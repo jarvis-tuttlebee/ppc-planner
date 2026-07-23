@@ -6,6 +6,52 @@ Newest session at the top.
 
 ---
 
+## 2026-07-23 — First recon + small cleanup (Perplexity agent)
+
+### What was built or decided
+- Did the read-only recon Claude Code asked for (cloned repo, read
+  `HANDOFF.md`, `src/index.js`, both HTML pages) and reported back before
+  touching anything — round-trip confirmed working.
+- Jarvis then asked for the flagged items to be cleaned up. Fixed on branch
+  `cleanup/handoff-flags` (not merged/deployed yet, needs review):
+  - Renamed `saveToFirestore()` → `saveToKV()` in `public/index.html`
+    (12 call sites). No Firestore involved — it's Cloudflare KV, the old
+    name was leftover/misleading.
+  - Fixed stale "28 Aug" seed-data references to Ode to Sirens' actual
+    date (4 Sept 2026) in `public/kanban.html` (`SEED_CARDS`, card `k11`)
+    and `public/index.html` (`EVENTS` seed array + the swing-tags task
+    body that mentioned the old date). These are fallback-only seed
+    values used when KV is empty, so low real-world impact, but would
+    have resurfaced the wrong date on any future reset.
+
+### What's mid-flight / not finished
+- **Not fixed yet — flagged as its own task, too big for a quick cleanup:**
+  the kanban "clobber" mitigation is only half-applied. `src/index.js`'s
+  `/api/kanban/patch` route does a safe server-side single-card merge, and
+  `public/index.html` uses it. But `public/kanban.html`'s own `saveBoard()`
+  (13 call sites — drag/drop, delete, project rename, panel save, staff
+  edits, etc.) still does a full read-modify-write POST straight to
+  `/api/kanban`. If the Task Board and Annual Planner are open in two tabs
+  and both save around the same time, the Task Board's full save can still
+  silently drop an edit the Annual Planner just made via patch. Needs a
+  proper pass deciding which of the 13 call sites are pure card edits
+  (→ switch to patch) vs. structural changes to order/projects/staff
+  (→ still need a full save, or a second patch-style endpoint for board
+  metadata). Didn't want to rush that blind on the live app's save path.
+
+### Known issues or things flagged but not fixed
+- Still no CI/deploy automation — `wrangler deploy` from this folder is
+  still the only way anything goes live. This branch has NOT been merged
+  to `main` or deployed; nothing changes for Jarvis until that happens.
+
+### Next logical step
+- Jarvis or Claude Code to review branch `cleanup/handoff-flags`, merge to
+  `main`, and run `wrangler deploy` when ready.
+- Pick up the `saveBoard()` → patch-endpoint refactor as its own scoped
+  task next.
+
+---
+
 ## 2026-07-23 — Repo init (Claude Code)
 
 ### What was built or decided

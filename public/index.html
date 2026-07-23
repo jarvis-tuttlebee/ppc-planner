@@ -1322,7 +1322,7 @@ let EVENTS = [
   { cat:'col', m:11, title:'010 Planning Begins',      date:'June 2027',               body:'Begin fabric selection and design direction for Collection 010. Should have 3 confirmed stockists and manufacturing fully operational.', status:'planned', tasks:[] },
 
   // Events
-  { cat:'evt', m:1,  title:'Ode to Sirens',            date:'28 August 2026',          body:'Community event. Direct sales, strong content moment. See Ode to Sirens Event Planning Brief for full detail.', status:'in-progress', tasks:['Confirm venue details','Prepare display setup','Pack stock and swing tags'] },
+  { cat:'evt', m:2,  title:'Ode to Sirens',            date:'4 September 2026',        body:'Community event. Direct sales, strong content moment. See Ode to Sirens Event Planning Brief for full detail.', status:'in-progress', tasks:['Confirm venue details','Prepare display setup','Pack stock and swing tags'] },
   { cat:'evt', m:3,  title:'Fashion Design Week (FDW)',date:'October 2026',            body:'Confirmed. Venue: The Piazza. Stage 2 form due 17 July. Collection 008 launches here. Biggest launch setup PPC has done.', status:'in-progress', tasks:['Submit Stage 2 form (due 17 July)','Confirm The Piazza address','Prepare 008 stock for launch','Plan display and setup'] },
   { cat:'evt', m:8,  title:'Second Event (TBD)',       date:'March 2027 (target)',     body:'Plan a second event around the 009 launch window. Type and venue TBD. To be discussed with Loui at July meeting.', status:'planned', tasks:[] },
   { cat:'evt', m:9,  title:'Quarterly Pop-up (TBD)',   date:'April 2027 (target)',     body:'Maintain quarterly event cadence between drops. Format and venue TBD.', status:'planned', tasks:[] },
@@ -1364,7 +1364,7 @@ let EVENTS = [
   { cat:'fin', m:0, week:1, title:'Map Monthly Fixed Costs', date:'Jul 2026', body:'List all fixed monthly PPC expenses (Shopify, Metricool, domain, Microsoft 365, packaging, materials) to calculate the real Mojo — minimum revenue before any personal draw is possible.', status:'planned', tasks:['List all fixed monthly expenses','Calculate Mojo figure','Update Phase 2 revenue model if numbers differ'] },
   { cat:'evt', m:0, week:2, title:'FDW Stage 2 Form Due', date:'17 Jul 2026', body:'Stage 2 form for Fremantle Design Week. Event description and host bio already drafted. Hard deadline 17 July — submit or confirm with FDW organisers.', status:'in-progress', tasks:['Submit Stage 2 form by 17 July'] },
   { cat:'per', m:0, week:3, title:'Loui Returns', date:'~23 Jul 2026', body:'Loui back from Europe. First team meeting of Phase 2. Agenda: manufacturing quotes, 008 design direction, swing tags and hangers, FDW planning, intern direction.', status:'planned', tasks:['Schedule team meeting for week of 23 July','Review CMT quotes together — decide on manufacturing path','Lock in 008 design direction and both colourways','Swing tags and hangers progress check','FDW Stage 2 review and event planning'] },
-  { cat:'col', m:0, week:4, title:'Swing Tags & Packaging', date:'Late Jul 2026', body:'Finalise and order swing tags with Loui. All stock must be tagged before Ode to Sirens on 28 August — allow 2–3 weeks lead time after ordering. Also: hangers, rack design, gift card on Shopify, fabric postcards.', status:'in-progress', tasks:['Finalise swing tag design with Loui','Order swing tags (2–3 week lead time)','Design hangers and rack with Loui','Add gift card product to Shopify','Create fabric postcards for Potter Textiles order'] },
+  { cat:'col', m:0, week:4, title:'Swing Tags & Packaging', date:'Late Jul 2026', body:'Finalise and order swing tags with Loui. All stock must be tagged before Ode to Sirens on 4 September — allow 2–3 weeks lead time after ordering. Also: hangers, rack design, gift card on Shopify, fabric postcards.', status:'in-progress', tasks:['Finalise swing tag design with Loui','Order swing tags (2–3 week lead time)','Design hangers and rack with Loui','Add gift card product to Shopify','Create fabric postcards for Potter Textiles order'] },
   { cat:'fin', m:0, week:4, title:'Macquarie Account', date:'Late Jul 2026', body:'Decide whether to open a Macquarie business account or defer. Cash on hand ($1,609) is tight — only move forward if it does not affect the Darrell Denim fabric order.', status:'planned', tasks:['Review current banking setup','Decide: open Macquarie now or defer until post-008 launch'] },
 
   // ── 008 Design & Sampling (currently missing — bulk production exists but no design phase) ──
@@ -1401,7 +1401,7 @@ let SETTINGS = { kanbanAutoAssign: true };
 // Monday-start calendar weeks (scheme 1 was day-number buckets).
 const WEEK_SCHEME = 3;
 
-function saveToFirestore() {
+function saveToKV() {
   const payload = {
     cats:   CATS.map(c => ({ ...c })),
     events: EVENTS.map(e => ({ ...e })),
@@ -1448,11 +1448,11 @@ async function initApp() {
     // calendar date each event was already sitting on.
     const stored = data.weekScheme || 1;
     if (stored < WEEK_SCHEME) { migrateWeekScheme(stored); dirty = true; }
-    if (dirty) saveToFirestore();
+    if (dirty) saveToKV();
   }
   // Pull dated Task Board cards onto the timeline (and push dated timeline
   // events back), so both boards show the same item on the same day.
-  if (await syncDateMirrors()) saveToFirestore();   // also refreshes localStorage
+  if (await syncDateMirrors()) saveToKV();   // also refreshes localStorage
   renderVertical();
 }
 
@@ -1972,7 +1972,7 @@ function attachPillDelete(pill, evt, mi) {
     if (linked) pushDueDateToCard(evt.srcCardId, null);
     const i = EVENTS.indexOf(evt);
     if (i > -1) EVENTS.splice(i, 1);
-    saveToFirestore();
+    saveToKV();
     if (viewMode === 'horizontal') renderGrid();
     else if (mi != null) refreshMonthContent(mi);
     else renderVertical();
@@ -2100,7 +2100,7 @@ function attachTouchDrag(pill, evt, mi) {
         _touchTarget.dataset.dropWeek ? parseInt(_touchTarget.dataset.dropWeek) : null,
         _touchTarget.dataset.dropDay ? parseInt(_touchTarget.dataset.dropDay) : null);
       cleanup();
-      saveToFirestore();
+      saveToKV();
       refreshMonthContent(mi);
       return;
     }
@@ -2169,7 +2169,7 @@ function renderMonthWeeks(container, mi) {
         if (!_dragEvt || _dragMi !== mi) return;
         applyEventSlot(_dragEvt, null, null);
         _dragEvt = null; _dragMi = null;
-        saveToFirestore();
+        saveToKV();
         refreshMonthContent(mi);
       });
 
@@ -2231,7 +2231,7 @@ function renderMonthWeeks(container, mi) {
           if (!_dragEvt || _dragMi !== mi) return;
           applyEventSlot(_dragEvt, key, date);
           _dragEvt = null; _dragMi = null;
-          saveToFirestore();
+          saveToKV();
           refreshMonthContent(mi);
         });
 
@@ -2453,7 +2453,7 @@ function showCustomCatForm(picker, mi, weekKey, dayKey = null) {
     const fg = getFgForBg(selectedColor);
     const newCat = { id, label: name, bg: selectedColor, fg };
     CATS.push(newCat);
-    saveToFirestore();
+    saveToKV();
     closeCatPicker();
     if (weekKey !== undefined && weekKey !== 'overview') {
       openNewEventPanel(newCat, mi, weekKey, dayKey);
@@ -2510,7 +2510,7 @@ function showEditCatForm(picker, cat, mi, weekKey) {
     cat.label = name;
     cat.bg = selectedColor;
     cat.fg = getFgForBg(selectedColor);
-    saveToFirestore();
+    saveToKV();
     closeCatPicker();
     if (viewMode === 'vertical') renderVertical();
     else renderGrid();
@@ -2762,8 +2762,8 @@ function savePanel() {
     if (activeEvt.srcCardId) pushDueDateToCard(activeEvt.srcCardId, exactDate);
   }
 
-  saveToFirestore();
-  syncDateMirrors().then(changed => { if (changed) { saveToFirestore(); renderGrid(); if (viewMode === 'vertical') renderVertical(); } });
+  saveToKV();
+  syncDateMirrors().then(changed => { if (changed) { saveToKV(); renderGrid(); if (viewMode === 'vertical') renderVertical(); } });
   renderGrid();
   if (viewMode === 'vertical') renderVertical();
   closePanel();
@@ -2913,7 +2913,7 @@ function renderSettingsList() {
 
 function toggleKanbanAutoAssign(cb) {
   SETTINGS.kanbanAutoAssign = cb.checked;
-  saveToFirestore();
+  saveToKV();
 }
 
 initApp();
