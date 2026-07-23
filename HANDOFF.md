@@ -6,6 +6,71 @@ Newest session at the top.
 
 ---
 
+## 2026-07-23 — Home page: logo + 3 tertiary-colour cards (Perplexity agent)
+
+### What was built or decided
+- Jarvis's ask: a home/landing page for the app — Press Play logo at top,
+  3 cards in the middle (Annual Planner, Task Board, Marketing System),
+  each card in a **different PPC tertiary colour**.
+- Renamed the old Annual Planner page from `public/index.html` to
+  `public/planner.html` via `git mv` (preserves file history; content
+  unchanged). Wrote a brand-new `public/index.html` as the Home page —
+  it now owns the `/` route.
+- New logo asset: `public/assets/pressplay-logo.png` — the Twilight
+  Indigo (`#344364`) Press Play wordmark, cropped tight and made
+  transparent from the existing brand wallpaper
+  `pressplay_indigo_on-cloud.png` (source: Jarvis's vault, Brand &
+  Identity folder). Note `planner.html`'s header already had its own
+  logo treatment via a separate base64 CSS mask — left untouched; the
+  new PNG is only used on the Home page for now.
+- Tertiary colour → card mapping (deliberate one-off override of the
+  brand doc's "tertiary colours are felt-not-seen, never flat fills"
+  rule — Jarvis explicitly asked for exactly this on this page):
+  - **Annual Planner** → Teal `#4E6E6C`, links to `/planner`
+  - **Task Board** → Archive Violet `#564A5E`, links to `/kanban`
+  - **Marketing System** → Muted Mustard `#C29A3B`, links to `/marketing`
+  - Card text is Cloud `#F7F5F2`; page background is Cloud `#F7F5F2`.
+    Cards stack to 1 column under 760px. Verified via screenshot at both
+    desktop (1280px) and mobile (480px) widths — no wrapping/overflow,
+    logo renders clean, mustard-card contrast is fine.
+- Added `public/marketing.html` as a **placeholder only** — "Building
+  now" chip, page title, one-line description of the Phase A/B/C spec
+  already in this file, and a link back home. The real Marketing System
+  page (Phase A pipeline) hasn't been built yet — this just stops the
+  new home card from 404ing.
+- Added small cross-nav links so none of the three pages are a dead
+  end: `kanban.html`'s nav row now has a "⌂ Home" link (before the
+  existing "← Annual Planner" link, which was repointed from `/` to
+  `/planner` since `/` now serves Home instead); `planner.html`'s
+  toggle row now has a "⌂ Home" link next to the existing "Task Board
+  →" link.
+- Confirmed clean-URL routing (`/planner`, `/kanban`, `/marketing` →
+  their `.html` files) already works today via Cloudflare's default
+  Workers Assets `html_handling` behaviour — this is how the
+  pre-existing `/kanban` link already worked before this session, so
+  `/planner` will resolve the same way once deployed. `src/index.js`
+  itself is untouched — its fetch handler only ever runs for paths that
+  don't match a static asset (i.e. the `/api/*` routes); asset requests
+  are served by the platform first.
+
+### What's mid-flight / not finished
+- This entry's changes are committed and pushed to
+  `cleanup/handoff-flags` but **not deployed** — `wrangler deploy` is
+  still manual and wasn't run this session.
+- `public/marketing.html` is a placeholder, not the real page. Phase A
+  (spec'd in the entry below) is still the next actual build task.
+
+### Known issues or things flagged but not fixed
+- `planner.html` still doesn't use the self-hosted Forma DJR fonts the
+  way `kanban.html` and the new `index.html` do (pre-existing
+  inconsistency, out of scope again this session unless raised).
+
+### Next logical step
+- Review the home page live once deployed, then pick up Phase A of the
+  Marketing System build (see spec below).
+
+---
+
 ## 2026-07-23 — Marketing System page: spec only, no code yet (Perplexity agent)
 
 ### What was built or decided
@@ -338,8 +403,10 @@ Newest session at the top.
 - **Live:** https://ppc-planner.pressplaycollective.workers.dev
 - **Deploy:** `npx wrangler deploy` from this folder (needs Node on PATH)
 - **KV binding:** `PLANNER_KV` (id `2f3dc18365c2477595cc76e4f3303746`)
-- **Structure:** `public/index.html` (Annual Planner), `public/kanban.html`
-  (Task Board), `src/index.js` (Worker — serves `/api/data` and
-  `/api/kanban`, both backed by shared KV; `/api/kanban/patch` does a
-  server-side merge patch on a single card to avoid two open tabs
+- **Structure:** `public/index.html` (Home — logo + 3 cards),
+  `public/planner.html` (Annual Planner), `public/kanban.html` (Task
+  Board), `public/marketing.html` (Marketing System — placeholder only,
+  Phase A not built yet), `src/index.js` (Worker — serves `/api/data`
+  and `/api/kanban`, both backed by shared KV; `/api/kanban/patch` does
+  a server-side merge patch on a single card to avoid two open tabs
   clobbering each other on full-board read-modify-write)
