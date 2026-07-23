@@ -6,6 +6,109 @@ Newest session at the top.
 
 ---
 
+## 2026-07-23 — Marketing System page: spec only, no code yet (Perplexity agent)
+
+### What was built or decided
+- Jarvis's ask: fold the Miro "Content Filter Board" (his own note, "Miro
+  Marketing System Plan 23-07-26") into ppc-planner as a **third page**,
+  because the Miro board has ideas but no forward motion (his words: "it
+  has no solid way of moving forward") and he doesn't want to stay capped
+  by Miro/Claude usage limits for something this central to running the
+  brand. Confirmed with Jarvis: stays a **separate page** from Task Board
+  and Annual Planner (per the standing instruction already in this file),
+  no shared card IDs or KV namespace with either.
+- Source docs (Jarvis's vault, not this repo): "Miro Marketing System Plan
+  23-07-26.md" (raw ask) and "PPC Content Strategy — Phase 2.md" (03-07-26,
+  built with Claude — the fuller spec for the Content/Marketing Filter
+  Board, channel list, and four-week content rhythm). Pull these again if
+  requirements drift — this entry is a compressed version of both.
+- This is a **planning-only session** — no code touched. Credits are
+  tight on both build tools right now (Jarvis's Claude cap is maxed for
+  the week; Perplexity Computer is running on a depleting one-time
+  balance, not a recurring grant), so the plan is: spec it once here,
+  cheaply, then build in small phases whenever either tool has room —
+  instead of re-deriving requirements mid-build and burning credits on
+  that instead of the actual feature.
+- **Scope split — build in this order, each one a standalone session:**
+  - **Phase A (this is the buildable-now scope):** the idea pipeline
+    itself. A new page, new KV namespace, four stage-columns (see below).
+    No calendar, no gap-detection, no event templates yet — just get
+    ideas moving from capture to scheduled with a review gate, mirroring
+    the Task Board's drag/drop card UI so it's not a new interaction
+    model to learn.
+  - **Phase B:** channel filter view + calendar (week/month grid) that
+    flags missing days against the four-week rhythm (Release / Brand
+    Identity / World Building / Tease weeks, from the Phase 2 doc).
+  - **Phase C:** event/campaign phase templates (e.g. 008 Explorations in
+    Denim's tease → name-drop → reveal → FDW → launch → post-launch
+    phases) that auto-suggest what's due when a card is tagged to an
+    event.
+  - Metricool export/integration is explicitly **not scoped yet** — open
+    question, don't build toward it until asked.
+
+### Phase A spec (buildable as its own task)
+- **New page:** `public/marketing.html`. Clone the Task Board's drag/drop
+  card + panel mechanics from `public/kanban.html` rather than building
+  new interaction patterns — same look, new columns and card shape.
+- **New API surface in `src/index.js`:** add `'/api/marketing': 'marketing'`
+  to `KV_KEYS` (own KV record, isolated from `main` and `kanban`), plus a
+  `/api/marketing/patch` route that mirrors the existing
+  `/api/kanban/patch` single-card merge pattern (`{ upsert: [card, ...],
+  remove: [id, ...] }`) from day one — don't repeat the full-board
+  read-modify-write mistake `kanban.html` had to be fixed for twice this
+  week.
+- **Stage columns (the pipeline):** `ideas` → `production` → `review` →
+  `scheduled`. This is the literal fix for what Jarvis's note flagged as
+  missing on the Miro board.
+- **Card shape (`MCARD`):**
+  ```
+  {
+    id: 'mc-<id>',
+    title: '',
+    body: '',              // idea description / notes
+    stage: 'ideas',        // 'ideas' | 'production' | 'review' | 'scheduled'
+    channel: 'ig_post',    // see taxonomy below
+    productionPlan: '',    // filled in once it leaves 'ideas'
+    result: '',            // link/note on the finished asset
+    scheduledDate: null,   // ISO date, set once it reaches 'scheduled'
+    eventTag: null,        // free-text for now, e.g. '008-fdw' — Phase C formalizes this
+    assignees: [],         // reuse the STAFF pattern from kanban.html (own local copy, don't cross-fetch)
+    approvedBy: null,      // set on the review → scheduled transition
+    createdAt: '', updatedAt: ''
+  }
+  ```
+- **Channel taxonomy** (tag on the card, not a column — from the Phase 2
+  doc's channel list, organic is primary):
+  - Primary: Instagram Post, Instagram Story, Instagram Reel, Pinterest
+  - Secondary: TikTok, Email, Meta Ads, Website
+  - Reuse the `CATS` colour-chip convention from `kanban.html` so primary
+    vs secondary is visually obvious at a glance.
+- **Review gate:** a card can't move `review` → `scheduled` without
+  `approvedBy` being set — matches the real approval flow (intern drafts,
+  Jarvis approves, intern schedules) from the Phase 2 doc's Team Roles
+  section.
+- **Nav:** none of the three pages currently link to each other (checked
+  `index.html` and `kanban.html` — no cross-links exist yet). Add a small
+  shared nav/tab bar across all three pages as part of this phase, not as
+  an afterthought.
+- **Explicitly deferred to Phase B/C, do not build now:** calendar/week
+  view, gap detection, content-layer weighting (Acquisition/Identity/
+  Conversion), event phase templates, Metricool export.
+
+### What's mid-flight / not finished
+- Nothing coded yet — this whole entry is the spec. Next session on this
+  should just start Phase A against the spec above.
+
+### Known issues or things flagged but not fixed
+- N/A — planning entry.
+
+### Next logical step
+- Build Phase A (idea pipeline page) per the spec above, on its own
+  branch, whenever there's room on either build tool. Don't start Phase B
+  until Phase A is reviewed and working.
+
+---
+
 ## 2026-07-23 — One true record: Task Board ⇄ Annual Planner mirror fix (Perplexity agent)
 
 ### What was built or decided
