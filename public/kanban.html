@@ -2246,8 +2246,8 @@ function savePanel() {
     applyMeta(newCard);
     moveCardToColumn(newCard, column);
     CARDS.push(newCard);
-    autoAssignToPlanner(newCard);        // undated cards → current week
-    upsertPlannerMirror(newCard);        // dated cards → their exact date
+    // Mirroring onto the Annual Planner happens lazily via the planner's own
+    // syncDateMirrors() next time it loads/reconciles — no direct push here.
     savedCard = newCard;
   } else {
     activeCard.cat = cat;
@@ -2257,8 +2257,8 @@ function savePanel() {
     activeCard.tasks = tasks;
     applyMeta(activeCard);
     moveCardToColumn(activeCard, column);
-    // Setting/changing a date re-places the card's pill on the timeline.
-    upsertPlannerMirror(activeCard);
+    // Setting/changing a date re-places the card's pill next time the planner
+    // reconciles (syncDateMirrors() in index.html).
     savedCard = activeCard;
   }
 
@@ -2274,120 +2274,13 @@ function closePanel() {
   activeNewColumn = null;
 }
 
-// ─── AUTO-ASSIGN TO ANNUAL PLANNER ──────────────────────────────────────────
-// When a new card is created, mirror it into the current week's "Any" column
-// of the Annual Planner. Controlled by the toggle in the planner's settings
-// sidebar (settings.kanbanAutoAssign in the /api/data payload; default on).
-
-const PLANNER_SYNC_URL = 'https://ppc-planner.pressplaycollective.workers.dev/api/data';
-const PLANNER_MONTHS = [
-  'Jul 2026','Aug 2026','Sep 2026','Oct 2026','Nov 2026','Dec 2026',
-  'Jan 2027','Feb 2027','Mar 2027','Apr 2027','May 2027','Jun 2027'
-];
-
-/* ─── TIMELINE MIRROR ─────────────────────────────────────────────────────────
-   A card with a due date shows on the Annual Planner timeline at exactly that
-   date. The planner reconciles fully on load; this just makes the change appear
-   straight away rather than on next visit. */
-
-function plannerSlotForDate(iso) {
-  if (!iso) return null;
-  const [y, mo, d] = iso.split('-').map(Number);
-  if (!y || !mo || !d) return null;
-  const mi = (y - 2026) * 12 + (mo - 1) - 6;
-  if (mi < 0 || mi > 11) return null;
-  // Real Monday→Sunday weeks, clipped to the month (matches the planner).
-  const calY = 2026 + Math.floor((6 + mi) / 12), calM = (6 + mi) % 12;
-  const last = new Date(calY, calM + 1, 0).getDate();
-  let from = 1, key = 0, band = null;
-  while (from <= last) {
-    const dow = new Date(calY, calM, from).getDay();
-    const to = Math.min(from + (dow === 0 ? 0 : 7 - dow), last);
-    key++;
-    if (d >= from && d <= to) { band = key; break; }
-    from = to + 1;
-  }
-  if (!band) return null;
-  const dayKey = { 1: 'mon', 2: 'tue', 3: 'wed', 4: 'thu', 5: 'fri' }[new Date(calY, calM, d).getDay()] || null;
-  return { m: mi, week: band, day: dayKey };
-}
-
-const PLANNER_MONTH_LABELS = [
-  'Jul 2026','Aug 2026','Sep 2026','Oct 2026','Nov 2026','Dec 2026',
-  'Jan 2027','Feb 2027','Mar 2027','Apr 2027','May 2027','Jun 2027'
-];
-
-async function upsertPlannerMirror(card) {
-  try {
-    const res = await fetch(PLANNER_SYNC_URL);
-    if (!res.ok) return;
-    const data = await res.json();
-    if (!data || !Array.isArray(data.events)) return;
-
-    const idx = data.events.findIndex(e => e.srcCardId === card.id);
-    const slot = card.dueDate ? plannerSlotForDate(card.dueDate) : null;
-
-    if (!slot) {
-      if (idx < 0) return;                 // nothing to do
-      data.events.splice(idx, 1);          // date cleared → retire the mirror
-    } else {
-      const body = document.createElement('div');
-      body.innerHTML = card.body || '';
-      const next = {
-        id: 'mir-' + card.id, srcCardId: card.id, mirrored: true,
-        cat: card.cat, m: slot.m, week: slot.week, day: slot.day,
-        title: card.title, date: PLANNER_MONTH_LABELS[slot.m],
-        body: (body.textContent || '').trim(),
-        status: card.status || 'planned',
-        tasks: (card.tasks || []).slice(),
-        dueDate: card.dueDate
-      };
-      if (idx < 0) data.events.push(next); else Object.assign(data.events[idx], next);
-    }
-
-    await fetch(PLANNER_SYNC_URL, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
-    });
-  } catch (err) { console.warn('Timeline mirror failed:', err); }
-}
-
-async function autoAssignToPlanner(card) {
-  // A dated card gets mirrored onto its exact date instead — don't also drop a
-  // loose copy into the current week.
-  if (card.dueDate) return;
-  try {
-    const res = await fetch(PLANNER_SYNC_URL);
-    if (!res.ok) return;
-    const data = await res.json();
-    if (!data || !Array.isArray(data.events)) return;
-    if (data.settings && data.settings.kanbanAutoAssign === false) return;
-
-    // Planner year runs July 2026 (m=0) to June 2027 (m=11).
-    const now = new Date();
-    const m = (now.getFullYear() - 2026) * 12 + (now.getMonth() - 6);
-    if (m < 0 || m > 11) return;
-    const week = Math.min(4, Math.ceil(now.getDate() / 7));
-
-    data.events.push({
-      cat: card.cat,
-      m,
-      week,
-      day: null,
-      title: card.title,
-      date: PLANNER_MONTHS[m],
-      body: card.body || '',
-      status: 'planned',
-      tasks: (card.tasks || []).slice()
-    });
-    await fetch(PLANNER_SYNC_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-  } catch (err) {
-    console.warn('Auto-assign to planner failed:', err);
-  }
-}
+// Mirroring cards onto the Annual Planner timeline (dated -> exact day,
+// undated -> current week when the planner's auto-assign setting is on) is
+// owned entirely by the planner's syncDateMirrors() in index.html -- that's
+// the one place cards get turned into timeline pills, kept in sync, and
+// cleaned up when retired. The Task Board never writes to the timeline
+// store directly; it just saves its own cards, and the planner picks up
+// the change next time it loads or reconciles.
 
 initApp();
 </script>

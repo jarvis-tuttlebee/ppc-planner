@@ -6,6 +6,98 @@ Newest session at the top.
 
 ---
 
+## 2026-07-23 — One true record: Task Board ⇄ Annual Planner mirror fix (Perplexity agent)
+
+### What was built or decided
+- Jarvis's ask: "it should be 1 card existing in both places... if you move a
+  card around in the planner, it should change the date in the card that's
+  living in both planner and task board. if you adjust it in the card, it
+  should update everywhere that card lives." This closes the gap the
+  previous entry flagged as a separate task.
+- Root cause found while mapping the sync code (as recommended below): the
+  Timeline → Task Board direction was already solid — `index.html`'s
+  `syncDateMirrors()` reconciles it safely through `/api/kanban/patch`.
+  The Task Board → Timeline direction was the broken one, and it was
+  broken by **duplicate, competing logic**, not a missing feature:
+  - `syncDateMirrors()` in `index.html` already mirrored *dated* cards
+    onto the timeline correctly (creates/updates/retires a linked event
+    keyed by `srcCardId`, one record per card).
+  - But `public/kanban.html` ALSO had `upsertPlannerMirror()` and
+    `autoAssignToPlanner()`, which pushed their own copies straight into
+    `/api/data` from the Task Board page itself — `autoAssignToPlanner()`
+    in particular created a copy with **no `id` and no `srcCardId`**,
+    so it was a permanently orphaned snapshot: editing the card afterwards
+    never touched that copy again. That's exactly the "lives in both
+    places but doesn't stay in sync" symptom Jarvis was hitting.
+- Fix: made `syncDateMirrors()` (`index.html`) the single owner of every
+  card→timeline mirror, dated or not:
+  - Extended it so an **undated** card also gets a linked mirror — parked
+    in the current week (via the same `dateToPlannerSlot()` banding used
+    for dated placement, just with `day: null`) when the existing
+    `kanbanAutoAssign` setting is on — reusing the same `mir-<cardId>` /
+    `srcCardId` link convention as dated mirrors, so the *same*
+    reconcile loop updates and retires them identically. One code path,
+    one record per card, no separate "auto-assign" mechanism anymore.
+  - Deleted `upsertPlannerMirror()`, `autoAssignToPlanner()`, and their
+    `PLANNER_SYNC_URL`/`PLANNER_MONTHS`/`PLANNER_MONTH_LABELS`/
+    `plannerSlotForDate()` support code from `public/kanban.html`, plus
+    their two call sites in the card-save function. The Task Board no
+    longer talks to `/api/data` at all — it just saves its own card
+    fields normally, and the Annual Planner's own reconcile pass (on
+    every load, and after planner-side saves) picks up the change.
+- Net effect: a card's due date, title, status, category, and project
+  now live in exactly one place (the Task Board card) with exactly one
+  linked timeline pill that always reflects it — moving the pill on the
+  planner still calls the already-safe `pushDueDateToCard()` → patches
+  the card's `dueDate` via `/api/kanban/patch`; editing the card updates
+  the same mirror event next time the planner reconciles. No more
+  separate/duplicate/orphaned copies.
+- **Timing note to flag to Jarvis:** this is reconcile-on-load, not
+  push-to-open-tabs. If the Task Board and Annual Planner are open in two
+  tabs side by side, a card edit shows up on the planner tab next time
+  *that tab* reconciles (page load, or its own next save/drag) — not
+  instantly. That matches how the reverse direction already worked before
+  this fix, so behavior is now consistent both ways, just not real-time
+  across simultaneously-open tabs.
+- Verified with an isolated Node simulation of the new reconcile logic
+  (`console.assert`-based, not saved to the repo): dated card → exactly
+  one mirror, editing the card updates that same mirror (not a second
+  one), undated card auto-parks in the current week when the setting is
+  on and gets no mirror when it's off, clearing a due date retires the
+  mirror, deleting a card removes its orphaned mirror. All passed. Both
+  files also pass `node --check` on their embedded scripts.
+
+### What's mid-flight / not finished
+- **Pre-existing stale data on the live KV, not touched by this fix:**
+  because the old `autoAssignToPlanner()` pushed events with no `id` and
+  no `srcCardId`, any "current week" copies it already created against
+  the *live* `/api/data` before this branch is deployed are permanently
+  unlinked and won't be recognized or cleaned up by the new reconcile
+  logic (there's no marker distinguishing them from genuine planner-
+  native events). If duplicate-looking pills show up on the timeline
+  after deploying, they're most likely these old orphans — safe to just
+  delete by hand once; not safe to auto-clean since nothing marks them.
+- Not yet tested in a real browser (no dev server / test harness for this
+  Worker app) — recommend opening both pages after review: create an
+  undated card (confirm it lands in the current week), give a card a due
+  date (confirm it moves to that date), edit a card's title/date (confirm
+  the SAME pill updates, not a new one), drag a pill on the planner
+  (confirm the card's due date follows), delete a card (confirm its pill
+  disappears).
+
+### Known issues or things flagged but not fixed
+- Still no CI/deploy automation, still on branch `cleanup/handoff-flags` —
+  nothing live changes until it's reviewed, merged, and `wrangler deploy`
+  is run manually.
+
+### Next logical step
+- Review + manual browser test as described above, then merge and deploy
+  when Jarvis/Claude Code are ready.
+- Content calendar / new features should stay a separate page from Task
+  Board and Annual Planner when that work starts — not part of this fix.
+
+---
+
 ## 2026-07-23 — Kanban save-race fix (Perplexity agent)
 
 ### What was built or decided

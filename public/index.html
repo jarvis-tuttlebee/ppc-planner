@@ -1876,15 +1876,31 @@ async function syncDateMirrors() {
   let eventsChanged = ensureEventIds();
 
   // ── Task Board → Timeline ────────────────────────────────────────────────
-  const datedCards = new Map();
-  board.cards.forEach(c => { if (c.dueDate && !c.srcEventId) datedCards.set(c.id, c); });
+  // Every card that isn't itself the Task-Board-side mirror of a native
+  // timeline event gets exactly one linked pill here: at its due date if it
+  // has one, or — when the "auto-assign" setting is on — parked in the
+  // current week (no specific day) if it doesn't. This is the single place
+  // that creates/updates/retires those pills; the Task Board itself never
+  // writes to the timeline store directly, so there's nothing for it to
+  // drift out of sync with.
+  const mirrorableCards = new Map();
+  board.cards.forEach(c => { if (!c.srcEventId) mirrorableCards.set(c.id, c); });
 
   for (let i = EVENTS.length - 1; i >= 0; i--) {
     const e = EVENTS[i];
-    if (e.srcCardId && !datedCards.has(e.srcCardId)) { EVENTS.splice(i, 1); eventsChanged = true; }
+    if (e.srcCardId && !mirrorableCards.has(e.srcCardId)) { EVENTS.splice(i, 1); eventsChanged = true; }
   }
-  datedCards.forEach((card, id) => {
-    const slot = dateToPlannerSlot(card.dueDate);
+
+  const autoAssignOn = SETTINGS.kanbanAutoAssign !== false;
+  const now = new Date();
+  const todayIso = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+  const todaySlot = dateToPlannerSlot(todayIso);   // reuse the exact same banding logic as dated placement
+
+  mirrorableCards.forEach((card, id) => {
+    let slot = dateToPlannerSlot(card.dueDate);
+    if (!slot && !card.dueDate && autoAssignOn && todaySlot) {
+      slot = { m: todaySlot.m, week: todaySlot.week, day: null };   // current week, no exact day
+    }
     const idx = EVENTS.findIndex(e => e.srcCardId === id);
     if (!slot) { if (idx >= 0) { EVENTS.splice(idx, 1); eventsChanged = true; } return; }
     const next = {
