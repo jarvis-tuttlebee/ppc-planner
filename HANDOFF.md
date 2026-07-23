@@ -6,6 +6,62 @@ Newest session at the top.
 
 ---
 
+## 2026-07-23 — Kanban save-race fix (Perplexity agent)
+
+### What was built or decided
+- Closed the clobber gap flagged in the previous entry, on the same branch
+  (`cleanup/handoff-flags`, still not merged/deployed):
+  - `src/index.js`: `/api/kanban/patch` now also accepts optional `order`,
+    `projects`, `staff` and overwrites those fields directly (safe —
+    Task Board is their only writer, so no merge needed, unlike `cards`).
+  - `public/kanban.html`: `saveBoard()` now takes `{ upsert, remove }` and
+    always routes through `/api/kanban/patch` instead of POSTing the
+    entire board. Every one of its ~13 call sites was reclassified and
+    updated: pure metadata changes (column reorder, project rename/
+    create, staff add) call `saveBoard()` with no args; anything that
+    touches specific cards (delete, move, project delete/unassign, staff
+    rename remapping assignees, panel save/create) now passes exactly the
+    card(s) it touched via `upsert`/`remove`, so this tab's stale copy of
+    *other* cards is never resent.
+  - Verified with an isolated Node test of the merge logic (not a full
+    browser test — no test harness exists for this app yet): confirmed a
+    metadata-only save no longer wipes a field the other page just patched
+    on an unrelated card, and unrelated deletes don't touch other cards.
+    Both files pass `node --check` on their embedded scripts.
+
+### What's mid-flight / not finished (found while doing this, NOT fixed)
+- **Bigger, separate issue discovered:** the *other* direction of this
+  same race exists on `/api/data` (the Annual Planner's own cats/events/
+  settings blob). `public/kanban.html`'s `upsertPlannerMirror()` and
+  `autoAssignToPlanner()` do their own full fetch-then-overwrite POST to
+  `/api/data` from the Task Board page — there's no `/api/data/patch`
+  equivalent at all, so this side has zero mitigation currently.
+  - Worth investigating before building a patch endpoint for it: `index.
+    html` already has its own `syncDateMirrors()` that reconciles the
+    same card→event mirrors independently on every Annual Planner load/
+    save. It's not obvious both mechanisms are still needed — possible
+    this is partly duplicate logic rather than just a race. Recommend
+    tracing through both before touching either, rather than assuming
+    it's a straight copy of the kanban-side fix.
+  - Also noticed: `autoAssignToPlanner()`'s pushed events have no `id`,
+    so even a future patch endpoint can't upsert-by-id on them without
+    that being added first (`mir-` prefix convention already exists for
+    the other function, e.g. `id: 'mir-' + card.id`).
+
+### Known issues or things flagged but not fixed
+- Still no CI/deploy automation, still on a branch — nothing live changes
+  until `cleanup/handoff-flags` is reviewed, merged, and `wrangler deploy`
+  is run manually.
+
+### Next logical step
+- Review and test `cleanup/handoff-flags` for real (open both pages,
+  confirm card edits/drags/project changes/staff edits still work and
+  sync correctly) before merging + deploying.
+- Then pick up the `/api/data` mirror-sync investigation above as its own
+  task.
+
+---
+
 ## 2026-07-23 — First recon + small cleanup (Perplexity agent)
 
 ### What was built or decided

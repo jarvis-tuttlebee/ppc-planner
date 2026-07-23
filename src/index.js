@@ -31,6 +31,13 @@ export default {
         else board.cards.push(incoming);
       });
 
+      // Board metadata (column order, projects, staff) has a single writer
+      // (the Task Board page) so it's safe to overwrite outright — unlike
+      // `cards`, nothing else concurrently patches these fields.
+      if (Array.isArray(patch.order)) board.order = patch.order;
+      if (Array.isArray(patch.projects)) board.projects = patch.projects;
+      if (Array.isArray(patch.staff)) board.staff = patch.staff;
+
       await env.PLANNER_KV.put('kanban', JSON.stringify(board));
       return new Response(JSON.stringify({ ok: true, cards: board.cards.length }), {
         headers: { ...cors, 'Content-Type': 'application/json' }

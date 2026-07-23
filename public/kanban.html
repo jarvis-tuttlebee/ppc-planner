@@ -942,18 +942,20 @@ let STAFF = ['Jarvis', 'Loui', 'Gregor'];
 // Cards used to hold a single `assignee` string. Normalise to an `assignees`
 // array so multi-assignment works without losing existing data.
 function migrateAssignees() {
-  let changed = false;
+  const touched = [];
+  let staffChanged = false;
   CARDS.forEach(c => {
     if (!Array.isArray(c.assignees)) {
       c.assignees = c.assignee ? [c.assignee] : [];
-      changed = true;
+      touched.push(c);
     }
     delete c.assignee;
   });
   // Anyone already assigned but missing from the staff list gets added back,
   // otherwise they'd silently vanish from the picker.
-  CARDS.forEach(c => c.assignees.forEach(n => { if (!STAFF.includes(n)) { STAFF.push(n); changed = true; } }));
-  return changed;
+  CARDS.forEach(c => c.assignees.forEach(n => { if (!STAFF.includes(n)) { STAFF.push(n); staffChanged = true; } }));
+  touched.staffChanged = staffChanged;   // tacked on so the caller can still trigger a save
+  return touched;
 }
 
 function projectById(id) { return PROJECTS.find(p => p.id === id) || null; }
@@ -1016,6 +1018,7 @@ let CARDS = SEED_CARDS.map(c => ({ ...c }));
 // ─── PERSISTENCE (localStorage + Cloudflare Worker sync) ─────────────────────
 const STORAGE_KEY = 'kanban-board-data';
 const SYNC_URL = 'https://ppc-planner.pressplaycollective.workers.dev/api/kanban';
+const KANBAN_PATCH_URL = 'https://ppc-planner.pressplaycollective.workers.dev/api/kanban/patch';
 const APP_VERSION = '1.9.0';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 
@@ -1033,17 +1036,32 @@ function moveCardToColumn(card, columnId) {
   }
 }
 
-function saveBoard() {
+// Saves board metadata (order/projects/staff) plus only the cards this
+// action actually touched. This used to POST the whole `cards` array on
+// every save, which meant any edit — even a pure column reorder — could
+// silently overwrite a card the Annual Planner had just patched via
+// `/api/kanban/patch` (or vice versa: this tab's stale in-memory copy of
+// a card would stomp a change made elsewhere). Routing every save through
+// the same patch endpoint, and only sending the specific card(s) that
+// changed, closes that race. Pass { upsert: [...cards] } and/or
+// { remove: [...ids] } when a call actually mutates cards; omit both for
+// pure metadata changes (reorder, project rename/create, staff edits).
+function saveBoard(opts) {
+  opts = opts || {};
+  const upsert = (opts.upsert || []).map(c => ({ ...c }));
+  const remove = opts.remove || [];
   const payload = { cards: CARDS.map(c => ({ ...c })), order: COLUMN_ORDER.slice(), projects: PROJECTS.map(p => ({ ...p })), staff: STAFF.slice() };
   try {
+    // Local cache stays a full snapshot — it's this tab's own offline
+    // fallback, not a shared write, so there's no cross-tab race here.
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   } catch (err) {
     console.warn('Local save failed:', err);
   }
-  fetch(SYNC_URL, {
+  fetch(KANBAN_PATCH_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
+    body: JSON.stringify({ upsert, remove, order: payload.order, projects: payload.projects, staff: payload.staff })
   }).catch(err => console.warn('Cloud sync failed:', err));
 }
 
@@ -1073,7 +1091,8 @@ async function initApp() {
     if (Array.isArray(data.staff) && data.staff.length) STAFF = data.staff;
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (err) {}
   }
-  if (migrateAssignees()) saveBoard();   // single assignee → array, once
+  const migrated = migrateAssignees();   // single assignee → array, once
+  if (migrated.length || migrated.staffChanged) saveBoard({ upsert: migrated });
   showView('board');
 }
 
@@ -1313,7 +1332,7 @@ function makeCardPill(card) {
     if (!confirm(`Delete "${card.title}"?`)) return;
     const idx = CARDS.indexOf(card);
     if (idx !== -1) CARDS.splice(idx, 1);
-    saveBoard();
+    saveBoard({ remove: [card.id] });
     renderBoard();
   });
   pill.appendChild(delBtn);
@@ -1373,7 +1392,7 @@ function attachTouchDrag(pill, card) {
     if (_touchTarget) {
       moveCardToColumn(card, _touchTarget.dataset.dropColumn);
       cleanup();
-      saveBoard();
+      saveBoard({ upsert: [card] });
       renderBoard();
       return;
     }
@@ -1549,7 +1568,7 @@ function renderProjects() {
       CARDS.forEach(c => { if (c.project === p.id) delete c.project; });
       PROJECTS = PROJECTS.filter(x => x.id !== p.id);
       expandedSections.delete(p.id);
-      saveBoard();
+      saveBoard({ upsert: cards });   // `cards` = this project's tasks, just unassigned above
       renderCurrentView();
     };
 
@@ -1784,10 +1803,11 @@ function makeColumn(col, sectionId) {
   body.addEventListener('drop', (e) => {
     e.preventDefault(); body.classList.remove('drop-target');
     if (!_dragCard) return;
-    assignCardToSection(_dragCard, sectionId);
-    moveCardToColumn(_dragCard, col.id);
+    const droppedCard = _dragCard;
+    assignCardToSection(droppedCard, sectionId);
+    moveCardToColumn(droppedCard, col.id);
     _dragCard = null;
-    saveBoard();
+    saveBoard({ upsert: [droppedCard] });
     renderBoard();
   });
 
@@ -2128,12 +2148,10 @@ function startRenameStaff(labelEl, index) {
 
     STAFF[index] = next;
     // Remap the old name everywhere it was used.
-    CARDS.forEach(c => {
-      if (!Array.isArray(c.assignees)) return;
-      c.assignees = c.assignees.map(n => (n === original ? next : n));
-    });
+    const affected = CARDS.filter(c => Array.isArray(c.assignees) && c.assignees.includes(original));
+    affected.forEach(c => { c.assignees = c.assignees.map(n => (n === original ? next : n)); });
     panelAssignees = panelAssignees.map(n => (n === original ? next : n));
-    saveBoard();
+    saveBoard({ upsert: affected });
     renderAssigneeList();
     updateAssigneeSummary();
     renderBoard();
@@ -2222,6 +2240,7 @@ function savePanel() {
     if (project) c.project = project; else delete c.project;
   };
 
+  let savedCard;
   if (!activeCard) {
     const newCard = { id: 'k' + Date.now(), cat, status, title, body, tasks };
     applyMeta(newCard);
@@ -2229,6 +2248,7 @@ function savePanel() {
     CARDS.push(newCard);
     autoAssignToPlanner(newCard);        // undated cards → current week
     upsertPlannerMirror(newCard);        // dated cards → their exact date
+    savedCard = newCard;
   } else {
     activeCard.cat = cat;
     activeCard.status = status;
@@ -2239,9 +2259,10 @@ function savePanel() {
     moveCardToColumn(activeCard, column);
     // Setting/changing a date re-places the card's pill on the timeline.
     upsertPlannerMirror(activeCard);
+    savedCard = activeCard;
   }
 
-  saveBoard();
+  saveBoard({ upsert: [savedCard] });
   renderCurrentView();
   closePanel();
 }
