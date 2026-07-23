@@ -30,8 +30,8 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 48px 24px 64px;
-      gap: 56px;
+      padding: 64px 24px 80px;
+      gap: 72px;
     }
 
     /* LOGO */
@@ -39,11 +39,11 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
     .brand img {
-      width: 260px;
-      max-width: 80vw;
+      width: 380px;
+      max-width: 82vw;
       height: auto;
       display: block;
     }
@@ -56,96 +56,60 @@
       color: #6B7A8D;
     }
 
-    /* CARDS */
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(220px, 300px));
-      gap: 24px;
-      width: 100%;
-      max-width: 980px;
-    }
-
-    .card {
-      position: relative;
+    /* MENU */
+    .menu {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      min-height: 200px;
-      padding: 28px 26px;
-      border-radius: 18px;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .menu-item {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px 42px;
+      border-radius: 999px;
+      border: 2px solid currentColor;
+      background: transparent;
       text-decoration: none;
-      color: #F7F5F2;
-      box-shadow: 0 1px 2px rgba(44,44,44,0.06);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 24px rgba(44,44,44,0.16);
-    }
-    .card:active { transform: translateY(-1px); }
-
-    .card-planner  { background: #4E6E6C; } /* Teal */
-    .card-taskboard{ background: #564A5E; } /* Archive Violet */
-    .card-marketing{ background: #C29A3B; } /* Muted Mustard */
-
-    .card .eyebrow {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 10.5px;
+      font-family: 'Forma DJR Banner', 'DM Sans', sans-serif;
+      font-size: 15px;
       font-weight: 600;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      opacity: 0.75;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
     }
-    .card h2 {
-      font-family: 'Forma DJR Display', 'Forma DJR Banner', 'Poppins', 'DM Sans', sans-serif;
-      font-size: 26px;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-      line-height: 1.15;
-      margin-top: 10px;
+    .menu-item:hover {
+      background: currentColor;
+      transform: translateY(-2px);
     }
-    .card .arrow {
-      align-self: flex-end;
-      font-size: 20px;
-      font-weight: 600;
-      opacity: 0.85;
-    }
+    .menu-item:hover span { color: #F7F5F2; }
+    .menu-item span { color: currentColor; transition: color 0.15s ease; }
 
-    @media (max-width: 760px) {
-      .cards {
-        grid-template-columns: 1fr;
-        max-width: 360px;
-      }
-      .card { min-height: 140px; }
+    .menu-planner   { color: #4E6E6C; } /* Teal */
+    .menu-taskboard { color: #564A5E; } /* Archive Violet */
+    .menu-marketing { color: #C29A3B; } /* Muted Mustard */
+
+    @media (max-width: 480px) {
+      .brand img { width: 300px; }
+      .menu-item { padding: 13px 30px; font-size: 13px; letter-spacing: 0.13em; }
     }
   </style>
 </head>
 <body>
   <div class="home">
     <div class="brand">
-      <img src="/assets/pressplay-logo.png" alt="Press Play">
+      <img src="/assets/pressplay-logo-black.png" alt="Press Play">
       <div class="tag">Internal Tools</div>
     </div>
 
-    <div class="cards">
-      <a class="card card-planner" href="/planner.html">
-        <div class="eyebrow">Calendar</div>
-        <h2>Annual&nbsp;Planner</h2>
-        <div class="arrow">→</div>
-      </a>
-
-      <a class="card card-taskboard" href="/kanban.html">
-        <div class="eyebrow">Execution</div>
-        <h2>Task&nbsp;Board</h2>
-        <div class="arrow">→</div>
-      </a>
-
-      <a class="card card-marketing" href="/marketing.html">
-        <div class="eyebrow">Content</div>
-        <h2>Marketing&nbsp;System</h2>
-        <div class="arrow">→</div>
-      </a>
-    </div>
+    <nav class="menu">
+      <a class="menu-item menu-planner" href="/planner.html"><span>Annual Planner</span></a>
+      <a class="menu-item menu-taskboard" href="/kanban.html"><span>Task Board</span></a>
+      <a class="menu-item menu-marketing" href="/marketing.html"><span>Marketing System</span></a>
+    </nav>
   </div>
 </body>
 </html>
