@@ -1,0 +1,2374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Task Board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Forma DJR — self-hosted, PPC design system. Previously this file asked for
+       Forma DJR but never hosted it, so headings silently fell back to Poppins. */
+    @font-face { font-family:'Forma DJR Banner'; src:url('/fonts/forma-djr-banner-400.ttf') format('truetype'); font-weight:400; font-style:normal; font-display:swap; }
+    @font-face { font-family:'Forma DJR Banner'; src:url('/fonts/forma-djr-banner-500.ttf') format('truetype'); font-weight:500; font-style:normal; font-display:swap; }
+    @font-face { font-family:'Forma DJR Banner'; src:url('/fonts/forma-djr-banner-700.ttf') format('truetype'); font-weight:700; font-style:normal; font-display:swap; }
+    @font-face { font-family:'Forma DJR Display'; src:url('/fonts/forma-djr-display-700.ttf') format('truetype'); font-weight:700; font-style:normal; font-display:swap; }
+    @font-face { font-family:'Forma DJR Display'; src:url('/fonts/forma-djr-display-900.ttf') format('truetype'); font-weight:900; font-style:normal; font-display:swap; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      background: #F7F5F2;
+      color: #2C2C2C;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    .header {
+      background: #F7F5F2;
+      color: #6B7A8D;
+      padding: 16px 32px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      border-bottom: 1px solid #e0ddd8;
+    }
+    .header-title { font-family: 'Forma DJR Display', 'Forma DJR Banner', 'Poppins', 'DM Sans', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.01em; color: #2C2C2C; justify-self: center; }
+    .header-right { text-align: right; }
+    .header-right .sub {
+      font-size: 11px;
+      opacity: 0.55;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .header-right .version {
+      font-size: 9px;
+      letter-spacing: 0.06em;
+      opacity: 0.35;
+      margin-top: 3px;
+    }
+
+    /* NAV */
+    .nav-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 32px;
+      background: #F7F5F2;
+      border-bottom: 1px solid #e0ddd8;
+    }
+    .nav-link {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1.5px solid #344364;
+      background: transparent;
+      color: #344364;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+    .nav-link:hover { background: #344364; color: #fff; }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      letter-spacing: 0.03em;
+      color: #6B7A8D;
+    }
+    .legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+    /* BOARD — one scrollable page of collapsible sections */
+    .board {
+      display: block;
+      padding: 28px 32px 60px;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+    .board-section { border-bottom: 1px solid #E2DDD5; }
+    .board-section:first-child { border-top: 1px solid #E2DDD5; }
+    .section-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 15px 6px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.12s;
+    }
+    .section-row:hover { background: rgba(52,67,100,0.035); }
+    .section-num {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      color: #b5b0a8;
+      min-width: 26px;
+    }
+    .section-swatch { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .section-title {
+      font-family: 'Forma DJR Banner', 'Poppins', 'DM Sans', sans-serif;
+      font-size: 15.5px;
+      font-weight: 700;
+      color: #2C2C2C;
+      letter-spacing: -0.005em;
+      flex: 1;
+    }
+    .section-title.editing {
+      outline: none;
+      background: #fff;
+      border-bottom: 1.5px solid #344364;
+      padding: 1px 5px;
+      margin: -1px -5px;
+      border-radius: 3px 3px 0 0;
+      cursor: text;
+      min-width: 60px;
+    }
+    .section-title.rename-error {
+      border-bottom-color: #8A5A3B;
+      background: rgba(138,90,59,0.08);
+    }
+    .section-count {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      color: #9a958d;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+    .section-chev { color: #9a958d; font-size: 11px; width: 12px; text-align: center; }
+    .board-section.open .section-title { color: #344364; }
+    .section-board {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      overflow-x: auto;
+      padding: 4px 2px 22px;
+    }
+    .board-col {
+      background: #fff;
+      border-radius: 10px;
+      border: 1px solid #e8e5e0;
+      flex: 1 1 260px;
+      min-width: 260px;
+      max-width: 320px;
+      display: flex;
+      flex-direction: column;
+    }
+    .board-col-head {
+      padding: 14px 16px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #f0ede8;
+    }
+    .board-col-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #6B7A8D;
+    }
+    .board-col-count {
+      font-size: 11px;
+      color: #bbb;
+      background: #F7F5F2;
+      border-radius: 10px;
+      padding: 1px 8px;
+    }
+    .board-col-body {
+      padding: 10px;
+      flex: 1;
+      min-height: 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: background 0.12s, border-color 0.12s;
+      border-radius: 0 0 10px 10px;
+    }
+    .board-col-body.drop-target {
+      background: rgba(71,133,137,0.08);
+      outline: 2px dashed #4E6E6C;
+      outline-offset: -4px;
+    }
+    .board-col-head[draggable="true"] { cursor: grab; }
+    .board-col.col-dragging { opacity: 0.4; }
+    .board-col.col-drop-target { outline: 2px dashed #344364; outline-offset: -4px; border-radius: 10px; }
+    .board-col-drag-handle { opacity: 0.35; margin-right: 5px; font-size: 10px; letter-spacing: -1px; }
+
+    .done-group-toggle {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      color: #9a9a9a;
+      padding: 6px 4px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .done-group-toggle:hover { color: #4E6E6C; }
+
+    /* CARD PILL */
+    .card-pill {
+      display: block;
+      padding: 9px 11px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      line-height: 1.4;
+      cursor: pointer;
+      transition: filter 0.12s, opacity 0.12s;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      border: 1px solid #E2DDD5;
+      position: relative;
+    }
+    .card-pill:hover { filter: brightness(0.98); }
+    .card-pill[draggable="true"] { cursor: grab; }
+    .card-pill.dragging { opacity: 0.3 !important; cursor: grabbing; }
+    .card-delete-btn {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(0,0,0,0.18);
+      color: inherit;
+      font-size: 15px;
+      line-height: 1;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      opacity: 0.7;
+    }
+    .card-pill:hover .card-delete-btn { display: flex; }
+    .card-delete-btn:hover { opacity: 1; background: rgba(0,0,0,0.35); }
+    @media (hover: none) { .card-delete-btn { display: flex; } }
+    .card-pill-cat {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      opacity: 0.75;
+      margin-bottom: 3px;
+    }
+    .card-pill-checklist {
+      font-size: 10px;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+
+    /* ── Card layout: icon + title, View details, then Assignee/Status/Due row ── */
+    .card-head { display: flex; align-items: flex-start; gap: 7px; }
+    .card-icon {
+      width: 15px; height: 15px; border-radius: 4px; flex-shrink: 0; margin-top: 1px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 9px; color: #fff; font-weight: 700;
+    }
+    .card-title { font-weight: 600; line-height: 1.35; flex: 1; }
+    .card-details-link {
+      display: inline-block; margin-top: 5px;
+      font-family: 'DM Sans', sans-serif; font-size: 10.5px; font-weight: 500;
+      letter-spacing: 0.04em; color: #6B7A8D; cursor: pointer;
+    }
+    .card-details-link:hover { color: #344364; text-decoration: underline; }
+    .card-meta {
+      display: flex; gap: 10px; margin-top: 9px; padding-top: 8px;
+      border-top: 1px solid #E2DDD5; flex-wrap: wrap;
+    }
+    .card-meta-cell { min-width: 0; flex: 1 1 30%; }
+    .card-meta-head {
+      display: flex; align-items: center; gap: 4px;
+      font-family: 'DM Sans', sans-serif; font-size: 9px; letter-spacing: 0.06em;
+      text-transform: uppercase; color: #9a958d; margin-bottom: 3px; white-space: nowrap;
+    }
+    .card-meta-ico { width: 10px; height: 10px; flex-shrink: 0; opacity: 0.65; }
+    .card-meta-val { font-size: 11px; color: #2C2C2C; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .card-meta-val.empty { color: #b5b0a8; }
+    .card-meta-val.overdue { color: #8A5A3B; font-weight: 600; }
+    .status-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      border-radius: 12px; padding: 2px 8px 2px 6px;
+      font-size: 10px; font-weight: 500; white-space: nowrap;
+    }
+    .status-chip .chip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ── Projects view ── */
+    .projects-wrap { padding: 24px 32px 40px; max-width: 1100px; }
+    .projects-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+    .projects-title { font-family: 'Forma DJR Display','Forma DJR Banner','Poppins',sans-serif; font-size: 22px; font-weight: 700; color: #2C2C2C; }
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+    .project-card {
+      background: #fff; border: 1px solid #e8e5e0; border-radius: 12px; padding: 16px;
+      cursor: pointer; transition: border-color 0.15s, transform 0.1s; position: relative;
+    }
+    .project-card:hover { border-color: #344364; }
+    .project-card:active { transform: scale(0.995); }
+    .project-name { font-family: 'Forma DJR Banner','Poppins',sans-serif; font-size: 15px; font-weight: 700; color: #2C2C2C; margin-bottom: 4px; padding-right: 20px; }
+    .project-desc {
+      font-size: 12px; color: #6b665e; line-height: 1.45; margin-bottom: 6px;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .project-meta { font-size: 11.5px; color: #6B7A8D; }
+    .project-bar { display: flex; gap: 3px; margin-top: 11px; height: 4px; border-radius: 2px; overflow: hidden; background: #F0EDE8; }
+    .project-bar span { display: block; height: 100%; }
+    .project-del {
+      position: absolute; top: 10px; right: 10px; border: none; background: none;
+      color: #c9c4bc; font-size: 15px; cursor: pointer; line-height: 1; padding: 2px 4px; display: none;
+    }
+    .project-card:hover .project-del { display: block; }
+    .project-del:hover { color: #8A5A3B; }
+    .project-add-card {
+      border: 1.5px dashed #d5d0c8; background: none; border-radius: 12px; padding: 16px;
+      cursor: pointer; color: #6B7A8D; font-family: 'DM Sans', sans-serif; font-size: 13px;
+      display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 92px;
+    }
+    .project-add-card:hover { border-color: #344364; color: #344364; }
+    .project-context {
+      display: flex; align-items: center; gap: 8px; padding: 0 32px; margin-top: -4px; margin-bottom: 4px;
+      font-family: 'DM Sans', sans-serif; font-size: 12px; color: #6B7A8D;
+    }
+    .project-context b { font-family: 'Forma DJR Banner','Poppins',sans-serif; color: #2C2C2C; font-size: 14px; }
+    .nav-link.active { background: #344364; color: #fff; }
+
+    /* ── Assignee multi-select (rename inline, add staff, Done) ── */
+    .asg { position: relative; display: inline-block; min-width: 190px; }
+    .asg-toggle {
+      display: flex; align-items: center; justify-content: space-between; gap: 6px;
+      width: 100%; border: 1px solid #EAE2D6; background: #fff; border-radius: 7px;
+      padding: 6px 9px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+      font-size: 12.5px; color: #2C2C2C; text-align: left;
+    }
+    .asg-toggle:hover { border-color: #b9b2a6; }
+    .asg-summary { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .asg-summary.empty { color: #b5b0a8; }
+    .asg-menu {
+      display: none; position: absolute; left: 0; top: calc(100% + 4px);
+      min-width: 230px; background: #fff; border: 1px solid #EAE2D6; border-radius: 10px;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.16); z-index: 240; padding: 5px;
+    }
+    .asg-menu.open { display: block; }
+    .asg-opt {
+      display: flex; align-items: center; gap: 8px; padding: 7px 8px;
+      border-radius: 6px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px;
+    }
+    .asg-opt:hover { background: #F7F5F2; }
+    .asg-check {
+      width: 15px; height: 15px; border: 1.5px solid #d5d0c8; border-radius: 4px; flex-shrink: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 10px; color: #fff; line-height: 1;
+    }
+    .asg-opt.sel .asg-check { background: #344364; border-color: #344364; }
+    .asg-name { flex: 1; color: #2C2C2C; }
+    .asg-name.editing {
+      outline: none; background: #F7F5F2; border-bottom: 1.5px solid #344364;
+      border-radius: 3px 3px 0 0; padding: 0 3px; cursor: text;
+    }
+    .asg-name.rename-error { border-bottom-color: #8A5A3B; background: rgba(138,90,59,0.1); }
+    .asg-newrow { display: none; gap: 6px; padding: 6px 8px 4px; }
+    .asg-newrow.open { display: flex; }
+    .asg-newinput {
+      flex: 1; min-width: 0; border: 1px solid #EAE2D6; border-radius: 6px;
+      padding: 6px 8px; font-family: 'DM Sans', sans-serif; font-size: 12.5px; color: #2C2C2C;
+    }
+    .asg-newinput:focus { outline: none; border-color: #344364; }
+    .asg-newsave {
+      border: none; background: #344364; color: #fff; border-radius: 6px;
+      padding: 0 11px; font-family: 'DM Sans', sans-serif; font-size: 11.5px; cursor: pointer;
+    }
+    .asg-foot {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      border-top: 1px solid #F0EDE8; margin-top: 4px; padding: 7px 8px 3px;
+    }
+    .asg-add {
+      font-family: 'DM Sans', sans-serif; font-size: 12px; color: #6B7A8D; cursor: pointer;
+    }
+    .asg-add:hover { color: #344364; }
+    .asg-done {
+      border: none; background: #344364; color: #fff; border-radius: 6px;
+      padding: 6px 14px; font-family: 'DM Sans', sans-serif; font-size: 11.5px;
+      letter-spacing: 0.04em; cursor: pointer;
+    }
+    .asg-hint {
+      font-family: 'DM Sans', sans-serif; font-size: 10px; color: #b5b0a8;
+      padding: 2px 8px 5px; letter-spacing: 0.02em;
+    }
+
+    /* ── New-project modal ── */
+    .proj-modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 300;
+      background: rgba(44,44,44,0.42);
+    }
+    .proj-modal-overlay.open { display: block; }
+    .proj-modal {
+      display: none; position: fixed; z-index: 310;
+      left: 50%; top: 50%; transform: translate(-50%,-50%);
+      width: min(440px, calc(100vw - 32px));
+      max-height: calc(100vh - 48px); overflow-y: auto;
+      background: #fff; border-radius: 14px; padding: 22px 24px 20px;
+      box-shadow: 0 18px 48px rgba(0,0,0,0.24);
+    }
+    .proj-modal.open { display: block; }
+    .proj-modal-head {
+      font-family: 'Forma DJR Display','Forma DJR Banner','Poppins',sans-serif;
+      font-size: 19px; font-weight: 700; color: #2C2C2C; margin-bottom: 16px;
+    }
+    .np-label {
+      display: block; font-family: 'DM Sans', sans-serif; font-size: 10px;
+      letter-spacing: 0.1em; text-transform: uppercase; color: #6B7A8D;
+      font-weight: 600; margin-bottom: 5px;
+    }
+    .np-input {
+      width: 100%; border: 1px solid #EAE2D6; border-radius: 8px;
+      padding: 10px 11px; font-family: 'DM Sans', sans-serif; font-size: 14px;
+      color: #2C2C2C; background: #fff; margin-bottom: 14px;
+    }
+    .np-input:focus { outline: none; border-color: #344364; }
+    .np-textarea { resize: vertical; min-height: 66px; line-height: 1.5; }
+    .np-types { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 6px; }
+    .np-type {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid #EAE2D6; background: #fff; border-radius: 20px;
+      padding: 6px 12px 6px 9px; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; font-size: 12px; color: #6b665e;
+    }
+    .np-type:hover { border-color: #b9b2a6; }
+    .np-type .np-swatch { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .np-type.sel { border-width: 1.5px; font-weight: 600; color: #2C2C2C; }
+    .np-error { color: #8A5A3B; font-size: 12px; min-height: 16px; margin: 6px 0 2px; }
+    .proj-modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+
+    /* ── Rich-text toolbar for the description field ── */
+    .fmt-bar { display: flex; gap: 4px; margin-bottom: 6px; flex-wrap: wrap; }
+    .fmt-btn {
+      border: 1px solid #EAE2D6; background: #fff; border-radius: 6px;
+      width: 28px; height: 26px; cursor: pointer; color: #45464B; font-size: 12px;
+      display: inline-flex; align-items: center; justify-content: center; padding: 0;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .fmt-btn:hover { background: #F7F5F2; border-color: #344364; }
+    .fmt-btn.wide { width: auto; padding: 0 8px; font-size: 10.5px; letter-spacing: 0.04em; }
+    .panel-desc b, .panel-desc strong { font-weight: 700; }
+
+    /* PANEL (reused from Annual Planner) */
+    .panel {
+      position: fixed;
+      right: 0; top: 0; bottom: 0;
+      width: 400px;
+      background: #fff;
+      border-left: 1px solid #e8e5e0;
+      transform: translateX(100%);
+      transition: transform 0.22s ease;
+      z-index: 200;
+      overflow-y: auto;
+      box-shadow: -6px 0 28px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+    }
+    .panel.open { transform: translateX(0); }
+    .panel-strip { height: 5px; flex-shrink: 0; }
+    .panel-body-wrap { padding: 28px 28px 32px; flex: 1; }
+    .panel-close {
+      position: absolute;
+      top: 12px; right: 14px;
+      font-size: 18px;
+      cursor: pointer;
+      color: #aaa;
+      background: none;
+      border: none;
+      line-height: 1;
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 4px;
+      transition: background 0.12s, color 0.12s;
+    }
+    .panel-close:hover { background: #f3f1ee; color: #555; }
+    .panel-title-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px; }
+    .panel-status-dot {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      border: 2px solid #ccc;
+      flex-shrink: 0;
+      margin-top: 7px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      position: relative;
+    }
+    .panel-status-dot.done { background: #4E6E6C; border-color: #4E6E6C; }
+    .panel-status-dot.done::after {
+      content: '';
+      position: absolute;
+      width: 6px; height: 4px;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -65%) rotate(-45deg);
+    }
+    .panel-title-text {
+      font-size: 22px;
+      font-weight: 500;
+      line-height: 1.25;
+      color: #1a1a1a;
+      flex: 1;
+      outline: none;
+      border: none;
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      padding: 2px 4px;
+      border-radius: 4px;
+      min-height: 32px;
+    }
+    .panel-title-text:focus { background: #f8f6f3; }
+    .panel-title-text:empty::before { content: attr(placeholder); color: #bbb; }
+    .panel-props { margin-bottom: 20px; }
+    .prop-row { display: flex; align-items: center; padding: 7px 0; border-bottom: 1px solid #f0ede8; gap: 12px; }
+    .prop-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #9a9a9a;
+      width: 90px;
+      flex-shrink: 0;
+    }
+    .prop-value { font-size: 13px; color: #2C2C2C; flex: 1; }
+    .prop-badge { display: inline-block; padding: 3px 9px; border-radius: 3px; font-size: 11px; font-weight: 500; letter-spacing: 0.04em; }
+    .prop-status-select {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: #2C2C2C;
+      padding: 3px 8px;
+      border-radius: 3px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    .prop-status-select:focus { background: #f8f6f3; }
+    .prop-status-wrap { display: flex; align-items: center; gap: 6px; }
+    .status-dot-small { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .panel-divider { border: none; border-top: 1px solid #ede9e3; margin: 18px 0; }
+    .panel-section-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #bbb;
+      margin-bottom: 10px;
+    }
+    .panel-desc {
+      font-size: 13px;
+      line-height: 1.75;
+      color: #444;
+      outline: none;
+      min-height: 60px;
+      padding: 4px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    .panel-desc:focus { background: #f8f6f3; }
+    .panel-desc:empty::before { content: attr(placeholder); color: #ccc; }
+    .subtasks-list { list-style: none; margin-bottom: 10px; }
+    .subtask-item { display: flex; align-items: flex-start; gap: 9px; padding: 5px 0; border-bottom: 1px solid #f4f1ee; }
+    .subtask-check {
+      width: 15px; height: 15px;
+      border-radius: 3px;
+      border: 1.5px solid #ccc;
+      flex-shrink: 0;
+      margin-top: 2px;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background: transparent;
+      position: relative;
+    }
+    .subtask-check:checked { background: #4E6E6C; border-color: #4E6E6C; }
+    .subtask-check:checked::after {
+      content: '';
+      position: absolute;
+      left: 2px; top: -1px;
+      width: 8px; height: 5px;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(-45deg);
+    }
+    .subtask-text { font-size: 13px; color: #2C2C2C; flex: 1; outline: none; line-height: 1.5; }
+    .subtask-text:empty::before { content: 'Action item...'; color: #ccc; }
+    .subtask-del {
+      font-size: 16px;
+      color: #ccc;
+      cursor: pointer;
+      background: none;
+      border: none;
+      line-height: 1;
+      padding: 0 2px;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+    .subtask-item:hover .subtask-del { opacity: 1; }
+    .subtask-del:hover { color: #e55; }
+    .add-subtask-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      color: #9a9a9a;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .add-subtask-btn:hover { color: #4E6E6C; }
+    .panel-save-row {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid #ede9e3;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .btn-save {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 7px 16px;
+      background: #344364;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: background 0.15s;
+    }
+    .btn-save:hover { background: #2a3652; }
+    .btn-cancel {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 400;
+      padding: 7px 14px;
+      background: transparent;
+      color: #888;
+      border: 1px solid #e0ddd8;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .btn-cancel:hover { background: #f4f1ee; }
+    .overlay { display: none; position: fixed; inset: 0; z-index: 100; }
+    .overlay.open { display: block; }
+
+    /* ADD CARD */
+    .add-card-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1.5px dashed #d0ccc6;
+      background: transparent;
+      color: #bbb;
+      font-size: 12px;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: border-color 0.12s, color 0.12s;
+    }
+    .add-card-btn:hover { border-color: #6B7A8D; color: #6B7A8D; }
+
+    @media (max-width: 768px) {
+      .header { padding: 14px 16px; }
+      .nav-row { padding: 10px 16px; gap: 8px; }
+      .board { padding: 14px 16px 40px; }
+      .board-col { min-width: 240px; }
+      .section-row { gap: 10px; padding: 14px 2px; }
+      .section-title { font-size: 14.5px; }
+      .section-count { font-size: 10px; }
+      .section-board { gap: 10px; }
+      .panel { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-spacer"></div>
+  <div class="header-title">Task Board</div>
+  <div class="header-right">
+    <div class="sub">Press Play Collective</div>
+    <div class="version" id="versionTag"></div>
+  </div>
+</div>
+
+<div class="nav-row">
+  <a class="nav-link" href="https://ppc-planner.pressplaycollective.workers.dev/">&#8592; Annual Planner</a>
+  <button class="nav-link" id="tabBoardBtn" onclick="showView('board')">Board</button>
+  <button class="nav-link" id="tabProjectsBtn" onclick="showView('projects')">Projects</button>
+  <button class="nav-link" id="refreshBtn" onclick="refreshBoard()" title="Reload latest data from cloud">&#8635; Refresh</button>
+  <div style="margin-left:auto;display:flex;gap:14px;flex-wrap:wrap;">
+    <div class="legend-item"><div class="legend-dot" style="background:#4E6E6C"></div>Collections &amp; Launches</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#C29A3B"></div>Events</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#564A5E"></div>Marketing &amp; Content</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#6B7A8D"></div>Manufacturing &amp; Fabric</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#344364"></div>Stockists</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#8A5A3B"></div>Finance &amp; Admin</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#2C2C2C"></div>Personal Milestones</div>
+  </div>
+</div>
+
+<div class="project-context" id="projectContext" style="display:none;"></div>
+<div class="board" id="board"></div>
+<div class="projects-wrap" id="projectsView" style="display:none;">
+  <div class="projects-head">
+    <div class="projects-title">Projects</div>
+  </div>
+  <div class="projects-grid" id="projectsGrid"></div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closePanel()"></div>
+
+<!-- New-project dialog. Replaces window.prompt(), which browsers silently
+     suppress inside webviews / after "prevent additional dialogs" — the button
+     was firing, the prompt just never appeared. -->
+<div class="proj-modal-overlay" id="projModalOverlay" onclick="closeProjectModal()"></div>
+<div class="proj-modal" id="projModal" role="dialog" aria-modal="true" aria-labelledby="projModalTitle">
+  <div class="proj-modal-head" id="projModalTitle">New project</div>
+
+  <label class="np-label" for="npName">Project name</label>
+  <input class="np-input" id="npName" placeholder="e.g. Ode to Sirens" autocomplete="off">
+
+  <label class="np-label" for="npDesc">Description</label>
+  <textarea class="np-input np-textarea" id="npDesc" placeholder="What is this project for?"></textarea>
+
+  <label class="np-label">Project type</label>
+  <div class="np-types" id="npTypes"></div>
+
+  <div class="np-error" id="npError"></div>
+
+  <div class="proj-modal-actions">
+    <button type="button" class="btn-cancel" onclick="closeProjectModal()">Cancel</button>
+    <button type="button" class="btn-save" onclick="submitProject()">Create project</button>
+  </div>
+</div>
+
+<div class="panel" id="panel">
+  <div class="panel-strip" id="panelStrip"></div>
+  <button class="panel-close" id="panelClose" onclick="closePanel()">&#x2715;</button>
+  <div class="panel-body-wrap">
+
+    <div class="panel-title-row">
+      <div class="panel-status-dot" id="pStatusDot" onclick="toggleDone()"></div>
+      <div class="panel-title-text" id="pTitle" contenteditable="true" placeholder="Task title..."></div>
+    </div>
+
+    <div class="panel-props">
+      <div class="prop-row">
+        <span class="prop-label">Category</span>
+        <span class="prop-value">
+          <div class="prop-status-wrap">
+            <select class="prop-status-select" id="pCat" onchange="updateCatColor()">
+              <option value="col">Collections &amp; Launches</option>
+              <option value="evt">Events</option>
+              <option value="mkt">Marketing &amp; Content</option>
+              <option value="mfg">Manufacturing &amp; Fabric</option>
+              <option value="stk">Stockists</option>
+              <option value="fin">Finance &amp; Admin</option>
+              <option value="per">Personal Milestones</option>
+            </select>
+          </div>
+        </span>
+      </div>
+      <div class="prop-row">
+        <span class="prop-label">Column</span>
+        <span class="prop-value">
+          <div class="prop-status-wrap">
+            <select class="prop-status-select" id="pColumn">
+              <option value="backlog">Backlog</option>
+              <option value="active">Active</option>
+              <option value="waiting">Waiting</option>
+              <option value="done">Done</option>
+            </select>
+          </div>
+        </span>
+      </div>
+      <div class="prop-row">
+        <span class="prop-label">Status</span>
+        <span class="prop-value">
+          <div class="prop-status-wrap">
+            <div class="status-dot-small" id="pStatusSmall"></div>
+            <select class="prop-status-select" id="pStatus" onchange="updateStatusColor()">
+              <option value="planned">Planned</option>
+              <option value="in-progress">In Progress</option>
+              <option value="complete">Complete</option>
+            </select>
+          </div>
+        </span>
+      </div>
+      <div class="prop-row">
+        <span class="prop-label">Assignee</span>
+        <span class="prop-value">
+          <div class="asg" id="asgWrap">
+            <button type="button" class="asg-toggle" onclick="toggleAssigneeMenu(event)">
+              <span class="asg-summary empty" id="asgSummary">Unassigned</span>
+              <span class="dd-caret">&#9662;</span>
+            </button>
+            <div class="asg-menu" id="asgMenu">
+              <div id="asgList"></div>
+              <div class="asg-newrow" id="asgNewRow">
+                <input class="asg-newinput" id="asgNewInput" placeholder="Staff name" autocomplete="off">
+                <button type="button" class="asg-newsave" onclick="commitNewStaff()">Add</button>
+              </div>
+              <div class="asg-foot">
+                <span class="asg-add" onclick="showNewStaffInput(event)">+ Add staff</span>
+                <button type="button" class="asg-done" onclick="closeAssigneeMenu()">Done</button>
+              </div>
+            </div>
+          </div>
+        </span>
+      </div>
+      <div class="prop-row">
+        <span class="prop-label">Due date</span>
+        <span class="prop-value">
+          <div class="prop-status-wrap">
+            <input type="date" class="prop-status-select" id="pDue" style="padding:4px 6px;">
+          </div>
+        </span>
+      </div>
+      <div class="prop-row">
+        <span class="prop-label">Project</span>
+        <span class="prop-value">
+          <div class="prop-status-wrap">
+            <select class="prop-status-select" id="pProject"></select>
+          </div>
+        </span>
+      </div>
+    </div>
+
+    <hr class="panel-divider">
+
+    <div class="panel-section-label">Description</div>
+    <div class="fmt-bar">
+      <button type="button" class="fmt-btn" title="Bold (Ctrl+B)" onclick="fmt('bold')"><b>B</b></button>
+      <button type="button" class="fmt-btn" title="Italic (Ctrl+I)" onclick="fmt('italic')"><i>I</i></button>
+      <button type="button" class="fmt-btn" title="Underline (Ctrl+U)" onclick="fmt('underline')"><u>U</u></button>
+      <button type="button" class="fmt-btn" title="Bulleted list" onclick="fmt('insertUnorderedList')">&#8226;</button>
+      <button type="button" class="fmt-btn wide" title="Remove formatting" onclick="fmt('removeFormat')">Clear</button>
+    </div>
+    <div class="panel-desc" id="pDesc" contenteditable="true" placeholder="Add a description..."></div>
+
+    <div class="panel-section-label">Checklist</div>
+    <ul class="subtasks-list" id="subtaskList"></ul>
+    <button class="add-subtask-btn" onclick="addSubtask()">
+      <span style="font-size:16px;line-height:1">+</span> Add checklist item
+    </button>
+
+    <div class="panel-save-row">
+      <button class="btn-cancel" onclick="closePanel()">Cancel</button>
+      <button class="btn-save" onclick="savePanel()">Save changes</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+
+// Brand palette v4 (Colour & Identity Document 2026 v4): muted tertiary family,
+// Signal Yellow retired. Finance has no brand slot — dusty rust derived to fit the family.
+const CATS = [
+  { id: 'col', label: 'Collections & Launches', bg: '#4E6E6C', fg: '#fff' },
+  { id: 'evt', label: 'Events',                  bg: '#C29A3B', fg: '#2C2C2C' },
+  { id: 'mkt', label: 'Marketing & Content',     bg: '#564A5E', fg: '#fff' },
+  { id: 'mfg', label: 'Manufacturing & Fabric',  bg: '#6B7A8D', fg: '#fff' },
+  { id: 'stk', label: 'Stockists',               bg: '#344364', fg: '#fff' },
+  { id: 'fin', label: 'Finance & Admin',         bg: '#8A5A3B', fg: '#fff' },
+  { id: 'per', label: 'Personal Milestones',     bg: '#2C2C2C', fg: '#fff' },
+];
+
+// Pills use a single calm background; the category color becomes an accent
+// (left border + title/label text) instead of a full-color fill.
+const PILL_BG = '#F0EDE8';
+function accentTextColor(bg) {
+  // Yellows/mustards are too low-contrast as text — fall back to Graphite
+  // (the coloured left bar still carries the category).
+  const b = bg.toLowerCase();
+  return (b === '#edd960' || b === '#c29a3b') ? '#2C2C2C' : bg;
+}
+
+const COLUMNS = [
+  { id: 'backlog', label: 'Backlog' },
+  { id: 'active',  label: 'Active' },
+  { id: 'waiting', label: 'Waiting' },
+  { id: 'done',    label: 'Done' },
+];
+
+// Column display order — draggable by the user, persisted alongside the cards.
+let COLUMN_ORDER = COLUMNS.map(c => c.id);
+
+// Project boards use a fixed Backlog → Waiting → Active → Done order.
+const PROJECT_COLUMN_ORDER = ['backlog', 'waiting', 'active', 'done'];
+
+// Projects. Cards with no `project` belong to the "Misc" section.
+let PROJECTS = [];
+let currentView = 'board';     // 'board' | 'projects'
+
+// Which board sections are expanded. Deliberately not persisted — every load
+// starts with the clean all-collapsed index.
+let expandedSections = new Set();
+const MISC_ID = '__misc__';
+
+// Who tasks can be assigned to. Editable and persisted alongside the board;
+// "Unassigned" is the empty state. Tasks can carry more than one assignee.
+let STAFF = ['Jarvis', 'Loui', 'Gregor'];
+
+// Cards used to hold a single `assignee` string. Normalise to an `assignees`
+// array so multi-assignment works without losing existing data.
+function migrateAssignees() {
+  let changed = false;
+  CARDS.forEach(c => {
+    if (!Array.isArray(c.assignees)) {
+      c.assignees = c.assignee ? [c.assignee] : [];
+      changed = true;
+    }
+    delete c.assignee;
+  });
+  // Anyone already assigned but missing from the staff list gets added back,
+  // otherwise they'd silently vanish from the picker.
+  CARDS.forEach(c => c.assignees.forEach(n => { if (!STAFF.includes(n)) { STAFF.push(n); changed = true; } }));
+  return changed;
+}
+
+function projectById(id) { return PROJECTS.find(p => p.id === id) || null; }
+
+// The board is a stack of sections: Misc first, then one per project.
+function boardSections() {
+  return [
+    { id: MISC_ID, name: 'Misc', type: null, description: 'General tasks not tied to a project' },
+    ...PROJECTS.map(p => ({ id: p.id, name: p.name, type: p.type, description: p.description }))
+  ];
+}
+function cardsInSection(sectionId) {
+  return sectionId === MISC_ID
+    ? CARDS.filter(c => !c.project)
+    : CARDS.filter(c => c.project === sectionId);
+}
+
+function orderedColumns() {
+  return COLUMN_ORDER.map(id => COLUMNS.find(c => c.id === id)).filter(Boolean);
+}
+
+function applyColumnOrder(order) {
+  if (!Array.isArray(order)) return;
+  const valid = order.filter(id => COLUMNS.some(c => c.id === id));
+  const missing = COLUMNS.map(c => c.id).filter(id => !valid.includes(id));
+  COLUMN_ORDER = [...valid, ...missing];
+}
+
+const SEED_CARDS = [
+  { id: 'k1',  title: 'Design jeans (both colourways) for Explorations in Denim', body: '', column: 'backlog', cat: 'col', status: 'planned', tasks: [] },
+  { id: 'k2',  title: 'Sample both styles (Dark Roast, Darrell Denim)', body: '', column: 'backlog', cat: 'mfg', status: 'planned', tasks: [] },
+  { id: 'k3',  title: 'Bulk make once samples approved, stock ready by late Sep', body: '', column: 'backlog', cat: 'mfg', status: 'planned', tasks: [] },
+  { id: 'k4',  title: 'Figure out stock levels per product for future collections', body: '', column: 'backlog', cat: 'col', status: 'planned', tasks: [] },
+  { id: 'k5',  title: 'Future release planning tied to analytics (incl. printed T idea with Gregor)', body: '', column: 'backlog', cat: 'col', status: 'planned', tasks: [] },
+  { id: 'k6',  title: 'Research Framer as new website option', body: '', column: 'backlog', cat: 'mkt', status: 'planned', tasks: [] },
+  { id: 'k7',  title: 'Build new website with Claude Code', body: '', column: 'backlog', cat: 'mkt', status: 'planned', tasks: [] },
+  { id: 'k8',  title: 'Unpark Design Practice Development (design process audit)', body: '', column: 'backlog', cat: 'fin', status: 'planned', tasks: [] },
+  { id: 'k9',  title: 'Map monthly fixed expenses for real Mojo target', body: '', column: 'backlog', cat: 'fin', status: 'planned', tasks: [] },
+  { id: 'k10', title: 'Decide on Macquarie account (open or defer)', body: '', column: 'backlog', cat: 'fin', status: 'planned', tasks: [] },
+
+  { id: 'k11', title: 'Ode to Sirens (28 Aug) — brief created, next moves with Louise/Gregor', body: '', column: 'waiting', cat: 'evt', status: 'planned', tasks: [] },
+  { id: 'k12', title: "Marketing system build — waiting on Loui's return + intern onboarding", body: '', column: 'waiting', cat: 'mkt', status: 'planned', tasks: [] },
+  { id: 'k13', title: 'Xero cleanup — scheduled for next week', body: '', column: 'waiting', cat: 'fin', status: 'planned', tasks: [] },
+  { id: 'k14', title: 'Swing tags concept — scheduled with Loui, week of 23 July', body: '', column: 'waiting', cat: 'mfg', status: 'planned', tasks: [] },
+
+  { id: 'k15', title: 'Manufacturer outreach: add ethics/accreditation question to 5 drafts (HOLD — not sending yet, sequencing TBD)', body: '', column: 'active', cat: 'mfg', status: 'in-progress', tasks: [] },
+  { id: 'k16', title: 'Rock Tumbler/IDI board — built, needs ongoing use', body: '', column: 'active', cat: 'per', status: 'in-progress', tasks: [] },
+
+  { id: 'k17', title: 'FDW Stage 2 form submitted', body: '', column: 'done', cat: 'evt', status: 'complete', tasks: [] },
+  { id: 'k18', title: 'Meal Planner, Workout Planner, Balance Planner all live', body: '', column: 'done', cat: 'per', status: 'complete', tasks: [] },
+  { id: 'k19', title: 'CMT manufacturer research complete (5 candidates identified)', body: '', column: 'done', cat: 'mfg', status: 'complete', tasks: [] },
+  { id: 'k20', title: 'Daily Trident added to Daily Note Template', body: '', column: 'done', cat: 'per', status: 'complete', tasks: [] },
+  { id: 'k21', title: 'Kanban + Templater + Dataview plugins installed', body: '', column: 'done', cat: 'per', status: 'complete', tasks: [] },
+  { id: 'k22', title: 'Daily Brief template built', body: '', column: 'done', cat: 'per', status: 'complete', tasks: [] },
+  { id: 'k23', title: 'Task Board is now the primary task tracker', body: '', column: 'done', cat: 'per', status: 'complete', tasks: [] },
+];
+
+let CARDS = SEED_CARDS.map(c => ({ ...c }));
+
+// ─── PERSISTENCE (localStorage + Cloudflare Worker sync) ─────────────────────
+const STORAGE_KEY = 'kanban-board-data';
+const SYNC_URL = 'https://ppc-planner.pressplaycollective.workers.dev/api/kanban';
+const APP_VERSION = '1.9.0';
+document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
+
+let editMode = true;
+let doneGroupCollapsed = true;
+
+// Moves a card into a column and stamps/clears its completion timestamp —
+// the Done column's "earlier" grouping is bucketed off this.
+function moveCardToColumn(card, columnId) {
+  card.column = columnId;
+  if (columnId === 'done') {
+    if (!card.doneAt) card.doneAt = new Date().toISOString();
+  } else {
+    delete card.doneAt;
+  }
+}
+
+function saveBoard() {
+  const payload = { cards: CARDS.map(c => ({ ...c })), order: COLUMN_ORDER.slice(), projects: PROJECTS.map(p => ({ ...p })), staff: STAFF.slice() };
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  } catch (err) {
+    console.warn('Local save failed:', err);
+  }
+  fetch(SYNC_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(err => console.warn('Cloud sync failed:', err));
+}
+
+async function initApp() {
+  let data = null;
+  try {
+    const res = await fetch(SYNC_URL);
+    if (res.ok) {
+      const remote = await res.json();
+      if (remote && remote.cards && remote.cards.length) data = remote;
+    }
+  } catch (err) {
+    console.warn('Cloud fetch failed, falling back to local storage:', err);
+  }
+  if (!data) {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) data = JSON.parse(raw);
+    } catch (err) {
+      console.warn('Could not load saved data:', err);
+    }
+  }
+  if (data && data.cards && data.cards.length) {
+    CARDS = data.cards;
+    applyColumnOrder(data.order);
+    PROJECTS = Array.isArray(data.projects) ? data.projects : [];
+    if (Array.isArray(data.staff) && data.staff.length) STAFF = data.staff;
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (err) {}
+  }
+  if (migrateAssignees()) saveBoard();   // single assignee → array, once
+  showView('board');
+}
+
+async function refreshBoard() {
+  const btn = document.getElementById('refreshBtn');
+  if (btn) btn.style.opacity = '0.5';
+  try {
+    const res = await fetch(SYNC_URL);
+    if (res.ok) {
+      const remote = await res.json();
+      if (remote && remote.cards && remote.cards.length) {
+        CARDS = remote.cards;
+        applyColumnOrder(remote.order);
+        PROJECTS = Array.isArray(remote.projects) ? remote.projects : [];
+        if (Array.isArray(remote.staff) && remote.staff.length) STAFF = remote.staff;
+        migrateAssignees();
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(remote)); } catch (err) {}
+        // Drop expanded sections that no longer exist after a remote refresh.
+        expandedSections = new Set([...expandedSections].filter(id => id === MISC_ID || projectById(id)));
+        renderCurrentView();
+      }
+    }
+  } catch (err) {
+    console.warn('Refresh failed:', err);
+  }
+  if (btn) btn.style.opacity = '1';
+}
+
+// ─── DRAG & DROP (mouse + touch, matching Annual Planner pattern) ────────────
+const IS_TOUCH = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+let _dragCard = null;
+let _dragColumnId = null;
+let _touchGhost = null;
+let _touchTarget = null;
+let _touchJustDragged = false;
+
+function reorderColumns(draggedId, targetId) {
+  if (draggedId === targetId) return;
+  const from = COLUMN_ORDER.indexOf(draggedId);
+  const to = COLUMN_ORDER.indexOf(targetId);
+  if (from === -1 || to === -1) return;
+  COLUMN_ORDER.splice(from, 1);
+  COLUMN_ORDER.splice(to, 0, draggedId);
+}
+
+// Hold a column header ~half a second to pick it up and drag it left/right to reorder.
+function attachColumnTouchDrag(head, colEl, colId) {
+  let timer = null, dragging = false, startX = 0, startY = 0, ghost = null, target = null;
+
+  const cleanup = () => {
+    clearTimeout(timer); timer = null;
+    if (ghost) { ghost.remove(); ghost = null; }
+    if (target) { target.classList.remove('col-drop-target'); target = null; }
+    colEl.classList.remove('col-dragging');
+    dragging = false;
+    _dragColumnId = null;
+  };
+
+  head.addEventListener('touchstart', (e) => {
+    if (!editMode) return;
+    const t = e.touches[0];
+    startX = t.clientX; startY = t.clientY;
+    timer = setTimeout(() => {
+      dragging = true;
+      _dragColumnId = colId;
+      colEl.classList.add('col-dragging');
+      if (navigator.vibrate) navigator.vibrate(30);
+      ghost = head.cloneNode(true);
+      ghost.style.cssText = 'position:fixed;z-index:99999;pointer-events:none;opacity:0.92;box-shadow:0 6px 18px rgba(0,0,0,0.3);width:' + head.offsetWidth + 'px;left:' + (startX - head.offsetWidth / 2) + 'px;top:' + (startY - 20) + 'px;margin:0;background:#fff;border-radius:8px;';
+      document.body.appendChild(ghost);
+    }, 450);
+  }, { passive: true });
+
+  head.addEventListener('touchmove', (e) => {
+    const t = e.touches[0];
+    if (!dragging) {
+      if (Math.abs(t.clientX - startX) > 10 || Math.abs(t.clientY - startY) > 10) { clearTimeout(timer); timer = null; }
+      return;
+    }
+    e.preventDefault();
+    ghost.style.left = (t.clientX - ghost.offsetWidth / 2) + 'px';
+    ghost.style.top = (t.clientY - 20) + 'px';
+    const el = document.elementFromPoint(t.clientX, t.clientY);
+    const found = el && el.closest('[data-col-id]');
+    if (target && target !== found) target.classList.remove('col-drop-target');
+    target = (found && found.dataset.colId !== colId) ? found : null;
+    if (target) target.classList.add('col-drop-target');
+  }, { passive: false });
+
+  head.addEventListener('touchend', () => {
+    if (!dragging) { clearTimeout(timer); timer = null; return; }
+    _touchJustDragged = true;
+    setTimeout(() => { _touchJustDragged = false; }, 400);
+    if (target) {
+      reorderColumns(colId, target.dataset.colId);
+      cleanup();
+      saveBoard();
+      renderBoard();
+      return;
+    }
+    cleanup();
+  });
+
+  head.addEventListener('touchcancel', cleanup);
+}
+
+// ─── CARD META (Assignee / Status / Due date) ────────────────────────────────
+// Lucide-style thin-stroke icons, matching the brand's hairline weight.
+const ICON_USER = '<svg class="card-meta-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>';
+const ICON_STATUS = '<svg class="card-meta-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
+const ICON_CAL = '<svg class="card-meta-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
+
+const STATUS_LABELS = { planned: 'Planned', 'in-progress': 'In progress', complete: 'Complete' };
+
+function metaCell(iconSvg, label, value) {
+  const cell = document.createElement('div');
+  cell.className = 'card-meta-cell';
+  const head = document.createElement('div');
+  head.className = 'card-meta-head';
+  head.innerHTML = iconSvg + '<span>' + label + '</span>';
+  cell.appendChild(head);
+
+  if (value.chip) {
+    const colour = STATUS_COLORS[value.chip] || '#6B7A8D';
+    const chip = document.createElement('span');
+    chip.className = 'status-chip';
+    chip.style.background = colour + '22';
+    chip.style.color = colour;
+    chip.innerHTML = '<span class="chip-dot" style="background:' + colour + '"></span>' + (STATUS_LABELS[value.chip] || value.chip);
+    cell.appendChild(chip);
+  } else {
+    const val = document.createElement('div');
+    val.className = 'card-meta-val' + (value.empty ? ' empty' : '') + (value.overdue ? ' overdue' : '');
+    val.textContent = value.text;
+    cell.appendChild(val);
+  }
+  return cell;
+}
+
+// Cards can carry several assignees; keep the cell to one tidy line.
+function assigneeDisplay(card) {
+  const list = Array.isArray(card.assignees) ? card.assignees : (card.assignee ? [card.assignee] : []);
+  if (!list.length) return { text: 'Empty', empty: true };
+  if (list.length <= 2) return { text: list.join(', ') };
+  return { text: `${list[0]}, ${list[1]} +${list.length - 2}` };
+}
+
+function dueDisplay(iso) {
+  if (!iso) return { text: 'Empty', empty: true };
+  const [y, m, d] = iso.split('-').map(Number);
+  const due = new Date(y, m - 1, d);
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const days = Math.round((due - today) / 86400000);
+  const label = due.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+  if (days < 0) return { text: label + ' · overdue', overdue: true };
+  if (days === 0) return { text: 'Today', overdue: true };
+  if (days === 1) return { text: 'Tomorrow' };
+  return { text: label };
+}
+
+function makeCardPill(card) {
+  const cat = CATS.find(c => c.id === card.cat) || CATS[0];
+  const pill = document.createElement('div');
+  pill.className = 'card-pill';
+  pill.style.background = PILL_BG;
+  pill.style.borderLeft = '3px solid ' + cat.bg;
+  const accent = accentTextColor(cat.bg);
+  pill.style.color = '#2C2C2C';
+  if (card.status === 'complete') pill.style.opacity = '0.55';
+
+  // Project name above the title where there is one, so it reads clearly what
+  // the task belongs to; otherwise fall back to the category.
+  const proj = card.project ? PROJECTS.find(p => p.id === card.project) : null;
+  const catLabel = document.createElement('div');
+  catLabel.className = 'card-pill-cat';
+  catLabel.textContent = proj ? proj.name : cat.label;
+  catLabel.style.color = accent;
+  catLabel.title = proj ? proj.name + ' · ' + cat.label : cat.label;
+  pill.appendChild(catLabel);
+
+  // Head: category icon + title
+  const head = document.createElement('div');
+  head.className = 'card-head';
+  const icon = document.createElement('span');
+  icon.className = 'card-icon';
+  icon.style.background = cat.bg;
+  icon.textContent = cat.label.charAt(0);
+  const title = document.createElement('div');
+  title.className = 'card-title';
+  title.textContent = card.title;
+  title.style.color = accent;
+  head.appendChild(icon);
+  head.appendChild(title);
+  pill.appendChild(head);
+
+  const doneCount = (card.tasks || []).filter(t => t.startsWith('[x] ')).length;
+  if (card.tasks && card.tasks.length) {
+    const cl = document.createElement('div');
+    cl.className = 'card-pill-checklist';
+    cl.textContent = doneCount + '/' + card.tasks.length + ' checked';
+    pill.appendChild(cl);
+  }
+
+  const details = document.createElement('span');
+  details.className = 'card-details-link';
+  details.textContent = 'View details';
+  details.addEventListener('click', e => { e.stopPropagation(); openPanel(card); });
+  pill.appendChild(details);
+
+  // Assignee / Status / Due date — icon+label above each value, per the design ref.
+  const meta = document.createElement('div');
+  meta.className = 'card-meta';
+  meta.appendChild(metaCell(ICON_USER, 'Assignee', assigneeDisplay(card)));
+  meta.appendChild(metaCell(ICON_STATUS, 'Status', { chip: card.status || 'planned' }));
+  meta.appendChild(metaCell(ICON_CAL, 'Due date', dueDisplay(card.dueDate)));
+  pill.appendChild(meta);
+
+  pill.draggable = !IS_TOUCH;
+  pill.addEventListener('dragstart', (e) => {
+    if (!editMode) { e.preventDefault(); return; }
+    _dragCard = card;
+    e.dataTransfer.effectAllowed = 'move';
+    setTimeout(() => pill.classList.add('dragging'), 0);
+  });
+  pill.addEventListener('dragend', () => {
+    pill.classList.remove('dragging');
+    _dragCard = null;
+  });
+  if (IS_TOUCH) attachTouchDrag(pill, card);
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'card-delete-btn';
+  delBtn.textContent = '×';
+  delBtn.title = 'Delete card';
+  delBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    if (!confirm(`Delete "${card.title}"?`)) return;
+    const idx = CARDS.indexOf(card);
+    if (idx !== -1) CARDS.splice(idx, 1);
+    saveBoard();
+    renderBoard();
+  });
+  pill.appendChild(delBtn);
+
+  pill.addEventListener('click', e => { e.stopPropagation(); if (_touchJustDragged) return; openPanel(card); });
+  return pill;
+}
+
+function attachTouchDrag(pill, card) {
+  let timer = null, dragging = false, startX = 0, startY = 0;
+
+  const cleanup = () => {
+    clearTimeout(timer); timer = null;
+    if (_touchGhost) { _touchGhost.remove(); _touchGhost = null; }
+    if (_touchTarget) { _touchTarget.classList.remove('drop-target'); _touchTarget = null; }
+    pill.classList.remove('dragging');
+    dragging = false;
+    _dragCard = null;
+  };
+
+  pill.addEventListener('touchstart', (e) => {
+    if (!editMode) return;
+    const t = e.touches[0];
+    startX = t.clientX; startY = t.clientY;
+    timer = setTimeout(() => {
+      dragging = true;
+      _dragCard = card;
+      pill.classList.add('dragging');
+      if (navigator.vibrate) navigator.vibrate(30);
+      _touchGhost = pill.cloneNode(true);
+      _touchGhost.classList.remove('dragging');
+      _touchGhost.style.cssText = 'position:fixed;z-index:99999;pointer-events:none;opacity:0.92;box-shadow:0 6px 18px rgba(0,0,0,0.3);width:' + pill.offsetWidth + 'px;left:' + (startX - pill.offsetWidth / 2) + 'px;top:' + (startY - 24) + 'px;margin:0;';
+      document.body.appendChild(_touchGhost);
+    }, 450);
+  }, { passive: true });
+
+  pill.addEventListener('touchmove', (e) => {
+    const t = e.touches[0];
+    if (!dragging) {
+      if (Math.abs(t.clientX - startX) > 10 || Math.abs(t.clientY - startY) > 10) { clearTimeout(timer); timer = null; }
+      return;
+    }
+    e.preventDefault();
+    _touchGhost.style.left = (t.clientX - _touchGhost.offsetWidth / 2) + 'px';
+    _touchGhost.style.top = (t.clientY - 24) + 'px';
+    const el = document.elementFromPoint(t.clientX, t.clientY);
+    const target = el && el.closest('[data-drop-column]');
+    if (_touchTarget && _touchTarget !== target) _touchTarget.classList.remove('drop-target');
+    _touchTarget = target || null;
+    if (_touchTarget) _touchTarget.classList.add('drop-target');
+  }, { passive: false });
+
+  pill.addEventListener('touchend', () => {
+    if (!dragging) { clearTimeout(timer); timer = null; return; }
+    _touchJustDragged = true;
+    setTimeout(() => { _touchJustDragged = false; }, 400);
+    if (_touchTarget) {
+      moveCardToColumn(card, _touchTarget.dataset.dropColumn);
+      cleanup();
+      saveBoard();
+      renderBoard();
+      return;
+    }
+    cleanup();
+  });
+
+  pill.addEventListener('touchcancel', cleanup);
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+
+// ─── VIEW ROUTING (main board / project board / projects list) ───────────────
+
+function showView(view) {
+  currentView = view;
+  renderCurrentView();
+}
+
+// From the Projects list: go back to the board with just that project open.
+function openProject(id) {
+  currentView = 'board';
+  expandedSections = new Set([id]);
+  renderCurrentView();
+  setTimeout(() => {
+    const el = document.getElementById('section-' + id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 60);
+}
+
+function toggleSection(id) {
+  if (expandedSections.has(id)) expandedSections.delete(id);
+  else expandedSections.add(id);
+  renderBoard();
+}
+
+// ─── INLINE RENAME (double-click a project row title) ────────────────────────
+let _rowClickTimer = null;
+let renamingSectionId = null;
+
+function startRenameSection(titleEl, projectId) {
+  const proj = projectById(projectId);
+  if (!proj || renamingSectionId) return;
+
+  renamingSectionId = projectId;
+  const original = proj.name;
+
+  titleEl.contentEditable = 'true';
+  titleEl.classList.add('editing');
+  titleEl.focus();
+  // Select the whole name so typing replaces it.
+  const range = document.createRange();
+  range.selectNodeContents(titleEl);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+
+  let settled = false;
+  const finish = (commit) => {
+    if (settled) return;
+    settled = true;
+    renamingSectionId = null;
+    titleEl.contentEditable = 'false';
+    titleEl.classList.remove('editing');
+
+    const next = titleEl.textContent.trim();
+    const revert = (why) => {
+      titleEl.textContent = original;
+      if (why) flashRenameError(titleEl);
+      else renderBoard();
+    };
+
+    if (!commit || !next) return revert(false);
+    if (next === original) return revert(false);
+    if (PROJECTS.some(p => p.id !== projectId && p.name.toLowerCase() === next.toLowerCase())) {
+      return revert(true);   // duplicate name — keep the old one
+    }
+
+    proj.name = next;
+    saveBoard();
+    renderBoard();
+  };
+
+  titleEl.addEventListener('keydown', (e) => {
+    e.stopPropagation();   // keep Escape from reaching the modal handler
+    if (e.key === 'Enter') { e.preventDefault(); finish(true); }
+    else if (e.key === 'Escape') { e.preventDefault(); finish(false); }
+  });
+  titleEl.addEventListener('blur', () => finish(true));
+  // Clicks while editing must not toggle the section.
+  titleEl.addEventListener('click', (e) => e.stopPropagation());
+  titleEl.addEventListener('dblclick', (e) => e.stopPropagation());
+  // Renames stay plain text, same as the card fields.
+  titleEl.addEventListener('paste', plainTextPaste);
+}
+
+function flashRenameError(el) {
+  el.classList.add('rename-error');
+  setTimeout(() => { el.classList.remove('rename-error'); renderBoard(); }, 900);
+}
+
+function renderCurrentView() {
+  const isProjects = currentView === 'projects';
+  document.getElementById('projectsView').style.display = isProjects ? 'block' : 'none';
+  document.getElementById('board').style.display = isProjects ? 'none' : 'block';
+  document.getElementById('tabBoardBtn').classList.toggle('active', !isProjects);
+  document.getElementById('tabProjectsBtn').classList.toggle('active', isProjects);
+  document.getElementById('projectContext').style.display = 'none';
+
+  if (isProjects) renderProjects(); else renderBoard();
+}
+
+function renderProjects() {
+  const grid = document.getElementById('projectsGrid');
+  grid.innerHTML = '';
+
+  PROJECTS.forEach(p => {
+    const cards = CARDS.filter(c => c.project === p.id);
+    const done = cards.filter(c => c.column === 'done').length;
+    const cat = CATS.find(c => c.id === p.type);
+    const card = document.createElement('div');
+    card.className = 'project-card';
+    card.onclick = () => openProject(p.id);
+    // Project type carries the same colour identity as its tasks.
+    if (cat) card.style.borderLeft = '3px solid ' + cat.bg;
+
+    if (cat) {
+      const typeLbl = document.createElement('div');
+      typeLbl.className = 'card-pill-cat';
+      typeLbl.style.color = accentTextColor(cat.bg);
+      typeLbl.textContent = cat.label;
+      card.appendChild(typeLbl);
+    }
+
+    const name = document.createElement('div');
+    name.className = 'project-name';
+    name.textContent = p.name;
+
+    let desc = null;
+    if (p.description) {
+      desc = document.createElement('div');
+      desc.className = 'project-desc';
+      desc.textContent = p.description;
+    }
+
+    const meta = document.createElement('div');
+    meta.className = 'project-meta';
+    meta.textContent = cards.length
+      ? `${cards.length} task${cards.length === 1 ? '' : 's'} · ${done} done`
+      : 'No tasks yet';
+
+    const bar = document.createElement('div');
+    bar.className = 'project-bar';
+    PROJECT_COLUMN_ORDER.forEach(colId => {
+      const n = cards.filter(c => c.column === colId).length;
+      if (!n) return;
+      const seg = document.createElement('span');
+      seg.style.flex = n;
+      seg.style.background = colId === 'done' ? '#4E6E6C' : colId === 'active' ? '#C29A3B' : colId === 'waiting' ? '#6B7A8D' : '#344364';
+      bar.appendChild(seg);
+    });
+
+    const del = document.createElement('button');
+    del.className = 'project-del';
+    del.textContent = '×';
+    del.title = 'Delete project';
+    del.onclick = (e) => {
+      e.stopPropagation();
+      const msg = cards.length
+        ? `Delete "${p.name}"? Its ${cards.length} task${cards.length === 1 ? '' : 's'} will move back to the main board.`
+        : `Delete "${p.name}"?`;
+      if (!confirm(msg)) return;
+      // Never destroy tasks with the project — hand them back to the main board.
+      CARDS.forEach(c => { if (c.project === p.id) delete c.project; });
+      PROJECTS = PROJECTS.filter(x => x.id !== p.id);
+      expandedSections.delete(p.id);
+      saveBoard();
+      renderCurrentView();
+    };
+
+    card.appendChild(del);
+    card.appendChild(name);
+    if (desc) card.appendChild(desc);
+    card.appendChild(meta);
+    card.appendChild(bar);
+    grid.appendChild(card);
+  });
+
+  const add = document.createElement('button');
+  add.type = 'button';
+  add.className = 'project-add-card';
+  add.innerHTML = '<span style="font-size:17px;line-height:1">+</span> New project';
+  add.addEventListener('click', openProjectModal);
+  grid.appendChild(add);
+}
+
+// ─── NEW PROJECT MODAL ───────────────────────────────────────────────────────
+// Project type reuses the board's colour-coding legend (CATS), so a project
+// carries the same identity colour as its tasks.
+
+let npType = CATS[0].id;
+
+function openProjectModal() {
+  npType = CATS[0].id;
+  document.getElementById('npName').value = '';
+  document.getElementById('npDesc').value = '';
+  document.getElementById('npError').textContent = '';
+  renderProjectTypes();
+  document.getElementById('projModal').classList.add('open');
+  document.getElementById('projModalOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('npName').focus(), 40);
+}
+
+function closeProjectModal() {
+  document.getElementById('projModal').classList.remove('open');
+  document.getElementById('projModalOverlay').classList.remove('open');
+}
+
+function renderProjectTypes() {
+  const wrap = document.getElementById('npTypes');
+  wrap.innerHTML = '';
+  CATS.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'np-type' + (npType === cat.id ? ' sel' : '');
+    if (npType === cat.id) { btn.style.borderColor = cat.bg; btn.style.background = cat.bg + '14'; }
+    btn.innerHTML = `<span class="np-swatch" style="background:${cat.bg}"></span>${escHtml(cat.label)}`;
+    btn.onclick = () => { npType = cat.id; renderProjectTypes(); };
+    wrap.appendChild(btn);
+  });
+}
+
+function submitProject() {
+  const name = document.getElementById('npName').value.trim();
+  const description = document.getElementById('npDesc').value.trim();
+  const err = document.getElementById('npError');
+
+  if (!name) {
+    err.textContent = 'Give the project a name.';
+    document.getElementById('npName').focus();
+    return;
+  }
+  if (PROJECTS.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+    err.textContent = 'A project with that name already exists.';
+    return;
+  }
+
+  const proj = {
+    id: 'p' + Date.now().toString(36),
+    name,
+    description,
+    type: npType,
+    createdAt: new Date().toISOString()
+  };
+  PROJECTS.push(proj);
+  saveBoard();
+  closeProjectModal();
+  openProject(proj.id);
+}
+
+// Enter submits from the name field; Escape closes the dialog.
+document.getElementById('npName').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); submitProject(); }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.getElementById('projModal').classList.contains('open')) closeProjectModal();
+});
+// Clicks inside the dialog must not reach the overlay's close handler.
+document.getElementById('projModal').addEventListener('click', e => e.stopPropagation());
+
+// The board is one scrollable page: a numbered index of collapsible sections
+// (Misc first, then each project). Clicking a row expands its kanban in place.
+function renderBoard() {
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+
+  boardSections().forEach((section, i) => {
+    const cards = cardsInSection(section.id);
+    const cat = section.type ? CATS.find(c => c.id === section.type) : null;
+    const accent = cat ? cat.bg : '#6B7A8D';
+    const open = expandedSections.has(section.id);
+
+    const wrap = document.createElement('div');
+    wrap.className = 'board-section' + (open ? ' open' : '');
+    wrap.id = 'section-' + section.id;
+
+    // ── Collapsible row: number · swatch · title · count · chevron ──
+    const row = document.createElement('div');
+    row.className = 'section-row';
+    // Expanding is deferred a beat so a double-click (rename) can cancel it —
+    // otherwise the row toggles twice and re-renders the title mid-edit.
+    row.addEventListener('click', () => {
+      if (renamingSectionId) return;
+      clearTimeout(_rowClickTimer);
+      _rowClickTimer = setTimeout(() => toggleSection(section.id), 200);
+    });
+
+    const num = document.createElement('span');
+    num.className = 'section-num';
+    num.textContent = String(i + 1).padStart(3, '0');
+
+    const swatch = document.createElement('span');
+    swatch.className = 'section-swatch';
+    swatch.style.background = accent;
+
+    const title = document.createElement('span');
+    title.className = 'section-title';
+    title.textContent = section.name;
+    // Misc isn't a real project, so there's nothing to rename.
+    if (section.id !== MISC_ID) {
+      title.title = 'Double-click to rename';
+      title.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        clearTimeout(_rowClickTimer);   // cancel the pending expand/collapse
+        startRenameSection(title, section.id);
+      });
+    }
+
+    const count = document.createElement('span');
+    count.className = 'section-count';
+    const doneCount = cards.filter(c => c.column === 'done').length;
+    count.textContent = cards.length ? `${cards.length} · ${doneCount} done` : 'empty';
+
+    const chev = document.createElement('span');
+    chev.className = 'section-chev';
+    chev.textContent = open ? '▾' : '▸';
+
+    row.appendChild(num);
+    row.appendChild(swatch);
+    row.appendChild(title);
+    row.appendChild(count);
+    row.appendChild(chev);
+    wrap.appendChild(row);
+
+    // ── Expanded body: this section's own kanban columns ──
+    if (open) {
+      const boardEl = document.createElement('div');
+      boardEl.className = 'section-board';
+      orderedColumns().forEach(col => boardEl.appendChild(makeColumn(col, section.id)));
+      wrap.appendChild(boardEl);
+    }
+
+    board.appendChild(wrap);
+  });
+}
+
+// One kanban column, scoped to a section. Dropping a card here also re-homes it
+// to that section's project.
+function makeColumn(col, sectionId) {
+  const colEl = document.createElement('div');
+  colEl.className = 'board-col';
+  colEl.dataset.colId = col.id;
+
+  // Column order is global, so reordering from any section applies everywhere.
+  colEl.addEventListener('dragover', (e) => {
+    if (_dragColumnId && _dragColumnId !== col.id) { e.preventDefault(); colEl.classList.add('col-drop-target'); }
+  });
+  colEl.addEventListener('dragleave', (e) => {
+    if (!colEl.contains(e.relatedTarget)) colEl.classList.remove('col-drop-target');
+  });
+  colEl.addEventListener('drop', (e) => {
+    if (!_dragColumnId) return;
+    e.preventDefault();
+    colEl.classList.remove('col-drop-target');
+    reorderColumns(_dragColumnId, col.id);
+    _dragColumnId = null;
+    saveBoard();
+    renderBoard();
+  });
+
+  const head = document.createElement('div');
+  head.className = 'board-col-head';
+  head.title = 'Hold and drag to reorder columns';
+  const title = document.createElement('div');
+  title.className = 'board-col-title';
+  title.innerHTML = '<span class="board-col-drag-handle">::</span>' + col.label;
+  const cardsInCol = cardsInSection(sectionId).filter(c => c.column === col.id);
+  const count = document.createElement('div');
+  count.className = 'board-col-count';
+  count.textContent = cardsInCol.length;
+  head.appendChild(title);
+  head.appendChild(count);
+
+  head.draggable = !IS_TOUCH;
+  head.addEventListener('dragstart', (e) => {
+    if (!editMode) { e.preventDefault(); return; }
+    _dragColumnId = col.id;
+    e.dataTransfer.effectAllowed = 'move';
+    setTimeout(() => colEl.classList.add('col-dragging'), 0);
+  });
+  head.addEventListener('dragend', () => {
+    colEl.classList.remove('col-dragging');
+    _dragColumnId = null;
+  });
+  if (IS_TOUCH) attachColumnTouchDrag(head, colEl, col.id);
+  colEl.appendChild(head);
+
+  const body = document.createElement('div');
+  body.className = 'board-col-body';
+  body.dataset.dropColumn = col.id;
+  body.dataset.dropSection = sectionId;
+
+  body.addEventListener('dragover', (e) => {
+    if (_dragCard) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; body.classList.add('drop-target'); }
+  });
+  body.addEventListener('dragleave', (e) => {
+    if (!body.contains(e.relatedTarget)) body.classList.remove('drop-target');
+  });
+  body.addEventListener('drop', (e) => {
+    e.preventDefault(); body.classList.remove('drop-target');
+    if (!_dragCard) return;
+    assignCardToSection(_dragCard, sectionId);
+    moveCardToColumn(_dragCard, col.id);
+    _dragCard = null;
+    saveBoard();
+    renderBoard();
+  });
+
+  if (col.id === 'done') {
+    // Cards done in the last 7 days show directly; older ones collapse behind a
+    // toggle so the column stays readable as it fills up.
+    const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const recent = cardsInCol.filter(c => !c.doneAt || new Date(c.doneAt).getTime() >= cutoff);
+    const older = cardsInCol.filter(c => c.doneAt && new Date(c.doneAt).getTime() < cutoff);
+
+    recent.forEach(card => body.appendChild(makeCardPill(card)));
+
+    if (older.length) {
+      const toggle = document.createElement('div');
+      toggle.className = 'done-group-toggle';
+      toggle.textContent = (doneGroupCollapsed ? '▸ ' : '▾ ') + older.length + ' earlier';
+      toggle.onclick = (e) => { e.stopPropagation(); doneGroupCollapsed = !doneGroupCollapsed; renderBoard(); };
+      body.appendChild(toggle);
+      if (!doneGroupCollapsed) older.forEach(card => body.appendChild(makeCardPill(card)));
+    }
+  } else {
+    cardsInCol.forEach(card => body.appendChild(makeCardPill(card)));
+  }
+
+  const addBtn = document.createElement('button');
+  addBtn.className = 'add-card-btn';
+  addBtn.innerHTML = '<span style="font-size:14px;line-height:1">+</span> Add card';
+  addBtn.onclick = (e) => { e.stopPropagation(); openNewCardPanel(col.id, sectionId); };
+  body.appendChild(addBtn);
+
+  colEl.appendChild(body);
+  return colEl;
+}
+
+// Misc is the absence of a project, so dropping there clears the field.
+function assignCardToSection(card, sectionId) {
+  if (sectionId === MISC_ID) delete card.project;
+  else card.project = sectionId;
+}
+
+// ─── STATUS / CATEGORY COLOR HELPERS ──────────────────────────────────────────
+
+const STATUS_COLORS = { planned: '#6B7A8D', 'in-progress': '#C29A3B', complete: '#4E6E6C' };
+
+function updateStatusColor() {
+  const val = document.getElementById('pStatus').value;
+  document.getElementById('pStatusSmall').style.background = STATUS_COLORS[val] || '#9eabc0';
+  document.getElementById('pStatusDot').classList.toggle('done', val === 'complete');
+}
+
+function updateCatColor() {
+  const cat = CATS.find(c => c.id === document.getElementById('pCat').value) || CATS[0];
+  document.getElementById('panelStrip').style.background = cat.bg;
+}
+
+function toggleDone() {
+  const sel = document.getElementById('pStatus');
+  sel.value = sel.value === 'complete' ? 'planned' : 'complete';
+  updateStatusColor();
+}
+
+// ─── SUBTASKS (same "[x] " convention as Annual Planner) ─────────────────────
+
+function createSubtaskItem(text, checked) {
+  const li = document.createElement('li');
+  li.className = 'subtask-item';
+
+  const check = document.createElement('input');
+  check.type = 'checkbox';
+  check.className = 'subtask-check';
+  check.checked = !!checked;
+
+  const textSpan = document.createElement('span');
+  textSpan.className = 'subtask-text';
+  textSpan.contentEditable = 'true';
+  textSpan.textContent = text || '';
+
+  textSpan.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      const newLi = createSubtaskItem('', false);
+      li.after(newLi);
+      newLi.querySelector('.subtask-text').focus();
+    }
+  });
+
+  const del = document.createElement('button');
+  del.className = 'subtask-del';
+  del.textContent = '×';
+  del.onclick = () => li.remove();
+
+  li.appendChild(check);
+  li.appendChild(textSpan);
+  li.appendChild(del);
+  return li;
+}
+
+function renderSubtasks(tasks) {
+  const list = document.getElementById('subtaskList');
+  list.innerHTML = '';
+  (tasks || []).forEach(t => {
+    const checked = t.startsWith('[x] ');
+    list.appendChild(createSubtaskItem(t.replace(/^\[x\] /, ''), checked));
+  });
+}
+
+function addSubtask(text) {
+  const list = document.getElementById('subtaskList');
+  const li = createSubtaskItem(text || '', false);
+  list.appendChild(li);
+  if (!text) setTimeout(() => li.querySelector('.subtask-text').focus(), 10);
+}
+
+function readSubtasks() {
+  const items = document.querySelectorAll('.subtask-item');
+  const result = [];
+  items.forEach(li => {
+    const check = li.querySelector('.subtask-check');
+    const text = li.querySelector('.subtask-text').textContent.trim();
+    if (text) result.push((check.checked ? '[x] ' : '') + text);
+  });
+  return result;
+}
+
+// ─── RICH TEXT ───────────────────────────────────────────────────────────────
+// Paste/cut/copy carry plain text only — pasting from Notion/Docs/Slack used to
+// drag in foreign fonts, colours and background styling. Formatting is instead
+// applied deliberately via the toolbar below.
+
+function plainTextPaste(e) {
+  e.preventDefault();
+  const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+  // insertText keeps native undo working, unlike manual range surgery.
+  document.execCommand('insertText', false, text);
+}
+function plainTextCopy(e) {
+  const sel = window.getSelection();
+  if (!sel || !sel.rangeCount || sel.isCollapsed) return;
+  e.preventDefault();
+  const text = sel.toString();
+  (e.clipboardData || window.clipboardData).setData('text/plain', text);
+  if (e.type === 'cut') document.execCommand('delete');
+}
+['pTitle', 'pDesc'].forEach(id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('paste', plainTextPaste);
+  el.addEventListener('copy', plainTextCopy);
+  el.addEventListener('cut', plainTextCopy);
+});
+
+function fmt(command) {
+  document.getElementById('pDesc').focus();
+  document.execCommand(command, false, null);
+}
+
+// Only allow the formatting the toolbar can produce; strip anything else that
+// slips in (scripts, inline styles, event handlers).
+const ALLOWED_TAGS = ['B','STRONG','I','EM','U','BR','DIV','P','UL','OL','LI','SPAN'];
+function sanitizeHtml(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  tmp.querySelectorAll('script,style,iframe,object,embed,link,meta').forEach(n => n.remove());
+  tmp.querySelectorAll('*').forEach(node => {
+    if (!ALLOWED_TAGS.includes(node.tagName)) {
+      node.replaceWith(...node.childNodes);   // unwrap, keep the text
+      return;
+    }
+    [...node.attributes].forEach(attr => {
+      const n = attr.name.toLowerCase();
+      if (n.startsWith('on') || n === 'style' || n === 'class' || n === 'src' || n === 'href') {
+        node.removeAttribute(attr.name);
+      }
+    });
+  });
+  return tmp.innerHTML;
+}
+
+// ─── PANEL ───────────────────────────────────────────────────────────────────
+
+let activeCard = null;
+let activeNewColumn = null;
+
+// ─── ASSIGNEES (multi-select, inline rename, add staff) ──────────────────────
+
+let panelAssignees = [];   // working copy while the panel is open
+
+function fillPanelSelects(assignees, projectId) {
+  panelAssignees = Array.isArray(assignees) ? assignees.slice() : (assignees ? [assignees] : []);
+  // Keep historical names selectable even if they've left the staff list.
+  panelAssignees.forEach(n => { if (!STAFF.includes(n)) STAFF.push(n); });
+  renderAssigneeList();
+  updateAssigneeSummary();
+  hideNewStaffInput();
+  closeAssigneeMenu();
+
+  const pSel = document.getElementById('pProject');
+  pSel.innerHTML = '<option value="">Main board</option>' +
+    PROJECTS.map(p => `<option value="${escAttr(p.id)}">${escHtml(p.name)}</option>`).join('');
+  pSel.value = projectId || '';
+}
+
+function updateAssigneeSummary() {
+  const el = document.getElementById('asgSummary');
+  if (!panelAssignees.length) {
+    el.textContent = 'Unassigned';
+    el.classList.add('empty');
+    return;
+  }
+  el.classList.remove('empty');
+  el.textContent = panelAssignees.length <= 2
+    ? panelAssignees.join(', ')
+    : `${panelAssignees[0]}, ${panelAssignees[1]} +${panelAssignees.length - 2}`;
+}
+
+function renderAssigneeList() {
+  const list = document.getElementById('asgList');
+  list.innerHTML = '';
+
+  const hint = document.createElement('div');
+  hint.className = 'asg-hint';
+  hint.textContent = 'Tick to assign · double-click a name to rename';
+  list.appendChild(hint);
+
+  STAFF.forEach((name, i) => {
+    const sel = panelAssignees.includes(name);
+    const opt = document.createElement('div');
+    opt.className = 'asg-opt' + (sel ? ' sel' : '');
+
+    const check = document.createElement('span');
+    check.className = 'asg-check';
+    check.textContent = sel ? '✓' : '';
+
+    const label = document.createElement('span');
+    label.className = 'asg-name';
+    label.textContent = name;
+    label.addEventListener('dblclick', (e) => { e.stopPropagation(); startRenameStaff(label, i); });
+
+    opt.appendChild(check);
+    opt.appendChild(label);
+    // Toggling is deferred so a double-click (rename) doesn't also tick the box.
+    opt.addEventListener('click', (e) => {
+      if (renamingStaffIndex !== null) return;
+      e.stopPropagation();
+      clearTimeout(_asgClickTimer);
+      _asgClickTimer = setTimeout(() => toggleAssignee(name), 200);
+    });
+    list.appendChild(opt);
+  });
+}
+
+function toggleAssignee(name) {
+  const i = panelAssignees.indexOf(name);
+  if (i >= 0) panelAssignees.splice(i, 1); else panelAssignees.push(name);
+  renderAssigneeList();
+  updateAssigneeSummary();
+}
+
+function toggleAssigneeMenu(e) {
+  e.stopPropagation();
+  const menu = document.getElementById('asgMenu');
+  const open = menu.classList.contains('open');
+  if (open) { closeAssigneeMenu(); return; }
+  renderAssigneeList();
+  menu.classList.add('open');
+}
+function closeAssigneeMenu() {
+  document.getElementById('asgMenu').classList.remove('open');
+  hideNewStaffInput();
+}
+
+// ── Add staff (inline input — window.prompt is suppressed in webviews) ──
+function showNewStaffInput(e) {
+  if (e) e.stopPropagation();
+  document.getElementById('asgNewRow').classList.add('open');
+  const input = document.getElementById('asgNewInput');
+  input.value = '';
+  setTimeout(() => input.focus(), 30);
+}
+function hideNewStaffInput() {
+  document.getElementById('asgNewRow').classList.remove('open');
+}
+function commitNewStaff() {
+  const input = document.getElementById('asgNewInput');
+  const name = input.value.trim();
+  if (!name) { input.focus(); return; }
+  if (STAFF.some(s => s.toLowerCase() === name.toLowerCase())) {
+    input.value = '';
+    input.placeholder = 'Already on the list';
+    return;
+  }
+  STAFF.push(name);
+  panelAssignees.push(name);   // adding someone assigns them straight away
+  saveBoard();
+  hideNewStaffInput();
+  renderAssigneeList();
+  updateAssigneeSummary();
+}
+
+// ── Rename staff inline; renaming remaps every card so nobody gets orphaned ──
+let _asgClickTimer = null;
+let renamingStaffIndex = null;
+
+function startRenameStaff(labelEl, index) {
+  if (renamingStaffIndex !== null) return;
+  clearTimeout(_asgClickTimer);          // cancel the pending tick
+  renamingStaffIndex = index;
+  const original = STAFF[index];
+
+  labelEl.contentEditable = 'true';
+  labelEl.classList.add('editing');
+  labelEl.focus();
+  const range = document.createRange();
+  range.selectNodeContents(labelEl);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+
+  let settled = false;
+  const finish = (commit) => {
+    if (settled) return;
+    settled = true;
+    renamingStaffIndex = null;
+    labelEl.contentEditable = 'false';
+    labelEl.classList.remove('editing');
+
+    const next = labelEl.textContent.trim();
+    const revert = (flash) => {
+      labelEl.textContent = original;
+      if (flash) {
+        labelEl.classList.add('rename-error');
+        setTimeout(() => { labelEl.classList.remove('rename-error'); renderAssigneeList(); }, 900);
+      } else renderAssigneeList();
+    };
+
+    if (!commit || !next || next === original) return revert(false);
+    if (STAFF.some((s, i) => i !== index && s.toLowerCase() === next.toLowerCase())) return revert(true);
+
+    STAFF[index] = next;
+    // Remap the old name everywhere it was used.
+    CARDS.forEach(c => {
+      if (!Array.isArray(c.assignees)) return;
+      c.assignees = c.assignees.map(n => (n === original ? next : n));
+    });
+    panelAssignees = panelAssignees.map(n => (n === original ? next : n));
+    saveBoard();
+    renderAssigneeList();
+    updateAssigneeSummary();
+    renderBoard();
+  };
+
+  labelEl.addEventListener('keydown', (e) => {
+    e.stopPropagation();
+    if (e.key === 'Enter') { e.preventDefault(); finish(true); }
+    else if (e.key === 'Escape') { e.preventDefault(); finish(false); }
+  });
+  labelEl.addEventListener('blur', () => finish(true));
+  labelEl.addEventListener('click', (e) => e.stopPropagation());
+  labelEl.addEventListener('paste', plainTextPaste);
+}
+
+// Enter in the new-staff field adds them; clicks inside the menu keep it open.
+document.getElementById('asgNewInput').addEventListener('keydown', (e) => {
+  e.stopPropagation();
+  if (e.key === 'Enter') { e.preventDefault(); commitNewStaff(); }
+});
+document.getElementById('asgMenu').addEventListener('click', (e) => e.stopPropagation());
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s) { return escHtml(s).replace(/"/g,'&quot;'); }
+
+function openNewCardPanel(columnId, sectionId) {
+  activeCard = null;
+  activeNewColumn = columnId;
+  // A card added inside a section belongs to that section's project.
+  const presetProject = (sectionId && sectionId !== MISC_ID) ? sectionId : '';
+
+  document.getElementById('panelStrip').style.background = CATS[0].bg;
+  document.getElementById('pTitle').textContent = '';
+  document.getElementById('pCat').value = CATS[0].id;
+  document.getElementById('pColumn').value = columnId;
+  document.getElementById('pStatus').value = 'planned';
+  document.getElementById('pDesc').innerHTML = '';
+  document.getElementById('pDue').value = '';
+  // New cards inherit the section they were added from.
+  fillPanelSelects([], presetProject);
+  renderSubtasks([]);
+  updateStatusColor();
+  updateCatColor();
+
+  document.getElementById('panel').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+  setTimeout(() => document.getElementById('pTitle').focus(), 50);
+}
+
+function openPanel(card) {
+  activeCard = card;
+  activeNewColumn = null;
+
+  const cat = CATS.find(c => c.id === card.cat) || CATS[0];
+  document.getElementById('panelStrip').style.background = cat.bg;
+  document.getElementById('pTitle').textContent = card.title;
+  document.getElementById('pCat').value = card.cat;
+  document.getElementById('pColumn').value = card.column;
+  document.getElementById('pStatus').value = card.status || 'planned';
+  document.getElementById('pDesc').innerHTML = sanitizeHtml(card.body || '');
+  document.getElementById('pDue').value = card.dueDate || '';
+  fillPanelSelects(card.assignees || [], card.project || '');
+  renderSubtasks(card.tasks || []);
+  updateStatusColor();
+
+  document.getElementById('panel').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+
+function savePanel() {
+  const title = document.getElementById('pTitle').textContent.trim();
+  if (!title) { closePanel(); return; }
+
+  const cat = document.getElementById('pCat').value;
+  const column = document.getElementById('pColumn').value;
+  const status = document.getElementById('pStatus').value;
+  const body = sanitizeHtml(document.getElementById('pDesc').innerHTML).trim();
+  const assignees = panelAssignees.slice();
+  const dueDate = document.getElementById('pDue').value;
+  const project = document.getElementById('pProject').value;
+  const tasks = readSubtasks();
+
+  const applyMeta = (c) => {
+    c.assignees = assignees;
+    delete c.assignee;   // legacy single-value field
+    if (dueDate) c.dueDate = dueDate; else delete c.dueDate;
+    if (project) c.project = project; else delete c.project;
+  };
+
+  if (!activeCard) {
+    const newCard = { id: 'k' + Date.now(), cat, status, title, body, tasks };
+    applyMeta(newCard);
+    moveCardToColumn(newCard, column);
+    CARDS.push(newCard);
+    autoAssignToPlanner(newCard);        // undated cards → current week
+    upsertPlannerMirror(newCard);        // dated cards → their exact date
+  } else {
+    activeCard.cat = cat;
+    activeCard.status = status;
+    activeCard.title = title;
+    activeCard.body = body;
+    activeCard.tasks = tasks;
+    applyMeta(activeCard);
+    moveCardToColumn(activeCard, column);
+    // Setting/changing a date re-places the card's pill on the timeline.
+    upsertPlannerMirror(activeCard);
+  }
+
+  saveBoard();
+  renderCurrentView();
+  closePanel();
+}
+
+function closePanel() {
+  document.getElementById('panel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+  activeCard = null;
+  activeNewColumn = null;
+}
+
+// ─── AUTO-ASSIGN TO ANNUAL PLANNER ──────────────────────────────────────────
+// When a new card is created, mirror it into the current week's "Any" column
+// of the Annual Planner. Controlled by the toggle in the planner's settings
+// sidebar (settings.kanbanAutoAssign in the /api/data payload; default on).
+
+const PLANNER_SYNC_URL = 'https://ppc-planner.pressplaycollective.workers.dev/api/data';
+const PLANNER_MONTHS = [
+  'Jul 2026','Aug 2026','Sep 2026','Oct 2026','Nov 2026','Dec 2026',
+  'Jan 2027','Feb 2027','Mar 2027','Apr 2027','May 2027','Jun 2027'
+];
+
+/* ─── TIMELINE MIRROR ─────────────────────────────────────────────────────────
+   A card with a due date shows on the Annual Planner timeline at exactly that
+   date. The planner reconciles fully on load; this just makes the change appear
+   straight away rather than on next visit. */
+
+function plannerSlotForDate(iso) {
+  if (!iso) return null;
+  const [y, mo, d] = iso.split('-').map(Number);
+  if (!y || !mo || !d) return null;
+  const mi = (y - 2026) * 12 + (mo - 1) - 6;
+  if (mi < 0 || mi > 11) return null;
+  // Real Monday→Sunday weeks, clipped to the month (matches the planner).
+  const calY = 2026 + Math.floor((6 + mi) / 12), calM = (6 + mi) % 12;
+  const last = new Date(calY, calM + 1, 0).getDate();
+  let from = 1, key = 0, band = null;
+  while (from <= last) {
+    const dow = new Date(calY, calM, from).getDay();
+    const to = Math.min(from + (dow === 0 ? 0 : 7 - dow), last);
+    key++;
+    if (d >= from && d <= to) { band = key; break; }
+    from = to + 1;
+  }
+  if (!band) return null;
+  const dayKey = { 1: 'mon', 2: 'tue', 3: 'wed', 4: 'thu', 5: 'fri' }[new Date(calY, calM, d).getDay()] || null;
+  return { m: mi, week: band, day: dayKey };
+}
+
+const PLANNER_MONTH_LABELS = [
+  'Jul 2026','Aug 2026','Sep 2026','Oct 2026','Nov 2026','Dec 2026',
+  'Jan 2027','Feb 2027','Mar 2027','Apr 2027','May 2027','Jun 2027'
+];
+
+async function upsertPlannerMirror(card) {
+  try {
+    const res = await fetch(PLANNER_SYNC_URL);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data || !Array.isArray(data.events)) return;
+
+    const idx = data.events.findIndex(e => e.srcCardId === card.id);
+    const slot = card.dueDate ? plannerSlotForDate(card.dueDate) : null;
+
+    if (!slot) {
+      if (idx < 0) return;                 // nothing to do
+      data.events.splice(idx, 1);          // date cleared → retire the mirror
+    } else {
+      const body = document.createElement('div');
+      body.innerHTML = card.body || '';
+      const next = {
+        id: 'mir-' + card.id, srcCardId: card.id, mirrored: true,
+        cat: card.cat, m: slot.m, week: slot.week, day: slot.day,
+        title: card.title, date: PLANNER_MONTH_LABELS[slot.m],
+        body: (body.textContent || '').trim(),
+        status: card.status || 'planned',
+        tasks: (card.tasks || []).slice(),
+        dueDate: card.dueDate
+      };
+      if (idx < 0) data.events.push(next); else Object.assign(data.events[idx], next);
+    }
+
+    await fetch(PLANNER_SYNC_URL, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+    });
+  } catch (err) { console.warn('Timeline mirror failed:', err); }
+}
+
+async function autoAssignToPlanner(card) {
+  // A dated card gets mirrored onto its exact date instead — don't also drop a
+  // loose copy into the current week.
+  if (card.dueDate) return;
+  try {
+    const res = await fetch(PLANNER_SYNC_URL);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data || !Array.isArray(data.events)) return;
+    if (data.settings && data.settings.kanbanAutoAssign === false) return;
+
+    // Planner year runs July 2026 (m=0) to June 2027 (m=11).
+    const now = new Date();
+    const m = (now.getFullYear() - 2026) * 12 + (now.getMonth() - 6);
+    if (m < 0 || m > 11) return;
+    const week = Math.min(4, Math.ceil(now.getDate() / 7));
+
+    data.events.push({
+      cat: card.cat,
+      m,
+      week,
+      day: null,
+      title: card.title,
+      date: PLANNER_MONTHS[m],
+      body: card.body || '',
+      status: 'planned',
+      tasks: (card.tasks || []).slice()
+    });
+    await fetch(PLANNER_SYNC_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+  } catch (err) {
+    console.warn('Auto-assign to planner failed:', err);
+  }
+}
+
+initApp();
+</script>
+</body>
+</html>
