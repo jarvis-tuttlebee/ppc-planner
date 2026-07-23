@@ -6,6 +6,37 @@ Newest session at the top.
 
 ---
 
+## 2026-07-23 — Home page: smaller logo/pills, lift-only hover, deployed (Perplexity agent)
+
+### What was built or decided
+- Jarvis's ask: shrink the nav pills and logo by 20%, and change the pill
+  hover state so it no longer fills with colour — just lifts slightly
+  instead. Also swap in a smoother logo from a new source image.
+- New logo source: `Press-Play-Master-Label.jpg` (Jarvis's upload,
+  1346×280px, clean black wordmark on white). Converted to a transparent
+  PNG via inverted-luminance alpha (white → alpha 0, black → alpha 255,
+  greys in between) — this gives naturally smooth/anti-aliased edges
+  without a hard cutout look. Cropped to content bounds and saved as
+  `public/assets/pressplay-logo-master.png`. `index.html` now points
+  here instead of `pressplay-logo-black.png` (old file left in place,
+  unused).
+- Sizing: logo 380px → 304px desktop, 300px → 240px mobile. Pills
+  280px → 224px desktop, 230px → 184px mobile (font-size and padding
+  scaled proportionally too). Checked "Marketing System" (longest
+  label) still doesn't wrap at the smaller width.
+- Hover: removed the `background: currentColor` fill and the cream
+  text-colour swap entirely. Hover now only does `translateY(-4px)`
+  plus a soft `box-shadow` — outline stays the tertiary colour at all
+  times, nothing changes fill/text colour on hover.
+- Verified both changes with Playwright screenshots (1280px desktop,
+  480px mobile, plus a hover-state screenshot) before committing.
+- Deployed to production: `https://ppc-planner.pressplaycollective.workers.dev`
+  (Version ID `c4cfe772-db35-4eca-8a78-008588bb9747`). Hit the usual
+  asset-upload JWT auth quirk (see below) — worked around it the same
+  way as prior sessions.
+
+---
+
 ## 2026-07-23 — Home page: logo + 3 tertiary-colour cards (Perplexity agent)
 
 ### What was built or decided
