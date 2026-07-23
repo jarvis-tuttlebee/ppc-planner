@@ -6,6 +6,19 @@ Newest session at the top.
 
 ---
 
+## 2026-07-23 — Home page: thinner pill outline, deployed (Perplexity agent)
+
+### What was built or decided
+- Jarvis's ask: the pill outline felt bland — make it thinner for a
+  sharper line.
+- `.menu-item` border: `2px` → `1px solid currentColor`. Verified with
+  a screenshot, then deployed.
+- Deployed to production: `https://ppc-planner.pressplaycollective.workers.dev`
+  (Version ID `04f53fe8-62b4-4971-9eee-8f31d77b4c2f`). Same JWT
+  asset-upload quirk as usual, worked around the same way.
+
+---
+
 ## 2026-07-23 — Home page: smaller logo/pills, lift-only hover, deployed (Perplexity agent)
 
 ### What was built or decided
