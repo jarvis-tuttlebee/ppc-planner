@@ -68,6 +68,41 @@ Newest session at the top.
 
 ---
 
+## 2026-07-23 — Home page restyle: black logo + pill nav (Perplexity agent)
+
+### What was built or decided
+- Jarvis's ask: restyle the home page menu to match a reference layout
+  from another project (vertical, centered nav, letter-spaced uppercase
+  font) — logo in **black** instead of Twilight Indigo, and each menu
+  item as a **horizontal pill-outline box** in a different tertiary
+  colour (same Teal / Archive Violet / Muted Mustard mapping as before).
+  Then equalized all three pill widths (280px desktop, 230px mobile) so
+  they read as a clean uniform stack rather than hugging each label's
+  text width.
+- New asset: `public/assets/pressplay-logo-black.png` — same wordmark,
+  recoloured to near-black (`#111`), same transparency/crop as the
+  indigo version. Original `pressplay-logo.png` left in place, unused
+  on this page now but not deleted in case it's wanted elsewhere.
+- Replaced the 3 filled colour cards with a `<nav class="menu">` of
+  3 `<a class="menu-item">` pills — `border: 2px solid currentColor`,
+  `border-radius: 999px`, transparent fill, colour text/border per
+  item, fills solid on hover. Verified via Playwright screenshots at
+  1280px and 480px — no wrapping, pills same size, good contrast on
+  all three colours.
+- Deployed. Live at https://ppc-planner.pressplaycollective.workers.dev
+  — Version ID `2064c563-c5ee-43e0-8d21-a26386befde0`. Same credential-
+  proxy/JWT snag as the previous deploy entry below; same workaround
+  used (manual upload with Cloudflare's own issued JWT, then normal
+  `wrangler deploy` finished it).
+
+### What's mid-flight / not finished
+- Nothing from this entry — deploy confirmed live.
+
+### Next logical step
+- Pick up Phase A of the Marketing System build (see spec below).
+
+---
+
 ## 2026-07-23 — Deployed home page to production (Perplexity agent)
 
 ### What was built or decided
