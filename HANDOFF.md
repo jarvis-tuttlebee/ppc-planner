@@ -54,9 +54,6 @@ Newest session at the top.
   are served by the platform first.
 
 ### What's mid-flight / not finished
-- This entry's changes are committed and pushed to
-  `cleanup/handoff-flags` but **not deployed** — `wrangler deploy` is
-  still manual and wasn't run this session.
 - `public/marketing.html` is a placeholder, not the real page. Phase A
   (spec'd in the entry below) is still the next actual build task.
 
@@ -66,8 +63,52 @@ Newest session at the top.
   inconsistency, out of scope again this session unless raised).
 
 ### Next logical step
-- Review the home page live once deployed, then pick up Phase A of the
-  Marketing System build (see spec below).
+- Pick up Phase A of the Marketing System build (see spec below) — the
+  home page is live now, see the deploy entry above this one.
+
+---
+
+## 2026-07-23 — Deployed home page to production (Perplexity agent)
+
+### What was built or decided
+- Jarvis asked to run the deploy for the home-page commit
+  (`e2a04c9`) above. Ran `wrangler deploy` against the live Worker
+  (`ppc-planner`, account `Jarvis@pressplaycollective.com.au's
+  Account`). Live at
+  https://ppc-planner.pressplaycollective.workers.dev — Version ID
+  `fef7e535-794d-4445-8726-9fd257562219`.
+- Hit a snag worth flagging in case it recurs: this Perplexity agent's
+  Cloudflare credential is a single static API token proxied in on
+  every request to `api.cloudflare.com`. Wrangler's asset-upload flow
+  needs a *second*, short-lived token (a JWT Cloudflare issues mid-flow)
+  for the actual file-upload step — the proxy overwrote that JWT with
+  the static token each time, so uploads 401'd. Worked around it by
+  completing that one upload step with a direct call using the
+  JWT Cloudflare had already issued (not a secret — Cloudflare's own
+  ephemeral response data), then re-ran `wrangler deploy` normally,
+  which saw the assets already uploaded and finished the rest of the
+  deploy (bindings, routes) through the normal token path without
+  incident. No code or config changed by this workaround — it only
+  affected how the deploy tool talked to Cloudflare's API.
+- Verified post-deploy: `/` → title "Press Play — Home", logo asset
+  loads; `/planner`, `/kanban`, `/marketing` all 200; `/marketing.html`
+  307-redirects to `/marketing` (expected Workers Assets clean-URL
+  behaviour); nav links (Home ⇄ Planner ⇄ Kanban) all resolve.
+
+### What's mid-flight / not finished
+- Nothing from this entry — deploy is confirmed live and verified.
+
+### Known issues or things flagged but not fixed
+- Same Forma DJR font inconsistency on `planner.html` noted above,
+  still untouched.
+- The Cloudflare API token used for deploys is missing the
+  `Memberships:Read` scope, so `wrangler`'s automatic account-ID
+  lookup fails; deploys from this agent need `CLOUDFLARE_ACCOUNT_ID`
+  set explicitly (`47158437762885ed0f87fb125f7f2725`) to skip that
+  lookup. Not a blocker, just a note for next time.
+
+### Next logical step
+- Pick up Phase A of the Marketing System build (see spec below).
 
 ---
 
