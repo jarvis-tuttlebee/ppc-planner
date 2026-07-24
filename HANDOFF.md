@@ -1,8 +1,43 @@
 # HANDOFF
 
 Update this at the end of every session touching this repo, whether that's
-Claude Code, Cowork, or the Perplexity coding agent. Keep entries short.
-Newest session at the top.
+Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
+
+---
+
+## 2026-07-24 — Second agent swapped: Perplexity Computer → Cursor Pro (Claude Code)
+
+### What was built or decided
+- The second coding agent working on this repo alongside Claude Code is now
+  **Cursor Pro**, not Perplexity Computer (Perplexity Pro was separately
+  dropped/refunded on 2026-07-22 for research use — unrelated tool, noted
+  here only to avoid confusion between the two).
+- Repo cloned onto Jarvis's Mac at
+  `~/Desktop/Press Play Collective/ppc-planner-worker` (deliberately outside
+  the Obsidian vault — a code repo inside the vault risks iCloud sync
+  conflicts and unnecessary Obsidian file indexing). Windows machine still
+  has its own clone at the equivalent path; both point at the same GitHub
+  remote.
+- Cursor should open this exact folder and read this file first each
+  session — same round-trip pattern used for any agent here: report
+  understanding + flag anything mid-flight before making changes.
+
+### What's mid-flight / not finished
+- Deploys stay a single-agent/manual step (`npx wrangler deploy`) — Cursor
+  and Claude Code both write code and push to GitHub, but do not deploy
+  independently, to avoid version drift between the two live apps.
+- Jarvis to spot-check the "OTS - Layout plan" kanban card after the
+  2026-07-24 Kanban-Timeline mirroring changes (see repo history / vault
+  session summary for that date).
+
+### Known issues or things flagged but not fixed
+- None new this session.
+
+### Next logical step
+- Give Cursor its first read-only task here (same pattern used for
+  Perplexity's first task): read this file + the repo, report back its
+  understanding, flag anything mid-flight — no code changes yet, to confirm
+  the round-trip before handing it real work.
 
 ---
 
