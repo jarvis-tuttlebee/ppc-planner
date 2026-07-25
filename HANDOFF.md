@@ -5,6 +5,32 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-07-25 — OTS Layout plan mirror spot-check (Cursor)
+
+### What was built or decided
+- Spot-checked live card **OTS - Layout plan** (`k1784776542819`, project
+  Ode to Sirens, due `2026-08-07`) against Annual Planner mirror
+  `mir-k1784776542819`.
+- Baseline: exactly one ⇄ mirror, dates/slot match (Aug 2026 week 1 day 7).
+- Live API tests (with restore): board→timeline due-date move PASS;
+  timeline→board due-date move PASS; production date restored to
+  `2026-08-07`.
+- Cursor round-trip + GitHub push auth are confirmed working on this Mac.
+
+### What's mid-flight / not finished
+- Deploys stay manual (`npx wrangler deploy`) — unchanged.
+
+### Known issues or things flagged but not fixed
+- Planner KV still has several `mir-*` events with `srcCardId` but
+  `dueDate: null` (undated mirrors left on the timeline). Not specific to
+  OTS; worth a cleanup pass later if they clutter Aug/Jul views.
+
+### Next logical step
+- Hand Cursor real product work when ready. No deploy needed for this
+  HANDOFF-only update.
+
+---
+
 ## 2026-07-24 — Second agent swapped: Perplexity Computer → Cursor Pro (Claude Code)
 
 ### What was built or decided
@@ -26,18 +52,14 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 - Deploys stay a single-agent/manual step (`npx wrangler deploy`) — Cursor
   and Claude Code both write code and push to GitHub, but do not deploy
   independently, to avoid version drift between the two live apps.
-- Jarvis to spot-check the "OTS - Layout plan" kanban card after the
-  2026-07-24 Kanban-Timeline mirroring changes (see repo history / vault
-  session summary for that date).
+- ~~Jarvis to spot-check the "OTS - Layout plan" kanban card~~ — done
+  2026-07-25 (see entry above).
 
 ### Known issues or things flagged but not fixed
 - None new this session.
 
 ### Next logical step
-- Give Cursor its first read-only task here (same pattern used for
-  Perplexity's first task): read this file + the repo, report back its
-  understanding, flag anything mid-flight — no code changes yet, to confirm
-  the round-trip before handing it real work.
+- ~~Give Cursor its first read-only task~~ — done; round-trip confirmed.
 
 ---
 
