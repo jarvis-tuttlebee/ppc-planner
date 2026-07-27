@@ -5,6 +5,50 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-07-27 — Marketing System Phase A: Content Ideas mood board (Cursor)
+
+### What was built or decided
+- New page **`/marketing`** — **Marketing System** header, five vertical
+  sections (Task Board section pattern):
+  1. **Content Ideas** — built: zoomable mood-board canvas with image cards,
+     category-coloured cards, right-click empty space → Add card, drag image
+     onto canvas or card, click image well then paste (`Ctrl+V`/`Cmd+V`),
+     `+ Add idea` button, 4 sample cards, drag cards to reposition, drag empty
+     space to pan, `Ctrl`+scroll to zoom, cards shrink as the idea count grows
+  2. **Content Preparation** — skeleton (empty, "Coming in a later phase")
+  3. **Content Execution** — skeleton
+  4. **Content Review** — skeleton
+  5. **Content Schedule** — skeleton
+- New API **`/api/marketing`** → KV key `marketing` (ideas + reserved section
+  arrays). Images stored on each card (`imageData`) with resized dimensions
+  tracked for thumbnail/panel display.
+- Nav links added on Annual Planner and Task Board → Marketing.
+- Worker name / live URL stay **`ppc-planner`** (no hostname migration).
+- No cross-links to planner or kanban yet.
+- Cards now open a Task Board-style side panel for editing **Description** and
+  **Category**. Category uses the PPC palette and tints the card like Task
+  Board cards. Panel also shows a larger image preview.
+- Portrait thumbnails were adjusted late in session to reduce side whitespace
+  by matching the image well height more closely to image aspect ratio.
+
+### What's mid-flight / not finished
+- Sections 2–5 not implemented — next agent picks up Content Preparation.
+- No git commit/push yet this session.
+
+### Known issues or things flagged but not fixed
+- Base64 images in KV JSON will grow payload size — fine for reference
+  mood-board images; move to R2/CDN if library gets large.
+- Planner KV still has undated `mir-*` events (pre-existing).
+
+### Next logical step
+- Phase B: Content Preparation section (production plan fields per Miro middle
+  frame), then Content Execution / Review / Schedule.
+- If the portrait thumbnail tweak still leaves visible whitespace on some
+  images, refine the image-well sizing logic before adding more media-heavy
+  features.
+
+---
+
 ## 2026-07-25 — OTS Layout plan mirror spot-check (Cursor)
 
 ### What was built or decided
@@ -99,7 +143,6 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 - **Deploy:** `npx wrangler deploy` from this folder (needs Node on PATH)
 - **KV binding:** `PLANNER_KV` (id `2f3dc18365c2477595cc76e4f3303746`)
 - **Structure:** `public/index.html` (Annual Planner), `public/kanban.html`
-  (Task Board), `src/index.js` (Worker — serves `/api/data` and
-  `/api/kanban`, both backed by shared KV; `/api/kanban/patch` does a
-  server-side merge patch on a single card to avoid two open tabs
-  clobbering each other on full-board read-modify-write)
+  (Task Board), `public/marketing.html` (Marketing System), `src/index.js`
+  (Worker — serves `/api/data`, `/api/kanban`, `/api/marketing`; kanban
+  also has `/api/kanban/patch` for server-side single-card merge)

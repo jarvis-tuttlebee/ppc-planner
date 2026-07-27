@@ -1,4 +1,4 @@
-const KV_KEYS = { '/api/data': 'main', '/api/kanban': 'kanban' };
+const KV_KEYS = { '/api/data': 'main', '/api/kanban': 'kanban', '/api/marketing': 'marketing' };
 
 export default {
   async fetch(request, env) {
