@@ -64,34 +64,16 @@
       margin-top: 3px;
     }
 
-    /* LEGEND */
-    .legend {
+    /* TOOLBAR */
+    .toolbar {
       display: flex;
       flex-wrap: wrap;
-      gap: 18px;
-      padding: 13px 32px;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 10px 32px;
       background: #F7F5F2;
       border-bottom: 1px solid #e0ddd8;
-    }
-    .legend-item {
-      display: flex;
       align-items: center;
-      gap: 7px;
-      font-size: 11px;
-      letter-spacing: 0.03em;
-      color: #6B7A8D;
-    }
-    .legend-dot {
-      width: 9px; height: 9px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    /* GRID WRAPPER */
-    .grid-wrap {
-      overflow-x: auto;
-      padding: 28px 32px 0;
-      display: none;
     }
 
     /* TABLE */
@@ -170,6 +152,21 @@
       padding-right: 20px;
     }
     .pill:hover { filter: brightness(0.97); }
+    .pill.pill--complete {
+      opacity: 0.55;
+      padding: 2px 18px 2px 6px;
+      font-size: 10px;
+      line-height: 1.2;
+      margin-bottom: 2px;
+    }
+    .pill.pill--complete .pill-project { display: none; }
+    .pill.pill--complete .pill-title {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .pill.pill--complete .pill-datemark { display: none; }
     .pill-del {
       position: absolute;
       top: 3px;
@@ -635,7 +632,17 @@
     .overlay.open { display: block; }
 
     /* VIEW TOGGLE */
-    .view-toggle-btn {
+    .nav-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 13px 32px;
+      background: #F7F5F2;
+      border-bottom: 1px solid #e0ddd8;
+    }
+    .nav-link {
       font-family: 'DM Sans', sans-serif;
       font-size: 11px;
       font-weight: 500;
@@ -648,39 +655,12 @@
       cursor: pointer;
       transition: all 0.15s;
       white-space: nowrap;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
     }
-    .view-toggle-btn:hover, .view-toggle-btn.active { background: #344364; color: #fff; }
-
-    /* FORMAT DROPDOWN (Timeline / Gantt) */
-    .format-dropdown { position: relative; }
-    .format-menu {
-      display: none;
-      position: absolute;
-      top: calc(100% + 6px);
-      left: 0;
-      background: #fff;
-      border: 1px solid #e8e5e0;
-      border-radius: 8px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-      padding: 4px;
-      min-width: 120px;
-      z-index: 50;
-    }
-    .format-menu.open { display: block; }
-    .format-dropdown:hover .format-menu { display: block; }
-    .format-menu-item {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 12px;
-      color: #2C2C2C;
-      padding: 7px 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .format-menu-item:hover { background: #F7F5F2; }
-    body.dark .format-menu { background: #1e2538; border-color: #2e3a55; }
-    body.dark .format-menu-item { color: #f0ede8; }
-    body.dark .format-menu-item:hover { background: #252e45; }
+    .nav-link:hover { background: #344364; color: #fff; }
+    .nav-link.active { background: #344364; color: #fff; }
 
     /* PLUS BUTTON — horizontal grid cell */
     .add-event-btn {
@@ -780,9 +760,8 @@
     }
     .week-days-grid {
       display: grid;
-      /* Column count is set per band in JS — weeks 1–3 have 7 days, week 4
-         carries the month's remainder. Scrolls if the row runs wide. */
-      grid-template-columns: 1.1fr repeat(7, minmax(88px, 1fr));
+      /* Always Sun–Sat (7 columns). Out-of-month cells use --na. */
+      grid-template-columns: repeat(7, minmax(88px, 1fr));
       gap: 5px;
       padding: 4px 12px 10px;
       overflow-x: auto;
@@ -813,6 +792,13 @@
     .week-day-na { color: #cfc9bf; font-weight: 400; margin-left: 1px; }
     .week-day-col--na { opacity: 0.4; }
     .week-day-col--na .week-day-body { background: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(0,0,0,0.025) 5px, rgba(0,0,0,0.025) 10px); }
+    .week-day-col--bleed { opacity: 0.72; }
+    .week-day-col--bleed .week-day-num { color: #6B7A8D; }
+    .week-day-col--bleed.week-day-col--na { opacity: 0.72; }
+    .week-day-col--bleed .week-day-body {
+      background: rgba(78,110,108,0.04);
+      border-radius: 4px;
+    }
     .week-day-col--na .week-add-btn { display: none; }
     .week-day-body {
       flex: 1;
@@ -897,7 +883,7 @@
     .month-collapse-btn:hover { color: #fff; }
     .v-table {
       width: 100%;
-      min-width: 0; /* opt out of the global table min-width meant for the Gantt grid */
+      min-width: 0;
       border-collapse: collapse;
     }
     .v-table tr + tr .v-cat-label,
@@ -948,13 +934,11 @@
       .header { padding: 14px 16px; }
       .header-logo { height: 24px; }
       .header-right .sub { font-size: 9px; }
-      .legend { padding: 10px 16px; gap: 10px; }
-      .grid-wrap { padding: 14px 0 0; }
+      .toolbar { padding: 8px 16px; }
       .v-wrap { padding: 14px 12px 24px; }
       .v-cat-label { width: 100px; font-size: 9px; padding: 8px 6px 8px 12px; }
       .rev-section { padding: 16px 16px 24px; }
       .panel { width: 100%; }
-      .view-toggle-btn { font-size: 10px; padding: 5px 10px; }
 
       /* Day columns become a horizontally-scrollable strip instead of squeezing 6-up */
       .week-days-grid {
@@ -996,13 +980,12 @@
     body.dark { background: #141928; color: #f0ede8; }
     body.dark .header { background: #141928; border-bottom-color: #2e3a55; color: #8a8680; }
     body.dark .header-logo { background-color: #f0ede8; }
-    body.dark .legend { background: #141928; border-bottom-color: #2e3a55; }
-    body.dark .legend-item { color: #c8c4be; }
-    body.dark .view-toggle-btn { border-color: #4a5a7f; color: #c8c4be; }
-    body.dark .view-toggle-btn:hover, body.dark .view-toggle-btn.active { background: #344364; color: #f0ede8; border-color: #344364; }
+    body.dark .toolbar { background: #141928; border-bottom-color: #2e3a55; }
+    body.dark .nav-row { background: #1a1f2e; border-bottom-color: #2e3a55; }
+    body.dark .nav-link { border-color: #4a5a7f; color: #c8c4be; }
+    body.dark .nav-link:hover, body.dark .nav-link.active { background: #344364; color: #f0ede8; border-color: #344364; }
     body.dark .dark-mode-btn { border-color: #4a5a7f; color: #c8c4be; }
     body.dark .dark-mode-btn:hover { background: #344364; color: #f0ede8; border-color: #344364; }
-    body.dark .grid-wrap { background: #141928; }
     body.dark th { background: #1e2538; color: #c8c4be; }
     body.dark th:first-child { background: transparent; color: #8a8680; }
     body.dark th.now { background: #1a3540; }
@@ -1084,36 +1067,16 @@
   </div>
 </div>
 
-<div class="legend">
-  <div class="legend-item"><div class="legend-dot" style="background:#4E6E6C"></div>Collections &amp; Launches</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#C29A3B"></div>Events</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#564A5E"></div>Marketing &amp; Content</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#6B7A8D"></div>Manufacturing &amp; Fabric</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#344364"></div>Stockists</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#2C2C2C"></div>Personal Milestones</div>
-  <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
-    <a class="view-toggle-btn" href="https://ppc-planner.pressplaycollective.workers.dev/kanban" title="Open the task board" style="text-decoration:none;">Task Board &#8594;</a>
-    <a class="view-toggle-btn" href="https://ppc-planner.pressplaycollective.workers.dev/marketing" title="Open the marketing system" style="text-decoration:none;">Marketing &#8594;</a>
-    <div class="format-dropdown" id="formatDropdown">
-      <button class="view-toggle-btn active" id="formatBtn" onclick="toggleFormatMenu(event)">&#8855; <span id="formatLabel">Timeline</span> &#9662;</button>
-      <div class="format-menu" id="formatMenu">
-        <div class="format-menu-item" onclick="setViewMode('vertical')">&#8855; Timeline</div>
-        <div class="format-menu-item" onclick="setViewMode('horizontal')">&#9645; Gantt</div>
-      </div>
-    </div>
-    <button class="dark-mode-btn" id="settingsBtn" onclick="openSettings()" title="Settings" style="display:inline-flex;align-items:center;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
-    <button class="dark-mode-btn" id="refreshBtn" onclick="refreshPlanner()" title="Reload latest data from cloud" style="font-size:13px;">↻</button>
-    <button class="dark-mode-btn" id="darkModeBtn" onclick="toggleDarkMode()">☾ Dark</button>
-  </div>
+<div class="nav-row">
+  <a class="nav-link" href="/">Home</a>
+  <a class="nav-link active" href="/">Annual Planner</a>
+  <a class="nav-link" href="/kanban">Task Board</a>
+  <a class="nav-link" href="/marketing">Marketing</a>
 </div>
 
-<div class="grid-wrap" id="gridWrap">
-  <table>
-    <thead>
-      <tr id="headerRow"></tr>
-    </thead>
-    <tbody id="gridBody"></tbody>
-  </table>
+<div class="toolbar">
+  <button class="dark-mode-btn" id="settingsBtn" onclick="openSettings()" title="Settings" style="display:inline-flex;align-items:center;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+  <button class="dark-mode-btn" id="darkModeBtn" onclick="toggleDarkMode()">☾ Dark</button>
 </div>
 
 <div class="v-wrap" id="verticalWrap"></div>
@@ -1136,7 +1099,7 @@
   <div class="settings-list" id="settingsList"></div>
   <div class="settings-toggle-row">
     <div class="settings-toggle-label">Auto-add new Task Board cards to this week
-      <small>New kanban tasks land in the current week's Any column</small>
+      <small>New kanban tasks without a due date land in Unassigned / Any</small>
     </div>
     <label class="switch">
       <input type="checkbox" id="autoAssignToggle" onchange="toggleKanbanAutoAssign(this)">
@@ -1280,41 +1243,6 @@ function accentTextColor(bg) {
   return (b === '#edd960' || b === '#c29a3b') ? '#2C2C2C' : bg;
 }
 
-// ─── VIEW MODE ───────────────────────────────────────────────────────────────
-
-let viewMode = 'vertical';
-
-function toggleFormatMenu(e) {
-  e.stopPropagation();
-  document.getElementById('formatMenu').classList.toggle('open');
-}
-document.addEventListener('click', (e) => {
-  const dd = document.getElementById('formatDropdown');
-  if (dd && !dd.contains(e.target)) document.getElementById('formatMenu').classList.remove('open');
-});
-
-function setViewMode(mode) {
-  viewMode = mode;
-  document.getElementById('formatMenu').classList.remove('open');
-  const btn = document.getElementById('formatBtn');
-  const label = document.getElementById('formatLabel');
-  const gw = document.getElementById('gridWrap');
-  const vw = document.getElementById('verticalWrap');
-  if (viewMode === 'vertical') {
-    label.textContent = 'Timeline';
-    btn.classList.add('active');
-    gw.style.display = 'none';
-    vw.style.display = 'block';
-    renderVertical();
-  } else {
-    label.textContent = 'Gantt';
-    btn.classList.remove('active');
-    gw.style.display = 'block';
-    vw.style.display = 'none';
-    renderGrid();
-  }
-}
-
 let EVENTS = [
   // Collections
   { cat:'col', m:0,  title:'Phase 2 Begins',           date:'July 2026',               body:'Current stock (~186 units) moving through DTC and Solari. Content system launching this month. Target $1,000 revenue.', status:'in-progress', tasks:[] },
@@ -1390,7 +1318,7 @@ const REVENUE = [1000,1800,1500,5000,3000,3500,2000,5500,6500,8000,8000,8000];
 // ─── PERSISTENCE (localStorage + Cloudflare Worker sync) ─────────────────────
 const STORAGE_KEY = 'ppc-planner-data';
 const SYNC_URL = 'https://ppc-planner.pressplaycollective.workers.dev/api/data';
-const APP_VERSION = '2.7.0';
+const APP_VERSION = '2.9.1';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 
 let editMode = true;
@@ -1400,7 +1328,7 @@ let SETTINGS = { kanbanAutoAssign: true };
 
 // Bumped when the meaning of an event's `week` number changes. Scheme 2 = real
 // Monday-start calendar weeks (scheme 1 was day-number buckets).
-const WEEK_SCHEME = 3;
+const WEEK_SCHEME = 5;
 
 function saveToFirestore() {
   const payload = {
@@ -1449,6 +1377,9 @@ async function initApp() {
     // calendar date each event was already sitting on.
     const stored = data.weekScheme || 1;
     if (stored < WEEK_SCHEME) { migrateWeekScheme(stored); dirty = true; }
+    EVENTS.forEach(e => {
+      if (e.day == null && e.week != null) { e.week = null; dirty = true; }
+    });
     if (dirty) saveToFirestore();
   }
   // Pull dated Task Board cards onto the timeline (and push dated timeline
@@ -1476,64 +1407,6 @@ function toggleMonthCollapse(mi) {
   if (sec) { const b = sec.querySelector('.month-collapse-btn'); if (b) b.textContent = monthCollapsed[mi] ? '▶' : '▼'; }
 }
 
-// ─── BUILD HEADER ────────────────────────────────────────────────────────────
-
-const headerRow = document.getElementById('headerRow');
-const thLabel = document.createElement('th');
-headerRow.appendChild(thLabel);
-MONTHS.forEach((m, i) => {
-  const th = document.createElement('th');
-  th.textContent = m;
-  if (i === 0) th.classList.add('now');
-  headerRow.appendChild(th);
-});
-
-// ─── BUILD GRID ──────────────────────────────────────────────────────────────
-
-function renderGrid() {
-  const gridBody = document.getElementById('gridBody');
-  gridBody.innerHTML = '';
-
-  CATS.forEach(cat => {
-    const tr = document.createElement('tr');
-
-    const label = document.createElement('td');
-    label.className = 'cat-label';
-    label.textContent = cat.label;
-    tr.appendChild(label);
-
-    for (let m = 0; m < 12; m++) {
-      const td = document.createElement('td');
-      td.className = 'ecell';
-
-      EVENTS.filter(e => e.cat === cat.id && e.m === m).forEach(evt => {
-        const pill = document.createElement('span');
-        pill.className = 'pill';
-        pill.textContent = evt.title;
-        pill.style.background = PILL_BG;
-        pill.style.borderLeft = '3px solid ' + cat.bg;
-        pill.style.color = accentTextColor(cat.bg);
-        pill.style.fontWeight = '600';
-        if (evt.status === 'complete') pill.style.opacity = '0.55';
-        pill.addEventListener('click', e => { e.stopPropagation(); openPanel(evt, cat); });
-        attachPillDelete(pill, evt, null);
-        td.appendChild(pill);
-      });
-
-      const addBtn = document.createElement('button');
-      addBtn.className = 'add-event-btn';
-      addBtn.textContent = '+';
-      addBtn.title = 'Add event';
-      addBtn.onclick = (e) => { e.stopPropagation(); openNewEventPanel(cat, m); };
-      td.appendChild(addBtn);
-
-      tr.appendChild(td);
-    }
-
-    gridBody.appendChild(tr);
-  });
-}
-
 // Title field: Enter = save, Shift+Enter = newline
 document.getElementById('pTitle').addEventListener('keydown', function(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); savePanel(); }
@@ -1541,8 +1414,33 @@ document.getElementById('pTitle').addEventListener('keydown', function(e) {
 
 // ─── VERTICAL LAYOUT ─────────────────────────────────────────────────────────
 
+const MONTH_VIEW_KEY = 'ppc-planner-month-views';
+
+function plannerMonthIndexNow() {
+  const now = new Date();
+  return (now.getFullYear() - 2026) * 12 + now.getMonth() - 6;
+}
+
+function defaultMonthViewMode(mi) {
+  // Future months open in Overview; current + past default to Week View.
+  return mi > plannerMonthIndexNow() ? 'overview' : 'week';
+}
+
+function persistMonthViewModes() {
+  try { localStorage.setItem(MONTH_VIEW_KEY, JSON.stringify({ ...monthViewModes })); }
+  catch (err) { console.warn('Could not save month view prefs:', err); }
+}
+
 const monthViewModes = {};
-for (let _i = 0; _i < 12; _i++) monthViewModes[_i] = 'week'; // default all months to week view
+(function initMonthViewModes() {
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(MONTH_VIEW_KEY) || 'null'); }
+  catch (err) { saved = null; }
+  for (let i = 0; i < 12; i++) {
+    if (saved && (saved[i] === 'week' || saved[i] === 'overview')) monthViewModes[i] = saved[i];
+    else monthViewModes[i] = defaultMonthViewMode(i);
+  }
+})();
 
 function renderVertical() {
   const wrap = document.getElementById('verticalWrap');
@@ -1550,7 +1448,7 @@ function renderVertical() {
 
   MONTHS.forEach((monthName, mi) => {
     const section = document.createElement('div');
-    section.className = 'month-section' + (mi === 0 ? ' month-section--current' : '');
+    section.className = 'month-section' + (mi === plannerMonthIndexNow() ? ' month-section--current' : '');
     section.id = 'month-section-' + mi;
 
     // Header with collapse button + tabs
@@ -1570,11 +1468,11 @@ function renderVertical() {
     const tabOv = document.createElement('button');
     tabOv.className = 'month-tab' + (monthViewModes[mi] !== 'week' ? ' active' : '');
     tabOv.textContent = 'Overview';
-    tabOv.onclick = (e) => { e.stopPropagation(); monthViewModes[mi] = 'overview'; refreshMonthContent(mi); };
+    tabOv.onclick = (e) => { e.stopPropagation(); monthViewModes[mi] = 'overview'; persistMonthViewModes(); refreshMonthContent(mi); };
     const tabWk = document.createElement('button');
     tabWk.className = 'month-tab' + (monthViewModes[mi] === 'week' ? ' active' : '');
     tabWk.textContent = 'Week View';
-    tabWk.onclick = (e) => { e.stopPropagation(); monthViewModes[mi] = 'week'; refreshMonthContent(mi); };
+    tabWk.onclick = (e) => { e.stopPropagation(); monthViewModes[mi] = 'week'; persistMonthViewModes(); refreshMonthContent(mi); };
     tabs.appendChild(tabOv);
     tabs.appendChild(tabWk);
     mHead.appendChild(tabs);
@@ -1641,7 +1539,7 @@ function renderMonthOverview(container, mi) {
       pill.style.display = 'inline-block';
       pill.style.marginRight = '6px';
       pill.style.marginBottom = '4px';
-      if (evt.status === 'complete') pill.style.opacity = '0.55';
+      if (evt.status === 'complete') pill.classList.add('pill--complete');
       pill.addEventListener('click', e => { e.stopPropagation(); openPanel(evt, cat); });
       attachPillDelete(pill, evt, mi);
       evtCell.appendChild(pill);
@@ -1678,13 +1576,12 @@ function renderMonthOverview(container, mi) {
 const IS_TOUCH = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
 
 /* ─── WEEK BANDS ──────────────────────────────────────────────────────────────
-   Always four bands per month: days 1–7, 8–14, 15–21, 22–end, each showing all
-   seven days (Sat and Sun included) in date order.
+   True Sunday–Saturday weeks owned by the month of their Sunday. Always 7
+   columns; days in the adjacent month are live bleed cells (so July has 4
+   weeks, not 5 — early July days sit in June's last week).
 
-   True Monday-start weeks are calendar-correct but produce 4–6 bands (August
-   2026 begins on a Saturday, yielding a 2-day sliver week and a 1-day tail),
-   which reads as clutter. Four fixed bands keep every month to four rows, and
-   with the weekend present each row is an unbroken run of dates. */
+   scheme 5: week = Sun–Sat week starting in this month,
+             day  = day-of-month (null + week null = Unassigned / Any) */
 
 const DAY_DOW = { sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6 };
 const DOW_LABELS = { 0: 'Sun', 1: 'Mon', 2: 'Tue', 3: 'Wed', 4: 'Thu', 5: 'Fri', 6: 'Sat' };
@@ -1694,28 +1591,81 @@ function monthYear(mi) { return 2026 + Math.floor((6 + mi) / 12); }
 function monthIndex(mi) { return (6 + mi) % 12; }
 function daysInMonth(mi) { return new Date(monthYear(mi), monthIndex(mi) + 1, 0).getDate(); }
 
+function plannerMiFromParts(y, m) {
+  return (y - 2026) * 12 + m - 6;
+}
+
+function isoFromMonthDay(mi, d) {
+  return monthYear(mi) + '-' + String(monthIndex(mi) + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+}
+
+/* Sun–Sat weeks starting in this month. A leading week is added only when
+   its Sunday is before the planner year (July needs this for Jul 1–4). Later
+   months get early days via the previous month's trailing bleed — no duplicate
+   rows. Trailing weeks bleed into the next month as live cells. */
 function monthWeekBands(mi) {
-  const last = daysInMonth(mi);
-  return [1, 2, 3, 4].map(k => ({
-    key: k,
-    from: (k - 1) * 7 + 1,
-    to: k === 4 ? last : k * 7
-  }));
+  const y = monthYear(mi), m = monthIndex(mi), last = daysInMonth(mi);
+  const bands = [];
+  let key = 1;
+  const firstDow = new Date(y, m, 1).getDay();
+  // Leading week only when its Sunday sits outside the planner year (e.g. late
+  // June before Jul 2026). Otherwise that week already lives in the previous
+  // month section and bleeds forward — avoid duplicating it here.
+  if (firstDow !== 0) {
+    const start = 1 - firstDow;
+    const sun = new Date(y, m, start);
+    const sunMi = plannerMiFromParts(sun.getFullYear(), sun.getMonth());
+    if (sunMi < 0) {
+      bands.push({ key, from: start, to: start + 6 });
+      key += 1;
+    }
+  }
+  for (let d = 1; d <= last; d++) {
+    if (new Date(y, m, d).getDay() !== 0) continue;
+    bands.push({ key, from: d, to: d + 6 });
+    key += 1;
+  }
+  return bands;
 }
 
 function bandForDate(mi, d) {
+  if (d == null) return null;
   return monthWeekBands(mi).find(b => d >= b.from && d <= b.to) || null;
 }
 
-// Every day the band contains, in date order — Saturday and Sunday included, so
-// a row reads as a continuous run of dates like a real calendar. Weeks 1–3 are
-// exactly seven days; week 4 carries the month's remainder.
+function bandLabelRange(mi, band) {
+  const last = daysInMonth(mi);
+  const y = monthYear(mi), m = monthIndex(mi);
+  const end = new Date(y, m, band.to);
+  const endInMonth = end.getMonth() === m && end.getFullYear() === y;
+  return {
+    from: band.from,
+    to: endInMonth ? end.getDate() : last,
+    bleedsNext: !endInMonth
+  };
+}
+
+// Always seven Sun–Sat columns. Adjacent-month days are live bleed cells.
 function dayColumnsForBand(mi, band) {
   if (!band) return [];
   const y = monthYear(mi), m = monthIndex(mi), cols = [];
-  for (let d = band.from; d <= band.to; d++) {
-    const dow = new Date(y, m, d).getDay();
-    cols.push({ date: d, dow, label: DOW_LABELS[dow], weekend: dow === 0 || dow === 6 });
+  for (let offset = 0; offset < 7; offset++) {
+    const cell = new Date(y, m, band.from + offset);
+    const cy = cell.getFullYear(), cm = cell.getMonth(), cd = cell.getDate();
+    const inSection = cy === y && cm === m;
+    const cellMi = plannerMiFromParts(cy, cm);
+    const inPlanner = cellMi >= 0 && cellMi <= 11;
+    const dow = cell.getDay();
+    cols.push({
+      date: cd,
+      cellMi: inPlanner ? cellMi : null,
+      outside: !inSection,
+      bleed: !inSection && inPlanner,
+      inert: !inSection && !inPlanner,
+      dow,
+      label: DOW_LABELS[dow],
+      weekend: dow === 0 || dow === 6
+    });
   }
   return cols;
 }
@@ -1728,13 +1678,13 @@ function ordinal(n) {
 }
 
 /* Convert stored placement to the current scheme, preserving the real calendar
-   date each event is already shown on. `day` becomes a day-of-month number
-   rather than a weekday key — week 4 spans 8–10 days and so can hold two
-   Wednesdays, which a weekday key can't tell apart. Runs once per scheme bump.
+   date each event is already shown on. Runs once per scheme bump.
 
    scheme 1: week = day-bucket,      day = 'mon'…'fri'
    scheme 2: week = real Mon–Sun week, day = 'mon'…'fri'
-   scheme 3: week = day-bucket,      day = date number  ← current */
+   scheme 3: week = day-bucket (1–7/8–14…), day = date number
+   scheme 4: week = Sun–Sat intersecting month (incl. leading empty cells)
+   scheme 5: week = Sun–Sat starting in month; adjacent days bleed live */
 function migrateWeekScheme(fromScheme) {
   const y = mi => monthYear(mi), mo = mi => monthIndex(mi);
 
@@ -1774,24 +1724,9 @@ function migrateWeekScheme(fromScheme) {
       const band = bandForDate(e.m, date);
       e.week = band ? band.key : 1;
     } else {
-      // No specific day ("Any" within a week) — keep it in the matching band.
+      // No specific day — former "Any" column cards park in Unassigned / Any.
       e.day = null;
-      if (e.week != null) {
-        let start = 1;
-        if (fromScheme >= 2) {
-          let d = 1, k = 0;
-          while (d <= last) {
-            const wd = new Date(y(e.m), mo(e.m), d).getDay();
-            const end = Math.min(d + (wd === 0 ? 0 : 7 - wd), last);
-            if (++k === e.week) { start = d; break; }
-            d = end + 1;
-          }
-        } else {
-          start = Math.min((e.week - 1) * 7 + 1, last);
-        }
-        const band = bandForDate(e.m, start);
-        e.week = band ? band.key : 1;
-      }
+      e.week = null;
     }
   });
 }
@@ -1830,19 +1765,20 @@ function dateToPlannerSlot(iso) {
   const [y, mo, d] = iso.split('-').map(Number);
   if (!y || !mo || !d) return null;
   const mi = (y - 2026) * 12 + (mo - 1) - 6;
-  if (mi < 0 || mi > 11) return null;                  // outside the planner year
+  if (mi < 0 || mi > 11) return null;
   const band = bandForDate(mi, d);
-  if (!band) return null;
-  return { m: mi, week: band.key, day: d };
+  // Day is enough to place; week may be null for leading days before the first Sunday.
+  return { m: mi, week: band ? band.key : null, day: d };
 }
 
 // The inverse: a timeline slot → the date it represents.
 function slotToDate(mi, week, day) {
-  if (mi == null || week == null) return null;
+  if (mi == null) return null;
+  if (typeof day === 'number') return isoFromMonthDay(mi, day);
+  if (week == null) return null;
   const band = monthWeekBands(mi).find(b => b.key === week);
   if (!band) return null;
-  const d = (typeof day === 'number') ? day : band.from;
-  return monthYear(mi) + '-' + String(monthIndex(mi) + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+  return isoFromMonthDay(mi, band.from);
 }
 
 function stripHtml(html) {
@@ -1882,7 +1818,11 @@ async function syncDateMirrors() {
 
   for (let i = EVENTS.length - 1; i >= 0; i--) {
     const e = EVENTS[i];
-    if (e.srcCardId && !datedCards.has(e.srcCardId)) { EVENTS.splice(i, 1); eventsChanged = true; }
+    if (e.srcCardId && !datedCards.has(e.srcCardId)) {
+      // Parked in Unassigned / Any after clearing the due date — keep it.
+      if (e.week == null) continue;
+      EVENTS.splice(i, 1); eventsChanged = true;
+    }
   }
   datedCards.forEach((card, id) => {
     const slot = dateToPlannerSlot(card.dueDate);
@@ -1930,6 +1870,7 @@ async function syncDateMirrors() {
       desired.assignees = [];
       upserts.push(desired);
     } else if (['title','cat','status','dueDate','project'].some(f => existing[f] !== desired[f])) {
+      desired.column = statusToColumn(evt.status);
       upserts.push(desired);
     }
   });
@@ -1945,15 +1886,33 @@ async function pushDueDateToCard(cardId, iso) {
   await patchBoard([{ id: cardId, dueDate: iso || null }], []);
 }
 
+async function pushStatusToCard(cardId, status) {
+  if (!cardId) return;
+  const patch = { id: cardId, status: status || 'planned' };
+  patch.column = statusToColumn(status);
+  if (status === 'complete') patch.doneAt = new Date().toISOString();
+  await patchBoard([patch], []);
+}
+
 /* Every slot change funnels through here so a dated pill's date follows it. */
-function applyEventSlot(evt, week, dayKey) {
-  evt.week = week;
+async function applyEventSlot(evt, week, dayKey, cellMi) {
+  if (cellMi != null && cellMi !== evt.m) {
+    evt.m = cellMi;
+    evt.date = MONTHS[cellMi];
+  }
   evt.day = dayKey;
-  const iso = week == null ? null : slotToDate(evt.m, week, dayKey);
+  if (typeof dayKey === 'number') {
+    const band = bandForDate(evt.m, dayKey);
+    evt.week = band ? band.key : null;
+  } else {
+    evt.week = week;
+    evt.day = null;
+  }
+  const iso = typeof dayKey === 'number' ? isoFromMonthDay(evt.m, dayKey) : null;
   if (evt.dueDate || evt.srcCardId) {
     if (iso) evt.dueDate = iso; else delete evt.dueDate;
   }
-  if (evt.srcCardId) pushDueDateToCard(evt.srcCardId, iso);
+  if (evt.srcCardId) await pushDueDateToCard(evt.srcCardId, iso);
 }
 
 function attachPillDelete(pill, evt, mi) {
@@ -1974,8 +1933,7 @@ function attachPillDelete(pill, evt, mi) {
     const i = EVENTS.indexOf(evt);
     if (i > -1) EVENTS.splice(i, 1);
     saveToFirestore();
-    if (viewMode === 'horizontal') renderGrid();
-    else if (mi != null) refreshMonthContent(mi);
+    if (mi != null) refreshMonthContent(mi);
     else renderVertical();
   };
   pill.appendChild(del);
@@ -1992,7 +1950,7 @@ function makePill(evt, mi) {
   pill.style.color = accentTextColor(cat.bg);
   pill.style.fontWeight = '600';
   pill.style.cursor = 'grab';
-  if (evt.status === 'complete') pill.style.opacity = '0.55';
+  if (evt.status === 'complete') pill.classList.add('pill--complete');
   // Native HTML5 drag doesn't work via touch and blocks the scroll gesture instead — skip it on touch devices.
   pill.draggable = !IS_TOUCH;
   pill.addEventListener('dragstart', (e) => {
@@ -2088,21 +2046,26 @@ function attachTouchDrag(pill, evt, mi) {
     const el = document.elementFromPoint(t.clientX, t.clientY);
     const target = el && el.closest('[data-drop-mi]');
     if (_touchTarget && _touchTarget !== target) _touchTarget.classList.remove('drop-target');
-    _touchTarget = (target && parseInt(target.dataset.dropMi) === mi) ? target : null;
+    const tMi = target && target.dataset.dropMi !== '' ? parseInt(target.dataset.dropMi) : NaN;
+    _touchTarget = (target && !isNaN(tMi) && tMi >= 0 && tMi <= 11) ? target : null;
     if (_touchTarget) _touchTarget.classList.add('drop-target');
   }, { passive: false });
 
-  pill.addEventListener('touchend', () => {
+  pill.addEventListener('touchend', async () => {
     if (!dragging) { clearTimeout(timer); timer = null; return; }
     _touchJustDragged = true;
     setTimeout(() => { _touchJustDragged = false; }, 400);
     if (_touchTarget) {
-      applyEventSlot(evt,
+      const destMi = _touchTarget.dataset.dropMi !== '' && _touchTarget.dataset.dropMi != null
+        ? parseInt(_touchTarget.dataset.dropMi) : mi;
+      await applyEventSlot(evt,
         _touchTarget.dataset.dropWeek ? parseInt(_touchTarget.dataset.dropWeek) : null,
-        _touchTarget.dataset.dropDay ? parseInt(_touchTarget.dataset.dropDay) : null);
+        _touchTarget.dataset.dropDay ? parseInt(_touchTarget.dataset.dropDay) : null,
+        destMi);
       cleanup();
       saveToFirestore();
       refreshMonthContent(mi);
+      if (destMi !== mi) refreshMonthContent(destMi);
       return;
     }
     cleanup();
@@ -2117,14 +2080,18 @@ function renderMonthWeeks(container, mi) {
   const calMonth = (6 + mi) % 12;
   const monShort = new Date(calYear, calMonth, 1).toLocaleDateString('en-AU', { month: 'short' });
 
-  // Four fixed bands: 1–7, 8–14, 15–21, 22–end.
+  // Sunday–Saturday weeks that start in this month (adjacent days bleed).
   const BANDS = monthWeekBands(mi);
   const bandByKey = (k) => BANDS.find(b => b.key === k) || null;
 
-  const WEEK_DEFS = BANDS.map(b => ({
-    key: b.key,
-    label: `Week ${b.key} · ${b.from}–${b.to} ${monShort}`
-  })).concat([{ key: null, label: 'All Month / Unassigned' }]);
+  const WEEK_DEFS = BANDS.map(b => {
+    const r = bandLabelRange(mi, b);
+    const tail = r.bleedsNext ? '+' : '';
+    return {
+      key: b.key,
+      label: `Week ${b.key} · ${r.from}–${r.to}${tail} ${monShort}`
+    };
+  }).concat([{ key: null, label: 'Unassigned / Any' }]);
 
   WEEK_DEFS.forEach(({ key, label }) => {
     const wKey = mi + '_' + key;
@@ -2160,29 +2127,32 @@ function renderMonthWeeks(container, mi) {
       };
 
       addArea.addEventListener('dragover', (e) => {
-        if (_dragEvt && _dragMi === mi) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; addArea.classList.add('drop-target'); }
+        if (_dragEvt) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; addArea.classList.add('drop-target'); }
       });
       addArea.addEventListener('dragleave', (e) => {
         if (!addArea.contains(e.relatedTarget)) addArea.classList.remove('drop-target');
       });
-      addArea.addEventListener('drop', (e) => {
+      addArea.addEventListener('drop', async (e) => {
         e.preventDefault(); addArea.classList.remove('drop-target');
-        if (!_dragEvt || _dragMi !== mi) return;
-        applyEventSlot(_dragEvt, null, null);
+        if (!_dragEvt) return;
+        const srcMi = _dragMi;
+        await applyEventSlot(_dragEvt, null, null, mi);
         _dragEvt = null; _dragMi = null;
         saveToFirestore();
+        if (srcMi != null && srcMi !== mi) refreshMonthContent(srcMi);
         refreshMonthContent(mi);
       });
 
       EVENTS.filter(e => {
         const cat = CATS.find(c => c.id === e.cat);
-        return cat && e.m === mi && e.week == null;
+        // Unassigned / Any — no week, or legacy week-without-day
+        return cat && e.m === mi && e.week == null && e.day == null;
       }).forEach(evt => addArea.appendChild(makePill(evt, mi)));
 
       const addBtn = document.createElement('button');
       addBtn.className = 'week-add-btn';
       addBtn.textContent = '+';
-      addBtn.title = 'Add unassigned event';
+      addBtn.title = 'Add to Unassigned / Any';
       addBtn.onclick = (e) => { e.stopPropagation(); showCatPicker(addBtn, mi, null, null); };
       addArea.appendChild(addBtn);
       weekSec.appendChild(addArea);
@@ -2199,54 +2169,72 @@ function renderMonthWeeks(container, mi) {
         daysGrid.style.display = weekCollapsed[wKey] ? 'none' : '';
       };
 
-      // "Any" first, then every day this band contains, in date order.
-      const cols = [{ date: null, label: 'Any' }].concat(dayColumnsForBand(mi, bandByKey(key)));
-      // Column count varies (8 for weeks 1–3, up to 11 for week 4), so size the
-      // grid to match rather than assuming a fixed six.
-      daysGrid.style.gridTemplateColumns = `1.1fr repeat(${cols.length - 1}, minmax(88px, 1fr))`;
+      // Always Sun–Sat; adjacent-month days are live bleed cells.
+      const cols = dayColumnsForBand(mi, bandByKey(key));
+      daysGrid.style.gridTemplateColumns = 'repeat(7, minmax(88px, 1fr))';
 
-      cols.forEach(({ date, label: dayLabel, weekend }) => {
+      cols.forEach(({ date, label: dayLabel, weekend, outside, bleed, inert, cellMi }) => {
         const col = document.createElement('div');
-        col.className = 'week-day-col' + (weekend ? ' week-day-col--weekend' : '');
+        col.className = 'week-day-col'
+          + (weekend ? ' week-day-col--weekend' : '')
+          + (outside ? ' week-day-col--na' : '')
+          + (bleed ? ' week-day-col--bleed' : '');
 
         const header = document.createElement('div');
         header.className = 'week-day-header';
-        header.innerHTML = date
-          ? `${dayLabel} <span class="week-day-num">${ordinal(date)}</span>`
-          : dayLabel;
+        if (inert) {
+          header.innerHTML = `${dayLabel} <span class="week-day-na">·</span>`;
+        } else {
+          header.innerHTML = `${dayLabel} <span class="week-day-num">${ordinal(date)}</span>`;
+        }
         col.appendChild(header);
 
         const body = document.createElement('div');
         body.className = 'week-day-body';
-        body.dataset.dropMi = mi; body.dataset.dropWeek = key;
-        body.dataset.dropDay = date == null ? '' : String(date);
+
+        if (inert || cellMi == null) {
+          col.appendChild(body);
+          daysGrid.appendChild(col);
+          return;
+        }
+
+        body.dataset.dropMi = cellMi;
+        body.dataset.dropWeek = key;
+        body.dataset.dropDay = String(date);
 
         body.addEventListener('dragover', (e) => {
-          if (_dragEvt && _dragMi === mi) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; body.classList.add('drop-target'); }
+          if (_dragEvt) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; body.classList.add('drop-target'); }
         });
         body.addEventListener('dragleave', (e) => {
           if (!body.contains(e.relatedTarget)) body.classList.remove('drop-target');
         });
-        body.addEventListener('drop', (e) => {
+        body.addEventListener('drop', async (e) => {
           e.preventDefault(); body.classList.remove('drop-target');
-          if (!_dragEvt || _dragMi !== mi) return;
-          applyEventSlot(_dragEvt, key, date);
+          if (!_dragEvt) return;
+          const destMi = cellMi;
+          await applyEventSlot(_dragEvt, key, date, destMi);
+          const srcMi = _dragMi;
           _dragEvt = null; _dragMi = null;
           saveToFirestore();
-          refreshMonthContent(mi);
+          if (srcMi != null) refreshMonthContent(srcMi);
+          refreshMonthContent(destMi);
+          if (destMi > 0) refreshMonthContent(destMi - 1);
+          if (destMi < 11) refreshMonthContent(destMi + 1);
         });
 
         EVENTS.filter(e => {
           const cat = CATS.find(c => c.id === e.cat);
-          return cat && e.m === mi && e.week === key &&
-                 (date == null ? e.day == null : e.day === date);
-        }).forEach(evt => body.appendChild(makePill(evt, mi)));
+          return cat && e.m === cellMi && e.day === date;
+        }).forEach(evt => body.appendChild(makePill(evt, cellMi)));
 
         const addBtn = document.createElement('button');
         addBtn.className = 'week-add-btn';
         addBtn.textContent = '+';
-        addBtn.title = date ? `Add to ${dayLabel} ${ordinal(date)}` : 'Add to this week';
-        addBtn.onclick = (e) => { e.stopPropagation(); showCatPicker(addBtn, mi, key, date); };
+        addBtn.title = `Add to ${dayLabel} ${ordinal(date)}`;
+        addBtn.onclick = (e) => {
+          e.stopPropagation();
+          const _band = bandForDate(cellMi, date); showCatPicker(addBtn, cellMi, _band ? _band.key : null, date);
+        };
         body.appendChild(addBtn);
 
         col.appendChild(body);
@@ -2263,11 +2251,14 @@ function renderMonthWeeks(container, mi) {
 // ─── DARK MODE ───────────────────────────────────────────────────────────────
 
 async function refreshPlanner() {
-  const btn = document.getElementById('refreshBtn');
-  if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
   await initApp();
-  if (btn) { btn.textContent = '↻'; btn.disabled = false; }
 }
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible') return;
+  if (document.getElementById('panel').classList.contains('open')) return;
+  refreshPlanner();
+});
 
 let darkMode = false;
 function toggleDarkMode() {
@@ -2459,8 +2450,7 @@ function showCustomCatForm(picker, mi, weekKey, dayKey = null) {
     if (weekKey !== undefined && weekKey !== 'overview') {
       openNewEventPanel(newCat, mi, weekKey, dayKey);
     }
-    if (viewMode === 'vertical') renderVertical();
-    else renderGrid();
+    renderVertical();
   };
 
   btnRow.appendChild(cancelBtn);
@@ -2513,8 +2503,7 @@ function showEditCatForm(picker, cat, mi, weekKey) {
     cat.fg = getFgForBg(selectedColor);
     saveToFirestore();
     closeCatPicker();
-    if (viewMode === 'vertical') renderVertical();
-    else renderGrid();
+    renderVertical();
   };
 
   btnRow.appendChild(cancelBtn);
@@ -2665,8 +2654,11 @@ function fillWeekSelect(mi, selected) {
   const sel = document.getElementById('pWeek');
   const monShort = (mi == null) ? '' : new Date(monthYear(mi), monthIndex(mi), 1).toLocaleDateString('en-AU', { month: 'short' });
   const bands = (mi == null) ? [] : monthWeekBands(mi);
-  sel.innerHTML = '<option value="">All Month</option>' +
-    bands.map(b => `<option value="${b.key}">Week ${b.key} — ${b.from}–${b.to} ${monShort}</option>`).join('');
+  sel.innerHTML = '<option value="">Unassigned / Any</option>' +
+    bands.map(b => {
+      const r = bandLabelRange(mi, b);
+      return `<option value="${b.key}">Week ${b.key} — ${r.from}–${r.to} ${monShort}</option>`;
+    }).join('');
   sel.value = selected || '';
 }
 
@@ -2759,14 +2751,16 @@ function savePanel() {
     activeEvt.tasks  = readSubtasks();
     if (exactDate) activeEvt.dueDate = exactDate; else delete activeEvt.dueDate;
     if (projectId) activeEvt.project = projectId; else delete activeEvt.project;
-    // Keep a linked Task Board card's due date in step.
-    if (activeEvt.srcCardId) pushDueDateToCard(activeEvt.srcCardId, exactDate);
+    // Keep a linked Task Board card's due date + status in step.
+    if (activeEvt.srcCardId) {
+      pushDueDateToCard(activeEvt.srcCardId, exactDate);
+      pushStatusToCard(activeEvt.srcCardId, activeEvt.status);
+    }
   }
 
   saveToFirestore();
-  syncDateMirrors().then(changed => { if (changed) { saveToFirestore(); renderGrid(); if (viewMode === 'vertical') renderVertical(); } });
-  renderGrid();
-  if (viewMode === 'vertical') renderVertical();
+  syncDateMirrors().then(changed => { if (changed) { saveToFirestore(); renderVertical(); } });
+  renderVertical();
   closePanel();
 }
 

@@ -55,6 +55,7 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
+      justify-content: center;
       gap: 10px;
       padding: 13px 32px;
       background: #F7F5F2;
@@ -215,6 +216,22 @@
     .done-group-toggle:hover { color: #4E6E6C; }
 
     /* CARD PILL */
+    .card-pill.card-pill--complete {
+      opacity: 0.55;
+      padding: 6px 10px 6px 8px;
+    }
+    .card-pill--complete .card-pill-cat,
+    .card-pill--complete .card-pill-checklist,
+    .card-pill--complete .card-details-link,
+    .card-pill--complete .card-meta { display: none; }
+    .card-pill--complete .card-head { margin: 0; }
+    .card-pill--complete .card-icon { width: 14px; height: 14px; font-size: 8px; }
+    .card-pill--complete .card-title {
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .card-pill {
       display: block;
       padding: 9px 11px;
@@ -719,20 +736,21 @@
 </div>
 
 <div class="nav-row">
-  <a class="nav-link" href="https://ppc-planner.pressplaycollective.workers.dev/">&#8592; Annual Planner</a>
-  <a class="nav-link" href="https://ppc-planner.pressplaycollective.workers.dev/marketing">Marketing</a>
+  <a class="nav-link" href="/">Home</a>
+  <a class="nav-link" href="/">Annual Planner</a>
+  <a class="nav-link active" href="/kanban">Task Board</a>
+  <a class="nav-link" href="/marketing">Marketing</a>
   <button class="nav-link" id="tabBoardBtn" onclick="showView('board')">Board</button>
   <button class="nav-link" id="tabProjectsBtn" onclick="showView('projects')">Projects</button>
-  <button class="nav-link" id="refreshBtn" onclick="refreshBoard()" title="Reload latest data from cloud">&#8635; Refresh</button>
-  <div style="margin-left:auto;display:flex;gap:14px;flex-wrap:wrap;">
-    <div class="legend-item"><div class="legend-dot" style="background:#4E6E6C"></div>Collections &amp; Launches</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#C29A3B"></div>Events</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#564A5E"></div>Marketing &amp; Content</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#6B7A8D"></div>Manufacturing &amp; Fabric</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#344364"></div>Stockists</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#8A5A3B"></div>Finance &amp; Admin</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#2C2C2C"></div>Personal Milestones</div>
-  </div>
+</div>
+<div class="nav-row" style="padding-top:8px;padding-bottom:10px;justify-content:center;gap:14px;border-bottom:1px solid #e0ddd8;">
+  <div class="legend-item"><div class="legend-dot" style="background:#4E6E6C"></div>Collections &amp; Launches</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#C29A3B"></div>Events</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#564A5E"></div>Marketing &amp; Content</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#6B7A8D"></div>Manufacturing &amp; Fabric</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#344364"></div>Stockists</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#8A5A3B"></div>Finance &amp; Admin</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#2C2C2C"></div>Personal Milestones</div>
 </div>
 
 <div class="project-context" id="projectContext" style="display:none;"></div>
@@ -1017,7 +1035,7 @@ let CARDS = SEED_CARDS.map(c => ({ ...c }));
 // ─── PERSISTENCE (localStorage + Cloudflare Worker sync) ─────────────────────
 const STORAGE_KEY = 'kanban-board-data';
 const SYNC_URL = 'https://ppc-planner.pressplaycollective.workers.dev/api/kanban';
-const APP_VERSION = '1.9.0';
+const APP_VERSION = '1.9.2';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 
 let editMode = true;
@@ -1079,8 +1097,6 @@ async function initApp() {
 }
 
 async function refreshBoard() {
-  const btn = document.getElementById('refreshBtn');
-  if (btn) btn.style.opacity = '0.5';
   try {
     const res = await fetch(SYNC_URL);
     if (res.ok) {
@@ -1100,8 +1116,13 @@ async function refreshBoard() {
   } catch (err) {
     console.warn('Refresh failed:', err);
   }
-  if (btn) btn.style.opacity = '1';
 }
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible') return;
+  if (document.getElementById('panel') && document.getElementById('panel').classList.contains('open')) return;
+  refreshBoard();
+});
 
 // ─── DRAG & DROP (mouse + touch, matching Annual Planner pattern) ────────────
 const IS_TOUCH = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
@@ -1243,7 +1264,7 @@ function makeCardPill(card) {
   pill.style.borderLeft = '3px solid ' + cat.bg;
   const accent = accentTextColor(cat.bg);
   pill.style.color = '#2C2C2C';
-  if (card.status === 'complete') pill.style.opacity = '0.55';
+  if (card.status === 'complete' || card.column === 'done') pill.classList.add('card-pill--complete');
 
   // Project name above the title where there is one, so it reads clearly what
   // the task belongs to; otherwise fall back to the category.
@@ -2208,8 +2229,11 @@ function savePanel() {
   if (!title) { closePanel(); return; }
 
   const cat = document.getElementById('pCat').value;
-  const column = document.getElementById('pColumn').value;
-  const status = document.getElementById('pStatus').value;
+  let column = document.getElementById('pColumn').value;
+  let status = document.getElementById('pStatus').value;
+  // Keep status and Done column consistent both ways.
+  if (status === 'complete' && column !== 'done') column = 'done';
+  if (column === 'done' && status !== 'complete') status = 'complete';
   const body = sanitizeHtml(document.getElementById('pDesc').innerHTML).trim();
   const assignees = panelAssignees.slice();
   const dueDate = document.getElementById('pDue').value;
@@ -2255,9 +2279,8 @@ function closePanel() {
 }
 
 // ─── AUTO-ASSIGN TO ANNUAL PLANNER ──────────────────────────────────────────
-// When a new card is created, mirror it into the current week's "Any" column
-// of the Annual Planner. Controlled by the toggle in the planner's settings
-// sidebar (settings.kanbanAutoAssign in the /api/data payload; default on).
+// When a new undated card is created, mirror it into Unassigned / Any on the
+// Annual Planner. Controlled by the planner settings toggle (default on).
 
 const PLANNER_SYNC_URL = 'https://ppc-planner.pressplaycollective.workers.dev/api/data';
 const PLANNER_MONTHS = [
@@ -2276,20 +2299,22 @@ function plannerSlotForDate(iso) {
   if (!y || !mo || !d) return null;
   const mi = (y - 2026) * 12 + (mo - 1) - 6;
   if (mi < 0 || mi > 11) return null;
-  // Real Monday→Sunday weeks, clipped to the month (matches the planner).
+  // Match planner scheme 5: Sun–Sat weeks that start in this month.
   const calY = 2026 + Math.floor((6 + mi) / 12), calM = (6 + mi) % 12;
   const last = new Date(calY, calM + 1, 0).getDate();
-  let from = 1, key = 0, band = null;
-  while (from <= last) {
-    const dow = new Date(calY, calM, from).getDay();
-    const to = Math.min(from + (dow === 0 ? 0 : 7 - dow), last);
-    key++;
-    if (d >= from && d <= to) { band = key; break; }
-    from = to + 1;
+  const dt = new Date(calY, calM, d);
+  const sun = new Date(dt);
+  sun.setDate(dt.getDate() - dt.getDay());
+  let week = null;
+  if (sun.getMonth() === calM && sun.getFullYear() === calY) {
+    let key = 0;
+    for (let day = 1; day <= last; day++) {
+      if (new Date(calY, calM, day).getDay() !== 0) continue;
+      key++;
+      if (day === sun.getDate()) { week = key; break; }
+    }
   }
-  if (!band) return null;
-  const dayKey = { 1: 'mon', 2: 'tue', 3: 'wed', 4: 'thu', 5: 'fri' }[new Date(calY, calM, d).getDay()] || null;
-  return { m: mi, week: band, day: dayKey };
+  return { m: mi, week, day: d };
 }
 
 const PLANNER_MONTH_LABELS = [
@@ -2325,6 +2350,14 @@ async function upsertPlannerMirror(card) {
       if (idx < 0) data.events.push(next); else Object.assign(data.events[idx], next);
     }
 
+    // If this card was spawned from a timeline event, push status back too.
+    if (card.srcEventId) {
+      const ev = data.events.find(e => e.id === card.srcEventId);
+      if (ev && ev.status !== (card.status || 'planned')) {
+        ev.status = card.status || 'planned';
+      }
+    }
+
     await fetch(PLANNER_SYNC_URL, {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
     });
@@ -2346,17 +2379,19 @@ async function autoAssignToPlanner(card) {
     const now = new Date();
     const m = (now.getFullYear() - 2026) * 12 + (now.getMonth() - 6);
     if (m < 0 || m > 11) return;
-    const week = Math.min(4, Math.ceil(now.getDate() / 7));
 
     data.events.push({
+      id: 'mir-' + card.id,
+      srcCardId: card.id,
+      mirrored: true,
       cat: card.cat,
       m,
-      week,
+      week: null,
       day: null,
       title: card.title,
       date: PLANNER_MONTHS[m],
       body: card.body || '',
-      status: 'planned',
+      status: card.status || 'planned',
       tasks: (card.tasks || []).slice()
     });
     await fetch(PLANNER_SYNC_URL, {
