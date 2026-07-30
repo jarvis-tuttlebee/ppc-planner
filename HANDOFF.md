@@ -5,6 +5,446 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-07-30 — EOD (Cursor)
+
+### What shipped today
+- **Task Board** `1.10.3` — centred project titles, drag polish, typographic nav.
+- **Marketing pipeline:** Review board (`0.8.0`) → month calendar (`0.9.0`) →
+  **grid-first cadence** (`0.9.1`).
+- **Content Review:** inspo + context + shot media + outcome/tweaks + schedule handoff.
+- **Content Calendar:** month grid, Ode (4 Sep) + FDW/008 (22–25 Oct) anchors,
+  phase strip, unscheduled queue; targets = **grid posts first** (solo capacity).
+- Re-read Phase 2 strategy doc; shifted from 4-week release cycle to
+  event-anchored + steady grid rhythm.
+
+### Versions (live)
+- Planner `2.10.2` · Task Board `1.10.3` · Marketing **`0.9.1`**
+- Latest deploy: `c71f06ca-123a-44d4-8dc6-30accca48f89`
+- https://ppc-planner.pressplaycollective.workers.dev
+
+### Open / next
+1. Schedule 1–2 grid posts this week; tune `cadence` after a few weeks of real output.
+2. Project delete UI re-home; planner Projects/Releases parked; dark theme polish.
+3. Local changes still uncommitted on `main` — commit when asked.
+4. `wrangler dev` on `:8787` for local; restart if connection refused.
+
+### Notes for next session
+- Format **IG Post** fills the grid counter on the calendar.
+- Reels are optional — only when you have footage.
+- No intern yet: keep targets low-friction; system should reduce guilt, not add quota pressure.
+
+---
+
+## 2026-07-30 — Calendar cadence: grid-first (Cursor)
+
+### What was built or decided
+- Marketing `0.9.1`: phase targets retuned for **solo capacity** (no intern yet).
+- Primary weekly metric = **IG grid posts** (`ig-post`), not Reels/carousels.
+- Baseline ~**2 grid posts + 2 story days/week**; Reels optional/bonus when footage exists.
+- Phases renamed (Steady grid, Ode warm-up, etc.); lower story targets.
+
+### Open / next
+1. Use calendar for 2–3 weeks; adjust `cadence` from real output.
+2. Resume: planner delete UI, dark theme polish, commit when asked.
+
+### Deployed
+- Live: `c71f06ca-123a-44d4-8dc6-30accca48f89`
+- https://ppc-planner.pressplaycollective.workers.dev/marketing
+- Marketing `0.9.1` (grid-first cadence on top of `0.9.0` calendar).
+
+---
+
+## 2026-07-30 — Content Calendar month grid (Cursor)
+
+### What was built or decided
+- Marketing `0.9.0`: Content Calendar is a **month grid** (not a sorted list).
+- **Anchors** seeded: Ode to Sirens (4 Sep), 008 @ FDW (22–25 Oct, night 24 Oct).
+- **Phase strip** + per-week summary; scheduled cards on day cells; unscheduled queue.
+- Schedule panel: content layer + campaign anchor link.
+
+### Deployed
+- Superseded by `0.9.1` deploy above (`c71f06ca-…`).
+
+---
+
+## 2026-07-30 — Content Review Board (Cursor)
+
+### What was built or decided
+- Marketing `0.8.0`: **Content Review** + minimal **Content Calendar** list.
+- Exec → Review arm-then-apply (same card id). Review panel: inspo thumb,
+  collapsible plan/exec context, shot/edited media well (drop/paste image or
+  video poster) + Drive/video URL, Content outcome, Tweaks, Ready to schedule
+  (date; pillar/format = content type).
+- Review → Calendar moves card into `sections.schedule` (date-sorted list).
+- Archive restore supports `review` + `schedule` kinds.
+- Calendar list is functional handoff only — real calendar layout next.
+
+### What's mid-flight / not finished
+- Full calendar grid / month layout still not built (list only — works, wrong UX).
+- No video binary in KV — poster image + URL only.
+
+### Open / next
+1. Build Content Calendar month layout (replace sorted list).
+2. Project delete UI re-home; planner Projects/Releases parked; dark theme polish.
+3. Commit when asked.
+
+### Deployed
+- Live: `044ef96d-33d6-4383-92f5-59cbcc71669e`
+- https://ppc-planner.pressplaycollective.workers.dev
+- Marketing `0.8.0` (Content Review + schedule list handoff).
+
+---
+
+## 2026-07-30 — Task Board polish + tighter nav tracking (Cursor)
+
+### What was built or decided
+- Task Board project titles centred (equal side columns).
+- Project drag: 3-line grip icon; lift/scale while dragging; insert line above/below drop target.
+- Home + app nav letter-spacing tightened (`0.06em`) to match body type.
+
+### Deployed
+- Live: `59491306-4ce4-4927-ba69-2a062cdb53ba`
+- https://ppc-planner.pressplaycollective.workers.dev
+- Task Board `1.10.3` + typographic nav + tighter tracking.
+
+---
+
+## 2026-07-30 — Typographic nav (Cursor)
+
+### What was built or decided
+- Removed outline pills from Home + app nav. All-caps, tracked type in black /
+  slate (`#2C2C2C` / `#6B7A8D`); active = darker weight, no indigo fill.
+- Home menu is a hairline-separated vertical list (site-style).
+- Settings gear is borderless; dark mode matches.
+
+### Deployed
+- Included in `59491306-4ce4-4927-ba69-2a062cdb53ba`.
+
+---
+
+## 2026-07-30 — End of day (Cursor)
+
+### What shipped today
+- **Home** at `/` (logo + 3 pills); planner at `/planner`.
+- **Pill save fix:** await full kanban patch before `syncDateMirrors()`; empty-title toast.
+- **Calendar:** Sun–Sat month grid; past weeks under **Earlier weeks**; today marker.
+- **Task Board:** Priority section; no legend / Board / Projects pills; coloured titles;
+  `+` to add project; **Complete projects** + `::` drag reorder/complete.
+- **Archive (30d)** + unified **Settings** (gear, right of nav): Archive · Dark · Refresh.
+  Shared `/js/ppc-homebase.js` + `/api/archive`.
+- **Logo:** black wordmark from transparent `pressplay-logo.png` (first black file was a
+  solid JPEG — fixed + redeployed). Logo → `/`; Home pill removed.
+
+### Versions (live)
+- Planner `2.10.2` · Task Board `1.10.2` · Marketing `0.7.4`
+- Logo fix deploy: `15d3b625-8b9b-47c9-995f-38490f4be326`
+- Earlier EOD: `d3f48cc9-f64b-4a21-b7f9-099696af257c`
+- https://ppc-planner.pressplaycollective.workers.dev
+
+### Open / next
+1. Project delete UI removed with Projects view — re-home if needed.
+2. Old planner Projects/Releases settings still parked (hidden).
+3. Kanban/Marketing dark theme is lightweight only.
+4. Local changes may still be uncommitted on `main` (incl. `public/planner.html`,
+   `public/js/`, logos) — commit when asked.
+
+### Notes for next session
+- Prefer local `wrangler dev` on `:8787`; deploy only when asked.
+- Calendar is grid (not flat date list). Settings is gear icon, not a nav pill.
+- Soft-delete goes through `PPC.archivePush` / Settings → Archive.
+
+---
+
+## 2026-07-30 — Black logo as Home (Cursor)
+
+### What was built or decided
+- Swapped header/home logos to `pressplay-logo-black.png` (PRESS PLAY COLLECTIVE).
+- Removed Home nav pill on Planner / Task Board / Marketing; logo links to `/`.
+- App name sits in the header right on Kanban/Marketing.
+
+### Deployed
+- See end-of-day entry above.
+
+---
+
+## 2026-07-30 — Calendar month grid (Cursor)
+
+### What was built or decided
+- Planner Calendar is a **Sun–Sat month grid** (shared DOW header, week rows,
+  bleed days) — not the flat date list.
+- In the current month, weeks that have fully ended collapse under
+  **Earlier weeks**; expand state in `localStorage`. Today marked on the day
+  number. Unassigned / Any kept.
+
+### Deployed
+- Earlier today: `20fe48c1-3aa5-422c-a949-517e47387135` (pre-logo).
+- Logo + EOD deploy: see end-of-day entry.
+
+---
+
+## 2026-07-30 — Task Board layout + Settings icon (Cursor)
+
+### What was built or decided
+- Task Board: removed colour legend and Board/Projects nav pills.
+- Section rows: no numbers/dots; project titles use category colour.
+- `+` under active projects opens new-project modal; **Complete projects**
+  section at bottom (`project.completed`); `::` handle reorders / drags into
+  Complete (or back onto `+` / active rows to restore).
+- Settings is a gear icon on the right of the nav on Planner, Task Board,
+  and Marketing (not a pill).
+
+### What's mid-flight / not finished
+- Project delete UI was only on the old Projects view; not re-added yet.
+
+### Deployed
+- Included in day’s deploys — see end-of-day entry.
+
+---
+
+## 2026-07-30 — Homebase platform updates (Cursor)
+
+### What was built or decided
+- **Home restored** at `/` (logo + 3 pills); Annual Planner moved to
+  `/planner`. Nav later: logo → `/` (Home pill removed).
+- **Pill save fix:** linked pills await full kanban patch (title/body/tasks/
+  project/status/dueDate) before `syncDateMirrors()`; empty title toast.
+- **Calendar:** evolved to Sun–Sat month grid (flat list abandoned).
+- **Priority tasks** virtual section above Misc (due-date, not complete;
+  drop does not change `project`).
+- **Soft-delete Archive (30d):** `/api/archive` KV + `/js/ppc-homebase.js`;
+  deletes from planner/kanban/marketing archive; Recover + toast.
+- **Unified Settings:** Archive · Dark mode · Refresh. Shared dark via
+  `localStorage` `ppc-dark-mode`.
+
+### What's mid-flight / not finished
+- Old planner Projects/Releases settings parked (hidden), not redesigned.
+- Kanban/Marketing dark theme is lightweight (shared CSS), not full polish.
+
+### Deployed
+- See end-of-day entry.
+
+---
+
+## 2026-07-30 — Calendar rename + Ideas restack (Cursor)
+
+### What was built or decided
+- Marketing `0.7.1`:
+  - Section label **Content Schedule** → **Content Calendar** (id still
+    `schedule`).
+  - Prep: pillar colour dots removed; pillar + format titles centred.
+  - Ideas: height-aware column pack on move-to-Prep (and forced restack) so
+    remaining cards close gaps with an 8px gap and don’t overlap portraits.
+
+### What's mid-flight / not finished
+- Local only — deploy when asked.
+
+### Next logical step
+1. Smoke-test Prep headers + Ideas reshuffle after Prepare.
+2. Deploy when ready.
+
+### Deployed
+- Still live `0.6.2` until asked (`0.6.3`–`0.7.1` local).
+
+---
+
+## 2026-07-30 — Prep columns + shared selects (Cursor)
+
+### What was built or decided
+- Marketing `0.7.0`:
+  - Removed Placement note from Prep UI (data kept if present; calendar later).
+  - Prep lanes fill row width (no empty gutter). Format columns:
+    Organic unchanged; Email = Campaign / Flow / Automation / Newsletter;
+    Ads = Campaign / Ad sets / Ads; Website = Design / Blog / Features.
+    Old format IDs migrate (email→campaign, meta-ad→campaign, website→design).
+  - Shared `/js/ppc-select.js` custom select (lift menu). Coloured only when
+    needed (Marketing pillar/category; Kanban category + status; Planner
+    status). Format / project / column / week stay neutral.
+
+### What's mid-flight / not finished
+- Local only — deploy when asked.
+- Email/Website column labels can still be tuned from feedback.
+
+### Next logical step
+1. Smoke-test Marketing Prep columns + selects; Planner/Kanban panel selects.
+2. Deploy when ready.
+
+### Deployed
+- Still live `0.6.2` until asked (`0.6.3`–`0.7.0` local).
+
+---
+
+## 2026-07-30 — Panel list bullets stay inside (Cursor)
+
+### What was built or decided
+- Marketing `0.6.9`: `.panel-desc` lists get left padding so bullets don’t
+  render outside the field border; overflow clipped/scrollable.
+
+### Deployed
+- Still live `0.6.2` until asked (`0.6.3`–`0.6.9` local).
+
+---
+
+## 2026-07-30 — Ideas open crash fix (Cursor)
+
+### What was built or decided
+- Marketing `0.6.8`: click-to-open was broken for everyone (not local-only).
+  `openPanel` → `buildIdeaPanelProps` called `getElementById('pCat')` before
+  the color-select was in the document → TypeError, panel never opened.
+  Switched Category/Pillar wiring to `onChange` callbacks.
+
+### What's mid-flight / not finished
+- Local only — deploy when asked.
+
+### Next logical step
+1. Hard-refresh and confirm Ideas cards open.
+2. Deploy when ready.
+
+### Deployed
+- Still live `0.6.2` until asked (`0.6.3`–`0.6.8` local).
+
+---
+
+## 2026-07-30 — Ideas click-to-open fix (Cursor)
+
+### What was built or decided
+- Marketing `0.6.7`: Ideas cards open on any non-drag click (incl. image).
+  Drag threshold now uses screen pixels (canvas-space threshold broke opens
+  when zoomed out). Native image drag disabled. Image click still arms
+  paste focus when opening.
+
+### What's mid-flight / not finished
+- Local only — deploy when asked.
+
+### Next logical step
+1. Hard-refresh and confirm click opens Ideas cards.
+2. Deploy when ready.
+
+### Deployed
+- Still live `0.6.2` until asked (`0.6.3`–`0.6.7` local).
+
+---
+
+## 2026-07-30 — Exec field collapse + Ideas open fix (Cursor)
+
+### What was built or decided
+- Marketing `0.6.6`:
+  - Ideas cards: open on mouseup when not dragged (`mousedown` preventDefault
+    was killing click). Image still click=paste focus, dblclick=open.
+  - Execution panel: removed duplicate **Execution** notes. Stages stay
+    Prep → Exec. Exec fields = Idea + Production plan (from Prep) +
+    Products / Location / Requirements / Date. Legacy `executionNotes`
+    fold into empty productionPlan once then deleted.
+  - Canvas coords synced to 8000×5600 with viewport background.
+
+### What's mid-flight / not finished
+- Local only — deploy when asked.
+
+### Next logical step
+1. Smoke-test Ideas click-to-open + Exec panel without Execution notes.
+2. Deploy when ready.
+
+### Deployed
+- Still live `0.6.2` until asked (`0.6.3`–`0.6.6` local).
+
+---
+
+## 2026-07-30 — Colored Pillar/Category dropdown (Cursor)
+
+### What was built or decided
+- Marketing `0.6.5`: custom color select for Pillar (`pPillar`, `preparePillar`)
+  and Ideas Category (`pCat`) — category-colored labels, no OS blue highlight,
+  lift on hover/selected. Format stays native select.
+
+### What's mid-flight / not finished
+- Local only — deploy when asked.
+- Production/Execution field overlap decision still pending.
+
+### Next logical step
+1. Smoke-test Pillar/Category menus on local `/marketing`.
+2. Decide Production plan vs Execution notes.
+
+### Deployed
+- Still live `0.6.2` until asked (`0.6.3`–`0.6.5` local).
+
+---
+
+## 2026-07-30 — Ideas canvas + Prep lanes polish (Cursor)
+
+### What was built or decided
+- Marketing `0.6.4`:
+  - Ideas canvas: viewport owns continuous dot background; canvas
+    transparent + much larger so zoom-out doesn’t show an edge cut-off.
+  - Prep format lanes: shared board with vertical column rules (not loose
+    rounded cards).
+  - Idea field consistent across Ideas / Prep / Exec (short, no fmt bar);
+    Prep order remains Idea → Production plan → Placement note.
+  - Pillar titles colored with category swatch for memory when choosing.
+- Open design Q: Production plan vs Execution notes feel redundant —
+  discuss before combining stages or collapsing fields.
+
+### What's mid-flight / not finished
+- Local only — deploy when asked.
+- Production/Execution field overlap decision pending.
+
+### Next logical step
+1. Local smoke-test zoom-out + Prep column lines + pillar title colors.
+2. Decide: keep stages, merge duplicate plan/notes fields (see chat).
+
+### Deployed
+- Still live `0.6.2` until asked to deploy (`0.6.3`–`0.6.4` local).
+
+---
+
+## 2026-07-30 — Ideas/Prep: Description → Idea (Cursor)
+
+### What was built or decided
+- Marketing `0.6.3`: Ideas + Prep side panel label **Description** → **Idea**;
+  short height (same as Execution Idea); placeholder **Add an idea…**.
+  Production plan / Placement note unchanged. Execution untouched.
+
+### What's mid-flight / not finished
+- Local only — deploy when asked. Continue Ideas + Prep → Execution polish.
+
+### Next logical step
+1. Local smoke-test Ideas + Prep panels (`wrangler dev` /marketing).
+2. Deploy when ready, or next polish notes.
+
+### Deployed
+- Still live `0.6.2` (`c43e68f9-…`) until asked to deploy.
+
+---
+
+## 2026-07-30 — Prep polish → Execution bridge (Cursor)
+
+### What was built or decided
+- Marketing `0.6.0`:
+  - Removed Prep **Duplicate** (park for Schedule/calendar — cross-format
+    copies with publish-specific copy).
+  - Prepare / Execute are arm-then-apply: click Prepare or Execute, then
+    Enter / Ctrl+Enter (or the primary button). Plain save keeps panel open;
+    click outside / Close to leave. Shift+Enter = newline while armed.
+  - Execution: larger list cards; wide panel with image left; fields —
+    Idea (short, from Prep body), Production plan, Execution notes,
+    Products, Location, Requirements, Date/time.
+  - Earlier: Ideas open UX, thumbs, Placement note rename, Prep × delete.
+
+### What's mid-flight / not finished
+- Calendar-stage Duplicate (change format + publish details).
+- Full Execution polish from live testing; Review / Schedule still skeletons.
+- Remaining Miro Ideas import deferred; Unassigned month-rollover parked.
+
+### Known issues or things flagged but not fixed
+- Marketing KV ~3 MB base64 images — watch growth.
+
+### Next logical step
+1. Smoke-test Prepare → Execute → exec panel fields on live.
+2. Iterate Execution from feedback, or calendar Duplicate later.
+
+### Deployed
+- Version ID `c43e68f9-f422-4b67-b672-892382c86526` (0.6.2)
+  → https://ppc-planner.pressplaycollective.workers.dev
+---
+
 ## 2026-07-28 — EOD (Cursor)
 
 ### What was built or decided
@@ -362,7 +802,9 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 - **Live:** https://ppc-planner.pressplaycollective.workers.dev
 - **Deploy:** `npx wrangler deploy` from this folder (needs Node on PATH)
 - **KV binding:** `PLANNER_KV` (id `2f3dc18365c2477595cc76e4f3303746`)
-- **Structure:** `public/index.html` (Annual Planner), `public/kanban.html`
-  (Task Board), `public/marketing.html` (Marketing System), `src/index.js`
-  (Worker — serves `/api/data`, `/api/kanban`, `/api/marketing`; kanban
-  also has `/api/kanban/patch` for server-side single-card merge)
+- **Structure:** `public/index.html` (Home), `public/planner.html` (Annual
+  Planner), `public/kanban.html` (Task Board), `public/marketing.html`
+  (Marketing System), `public/js/ppc-homebase.js` + `ppc-select.js`,
+  `src/index.js` (Worker — `/api/data`, `/api/kanban`, `/api/kanban/patch`,
+  `/api/marketing`, `/api/archive`)
+

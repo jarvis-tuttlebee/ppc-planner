@@ -1,4 +1,20 @@
-const KV_KEYS = { '/api/data': 'main', '/api/kanban': 'kanban', '/api/marketing': 'marketing' };
+const KV_KEYS = {
+  '/api/data': 'main',
+  '/api/kanban': 'kanban',
+  '/api/marketing': 'marketing',
+  '/api/archive': 'archive'
+};
+
+const ARCHIVE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+
+function purgeArchiveItems(items) {
+  const cutoff = Date.now() - ARCHIVE_TTL_MS;
+  return (Array.isArray(items) ? items : []).filter(e => {
+    if (!e || !e.deletedAt) return false;
+    const t = new Date(e.deletedAt).getTime();
+    return !Number.isNaN(t) && t >= cutoff;
+  });
+}
 
 export default {
   async fetch(request, env) {
@@ -44,10 +60,24 @@ export default {
     if (request.method === 'OPTIONS') return new Response(null, { headers: cors });
     if (request.method === 'GET') {
       const data = await env.PLANNER_KV.get(kvKey, 'json');
+      if (kvKey === 'archive') {
+        const items = purgeArchiveItems(data && data.items);
+        if (data && Array.isArray(data.items) && items.length !== data.items.length) {
+          await env.PLANNER_KV.put('archive', JSON.stringify({ items }));
+        }
+        return new Response(JSON.stringify({ items }), { headers: { ...cors, 'Content-Type': 'application/json' } });
+      }
       return new Response(JSON.stringify(data || {}), { headers: { ...cors, 'Content-Type': 'application/json' } });
     }
     if (request.method === 'POST') {
       const body = await request.json();
+      if (kvKey === 'archive') {
+        const items = purgeArchiveItems(body && body.items);
+        await env.PLANNER_KV.put('archive', JSON.stringify({ items }));
+        return new Response(JSON.stringify({ ok: true, items: items.length }), {
+          headers: { ...cors, 'Content-Type': 'application/json' }
+        });
+      }
       await env.PLANNER_KV.put(kvKey, JSON.stringify(body));
       return new Response(JSON.stringify({ ok: true }), { headers: { ...cors, 'Content-Type': 'application/json' } });
     }

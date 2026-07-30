@@ -32,6 +32,21 @@
       align-items: center;
       border-bottom: 1px solid #e0ddd8;
     }
+    .header-logo-link {
+      justify-self: center;
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      line-height: 0;
+    }
+    .header-logo-link:hover { opacity: 0.72; }
+    .header-logo {
+      height: 26px;
+      width: auto;
+      max-width: min(260px, 52vw);
+      display: block;
+    }
+    body.dark .header-logo { filter: invert(1); }
     .header-title {
       font-family: 'Forma DJR Display', 'Forma DJR Banner', 'Poppins', 'DM Sans', sans-serif;
       font-size: 20px;
@@ -59,30 +74,51 @@
       flex-wrap: wrap;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      padding: 13px 32px;
+      gap: 28px;
+      padding: 16px 56px 16px 32px;
       background: #F7F5F2;
-      border-bottom: 1px solid #e0ddd8;
+      border-bottom: 1px solid #E2DDD5;
+      position: relative;
     }
     .nav-link {
       font-family: 'DM Sans', sans-serif;
       font-size: 11px;
       font-weight: 500;
       letter-spacing: 0.06em;
-      padding: 6px 14px;
-      border-radius: 20px;
-      border: 1.5px solid #344364;
+      text-transform: uppercase;
+      padding: 4px 0;
+      border: none;
+      border-radius: 0;
       background: transparent;
-      color: #344364;
+      color: #6B7A8D;
       cursor: pointer;
-      transition: all 0.15s;
+      transition: color 0.15s;
       white-space: nowrap;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
     }
-    .nav-link:hover { background: #344364; color: #fff; }
-    .nav-link.active { background: #344364; color: #fff; }
+    .nav-link:hover { color: #2C2C2C; background: transparent; }
+    .nav-link.active { color: #2C2C2C; background: transparent; font-weight: 600; }
+    .nav-settings-btn {
+      position: absolute;
+      right: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 32px;
+      border-radius: 0;
+      border: none;
+      background: transparent;
+      color: #6B7A8D;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.15s;
+    }
+    .nav-settings-btn:hover { background: transparent; color: #2C2C2C; }
 
     .board {
       display: block;
@@ -159,7 +195,9 @@
       position: relative;
       height: 380px;
       overflow: hidden;
-      background: #faf9f7;
+      background-color: #fff;
+      background-image: radial-gradient(circle, #e4e0da 1px, transparent 1px);
+      background-size: 28px 28px;
       border: 1px solid #e8e5e0;
       border-radius: 10px;
       cursor: grab;
@@ -169,7 +207,7 @@
     .mood-viewport.drop-target {
       outline: 2px dashed #564A5E;
       outline-offset: -4px;
-      background: rgba(86,74,94,0.04);
+      background-color: rgba(86,74,94,0.04);
     }
     .mood-viewport-hint {
       position: absolute;
@@ -187,12 +225,10 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 2200px;
-      height: 1500px;
+      width: 8000px;
+      height: 5600px;
       transform-origin: 0 0;
-      background-color: #fff;
-      background-image: radial-gradient(circle, #e4e0da 1px, transparent 1px);
-      background-size: 28px 28px;
+      background: transparent;
     }
 
     .idea-card {
@@ -210,8 +246,8 @@
       cursor: grab;
       z-index: 1;
     }
-    .idea-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); filter: brightness(0.99); z-index: 2; }
-    .idea-card.dragging { cursor: grabbing; z-index: 10; box-shadow: 0 8px 24px rgba(0,0,0,0.14); }
+    .idea-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); filter: brightness(0.99); }
+    .idea-card.dragging { cursor: grabbing; box-shadow: 0 8px 24px rgba(0,0,0,0.14); }
     .idea-card.has-cat { background: #F0EDE8; }
     .idea-card .card-delete {
       position: absolute;
@@ -266,6 +302,9 @@
       object-fit: contain;
       display: block;
       margin: 0;
+      pointer-events: none;
+      -webkit-user-drag: none;
+      user-select: none;
     }
     .image-well .placeholder {
       font-size: 10px;
@@ -316,7 +355,7 @@
       background: #fff;
       border-left: 1px solid #e8e5e0;
       transform: translateX(100%);
-      transition: transform 0.22s ease;
+      transition: transform 0.22s ease, width 0.22s ease;
       z-index: 200;
       overflow-y: auto;
       box-shadow: -6px 0 28px rgba(0,0,0,0.08);
@@ -324,8 +363,42 @@
       flex-direction: column;
     }
     .panel.open { transform: translateX(0); }
+    .panel.exec-mode { width: min(720px, 100vw); }
+    .panel.review-mode { width: min(720px, 100vw); }
     .panel-strip { height: 5px; flex-shrink: 0; }
     .panel-body-wrap { padding: 28px 28px 32px; flex: 1; }
+    .panel-exec-layout { display: flex; flex-direction: column; gap: 0; }
+    .panel.exec-mode .panel-exec-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+    .panel.exec-mode .panel-image-wrap {
+      margin: 0;
+      position: sticky;
+      top: 0;
+    }
+    .panel.exec-mode .panel-image-wrap img {
+      max-height: none;
+      width: 100%;
+      border-radius: 8px;
+    }
+    .panel.exec-mode #imageDivider { display: none; }
+    .panel.review-mode #pImageWrap,
+    .panel.review-mode #imageDivider,
+    .panel.review-mode #descSectionLabel,
+    .panel.review-mode #descFmtBar,
+    .panel.review-mode #pDesc { display: none !important; }
+    .panel-fields { min-width: 0; }
+    .panel-apply-hint {
+      width: 100%;
+      margin-top: 8px;
+      font-size: 10.5px;
+      color: #9a958d;
+      letter-spacing: 0.02em;
+      line-height: 1.4;
+    }
     .panel-close {
       position: absolute;
       top: 12px; right: 14px;
@@ -399,10 +472,18 @@
       border-radius: 8px;
       padding: 10px 12px;
       background: #fff;
+      overflow: auto;
     }
     .panel-desc:focus { border-color: #344364; background: #f8f6f3; }
     .panel-desc:empty::before { content: attr(placeholder); color: #ccc; }
     .panel-desc b, .panel-desc strong { font-weight: 700; }
+    .panel-desc ul,
+    .panel-desc ol {
+      margin: 0.25em 0;
+      padding-left: 1.1em;
+      list-style-position: inside;
+    }
+    .panel-desc li { margin: 0.15em 0; }
     .panel-image-wrap {
       display: block;
       margin: 4px 0 18px;
@@ -486,7 +567,8 @@
       background: #faf9f7;
     }
     .pillar-header {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
       align-items: center;
       gap: 10px;
       padding: 12px 14px;
@@ -502,20 +584,26 @@
     }
     .pillar.open .pillar-header { border-bottom-color: #e8e5e0; }
     .pillar.is-empty.open .pillar-header { border-bottom-color: #ebe7e1; }
-    .pillar-swatch { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-    .pillar.is-empty .pillar-swatch { width: 7px; height: 7px; }
     .pillar-title {
       font-family: 'Forma DJR Banner', 'Poppins', 'DM Sans', sans-serif;
       font-size: 13.5px;
       font-weight: 700;
       color: #2C2C2C;
-      flex: 1;
+      text-align: center;
+      justify-self: center;
+      grid-column: 2;
     }
     .pillar.is-empty .pillar-title {
       font-size: 11.5px;
       font-weight: 600;
       letter-spacing: 0.02em;
-      color: #6B7A8D;
+    }
+    .pillar-trailing {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-self: end;
+      grid-column: 3;
     }
     .pillar-count { font-size: 11px; color: #9a958d; }
     .pillar.is-empty .pillar-count { font-size: 10px; opacity: 0.75; }
@@ -526,43 +614,50 @@
     .pillar.is-empty .pillar-body { padding: 8px 10px 10px; }
     .prep-lanes {
       display: flex;
-      gap: 10px;
+      gap: 0;
+      width: 100%;
       overflow-x: auto;
-      padding-bottom: 4px;
-      align-items: flex-start;
+      align-items: stretch;
+      background: #f7f5f2;
+      border: 1px solid #e2ddd5;
+      border-radius: 8px;
+      min-height: 140px;
     }
     .prep-lane {
-      flex: 0 0 168px;
-      min-width: 168px;
-      background: #faf9f7;
-      border: 1px solid #ebe7e1;
-      border-radius: 8px;
-      min-height: 120px;
+      flex: 1 1 0;
+      min-width: 110px;
+      background: transparent;
+      border: none;
+      border-right: 1px solid #e2ddd5;
+      border-radius: 0;
+      min-height: 140px;
       display: flex;
       flex-direction: column;
-      transition: flex-basis 0.15s, min-width 0.15s, min-height 0.15s;
+      transition: background 0.12s;
     }
+    .prep-lane:last-child { border-right: none; }
     .prep-lane.is-empty {
-      flex: 0 0 72px;
-      min-width: 72px;
-      min-height: 40px;
-      border-style: dashed;
-      background: #fcfbfa;
+      flex: 1 1 0;
+      min-width: 110px;
+      min-height: 140px;
+      background: rgba(255,255,255,0.35);
     }
-    .prep-lane.drag-over { outline: 2px dashed #4E6E6C; outline-offset: -2px; background: rgba(78,110,108,0.06); }
+    .prep-lane.drag-over { background: rgba(78,110,108,0.08); box-shadow: inset 0 0 0 2px #4E6E6C; }
     .prep-lane-title {
       font-size: 10px;
       font-weight: 600;
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: #6B7A8D;
-      padding: 10px 10px 6px;
+      padding: 10px 10px 8px;
+      border-bottom: 1px solid #e8e5e0;
+      background: rgba(255,255,255,0.55);
+      text-align: center;
     }
     .prep-lane.is-empty .prep-lane-title {
-      padding: 8px 6px;
+      padding: 10px 8px 8px;
       font-size: 9px;
       letter-spacing: 0.04em;
-      text-align: center;
       line-height: 1.25;
       word-break: break-word;
     }
@@ -593,6 +688,28 @@
     .prep-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,0.07); }
     .prep-card.has-cat { background: #F0EDE8; }
     .prep-card.dragging { opacity: 0.55; }
+    .prep-card .card-delete {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(0,0,0,0.22);
+      color: #fff;
+      font-size: 13px;
+      line-height: 1;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.12s;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+    .prep-card:hover .card-delete { opacity: 1; }
     .prep-card-thumb {
       width: 100%;
       height: 72px;
@@ -633,6 +750,607 @@
       letter-spacing: 0.04em;
       text-transform: uppercase;
       opacity: 0.8;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .prep-card-ready {
+      flex-shrink: 0;
+      font-size: 8px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E6E6C;
+      background: rgba(78,110,108,0.12);
+      border-radius: 3px;
+      padding: 2px 5px;
+      font-weight: 700;
+    }
+    .panel-field-hint {
+      font-size: 11px;
+      color: #9a958d;
+      line-height: 1.4;
+      margin: 0 0 8px;
+    }
+    .exec-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .exec-card {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 16px;
+      background: #fff;
+      border: 1px solid #E2DDD5;
+      border-radius: 10px;
+      padding: 14px;
+      cursor: pointer;
+      transition: box-shadow 0.12s;
+      min-height: 148px;
+    }
+    .exec-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); }
+    .exec-card.has-cat { background: #F0EDE8; }
+    .exec-card-thumb {
+      width: 140px;
+      height: 140px;
+      flex-shrink: 0;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid #e8e5e0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .exec-card-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .exec-card-thumb.empty {
+      font-size: 10px;
+      color: #c4bfb7;
+      letter-spacing: 0.04em;
+      text-align: center;
+      padding: 8px;
+    }
+    .exec-card-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+    .exec-card-desc {
+      font-size: 13px;
+      line-height: 1.4;
+      color: #2C2C2C;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .exec-card-desc.empty { color: #b5b0a8; font-style: italic; }
+    .exec-card-meta {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+    .exec-card-plan {
+      font-size: 12px;
+      line-height: 1.35;
+      color: #6B7A8D;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .exec-card-plan.empty { font-style: italic; color: #b5b0a8; }
+    .exec-card-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: auto;
+      padding-top: 4px;
+    }
+    .exec-chip {
+      font-size: 10px;
+      color: #6B7A8D;
+      background: rgba(52,67,100,0.06);
+      border-radius: 4px;
+      padding: 3px 7px;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .exec-empty {
+      padding: 28px 16px;
+      text-align: center;
+      color: #b5b0a8;
+      font-size: 12px;
+      letter-spacing: 0.03em;
+    }
+    .review-inspo {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      margin-bottom: 14px;
+      padding: 10px;
+      background: #faf9f7;
+      border: 1px solid #E2DDD5;
+      border-radius: 8px;
+    }
+    .review-inspo-thumb {
+      width: 72px;
+      height: 72px;
+      flex-shrink: 0;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid #e8e5e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      color: #c4bfb7;
+      text-align: center;
+      letter-spacing: 0.03em;
+    }
+    .review-inspo-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .review-inspo-meta {
+      flex: 1;
+      min-width: 0;
+      font-size: 12px;
+      line-height: 1.4;
+      color: #6B7A8D;
+    }
+    .review-inspo-meta strong {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #9a958d;
+      margin-bottom: 4px;
+    }
+    .review-context-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #6B7A8D;
+      background: transparent;
+      border: 1px solid #E2DDD5;
+      border-radius: 8px;
+      padding: 10px 12px;
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+    .review-context-toggle:hover { background: #faf9f7; color: #2C2C2C; }
+    .review-context {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px;
+      margin-bottom: 14px;
+      background: #faf9f7;
+      border: 1px solid #E2DDD5;
+      border-radius: 8px;
+      font-size: 12px;
+      line-height: 1.45;
+      color: #6B7A8D;
+    }
+    .review-context.open { display: flex; }
+    .review-context-row strong {
+      display: block;
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #9a958d;
+      margin-bottom: 2px;
+    }
+    .review-context-row.empty { font-style: italic; color: #b5b0a8; }
+    .review-media-well {
+      width: 100%;
+      min-height: 200px;
+      border: 1.5px dashed #d5d0c8;
+      border-radius: 10px;
+      background: #faf9f7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 10px;
+      transition: border-color 0.12s, background 0.12s;
+    }
+    .review-media-well:hover,
+    .review-media-well.focused {
+      border-color: #6B7A8D;
+      background: rgba(107,122,141,0.04);
+    }
+    .review-media-well.drop-target {
+      border-color: #6B7A8D;
+      background: rgba(107,122,141,0.1);
+    }
+    .review-media-well.has-image {
+      border-style: solid;
+      min-height: 220px;
+      background: #fff;
+    }
+    .review-media-well img {
+      width: 100%;
+      max-height: 320px;
+      object-fit: contain;
+      display: block;
+    }
+    .review-media-well .placeholder {
+      font-size: 12px;
+      color: #b5b0a8;
+      letter-spacing: 0.03em;
+      text-align: center;
+      padding: 24px 16px;
+      line-height: 1.5;
+      pointer-events: none;
+    }
+    .review-media-clear {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      border: none;
+      background: rgba(44,44,44,0.72);
+      color: #fff;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      display: none;
+    }
+    .review-media-well.has-image .review-media-clear { display: flex; align-items: center; justify-content: center; }
+    .review-video-link {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .review-video-link input { flex: 1; min-width: 0; }
+    .review-video-open {
+      flex-shrink: 0;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      padding: 7px 10px;
+      border-radius: 7px;
+      border: 1px solid #E2DDD5;
+      background: #fff;
+      color: #6B7A8D;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .review-video-open:hover { color: #2C2C2C; border-color: #6B7A8D; }
+    .review-video-open.is-disabled {
+      pointer-events: none;
+      opacity: 0.4;
+    }
+    .schedule-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .schedule-card {
+      display: grid;
+      grid-template-columns: 88px 1fr;
+      gap: 14px;
+      background: #F0EDE8;
+      border: 1px solid #E2DDD5;
+      border-radius: 10px;
+      padding: 12px;
+      cursor: pointer;
+      transition: box-shadow 0.12s;
+    }
+    .schedule-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); }
+    .schedule-card-thumb {
+      width: 88px;
+      height: 88px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid #e8e5e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      color: #c4bfb7;
+      text-align: center;
+    }
+    .schedule-card-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .schedule-card-body { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+    .schedule-card-date {
+      font-size: 12px;
+      font-weight: 600;
+      color: #2C2C2C;
+    }
+    .schedule-card-meta {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+    .schedule-card-desc {
+      font-size: 12px;
+      line-height: 1.35;
+      color: #6B7A8D;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .cal-wrap { padding: 0 4px 8px; }
+    .cal-phase-strip {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 8px 16px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      background: #faf9f7;
+      border: 1px solid #E2DDD5;
+      border-radius: 10px;
+      font-size: 12px;
+      color: #6B7A8D;
+    }
+    .cal-phase-strip strong {
+      font-size: 13px;
+      color: #2C2C2C;
+      font-weight: 600;
+    }
+    .cal-phase-targets { font-size: 11px; letter-spacing: 0.02em; }
+    .cal-phase-fill { font-size: 11px; color: #4E6E6C; font-weight: 600; }
+    .cal-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 10px 10px;
+      gap: 12px;
+    }
+    .cal-nav-title {
+      font-family: 'Forma DJR Display', 'Poppins', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #2C2C2C;
+      letter-spacing: -0.01em;
+    }
+    .cal-nav-btns { display: flex; gap: 6px; }
+    .cal-nav-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid #E2DDD5;
+      background: #fff;
+      color: #6B7A8D;
+      cursor: pointer;
+    }
+    .cal-nav-btn:hover { border-color: #344364; color: #2C2C2C; }
+    .cal-dow-header {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 4px;
+      padding: 0 8px 4px;
+      border-bottom: 1px solid #ece9e4;
+    }
+    .cal-dow-cell {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #6B7A8D;
+      text-align: center;
+      padding: 4px 0;
+    }
+    .cal-week-block { margin-bottom: 4px; }
+    .cal-week-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 4px;
+      padding: 4px 8px;
+    }
+    .cal-day {
+      min-height: 88px;
+      border: 1px solid #ece9e4;
+      border-radius: 6px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .cal-day--other { opacity: 0.45; background: #faf9f7; }
+    .cal-day--today { border-color: #4E6E6C; box-shadow: inset 0 0 0 1px #4E6E6C; }
+    .cal-day-head {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 4px 5px 2px;
+      border-bottom: 1px solid #f0ede8;
+    }
+    .cal-day-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: #2C2C2C;
+    }
+    .cal-day-num--today {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+      background: #4E6E6C;
+      color: #F7F5F2;
+    }
+    .cal-anchor-pin {
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      padding: 2px 4px;
+      border-radius: 3px;
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+    }
+    .cal-anchor-pin--event { background: rgba(194,154,59,0.2); color: #8a6a1a; }
+    .cal-anchor-pin--release { background: rgba(52,67,100,0.12); color: #344364; }
+    .cal-day-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 3px 4px 4px;
+      overflow: hidden;
+    }
+    .cal-slot {
+      font-size: 9px;
+      line-height: 1.25;
+      padding: 3px 4px;
+      border-radius: 4px;
+      border-left: 3px solid #564A5E;
+      background: #F0EDE8;
+      cursor: pointer;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .cal-slot:hover { box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+    .cal-slot-meta {
+      font-size: 8px;
+      opacity: 0.75;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    .cal-week-summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      padding: 4px 12px 8px;
+      font-size: 10px;
+      color: #9a958d;
+      letter-spacing: 0.02em;
+    }
+    .cal-week-summary span strong { color: #6B7A8D; }
+    .cal-unscheduled {
+      margin-top: 16px;
+      border-top: 1px solid #E2DDD5;
+      padding-top: 12px;
+    }
+    .cal-unscheduled-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #6B7A8D;
+      background: transparent;
+      border: none;
+      padding: 8px 4px;
+      cursor: pointer;
+    }
+    .cal-unscheduled-toggle:hover { color: #2C2C2C; }
+    .cal-unscheduled-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 4px 0;
+    }
+    .cal-unscheduled-list.collapsed { display: none; }
+    .cal-anchor-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(20,18,16,0.28);
+      z-index: 8500;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s;
+    }
+    .cal-anchor-overlay.open { opacity: 1; pointer-events: auto; }
+    .cal-anchor-panel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -48%);
+      width: min(420px, 92vw);
+      max-height: 85vh;
+      overflow-y: auto;
+      background: #F7F5F2;
+      border: 1px solid #E2DDD5;
+      border-radius: 12px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+      z-index: 8501;
+      padding: 24px 24px 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s, transform 0.18s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .cal-anchor-panel.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%);
+    }
+    .cal-anchor-panel h2 {
+      margin: 0 0 6px;
+      font-size: 17px;
+      font-weight: 700;
+      color: #2C2C2C;
+    }
+    .cal-anchor-type {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #9a958d;
+      margin-bottom: 14px;
+    }
+    .cal-anchor-dates {
+      font-size: 12px;
+      color: #6B7A8D;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+    .cal-anchor-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      border: none;
+      background: transparent;
+      font-size: 20px;
+      color: #9a958d;
+      cursor: pointer;
+      line-height: 1;
     }
     .panel-actions-row {
       display: flex;
@@ -704,6 +1422,11 @@
       .header, .nav-row { padding-left: 16px; padding-right: 16px; }
       .board { padding: 20px 16px 40px; }
       .mood-viewport { height: 300px; }
+      .panel.exec-mode .panel-exec-layout { grid-template-columns: 1fr; }
+      .exec-card { grid-template-columns: 96px 1fr; min-height: 0; }
+      .exec-card-thumb { width: 96px; height: 96px; }
+      .schedule-card { grid-template-columns: 72px 1fr; }
+      .schedule-card-thumb { width: 72px; height: 72px; }
     }
   </style>
 </head>
@@ -711,18 +1434,22 @@
 
 <div class="header">
   <div class="header-spacer"></div>
-  <div class="header-title">Marketing System</div>
+  <a class="header-logo-link" href="/" title="Home">
+    <img class="header-logo" src="/assets/pressplay-logo-black.png?v=3" alt="Press Play Collective">
+  </a>
   <div class="header-right">
-    <div class="sub">Press Play Collective</div>
+    <div class="sub">Marketing System</div>
     <div class="version" id="versionTag"></div>
   </div>
 </div>
 
 <div class="nav-row">
-  <a class="nav-link" href="/">Home</a>
-  <a class="nav-link" href="/">Annual Planner</a>
+  <a class="nav-link" href="/planner">Annual Planner</a>
   <a class="nav-link" href="/kanban">Task Board</a>
   <a class="nav-link active" href="/marketing">Marketing</a>
+  <button type="button" class="nav-settings-btn" id="settingsBtn" title="Settings" aria-label="Settings">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+  </button>
 </div>
 
 <div class="board" id="board"></div>
@@ -732,42 +1459,162 @@
   <div class="panel-strip" id="panelStrip"></div>
   <button class="panel-close" type="button" onclick="closePanel()">&#x2715;</button>
   <div class="panel-body-wrap">
-    <div class="panel-props" id="panelProps"></div>
-    <hr class="panel-divider" id="imageDivider">
-    <div class="panel-image-wrap" id="pImageWrap">
-      <div class="panel-section-label">Image</div>
-      <img id="pImage" alt="">
-      <div class="panel-image-empty" id="pImageEmpty">No image on this card yet</div>
-    </div>
-    <hr class="panel-divider">
-    <div class="panel-section-label">Description</div>
-    <div class="fmt-bar" id="descFmtBar">
-      <button type="button" class="fmt-btn" title="Bold" onclick="fmtField('pDesc','bold')"><b>B</b></button>
-      <button type="button" class="fmt-btn" title="Italic" onclick="fmtField('pDesc','italic')"><i>I</i></button>
-      <button type="button" class="fmt-btn" title="Underline" onclick="fmtField('pDesc','underline')"><u>U</u></button>
-      <button type="button" class="fmt-btn" title="Bulleted list" onclick="fmtField('pDesc','insertUnorderedList')">&#8226;</button>
-      <button type="button" class="fmt-btn wide" title="Clear formatting" onclick="fmtField('pDesc','removeFormat')">Clear</button>
-    </div>
-    <div class="panel-desc" id="pDesc" contenteditable="true" placeholder="Add a description…"></div>
-    <div id="prepExtraFields" style="display:none">
-      <hr class="panel-divider">
-      <div class="panel-section-label">Production plan</div>
-      <div class="fmt-bar">
-        <button type="button" class="fmt-btn" title="Bold" onclick="fmtField('pPlan','bold')"><b>B</b></button>
-        <button type="button" class="fmt-btn" title="Italic" onclick="fmtField('pPlan','italic')"><i>I</i></button>
-        <button type="button" class="fmt-btn" title="Bulleted list" onclick="fmtField('pPlan','insertUnorderedList')">&#8226;</button>
-        <button type="button" class="fmt-btn wide" title="Clear formatting" onclick="fmtField('pPlan','removeFormat')">Clear</button>
+    <div class="panel-exec-layout" id="panelExecLayout">
+      <div class="panel-image-wrap" id="pImageWrap">
+        <div class="panel-section-label">Image</div>
+        <img id="pImage" alt="">
+        <div class="panel-image-empty" id="pImageEmpty">No image on this card yet</div>
       </div>
-      <div class="panel-desc" id="pPlan" contenteditable="true" placeholder="What needs to happen to produce this…"></div>
-      <hr class="panel-divider">
-      <div class="panel-section-label">Fit note</div>
-      <div class="panel-desc short" id="pFit" contenteditable="true" placeholder="Where this might fit — week type, launch, evergreen…"></div>
+      <div class="panel-fields">
+        <div class="panel-props" id="panelProps"></div>
+        <hr class="panel-divider" id="imageDivider">
+        <div class="panel-section-label" id="descSectionLabel">Idea</div>
+        <div class="fmt-bar" id="descFmtBar">
+          <button type="button" class="fmt-btn" title="Bold" onclick="fmtField('pDesc','bold')"><b>B</b></button>
+          <button type="button" class="fmt-btn" title="Italic" onclick="fmtField('pDesc','italic')"><i>I</i></button>
+          <button type="button" class="fmt-btn" title="Underline" onclick="fmtField('pDesc','underline')"><u>U</u></button>
+          <button type="button" class="fmt-btn" title="Bulleted list" onclick="fmtField('pDesc','insertUnorderedList')">&#8226;</button>
+          <button type="button" class="fmt-btn wide" title="Clear formatting" onclick="fmtField('pDesc','removeFormat')">Clear</button>
+        </div>
+        <div class="panel-desc short" id="pDesc" contenteditable="true" placeholder="Add an idea…"></div>
+        <div id="prepExtraFields" style="display:none">
+          <hr class="panel-divider">
+          <div class="panel-section-label">Production plan</div>
+          <div class="panel-field-hint" id="pPlanHint" style="display:none">Add a short production plan before sending to Execution.</div>
+          <div class="fmt-bar">
+            <button type="button" class="fmt-btn" title="Bold" onclick="fmtField('pPlan','bold')"><b>B</b></button>
+            <button type="button" class="fmt-btn" title="Italic" onclick="fmtField('pPlan','italic')"><i>I</i></button>
+            <button type="button" class="fmt-btn" title="Bulleted list" onclick="fmtField('pPlan','insertUnorderedList')">&#8226;</button>
+            <button type="button" class="fmt-btn wide" title="Clear formatting" onclick="fmtField('pPlan','removeFormat')">Clear</button>
+          </div>
+          <div class="panel-desc" id="pPlan" contenteditable="true" placeholder="What needs to happen to produce this…"></div>
+        </div>
+        <div id="execExtraFields" style="display:none">
+          <hr class="panel-divider">
+          <div class="panel-section-label">Production plan</div>
+          <div class="fmt-bar">
+            <button type="button" class="fmt-btn" title="Bold" onclick="fmtField('pExecPlan','bold')"><b>B</b></button>
+            <button type="button" class="fmt-btn" title="Italic" onclick="fmtField('pExecPlan','italic')"><i>I</i></button>
+            <button type="button" class="fmt-btn" title="Bulleted list" onclick="fmtField('pExecPlan','insertUnorderedList')">&#8226;</button>
+            <button type="button" class="fmt-btn wide" title="Clear formatting" onclick="fmtField('pExecPlan','removeFormat')">Clear</button>
+          </div>
+          <div class="panel-desc" id="pExecPlan" contenteditable="true" placeholder="What needs to happen to produce this…"></div>
+          <hr class="panel-divider">
+          <div class="panel-section-label">Products used</div>
+          <div class="panel-desc short" id="pProducts" contenteditable="true" placeholder="Garments, SKUs, props…"></div>
+          <hr class="panel-divider">
+          <div class="panel-section-label">Location</div>
+          <div class="panel-desc short" id="pLocation" contenteditable="true" placeholder="Where this is shot or set…"></div>
+          <hr class="panel-divider">
+          <div class="panel-section-label">Requirements</div>
+          <div class="panel-desc short" id="pRequirements" contenteditable="true" placeholder="Talent, kit, access, approvals…"></div>
+          <hr class="panel-divider">
+          <div class="panel-section-label">Date / time</div>
+          <input class="prop-select" id="pDateTime" type="datetime-local" style="margin-top:2px">
+        </div>
+        <div id="reviewExtraFields" style="display:none">
+          <div class="review-inspo" id="pReviewInspo">
+            <div class="review-inspo-thumb" id="pReviewInspoThumb"></div>
+            <div class="review-inspo-meta">
+              <strong>Inspiration</strong>
+              <div id="pReviewInspoText"></div>
+            </div>
+          </div>
+          <button type="button" class="review-context-toggle" id="reviewContextToggle">
+            <span>Plan &amp; execution details</span>
+            <span id="reviewContextChev">▸</span>
+          </button>
+          <div class="review-context" id="reviewContext"></div>
+          <hr class="panel-divider">
+          <div class="panel-section-label">Shot / edited content</div>
+          <div class="panel-field-hint">Drop or paste an image (or video poster). Add a Drive link below for the video file.</div>
+          <div class="review-media-well" id="pReviewMediaWell" tabindex="0">
+            <div class="placeholder" id="pReviewMediaEmpty">Drop or paste shot / edited content…</div>
+            <img id="pReviewMediaImg" alt="" style="display:none">
+            <button type="button" class="review-media-clear" id="pReviewMediaClear" title="Remove media">×</button>
+          </div>
+          <div class="panel-section-label">Video link</div>
+          <div class="review-video-link">
+            <input class="prop-select" id="pReviewVideoUrl" type="url" placeholder="https://drive.google.com/…">
+            <a class="review-video-open is-disabled" id="pReviewVideoOpen" href="#" target="_blank" rel="noopener noreferrer">Open</a>
+          </div>
+          <hr class="panel-divider">
+          <div class="panel-section-label">Content outcome</div>
+          <div class="fmt-bar">
+            <button type="button" class="fmt-btn" title="Bold" onclick="fmtField('pOutcome','bold')"><b>B</b></button>
+            <button type="button" class="fmt-btn" title="Italic" onclick="fmtField('pOutcome','italic')"><i>I</i></button>
+            <button type="button" class="fmt-btn" title="Bulleted list" onclick="fmtField('pOutcome','insertUnorderedList')">&#8226;</button>
+            <button type="button" class="fmt-btn wide" title="Clear formatting" onclick="fmtField('pOutcome','removeFormat')">Clear</button>
+          </div>
+          <div class="panel-desc" id="pOutcome" contenteditable="true" placeholder="What landed — strengths, audience fit…"></div>
+          <hr class="panel-divider">
+          <div class="panel-section-label">Tweaks to make</div>
+          <div class="fmt-bar">
+            <button type="button" class="fmt-btn" title="Bold" onclick="fmtField('pTweaks','bold')"><b>B</b></button>
+            <button type="button" class="fmt-btn" title="Italic" onclick="fmtField('pTweaks','italic')"><i>I</i></button>
+            <button type="button" class="fmt-btn" title="Bulleted list" onclick="fmtField('pTweaks','insertUnorderedList')">&#8226;</button>
+            <button type="button" class="fmt-btn wide" title="Clear formatting" onclick="fmtField('pTweaks','removeFormat')">Clear</button>
+          </div>
+          <div class="panel-desc" id="pTweaks" contenteditable="true" placeholder="Edits, crop, caption, colour grade…"></div>
+          <hr class="panel-divider">
+          <div class="panel-section-label">Ready to schedule</div>
+          <div class="panel-field-hint">Pick the publish date. Content type uses Pillar + Format above.</div>
+          <input class="prop-select" id="pScheduleAt" type="datetime-local" style="margin-top:2px">
+        </div>
+        <div id="scheduleExtraFields" style="display:none">
+          <div class="review-inspo" id="pScheduleInspo">
+            <div class="review-inspo-thumb" id="pScheduleThumb"></div>
+            <div class="review-inspo-meta">
+              <strong>Scheduled content</strong>
+              <div id="pScheduleIdeaText"></div>
+            </div>
+          </div>
+          <hr class="panel-divider">
+          <div class="panel-section-label">Publish date</div>
+          <input class="prop-select" id="pScheduleEditAt" type="datetime-local" style="margin-top:2px">
+          <hr class="panel-divider">
+          <div class="panel-section-label">Content layer</div>
+          <select class="prop-select" id="pScheduleLayer">
+            <option value="">— None —</option>
+            <option value="acquisition">Acquisition</option>
+            <option value="identity">Identity</option>
+            <option value="conversion">Conversion</option>
+          </select>
+          <div class="panel-section-label" style="margin-top:12px">Campaign anchor</div>
+          <select class="prop-select" id="pScheduleAnchor">
+            <option value="">— None —</option>
+          </select>
+          <hr class="panel-divider">
+          <div class="panel-section-label">Content outcome</div>
+          <div class="panel-desc short" id="pScheduleOutcome" contenteditable="true" placeholder="Outcome notes…"></div>
+          <div class="panel-section-label" style="margin-top:14px">Video link</div>
+          <div class="review-video-link">
+            <input class="prop-select" id="pScheduleVideoUrl" type="url" placeholder="https://drive.google.com/…">
+            <a class="review-video-open is-disabled" id="pScheduleVideoOpen" href="#" target="_blank" rel="noopener noreferrer">Open</a>
+          </div>
+        </div>
+        <div class="panel-actions-row" id="panelActions"></div>
+        <div class="panel-save-row">
+          <button type="button" class="btn-cancel" onclick="closePanel()">Close</button>
+          <button type="button" class="btn-save" id="panelSaveBtn" onclick="savePanel()">Save changes</button>
+        </div>
+        <div class="panel-apply-hint" id="panelApplyHint">Ctrl+Enter to apply · click outside to close</div>
+      </div>
     </div>
-    <div class="panel-actions-row" id="panelActions"></div>
-    <div class="panel-save-row">
-      <button type="button" class="btn-cancel" onclick="closePanel()">Cancel</button>
-      <button type="button" class="btn-save" id="panelSaveBtn" onclick="savePanel()">Save changes</button>
-    </div>
+  </div>
+</div>
+
+<div class="cal-anchor-overlay" id="anchorOverlay" onclick="closeAnchorPanel()"></div>
+<div class="cal-anchor-panel" id="anchorPanel">
+  <button type="button" class="cal-anchor-close" onclick="closeAnchorPanel()" aria-label="Close">&#x2715;</button>
+  <h2 id="anchorPanelTitle"></h2>
+  <div class="cal-anchor-type" id="anchorPanelType"></div>
+  <div class="cal-anchor-dates" id="anchorPanelDates"></div>
+  <div class="panel-section-label">Notes</div>
+  <textarea class="prop-select" id="anchorPanelNotes" rows="5" style="resize:vertical;min-height:100px;font-family:inherit"></textarea>
+  <div class="panel-save-row" style="margin-top:16px">
+    <button type="button" class="btn-cancel" onclick="closeAnchorPanel()">Close</button>
+    <button type="button" class="btn-save" onclick="saveAnchorPanel()">Save notes</button>
   </div>
 </div>
 
@@ -775,11 +1622,40 @@
   <div class="ctx-item" data-action="add-card">Add card</div>
 </div>
 
+<script src="/js/ppc-select.js"></script>
+<script src="/js/ppc-homebase.js"></script>
 <script>
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = 'https://ppc-planner.pressplaycollective.workers.dev/api/marketing';
-const APP_VERSION = '0.4.2';
+const APP_VERSION = '0.9.1';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
+
+const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'];
+const DOW_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+const DEFAULT_CADENCE = { gridPostsPerWeek: 2, storiesDaysPerWeek: 2, reelsPerWeek: 0 };
+
+const DEFAULT_ANCHORS = [
+  {
+    id: 'anchor-ode',
+    title: 'Ode to Sirens pop-up',
+    type: 'event',
+    startDate: '2026-09-04',
+    endDate: '2026-09-04',
+    eventNightDate: null,
+    notes: 'Pop-up at the bar. Five-week lead-up from late July — signal, tease, details, countdown.'
+  },
+  {
+    id: 'anchor-fdw',
+    title: '008 Explorations in Denim @ FDW',
+    type: 'release',
+    startDate: '2026-10-22',
+    endDate: '2026-10-25',
+    eventNightDate: '2026-10-24',
+    notes: 'Fremantle Design Week pop-up (22–25 Oct). Collection launch. Event night 24 Oct.'
+  }
+];
 
 // Marketing stream colours (= pillars). Not Task Board cats.
 const CATS = [
@@ -805,9 +1681,28 @@ const FORMATS = {
     { id: 'pinterest',  label: 'Pinterest' },
     { id: 'tiktok',     label: 'TikTok' }
   ],
-  email:   [{ id: 'email',    label: 'Campaign' }],
-  ads:     [{ id: 'meta-ad',  label: 'Meta Ad' }],
-  website: [{ id: 'website',  label: 'Page / update' }]
+  email: [
+    { id: 'campaign',    label: 'Campaign' },
+    { id: 'flow',        label: 'Flow' },
+    { id: 'automation',  label: 'Automation' },
+    { id: 'newsletter',  label: 'Newsletter' }
+  ],
+  ads: [
+    { id: 'campaign', label: 'Campaign' },
+    { id: 'ad-set',   label: 'Ad sets' },
+    { id: 'ad',       label: 'Ads' }
+  ],
+  website: [
+    { id: 'design',  label: 'Design' },
+    { id: 'blog',    label: 'Blog' },
+    { id: 'feature', label: 'Features' }
+  ]
+};
+
+const FORMAT_MIGRATE = {
+  email: { email: 'campaign' },
+  ads: { 'meta-ad': 'campaign' },
+  website: { website: 'design' }
 };
 
 function accentTextColor(bg) {
@@ -840,9 +1735,9 @@ function defaultFormatForPillar(pillarId) {
 const SECTIONS = [
   { id: 'ideas', name: 'Content Ideas', swatch: '#564A5E', built: true },
   { id: 'preparation', name: 'Content Preparation', swatch: '#4E6E6C', built: true },
-  { id: 'execution', name: 'Content Execution', swatch: '#C29A3B', built: false },
-  { id: 'review', name: 'Content Review', swatch: '#6B7A8D', built: false },
-  { id: 'schedule', name: 'Content Schedule', swatch: '#344364', built: false }
+  { id: 'execution', name: 'Content Execution', swatch: '#C29A3B', built: true },
+  { id: 'review', name: 'Content Review', swatch: '#6B7A8D', built: true },
+  { id: 'schedule', name: 'Content Calendar', swatch: '#344364', built: true }
 ];
 
 const SAMPLE_IDEAS = [
@@ -885,7 +1780,7 @@ const SAMPLE_PREP = [
     pillar: 'organic',
     format: 'ig-reel',
     productionPlan: 'Shoot 15–20s clips on iPhone landscape. Cut to Mutimer-style captions.',
-    fitNote: 'Brand Identity week — craft authority',
+    placementNote: 'Brand Identity week — craft authority',
     createdAt: '2026-07-28T00:00:00.000Z',
     movedAt: '2026-07-28T00:00:00.000Z'
   },
@@ -897,7 +1792,7 @@ const SAMPLE_PREP = [
     pillar: 'organic',
     format: 'ig-post',
     productionPlan: 'Select 5 stills. Write slide captions. Export square crop.',
-    fitNote: 'Evergreen identity content',
+    placementNote: 'Evergreen identity content',
     createdAt: '2026-07-28T00:00:00.000Z',
     movedAt: '2026-07-28T00:00:00.000Z'
   },
@@ -909,22 +1804,36 @@ const SAMPLE_PREP = [
     pillar: 'organic',
     format: 'ig-story',
     productionPlan: 'Quick vertical clips + sticker CTAs.',
-    fitNote: 'Release week — conversion layer',
+    placementNote: 'Release week — conversion layer',
     createdAt: '2026-07-28T00:00:00.000Z',
     movedAt: '2026-07-28T00:00:00.000Z'
   }
 ];
 
-let DATA = { ideas: [], sections: { preparation: [], execution: [], review: [], schedule: [] } };
+let DATA = { ideas: [], sections: { preparation: [], execution: [], review: [], schedule: [] }, anchors: [], cadence: { ...DEFAULT_CADENCE } };
 const expandedSections = new Set(['ideas', 'preparation']);
 const expandedPillars = new Set(PILLARS.filter(p => p.defaultOpen).map(p => p.id));
 let saveTimer = null;
+let scheduleViewYear = new Date().getFullYear();
+let scheduleViewMonth = new Date().getMonth();
+let unscheduledQueueOpen = true;
+let activeAnchorPanelId = null;
 let focusedWellId = null;
+let focusedReviewMedia = false;
 let activeIdeaId = null;
 let activePrepId = null;
-let panelMode = null; // 'idea' | 'prep'
+let activeExecId = null;
+let activeReviewId = null;
+let activeScheduleId = null;
+let panelMode = null; // 'idea' | 'prep' | 'exec' | 'review' | 'schedule'
 let prepareExpanded = false;
+let executeArmed = false;
+let reviewArmed = false;
+let scheduleArmed = false;
+let reviewContextOpen = false;
+let pendingReviewMedia = null; // { imageData, imageW, imageH } while panel open
 let dragPrepId = null;
+let ideaTopZ = 10;
 let canvasZoom = 0.85;
 let canvasPanX = 20;
 let canvasPanY = 20;
@@ -933,8 +1842,8 @@ let ctxCanvasY = null;
 let moodViewportEl = null;
 let moodCanvasEl = null;
 
-const CANVAS_W = 2200;
-const CANVAS_H = 1500;
+const CANVAS_W = 8000;
+const CANVAS_H = 5600;
 const IMAGE_MAX_EDGE = 1200;
 
 function migrateIdea(idea) {
@@ -948,38 +1857,132 @@ function migrateIdea(idea) {
 
 function migratePrep(card) {
   if (!card.pillar || !pillarById(card.pillar)) card.pillar = 'organic';
+  const map = FORMAT_MIGRATE[card.pillar] || {};
+  if (card.format && map[card.format]) card.format = map[card.format];
   const formats = formatsForPillar(card.pillar);
   if (!card.format || !formats.some(f => f.id === card.format)) {
     card.format = defaultFormatForPillar(card.pillar);
   }
   if (card.productionPlan == null) card.productionPlan = '';
-  if (card.fitNote == null) card.fitNote = '';
+  // Placement note parked for calendar stage — keep data if present, no UI.
+  if (card.placementNote == null && card.fitNote != null) {
+    card.placementNote = card.fitNote;
+  }
+  delete card.fitNote;
   return card;
+}
+
+function migrateExec(card) {
+  migratePrep(card);
+  // Fold legacy Execution notes into Production plan once (then drop the field).
+  if (card.executionNotes && !stripHtml(card.productionPlan || '')) {
+    card.productionPlan = card.executionNotes;
+  }
+  delete card.executionNotes;
+  if (card.productsUsed == null) card.productsUsed = '';
+  if (card.location == null) card.location = '';
+  if (card.requirements == null) card.requirements = '';
+  if (card.dateTime == null) card.dateTime = '';
+  return card;
+}
+
+function migrateReview(card) {
+  migrateExec(card);
+  if (card.reviewMedia == null) card.reviewMedia = null;
+  if (card.reviewVideoUrl == null) card.reviewVideoUrl = '';
+  if (card.contentOutcome == null) card.contentOutcome = '';
+  if (card.tweaks == null) card.tweaks = '';
+  if (card.scheduleAt == null) card.scheduleAt = '';
+  return card;
+}
+
+function migrateSchedule(card) {
+  migrateReview(card);
+  if (card.scheduledAt == null) {
+    card.scheduledAt = card.scheduleAt || '';
+  }
+  if (card.contentLayer == null) card.contentLayer = '';
+  if (card.anchorId == null) card.anchorId = '';
+  return card;
+}
+
+function migrateAnchor(anchor) {
+  if (!anchor || !anchor.id) return null;
+  return {
+    id: anchor.id,
+    title: anchor.title || 'Untitled',
+    type: anchor.type === 'release' ? 'release' : 'event',
+    startDate: anchor.startDate || '',
+    endDate: anchor.endDate || anchor.startDate || '',
+    eventNightDate: anchor.eventNightDate || null,
+    notes: anchor.notes || ''
+  };
+}
+
+function anchors() {
+  if (!Array.isArray(DATA.anchors)) DATA.anchors = [];
+  return DATA.anchors;
+}
+
+function cadenceSettings() {
+  if (!DATA.cadence) DATA.cadence = { ...DEFAULT_CADENCE };
+  const c = DATA.cadence;
+  if (c.gridPostsPerWeek == null) {
+    const legacy = (c.reelsPerWeek || 0) + (c.carouselsPerWeek || 0);
+    c.gridPostsPerWeek = legacy || DEFAULT_CADENCE.gridPostsPerWeek;
+  }
+  if (c.storiesDaysPerWeek == null) c.storiesDaysPerWeek = DEFAULT_CADENCE.storiesDaysPerWeek;
+  if (c.reelsPerWeek == null) c.reelsPerWeek = DEFAULT_CADENCE.reelsPerWeek;
+  return c;
+}
+
+function seedAnchorsIfEmpty() {
+  if (!anchors().length) {
+    DATA.anchors = DEFAULT_ANCHORS.map(a => ({ ...a }));
+  }
 }
 
 function ideaCardSize(count) {
   return Math.round(Math.max(96, Math.min(200, 228 - count * 11)));
 }
 
-function ideasOverlap(ax, ay, asize, bx, by, bsize) {
-  const pad = 12;
-  return ax < bx + bsize + pad && ax + asize + pad > bx && ay < by + bsize + pad && ay + asize + pad > by;
+function ideaCardHeight(idea, cardSize) {
+  const pad = 16;
+  const previewH = 58;
+  let imgH = Math.round(cardSize * 0.42);
+  if (idea && idea.imageW && idea.imageH) {
+    const innerW = Math.max(64, cardSize - 14);
+    imgH = Math.round((idea.imageH / idea.imageW) * innerW);
+    imgH = Math.max(56, Math.min(imgH, Math.round(cardSize * 2.4)));
+  } else if (idea && idea.imageData) {
+    imgH = Math.round(cardSize * 0.55);
+  }
+  return pad + imgH + previewH;
+}
+
+function ideasOverlap(ax, ay, aw, ah, bx, by, bw, bh) {
+  const pad = 6;
+  return ax < bx + bw + pad && ax + aw + pad > bx && ay < by + bh + pad && ay + ah + pad > by;
 }
 
 function scatterPosition(cardSize) {
   const placed = DATA.ideas.filter(i => i.x != null && i.y != null);
+  const selfH = ideaCardHeight(null, cardSize);
   for (let n = 0; n < 50; n++) {
     const x = 32 + Math.random() * (CANVAS_W - cardSize - 64);
     const y = 32 + Math.random() * (CANVAS_H - cardSize - 100);
-    const clash = placed.some(p => ideasOverlap(x, y, cardSize, p.x, p.y, ideaCardSize(DATA.ideas.length)));
+    const clash = placed.some(p => {
+      const ph = ideaCardHeight(p, ideaCardSize(DATA.ideas.length));
+      return ideasOverlap(x, y, cardSize, selfH, p.x, p.y, cardSize, ph);
+    });
     if (!clash) {
       return { x: Math.round(x), y: Math.round(y) };
     }
   }
   const i = placed.length;
   return {
-    x: 60 + (i % 7) * (cardSize * 0.55) + Math.random() * 40,
-    y: 60 + Math.floor(i / 7) * (cardSize * 0.65) + Math.random() * 30
+    x: 60 + (i % 7) * (cardSize * 0.55),
+    y: 60 + Math.floor(i / 7) * (cardSize * 0.9)
   };
 }
 
@@ -991,7 +1994,8 @@ function placeNearMostRecent(cardSize) {
   const anchorX = last.x;
   const anchorY = last.y;
   const stepBase = cardSize * 0.22;
-  const golden = Math.PI * (3 - Math.sqrt(5)); // golden angle spiral
+  const golden = Math.PI * (3 - Math.sqrt(5));
+  const selfH = ideaCardHeight(null, cardSize);
 
   for (let i = 0; i < 40; i++) {
     const r = stepBase * Math.sqrt(i + 1);
@@ -1001,14 +2005,16 @@ function placeNearMostRecent(cardSize) {
     const cx = Math.max(0, Math.min(CANVAS_W - cardSize, x));
     const cy = Math.max(0, Math.min(CANVAS_H - cardSize, y));
 
-    const clash = placed.some(p => ideasOverlap(cx, cy, cardSize, p.x, p.y, cardSize));
+    const clash = placed.some(p => {
+      const ph = ideaCardHeight(p, cardSize);
+      return ideasOverlap(cx, cy, cardSize, selfH, p.x, p.y, cardSize, ph);
+    });
     if (!clash) return { x: cx, y: cy };
   }
 
-  // Fallback: place slightly to the right of the last card.
   return {
     x: Math.max(0, Math.min(CANVAS_W - cardSize, Math.round(anchorX + cardSize * 0.35))),
-    y: Math.max(0, Math.min(CANVAS_H - cardSize, Math.round(anchorY + cardSize * 0.08)))
+    y: Math.max(0, Math.min(CANVAS_H - cardSize, Math.round(anchorY + ideaCardHeight(last, cardSize) + 8)))
   };
 }
 
@@ -1017,7 +2023,7 @@ function ensureIdeaPositions() {
   let changed = false;
   DATA.ideas.forEach(idea => {
     if (idea.x == null || idea.y == null) {
-      const pos = scatterPosition(size);
+      const pos = placeNearMostRecent(size);
       idea.x = pos.x;
       idea.y = pos.y;
       changed = true;
@@ -1027,22 +2033,26 @@ function ensureIdeaPositions() {
   return changed;
 }
 
-/** Pack ideas into a compact grid so deleted/shrunk cards don't leave huge gaps. */
+/** Pack ideas into columns using real card heights so portrait thumbs don't overlap. */
 function restackIdeas() {
   const n = DATA.ideas.length;
   if (!n) return false;
   const size = ideaCardSize(n);
-  const gap = Math.max(10, Math.round(size * 0.1));
-  const packWidth = Math.min(CANVAS_W - 80, 1080);
-  const cols = Math.max(1, Math.floor(packWidth / (size + gap)));
-  DATA.ideas.forEach((idea, i) => {
-    const col = i % cols;
-    const row = Math.floor(i / cols);
-    // Light jitter so it still feels like a mood board, not a spreadsheet.
-    const jx = ((i * 17) % 7) - 3;
-    const jy = ((i * 13) % 7) - 3;
-    idea.x = Math.max(0, Math.min(CANVAS_W - size, 36 + col * (size + gap) + jx));
-    idea.y = Math.max(0, Math.min(CANVAS_H - size, 36 + row * (size + gap) + jy));
+  const gap = 8;
+  const packWidth = Math.min(CANVAS_W - 80, 1100);
+  const cols = Math.max(1, Math.floor((packWidth + gap) / (size + gap)));
+  const colHeights = Array.from({ length: cols }, () => 36);
+  const startX = 36;
+
+  DATA.ideas.forEach(idea => {
+    let col = 0;
+    for (let c = 1; c < cols; c++) {
+      if (colHeights[c] < colHeights[col]) col = c;
+    }
+    const h = ideaCardHeight(idea, size);
+    idea.x = Math.round(startX + col * (size + gap));
+    idea.y = Math.round(colHeights[col]);
+    colHeights[col] += h + gap;
   });
   return true;
 }
@@ -1052,17 +2062,21 @@ function ideasAreSparse() {
   if (n < 3) return false;
   const size = ideaCardSize(n);
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  let packedH = 0;
   DATA.ideas.forEach(idea => {
     const x = idea.x || 0, y = idea.y || 0;
+    const h = ideaCardHeight(idea, size);
     minX = Math.min(minX, x);
     minY = Math.min(minY, y);
     maxX = Math.max(maxX, x + size);
-    maxY = Math.max(maxY, y + size);
+    maxY = Math.max(maxY, y + h);
+    packedH += h;
   });
   const spanArea = Math.max(1, (maxX - minX) * (maxY - minY));
-  const gap = Math.max(10, Math.round(size * 0.1));
+  const gap = 8;
   const cols = Math.max(1, Math.ceil(Math.sqrt(n)));
-  const packedArea = cols * (size + gap) * Math.ceil(n / cols) * (size + gap);
+  const avgH = packedH / n;
+  const packedArea = cols * (size + gap) * (avgH + gap) * Math.ceil(n / cols);
   return spanArea > packedArea * 2.6;
 }
 
@@ -1158,7 +2172,9 @@ function defaultData() {
       execution: [],
       review: [],
       schedule: []
-    }
+    },
+    anchors: DEFAULT_ANCHORS.map(a => ({ ...a })),
+    cadence: { ...DEFAULT_CADENCE }
   };
 }
 
@@ -1176,6 +2192,24 @@ function prepCards() {
   return DATA.sections.preparation;
 }
 
+function execCards() {
+  if (!DATA.sections) DATA.sections = { preparation: [], execution: [], review: [], schedule: [] };
+  if (!Array.isArray(DATA.sections.execution)) DATA.sections.execution = [];
+  return DATA.sections.execution;
+}
+
+function reviewCards() {
+  if (!DATA.sections) DATA.sections = { preparation: [], execution: [], review: [], schedule: [] };
+  if (!Array.isArray(DATA.sections.review)) DATA.sections.review = [];
+  return DATA.sections.review;
+}
+
+function scheduleCards() {
+  if (!DATA.sections) DATA.sections = { preparation: [], execution: [], review: [], schedule: [] };
+  if (!Array.isArray(DATA.sections.schedule)) DATA.sections.schedule = [];
+  return DATA.sections.schedule;
+}
+
 function typeLabel(id) {
   const c = catById(id);
   return c ? c.label : id;
@@ -1191,10 +2225,12 @@ function saveData() {
     ideas: DATA.ideas.map(i => ({ ...i })),
     sections: {
       preparation: prepCards().map(c => ({ ...c })),
-      execution: (DATA.sections.execution || []).slice(),
-      review: (DATA.sections.review || []).slice(),
-      schedule: (DATA.sections.schedule || []).slice()
-    }
+      execution: execCards().map(c => ({ ...c })),
+      review: reviewCards().map(c => ({ ...c })),
+      schedule: scheduleCards().map(c => ({ ...c }))
+    },
+    anchors: anchors().map(a => ({ ...a })),
+    cadence: { ...cadenceSettings() }
   };
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); } catch (e) {}
   fetch(SYNC_URL, {
@@ -1207,18 +2243,24 @@ function saveData() {
 function normalizeLoaded(data) {
   const sections = data.sections || { preparation: [], execution: [], review: [], schedule: [] };
   let preparation = Array.isArray(sections.preparation) ? sections.preparation.map(migratePrep) : [];
-  // Seed sample prep only when cloud/local has ideas but empty preparation (first upgrade).
-  if (!preparation.length && Array.isArray(data.ideas) && data.ideas.length) {
-    // Don't auto-seed samples over existing user ideas — only when defaulting fresh.
+  let execution = Array.isArray(sections.execution) ? sections.execution.map(migrateExec) : [];
+  let review = Array.isArray(sections.review) ? sections.review.map(migrateReview) : [];
+  let schedule = Array.isArray(sections.schedule) ? sections.schedule.map(migrateSchedule) : [];
+  let loadedAnchors = Array.isArray(data.anchors) ? data.anchors.map(migrateAnchor).filter(Boolean) : [];
+  const cadence = data.cadence && typeof data.cadence === 'object'
+    ? { ...DEFAULT_CADENCE, ...data.cadence }
+    : { ...DEFAULT_CADENCE };
+  if (cadence.gridPostsPerWeek == null) {
+    const legacy = (cadence.reelsPerWeek || 0) + (cadence.carouselsPerWeek || 0);
+    cadence.gridPostsPerWeek = legacy || DEFAULT_CADENCE.gridPostsPerWeek;
   }
+  if (cadence.storiesDaysPerWeek == null) cadence.storiesDaysPerWeek = DEFAULT_CADENCE.storiesDaysPerWeek;
+  if (cadence.reelsPerWeek == null) cadence.reelsPerWeek = DEFAULT_CADENCE.reelsPerWeek;
   return {
     ideas: (data.ideas || []).map(migrateIdea),
-    sections: {
-      preparation,
-      execution: sections.execution || [],
-      review: sections.review || [],
-      schedule: sections.schedule || []
-    }
+    sections: { preparation, execution, review, schedule },
+    anchors: loadedAnchors,
+    cadence
   };
 }
 
@@ -1283,6 +2325,9 @@ async function initApp() {
 
   if (ensureIdeaPositions()) scheduleSave();
   if (restackIdeasIfNeeded(false)) scheduleSave();
+  const hadAnchors = anchors().length;
+  seedAnchorsIfEmpty();
+  if (!hadAnchors && anchors().length) scheduleSave();
   renderBoard();
 }
 
@@ -1293,6 +2338,7 @@ async function refreshData() {
       const remote = await res.json();
       if (remote && Array.isArray(remote.ideas)) {
         DATA = normalizeLoaded(remote);
+        seedAnchorsIfEmpty();
         renderBoard();
       }
     }
@@ -1325,9 +2371,21 @@ function addIdea(atX, atY) {
   focusWell(id);
 }
 
-function removeIdea(id) {
+async function removeIdea(id) {
+  const idea = DATA.ideas.find(i => i.id === id);
+  if (idea) {
+    try {
+      await PPC.archivePush({
+        source: 'marketing',
+        item: JSON.parse(JSON.stringify(idea)),
+        restoreMeta: { kind: 'idea' },
+        label: stripHtml(idea.body || '') || 'Idea'
+      });
+    } catch (_) {}
+  }
   DATA.ideas = DATA.ideas.filter(i => i.id !== id);
-  restackIdeasIfNeeded(true);
+  restackIdeas();
+  lastIdeaCardSize = ideaCardSize(DATA.ideas.length);
   scheduleSave();
   renderBoard();
 }
@@ -1454,7 +2512,6 @@ function renderIdeaCard(idea, cardSize) {
   well.className = 'image-well' + (idea.imageData ? ' has-image' : '');
   well.dataset.ideaId = idea.id;
   well.tabIndex = 0;
-  well.title = 'Click to paste · Ctrl+V / Cmd+V · or drop image';
 
   if (idea.imageData) {
     // Resize the thumbnail container to the image's aspect ratio so we don't
@@ -1462,27 +2519,24 @@ function renderIdeaCard(idea, cardSize) {
     if (idea.imageW && idea.imageH) {
       const innerW = Math.max(64, cardSize - 14); // approximate padding/border
       let desiredH = Math.round((idea.imageH / idea.imageW) * innerW);
-      // Allow taller portrait thumbnails. Too-low caps reintroduce side whitespace
-      // when using `object-fit: contain`.
-      desiredH = Math.max(56, Math.min(desiredH, Math.round(cardSize * 1.35)));
+      // Tall portraits: keep aspect-true height; soft cap only to avoid huge cards.
+      desiredH = Math.max(56, Math.min(desiredH, Math.round(cardSize * 2.4)));
       well.style.height = desiredH + 'px';
     }
     const img = document.createElement('img');
     img.src = idea.imageData;
     img.alt = '';
+    img.draggable = false;
+    img.addEventListener('dragstart', e => e.preventDefault());
     well.appendChild(img);
   } else {
     const ph = document.createElement('div');
     ph.className = 'placeholder';
-    ph.innerHTML = 'Click to paste<br>Ctrl+V / Cmd+V<br>or drop image';
+    ph.innerHTML = 'Click to open<br>or drop image';
     well.appendChild(ph);
   }
 
-  well.addEventListener('click', e => {
-    e.stopPropagation();
-    focusWell(idea.id);
-  });
-
+  well.title = 'Click to open · drag to move · drop image to replace';
   setupDropZone(well, file => applyImageToIdea(idea.id, file));
   card.appendChild(well);
 
@@ -1500,7 +2554,7 @@ function renderIdeaCard(idea, cardSize) {
   const descPreview = document.createElement('div');
   const plain = stripHtml(idea.body || '');
   descPreview.className = 'card-desc-preview' + (plain ? '' : ' empty');
-  descPreview.textContent = plain || 'No description yet';
+  descPreview.textContent = plain || 'No idea yet';
   preview.appendChild(descPreview);
 
   const details = document.createElement('span');
@@ -1510,23 +2564,31 @@ function renderIdeaCard(idea, cardSize) {
 
   card.appendChild(preview);
 
-  let suppressClick = false;
+  let didDrag = false;
   let dragStartX = 0, dragStartY = 0, cardStartX = 0, cardStartY = 0;
+  let fromWell = false;
 
   card.addEventListener('mousedown', e => {
     if (e.button !== 0) return;
-    if (e.target.closest('.image-well') || e.target.closest('.card-delete')) return;
-    suppressClick = false;
+    if (e.target.closest('.card-delete')) return;
+    raiseIdeaCard(card);
+    didDrag = false;
+    fromWell = !!e.target.closest('.image-well');
     dragStartX = e.clientX;
     dragStartY = e.clientY;
-    cardStartX = idea.x;
-    cardStartY = idea.y;
+    cardStartX = idea.x || 0;
+    cardStartY = idea.y || 0;
     card.classList.add('dragging');
+    card.style.zIndex = String(ideaTopZ + 50);
 
     const onMove = ev => {
-      const dx = (ev.clientX - dragStartX) / canvasZoom;
-      const dy = (ev.clientY - dragStartY) / canvasZoom;
-      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) suppressClick = true;
+      const screenDx = ev.clientX - dragStartX;
+      const screenDy = ev.clientY - dragStartY;
+      // Threshold in screen pixels — canvas-space threshold failed when zoomed out.
+      if (!didDrag && Math.abs(screenDx) <= 5 && Math.abs(screenDy) <= 5) return;
+      didDrag = true;
+      const dx = screenDx / canvasZoom;
+      const dy = screenDy / canvasZoom;
       idea.x = Math.round(Math.max(0, Math.min(CANVAS_W - cardSize, cardStartX + dx)));
       idea.y = Math.round(Math.max(0, Math.min(CANVAS_H - cardSize, cardStartY + dy)));
       card.style.left = idea.x + 'px';
@@ -1534,22 +2596,28 @@ function renderIdeaCard(idea, cardSize) {
     };
     const onUp = () => {
       card.classList.remove('dragging');
+      card.style.zIndex = String(ideaTopZ);
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseup', onUp);
-      if (suppressClick) scheduleSave();
+      if (didDrag) {
+        scheduleSave();
+        return;
+      }
+      // Click (no drag): open panel. Image click also arms paste focus.
+      if (fromWell) focusWell(idea.id);
+      openPanel(idea.id);
     };
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
     e.preventDefault();
   });
 
-  card.addEventListener('click', e => {
-    if (e.target.closest('.image-well') || e.target.closest('.card-delete')) return;
-    if (suppressClick) { suppressClick = false; return; }
-    openPanel(idea.id);
-  });
-
   return card;
+}
+
+function raiseIdeaCard(cardEl) {
+  ideaTopZ += 1;
+  cardEl.style.zIndex = String(ideaTopZ);
 }
 
 function renderIdeasBody() {
@@ -1648,9 +2716,75 @@ function applyPrepCardStyle(el, pillarId) {
   }
 }
 
-function removePrepCard(id) {
+async function removePrepCard(id) {
+  const card = prepCards().find(c => c.id === id);
+  if (card) {
+    try {
+      await PPC.archivePush({
+        source: 'marketing',
+        item: JSON.parse(JSON.stringify(card)),
+        restoreMeta: { kind: 'prep', pillar: card.pillar, format: card.format },
+        label: stripHtml(card.body || '') || 'Prep card'
+      });
+    } catch (_) {}
+  }
   DATA.sections.preparation = prepCards().filter(c => c.id !== id);
-  scheduleSave();
+  clearTimeout(saveTimer);
+  saveData();
+  renderBoard();
+}
+
+async function removeExecCard(id) {
+  const card = execCards().find(c => c.id === id);
+  if (card) {
+    try {
+      await PPC.archivePush({
+        source: 'marketing',
+        item: JSON.parse(JSON.stringify(card)),
+        restoreMeta: { kind: 'exec', pillar: card.pillar, format: card.format },
+        label: stripHtml(card.body || '') || 'Execution card'
+      });
+    } catch (_) {}
+  }
+  DATA.sections.execution = execCards().filter(c => c.id !== id);
+  clearTimeout(saveTimer);
+  saveData();
+  renderBoard();
+}
+
+async function removeReviewCard(id) {
+  const card = reviewCards().find(c => c.id === id);
+  if (card) {
+    try {
+      await PPC.archivePush({
+        source: 'marketing',
+        item: JSON.parse(JSON.stringify(card)),
+        restoreMeta: { kind: 'review', pillar: card.pillar, format: card.format },
+        label: stripHtml(card.body || '') || 'Review card'
+      });
+    } catch (_) {}
+  }
+  DATA.sections.review = reviewCards().filter(c => c.id !== id);
+  clearTimeout(saveTimer);
+  saveData();
+  renderBoard();
+}
+
+async function removeScheduleCard(id) {
+  const card = scheduleCards().find(c => c.id === id);
+  if (card) {
+    try {
+      await PPC.archivePush({
+        source: 'marketing',
+        item: JSON.parse(JSON.stringify(card)),
+        restoreMeta: { kind: 'schedule', pillar: card.pillar, format: card.format },
+        label: stripHtml(card.body || '') || 'Scheduled content'
+      });
+    } catch (_) {}
+  }
+  DATA.sections.schedule = scheduleCards().filter(c => c.id !== id);
+  clearTimeout(saveTimer);
+  saveData();
   renderBoard();
 }
 
@@ -1661,6 +2795,79 @@ function movePrepCard(id, pillar, format) {
   card.format = format || defaultFormatForPillar(pillar);
   scheduleSave();
   renderBoard();
+}
+
+function sendPrepToExecution(id) {
+  const card = prepCards().find(c => c.id === id);
+  if (!card) return;
+  if (!stripHtml(card.productionPlan || '')) {
+    if (!confirm('No production plan yet — send anyway?')) return;
+  }
+  DATA.sections.preparation = prepCards().filter(c => c.id !== id);
+  const execCard = {
+    ...card,
+    productsUsed: card.productsUsed || '',
+    location: card.location || '',
+    requirements: card.requirements || '',
+    dateTime: card.dateTime || '',
+    sentAt: new Date().toISOString()
+  };
+  delete execCard.executionNotes;
+  execCards().push(execCard);
+  expandedSections.add('execution');
+  executeArmed = false;
+  closePanel();
+  clearTimeout(saveTimer);
+  saveData();
+  renderBoard();
+  openExecPanel(execCard.id);
+}
+
+function sendExecToReview(id) {
+  const card = execCards().find(c => c.id === id);
+  if (!card) return;
+  DATA.sections.execution = execCards().filter(c => c.id !== id);
+  const reviewCard = migrateReview({
+    ...card,
+    reviewMedia: card.reviewMedia || null,
+    reviewMediaW: card.reviewMediaW,
+    reviewMediaH: card.reviewMediaH,
+    reviewVideoUrl: card.reviewVideoUrl || '',
+    contentOutcome: card.contentOutcome || '',
+    tweaks: card.tweaks || '',
+    scheduleAt: card.scheduleAt || '',
+    reviewedAt: new Date().toISOString()
+  });
+  reviewCards().push(reviewCard);
+  expandedSections.add('review');
+  reviewArmed = false;
+  closePanel();
+  clearTimeout(saveTimer);
+  saveData();
+  renderBoard();
+  openReviewPanel(reviewCard.id);
+}
+
+function sendReviewToSchedule(id) {
+  const card = reviewCards().find(c => c.id === id);
+  if (!card) return;
+  if (!card.scheduleAt) {
+    if (!confirm('No schedule date set — send to Calendar anyway?')) return;
+  }
+  DATA.sections.review = reviewCards().filter(c => c.id !== id);
+  const scheduleCard = migrateSchedule({
+    ...card,
+    scheduledAt: card.scheduleAt || new Date().toISOString(),
+    movedToScheduleAt: new Date().toISOString()
+  });
+  scheduleCards().push(scheduleCard);
+  expandedSections.add('schedule');
+  scheduleArmed = false;
+  closePanel();
+  clearTimeout(saveTimer);
+  saveData();
+  renderBoard();
+  openSchedulePanel(scheduleCard.id);
 }
 
 function duplicatePrepToFormat(id, format) {
@@ -1679,6 +2886,16 @@ function duplicatePrepToFormat(id, format) {
   openPrepPanel(copy.id);
 }
 
+function sizePrepThumb(thumb, card) {
+  if (!card.imageData) return;
+  if (card.imageW && card.imageH) {
+    const innerW = 136;
+    let desiredH = Math.round((card.imageH / card.imageW) * innerW);
+    desiredH = Math.max(56, Math.min(desiredH, 200));
+    thumb.style.height = desiredH + 'px';
+  }
+}
+
 function renderPrepCard(card) {
   const el = document.createElement('div');
   el.className = 'prep-card';
@@ -1686,9 +2903,24 @@ function renderPrepCard(card) {
   el.dataset.prepId = card.id;
   applyPrepCardStyle(el, card.pillar);
 
+  const del = document.createElement('button');
+  del.type = 'button';
+  del.className = 'card-delete';
+  del.textContent = '×';
+  del.title = 'Remove card';
+  del.addEventListener('click', e => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (!confirm('Delete this preparation card?')) return;
+    if (activePrepId === card.id) closePanel();
+    removePrepCard(card.id);
+  });
+  el.appendChild(del);
+
   const thumb = document.createElement('div');
   thumb.className = 'prep-card-thumb' + (card.imageData ? '' : ' empty');
   if (card.imageData) {
+    sizePrepThumb(thumb, card);
     const img = document.createElement('img');
     img.src = card.imageData;
     img.alt = '';
@@ -1706,12 +2938,24 @@ function renderPrepCard(card) {
 
   const meta = document.createElement('div');
   meta.className = 'prep-card-meta';
-  meta.textContent = formatLabel(card.pillar, card.format);
+  const metaLabel = document.createElement('span');
+  metaLabel.textContent = formatLabel(card.pillar, card.format);
   const cat = catById(card.pillar);
   if (cat) meta.style.color = accentTextColor(cat.bg);
+  meta.appendChild(metaLabel);
+  if (stripHtml(card.productionPlan || '')) {
+    const ready = document.createElement('span');
+    ready.className = 'prep-card-ready';
+    ready.textContent = 'Planned';
+    meta.appendChild(ready);
+  }
   el.appendChild(meta);
 
   el.addEventListener('dragstart', e => {
+    if (e.target.closest('.card-delete')) {
+      e.preventDefault();
+      return;
+    }
     dragPrepId = card.id;
     el.classList.add('dragging');
     e.dataTransfer.setData('text/plain', card.id);
@@ -1785,13 +3029,13 @@ function renderPreparationBody() {
     header.className = 'pillar-header';
     header.addEventListener('click', () => togglePillar(pillar.id));
 
-    const swatch = document.createElement('span');
-    swatch.className = 'pillar-swatch';
-    swatch.style.background = cat ? cat.bg : '#ccc';
-
     const title = document.createElement('span');
     title.className = 'pillar-title';
     title.textContent = pillar.label;
+    if (cat) title.style.color = cat.bg;
+
+    const trailing = document.createElement('span');
+    trailing.className = 'pillar-trailing';
 
     const countEl = document.createElement('span');
     countEl.className = 'pillar-count';
@@ -1801,10 +3045,10 @@ function renderPreparationBody() {
     chev.className = 'pillar-chev';
     chev.textContent = open ? '▾' : '▸';
 
-    header.appendChild(swatch);
+    trailing.appendChild(countEl);
+    trailing.appendChild(chev);
     header.appendChild(title);
-    header.appendChild(countEl);
-    header.appendChild(chev);
+    header.appendChild(trailing);
     wrap.appendChild(header);
 
     if (open) {
@@ -1829,7 +3073,613 @@ function renderPreparationBody() {
 function sectionBodyFor(section) {
   if (section.id === 'ideas') return renderIdeasBody();
   if (section.id === 'preparation') return renderPreparationBody();
+  if (section.id === 'execution') return renderExecutionBody();
+  if (section.id === 'review') return renderReviewBody();
+  if (section.id === 'schedule') return renderScheduleBody();
   return renderSkeletonBody();
+}
+
+function renderExecutionBody() {
+  const body = document.createElement('div');
+  body.className = 'section-body';
+
+  const cards = execCards();
+  if (!cards.length) {
+    const empty = document.createElement('div');
+    empty.className = 'exec-empty';
+    empty.textContent = 'No cards in execution yet — send from Preparation when the plan is ready.';
+    body.appendChild(empty);
+    return body;
+  }
+
+  const list = document.createElement('div');
+  list.className = 'exec-list';
+  cards.forEach(card => list.appendChild(renderExecCard(card)));
+  body.appendChild(list);
+  return body;
+}
+
+function cardThumbSrc(card) {
+  return card.reviewMedia || card.imageData || null;
+}
+
+function renderReviewBody() {
+  const body = document.createElement('div');
+  body.className = 'section-body';
+
+  const cards = reviewCards();
+  if (!cards.length) {
+    const empty = document.createElement('div');
+    empty.className = 'exec-empty';
+    empty.textContent = 'No cards in review yet — send from Execution when the shoot is done.';
+    body.appendChild(empty);
+    return body;
+  }
+
+  const list = document.createElement('div');
+  list.className = 'exec-list';
+  cards.forEach(card => list.appendChild(renderReviewCard(card)));
+  body.appendChild(list);
+  return body;
+}
+
+function renderReviewCard(card) {
+  const el = document.createElement('div');
+  el.className = 'exec-card';
+  el.dataset.reviewId = card.id;
+  applyPrepCardStyle(el, card.pillar);
+
+  const thumbSrc = cardThumbSrc(card);
+  const thumb = document.createElement('div');
+  thumb.className = 'exec-card-thumb' + (thumbSrc ? '' : ' empty');
+  if (thumbSrc) {
+    const img = document.createElement('img');
+    img.src = thumbSrc;
+    img.alt = '';
+    thumb.appendChild(img);
+  } else {
+    thumb.textContent = 'No media';
+  }
+  el.appendChild(thumb);
+
+  const body = document.createElement('div');
+  body.className = 'exec-card-body';
+
+  const desc = document.createElement('div');
+  const ideaPlain = stripHtml(card.body || '');
+  desc.className = 'exec-card-desc' + (ideaPlain ? '' : ' empty');
+  desc.textContent = ideaPlain || 'No idea text';
+  body.appendChild(desc);
+
+  const meta = document.createElement('div');
+  meta.className = 'exec-card-meta';
+  meta.textContent = formatLabel(card.pillar, card.format);
+  const cat = catById(card.pillar);
+  if (cat) meta.style.color = accentTextColor(cat.bg);
+  body.appendChild(meta);
+
+  const chips = document.createElement('div');
+  chips.className = 'exec-card-chips';
+  const chipBits = [
+    stripHtml(card.contentOutcome || '') && ('Outcome: ' + stripHtml(card.contentOutcome)),
+    stripHtml(card.tweaks || '') && ('Tweaks: ' + stripHtml(card.tweaks)),
+    card.scheduleAt && ('Schedule: ' + formatDateTimeLabel(card.scheduleAt)),
+    card.reviewVideoUrl && 'Video linked'
+  ].filter(Boolean);
+  chipBits.forEach(text => {
+    const chip = document.createElement('span');
+    chip.className = 'exec-chip';
+    chip.textContent = text;
+    chips.appendChild(chip);
+  });
+  if (chipBits.length) body.appendChild(chips);
+
+  el.appendChild(body);
+  el.addEventListener('click', () => openReviewPanel(card.id));
+  return el;
+}
+
+function renderScheduleBody() {
+  const body = document.createElement('div');
+  body.className = 'section-body cal-wrap';
+
+  const phaseRef = new Date();
+  const phase = getContentPhase(phaseRef);
+  const weekStart = weekStartSunday(phaseRef);
+  const counts = countWeekFormats(weekStart);
+
+  const phaseStrip = document.createElement('div');
+  phaseStrip.className = 'cal-phase-strip';
+  phaseStrip.innerHTML =
+    '<strong>' + escapeHtml(phase.name) + '</strong>' +
+    '<span class="cal-phase-targets">Target this week: ' + formatPhaseTargets(phase) + '</span>' +
+    '<span class="cal-phase-fill">Scheduled: ' + formatPhaseFill(phase, counts) + '</span>';
+  body.appendChild(phaseStrip);
+
+  const nav = document.createElement('div');
+  nav.className = 'cal-nav';
+  const title = document.createElement('div');
+  title.className = 'cal-nav-title';
+  title.textContent = MONTH_NAMES[scheduleViewMonth] + ' ' + scheduleViewYear;
+  const btns = document.createElement('div');
+  btns.className = 'cal-nav-btns';
+  const prev = document.createElement('button');
+  prev.type = 'button';
+  prev.className = 'cal-nav-btn';
+  prev.textContent = '← Prev';
+  prev.addEventListener('click', e => { e.stopPropagation(); shiftScheduleMonth(-1); });
+  const next = document.createElement('button');
+  next.type = 'button';
+  next.className = 'cal-nav-btn';
+  next.textContent = 'Next →';
+  next.addEventListener('click', e => { e.stopPropagation(); shiftScheduleMonth(1); });
+  const todayBtn = document.createElement('button');
+  todayBtn.type = 'button';
+  todayBtn.className = 'cal-nav-btn';
+  todayBtn.textContent = 'Today';
+  todayBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    const n = new Date();
+    scheduleViewYear = n.getFullYear();
+    scheduleViewMonth = n.getMonth();
+    renderBoard();
+  });
+  btns.appendChild(prev);
+  btns.appendChild(todayBtn);
+  btns.appendChild(next);
+  nav.appendChild(title);
+  nav.appendChild(btns);
+  body.appendChild(nav);
+
+  const dow = document.createElement('div');
+  dow.className = 'cal-dow-header';
+  DOW_SHORT.forEach((label, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'cal-dow-cell' + (i === 0 || i === 6 ? ' cal-dow-cell--weekend' : '');
+    cell.textContent = label;
+    dow.appendChild(cell);
+  });
+  body.appendChild(dow);
+
+  const cardsByDay = groupScheduleByDay();
+  const today = new Date();
+  const firstOfMonth = new Date(scheduleViewYear, scheduleViewMonth, 1);
+  const startPad = firstOfMonth.getDay();
+  const daysInMonth = new Date(scheduleViewYear, scheduleViewMonth + 1, 0).getDate();
+  const totalCells = Math.ceil((startPad + daysInMonth) / 7) * 7;
+
+  let dayNum = 1 - startPad;
+  for (let w = 0; w < totalCells / 7; w++) {
+    const weekBlock = document.createElement('div');
+    weekBlock.className = 'cal-week-block';
+    const grid = document.createElement('div');
+    grid.className = 'cal-week-grid';
+    const weekDays = [];
+
+    for (let d = 0; d < 7; d++) {
+      const cellDate = new Date(scheduleViewYear, scheduleViewMonth, dayNum);
+      const inMonth = dayNum >= 1 && dayNum <= daysInMonth;
+      weekDays.push(cellDate);
+
+      const col = document.createElement('div');
+      col.className = 'cal-day' + (inMonth ? '' : ' cal-day--other');
+      if (inMonth && isSameCalendarDay(cellDate, today)) col.classList.add('cal-day--today');
+
+      const head = document.createElement('div');
+      head.className = 'cal-day-head';
+      const num = document.createElement('div');
+      num.className = 'cal-day-num' + (inMonth && isSameCalendarDay(cellDate, today) ? ' cal-day-num--today' : '');
+      num.textContent = inMonth ? String(dayNum) : '';
+      head.appendChild(num);
+
+      anchors().forEach(anchor => {
+        if (!anchorOnDate(anchor, cellDate)) return;
+        const pin = document.createElement('div');
+        pin.className = 'cal-anchor-pin cal-anchor-pin--' + anchor.type;
+        pin.textContent = anchor.title;
+        pin.title = anchor.title;
+        pin.addEventListener('click', e => {
+          e.stopPropagation();
+          openAnchorPanel(anchor.id);
+        });
+        head.appendChild(pin);
+      });
+      col.appendChild(head);
+
+      const dayBody = document.createElement('div');
+      dayBody.className = 'cal-day-body';
+      if (inMonth) {
+        const key = dateKey(cellDate);
+        const dayCards = cardsByDay[key] || [];
+        dayCards.forEach(card => {
+          dayBody.appendChild(renderCalSlot(card));
+        });
+      }
+      col.appendChild(dayBody);
+      grid.appendChild(col);
+      dayNum++;
+    }
+
+    weekBlock.appendChild(grid);
+
+    const wkStart = weekStartSunday(weekDays[0]);
+    const wkPhase = getContentPhase(wkStart);
+    const wkCounts = countWeekFormats(wkStart);
+    const summary = document.createElement('div');
+    summary.className = 'cal-week-summary';
+    summary.innerHTML =
+      '<span><strong>Week</strong> ' + formatShortDate(wkStart) + ' — ' + escapeHtml(wkPhase.name) + '</span>' +
+      '<span>Grid ' + wkCounts.gridPosts + '/' + wkPhase.gridPosts + '</span>' +
+      '<span>Stories ' + wkCounts.stories + '/' + wkPhase.stories + '</span>' +
+      (wkPhase.reels || wkCounts.reels ? '<span>Reels ' + wkCounts.reels + (wkPhase.reels ? '/' + wkPhase.reels : '') + '</span>' : '');
+    weekBlock.appendChild(summary);
+    body.appendChild(weekBlock);
+  }
+
+  const unscheduled = scheduleCards().filter(c => !c.scheduledAt || !String(c.scheduledAt).trim());
+  const unschedWrap = document.createElement('div');
+  unschedWrap.className = 'cal-unscheduled';
+  const toggle = document.createElement('button');
+  toggle.type = 'button';
+  toggle.className = 'cal-unscheduled-toggle';
+  toggle.innerHTML = '<span>Unscheduled (' + unscheduled.length + ')</span><span>' + (unscheduledQueueOpen ? '▾' : '▸') + '</span>';
+  toggle.addEventListener('click', e => {
+    e.stopPropagation();
+    unscheduledQueueOpen = !unscheduledQueueOpen;
+    renderBoard();
+  });
+  unschedWrap.appendChild(toggle);
+  const list = document.createElement('div');
+  list.className = 'cal-unscheduled-list' + (unscheduledQueueOpen ? '' : ' collapsed');
+  if (!unscheduled.length) {
+    const empty = document.createElement('div');
+    empty.className = 'exec-empty';
+    empty.style.padding = '12px 8px';
+    empty.textContent = 'All scheduled content has a publish date.';
+    list.appendChild(empty);
+  } else {
+    unscheduled.forEach(card => list.appendChild(renderScheduleCard(card)));
+  }
+  unschedWrap.appendChild(list);
+  body.appendChild(unschedWrap);
+
+  return body;
+}
+
+function escapeHtml(text) {
+  const d = document.createElement('div');
+  d.textContent = text || '';
+  return d.innerHTML;
+}
+
+function parseDateOnly(iso) {
+  if (!iso) return null;
+  const s = String(iso).slice(0, 10);
+  const parts = s.split('-').map(Number);
+  if (parts.length < 3 || !parts[0]) return null;
+  return new Date(parts[0], parts[1] - 1, parts[2]);
+}
+
+function dateKey(d) {
+  const pad = n => String(n).padStart(2, '0');
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+}
+
+function isSameCalendarDay(a, b) {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}
+
+function anchorOnDate(anchor, day) {
+  const start = parseDateOnly(anchor.startDate);
+  const end = parseDateOnly(anchor.endDate || anchor.startDate);
+  if (!start) return false;
+  const t = new Date(day.getFullYear(), day.getMonth(), day.getDate()).getTime();
+  const s = new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime();
+  const e = new Date((end || start).getFullYear(), (end || start).getMonth(), (end || start).getDate()).getTime();
+  return t >= s && t <= e;
+}
+
+function phaseAt(y, month1, day) {
+  return new Date(y, month1 - 1, day).getTime();
+}
+
+function formatPhaseTargets(phase) {
+  let s = phase.gridPosts + ' grid post' + (phase.gridPosts === 1 ? '' : 's');
+  s += ', ' + phase.stories + ' story day' + (phase.stories === 1 ? '' : 's');
+  if (phase.reels > 0) {
+    s += ', up to ' + phase.reels + ' Reel' + (phase.reels === 1 ? '' : 's') + ' if ready';
+  }
+  return s;
+}
+
+function formatPhaseFill(phase, counts) {
+  let s = counts.gridPosts + '/' + phase.gridPosts + ' grid';
+  s += ' · ' + counts.stories + '/' + phase.stories + ' stories';
+  if (phase.reels > 0 || counts.reels > 0) {
+    s += ' · ' + counts.reels + ' Reel' + (counts.reels === 1 ? '' : 's');
+    if (phase.reels > 0) s += ' (target ≤' + phase.reels + ')';
+  }
+  return s;
+}
+
+function getContentPhase(forDate) {
+  const d = forDate instanceof Date ? forDate : new Date(forDate);
+  const t = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+
+  if (t >= phaseAt(2026, 7, 30) && t < phaseAt(2026, 8, 4)) {
+    return { name: 'Steady grid (ramp-up)', gridPosts: 2, reels: 0, stories: 2 };
+  }
+  if (t >= phaseAt(2026, 8, 4) && t < phaseAt(2026, 8, 18)) {
+    return { name: 'Ode warm-up', gridPosts: 2, reels: 0, stories: 2 };
+  }
+  if (t >= phaseAt(2026, 8, 18) && t < phaseAt(2026, 8, 25)) {
+    return { name: 'Ode warm-up', gridPosts: 2, reels: 0, stories: 3 };
+  }
+  if (t >= phaseAt(2026, 8, 25) && t < phaseAt(2026, 9, 4)) {
+    return { name: 'Ode warm-up', gridPosts: 3, reels: 0, stories: 3 };
+  }
+  if (t === phaseAt(2026, 9, 4)) {
+    return { name: 'Ode event day', gridPosts: 0, reels: 0, stories: 3 };
+  }
+  if (t >= phaseAt(2026, 9, 5) && t < phaseAt(2026, 9, 15)) {
+    return { name: '008 tease', gridPosts: 2, reels: 0, stories: 2 };
+  }
+  if (t >= phaseAt(2026, 9, 15) && t < phaseAt(2026, 10, 6)) {
+    return { name: '008 product reveal', gridPosts: 2, reels: 1, stories: 2 };
+  }
+  if (t >= phaseAt(2026, 10, 6) && t < phaseAt(2026, 10, 20)) {
+    return { name: 'FDW context', gridPosts: 2, reels: 0, stories: 3 };
+  }
+  if (t >= phaseAt(2026, 10, 20) && t < phaseAt(2026, 10, 26)) {
+    return { name: 'Launch week', gridPosts: 3, reels: 1, stories: 4 };
+  }
+  const c = cadenceSettings();
+  return {
+    name: 'Steady grid',
+    gridPosts: c.gridPostsPerWeek || 2,
+    reels: c.reelsPerWeek || 0,
+    stories: c.storiesDaysPerWeek || 2
+  };
+}
+
+function weekStartSunday(d) {
+  const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  x.setDate(x.getDate() - x.getDay());
+  return x;
+}
+
+function countWeekFormats(weekStart) {
+  const end = new Date(weekStart);
+  end.setDate(end.getDate() + 7);
+  let gridPosts = 0;
+  let reels = 0;
+  let stories = 0;
+  scheduleCards().forEach(card => {
+    if (!card.scheduledAt) return;
+    const sd = new Date(card.scheduledAt);
+    if (Number.isNaN(sd.getTime())) return;
+    const day = new Date(sd.getFullYear(), sd.getMonth(), sd.getDate());
+    if (day < weekStart || day >= end) return;
+    const fmt = card.format;
+    if (fmt === 'ig-post' || fmt === 'pinterest') gridPosts++;
+    else if (fmt === 'ig-reel' || fmt === 'tiktok') reels++;
+    else if (fmt === 'ig-story') stories++;
+  });
+  return { gridPosts, reels, stories };
+}
+
+function groupScheduleByDay() {
+  const map = {};
+  scheduleCards().forEach(card => {
+    if (!card.scheduledAt) return;
+    const sd = new Date(card.scheduledAt);
+    if (Number.isNaN(sd.getTime())) return;
+    const key = dateKey(sd);
+    if (!map[key]) map[key] = [];
+    map[key].push(card);
+  });
+  Object.keys(map).forEach(k => {
+    map[k].sort((a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt));
+  });
+  return map;
+}
+
+function formatShortDate(d) {
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+
+function shiftScheduleMonth(delta) {
+  scheduleViewMonth += delta;
+  if (scheduleViewMonth < 0) {
+    scheduleViewMonth = 11;
+    scheduleViewYear--;
+  } else if (scheduleViewMonth > 11) {
+    scheduleViewMonth = 0;
+    scheduleViewYear++;
+  }
+  renderBoard();
+}
+
+function renderCalSlot(card) {
+  const el = document.createElement('div');
+  el.className = 'cal-slot';
+  const cat = catById(card.pillar);
+  if (cat) {
+    el.style.borderLeftColor = cat.bg;
+    el.style.background = '#F0EDE8';
+  }
+  const title = stripHtml(card.body || '') || 'Untitled';
+  const meta = formatLabel(card.pillar, card.format);
+  el.innerHTML = '<span class="cal-slot-meta">' + escapeHtml(meta) + '</span> ' + escapeHtml(title);
+  el.title = title;
+  el.addEventListener('click', e => {
+    e.stopPropagation();
+    openSchedulePanel(card.id);
+  });
+  return el;
+}
+
+function populateScheduleAnchorSelect(selectedId) {
+  const sel = document.getElementById('pScheduleAnchor');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">— None —</option>';
+  anchors().forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a.id;
+    opt.textContent = a.title;
+    if (a.id === selectedId) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+function openAnchorPanel(anchorId) {
+  const anchor = anchors().find(a => a.id === anchorId);
+  if (!anchor) return;
+  activeAnchorPanelId = anchorId;
+  document.getElementById('anchorPanelTitle').textContent = anchor.title;
+  document.getElementById('anchorPanelType').textContent = anchor.type === 'release' ? 'Release' : 'Event';
+  let dates = formatShortDate(parseDateOnly(anchor.startDate) || new Date());
+  if (anchor.endDate && anchor.endDate !== anchor.startDate) {
+    dates += ' – ' + formatShortDate(parseDateOnly(anchor.endDate) || new Date());
+  }
+  if (anchor.eventNightDate) {
+    dates += ' · Event night ' + formatShortDate(parseDateOnly(anchor.eventNightDate) || new Date());
+  }
+  document.getElementById('anchorPanelDates').textContent = dates;
+  document.getElementById('anchorPanelNotes').value = anchor.notes || '';
+  document.getElementById('anchorOverlay').classList.add('open');
+  document.getElementById('anchorPanel').classList.add('open');
+}
+
+function closeAnchorPanel() {
+  activeAnchorPanelId = null;
+  document.getElementById('anchorOverlay').classList.remove('open');
+  document.getElementById('anchorPanel').classList.remove('open');
+}
+
+function saveAnchorPanel() {
+  if (!activeAnchorPanelId) return;
+  const anchor = anchors().find(a => a.id === activeAnchorPanelId);
+  if (!anchor) return;
+  anchor.notes = document.getElementById('anchorPanelNotes').value.trim();
+  scheduleSave();
+  closeAnchorPanel();
+}
+
+function renderScheduleCard(card) {
+  const el = document.createElement('div');
+  el.className = 'schedule-card';
+  el.dataset.scheduleId = card.id;
+  applyPrepCardStyle(el, card.pillar);
+
+  const thumbSrc = cardThumbSrc(card);
+  const thumb = document.createElement('div');
+  thumb.className = 'schedule-card-thumb';
+  if (thumbSrc) {
+    const img = document.createElement('img');
+    img.src = thumbSrc;
+    img.alt = '';
+    thumb.appendChild(img);
+  } else {
+    thumb.textContent = 'No media';
+  }
+  el.appendChild(thumb);
+
+  const body = document.createElement('div');
+  body.className = 'schedule-card-body';
+
+  const dateEl = document.createElement('div');
+  dateEl.className = 'schedule-card-date';
+  dateEl.textContent = card.scheduledAt
+    ? formatDateTimeLabel(card.scheduledAt)
+    : 'No date set';
+  body.appendChild(dateEl);
+
+  const meta = document.createElement('div');
+  meta.className = 'schedule-card-meta';
+  meta.textContent = formatLabel(card.pillar, card.format);
+  const cat = catById(card.pillar);
+  if (cat) meta.style.color = accentTextColor(cat.bg);
+  body.appendChild(meta);
+
+  const desc = document.createElement('div');
+  const ideaPlain = stripHtml(card.body || '');
+  desc.className = 'schedule-card-desc';
+  desc.textContent = ideaPlain || 'Untitled content';
+  body.appendChild(desc);
+
+  el.appendChild(body);
+  el.addEventListener('click', () => openSchedulePanel(card.id));
+  return el;
+}
+
+function renderExecCard(card) {
+  const el = document.createElement('div');
+  el.className = 'exec-card';
+  el.dataset.execId = card.id;
+  applyPrepCardStyle(el, card.pillar);
+
+  const thumb = document.createElement('div');
+  thumb.className = 'exec-card-thumb' + (card.imageData ? '' : ' empty');
+  if (card.imageData) {
+    const img = document.createElement('img');
+    img.src = card.imageData;
+    img.alt = '';
+    thumb.appendChild(img);
+  } else {
+    thumb.textContent = 'No image';
+  }
+  el.appendChild(thumb);
+
+  const body = document.createElement('div');
+  body.className = 'exec-card-body';
+
+  const desc = document.createElement('div');
+  const ideaPlain = stripHtml(card.body || '');
+  desc.className = 'exec-card-desc' + (ideaPlain ? '' : ' empty');
+  desc.textContent = ideaPlain || 'No idea text';
+  body.appendChild(desc);
+
+  const meta = document.createElement('div');
+  meta.className = 'exec-card-meta';
+  meta.textContent = formatLabel(card.pillar, card.format);
+  const cat = catById(card.pillar);
+  if (cat) meta.style.color = accentTextColor(cat.bg);
+  body.appendChild(meta);
+
+  const plan = document.createElement('div');
+  const planPlain = stripHtml(card.productionPlan || '');
+  plan.className = 'exec-card-plan' + (planPlain ? '' : ' empty');
+  plan.textContent = planPlain || 'No production plan';
+  body.appendChild(plan);
+
+  const chips = document.createElement('div');
+  chips.className = 'exec-card-chips';
+  const chipBits = [
+    stripHtml(card.productsUsed || '') && ('Products: ' + stripHtml(card.productsUsed)),
+    stripHtml(card.location || '') && ('Location: ' + stripHtml(card.location)),
+    card.dateTime && ('When: ' + formatDateTimeLabel(card.dateTime))
+  ].filter(Boolean);
+  chipBits.forEach(text => {
+    const chip = document.createElement('span');
+    chip.className = 'exec-chip';
+    chip.textContent = text;
+    chips.appendChild(chip);
+  });
+  if (chipBits.length) body.appendChild(chips);
+
+  el.appendChild(body);
+  el.addEventListener('click', () => openExecPanel(card.id));
+  return el;
+}
+
+function formatDateTimeLabel(value) {
+  if (!value) return '';
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return value;
+  return d.toLocaleString(undefined, {
+    month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+  });
 }
 
 function renderBoard() {
@@ -1861,6 +3711,15 @@ function renderBoard() {
     } else if (section.id === 'preparation') {
       const n = prepCards().length;
       count.textContent = n ? n + ' cards' : 'empty';
+    } else if (section.id === 'execution') {
+      const n = execCards().length;
+      count.textContent = n ? n + ' cards' : 'empty';
+    } else if (section.id === 'review') {
+      const n = reviewCards().length;
+      count.textContent = n ? n + ' cards' : 'empty';
+    } else if (section.id === 'schedule') {
+      const n = scheduleCards().length;
+      count.textContent = n ? n + ' items' : 'empty';
     } else {
       count.textContent = '—';
     }
@@ -1916,20 +3775,15 @@ function sanitizeHtml(html) {
   return tmp.innerHTML;
 }
 
-function fillSelect(selectEl, options, includeNone) {
-  selectEl.innerHTML = '';
-  if (includeNone) {
-    const o = document.createElement('option');
-    o.value = '';
-    o.textContent = 'None';
-    selectEl.appendChild(o);
-  }
-  options.forEach(opt => {
-    const o = document.createElement('option');
-    o.value = opt.id;
-    o.textContent = opt.label;
-    selectEl.appendChild(o);
+function pillarSelectOptions() {
+  return PILLARS.map(p => {
+    const cat = catById(p.id);
+    return { id: p.id, label: p.label, color: cat ? cat.bg : null };
   });
+}
+
+function catSelectOptions() {
+  return CATS.map(c => ({ id: c.id, label: c.label, color: c.bg }));
 }
 
 function setPanelImage(imageData) {
@@ -1955,13 +3809,14 @@ function buildIdeaPanelProps(idea) {
   const row = document.createElement('div');
   row.className = 'prop-row';
   row.innerHTML = '<span class="prop-label">Category</span><span class="prop-value"></span>';
-  const select = document.createElement('select');
-  select.className = 'prop-select';
-  select.id = 'pCat';
-  fillSelect(select, CATS, true);
-  select.value = idea.cat || '';
-  select.addEventListener('change', () => updatePanelStrip(select.value));
-  row.querySelector('.prop-value').appendChild(select);
+  row.querySelector('.prop-value').appendChild(createPpcSelect({
+    id: 'pCat',
+    options: catSelectOptions(),
+    value: idea.cat || '',
+    includeNone: true,
+    colored: true,
+    onChange: v => updatePanelStrip(v)
+  }));
   wrap.appendChild(row);
 }
 
@@ -1972,52 +3827,72 @@ function buildPrepPanelProps(card) {
   const pillarRow = document.createElement('div');
   pillarRow.className = 'prop-row';
   pillarRow.innerHTML = '<span class="prop-label">Pillar</span><span class="prop-value"></span>';
-  const pillarSelect = document.createElement('select');
-  pillarSelect.className = 'prop-select';
-  pillarSelect.id = 'pPillar';
-  fillSelect(pillarSelect, PILLARS.map(p => ({ id: p.id, label: p.label })), false);
-  pillarSelect.value = card.pillar;
-  pillarRow.querySelector('.prop-value').appendChild(pillarSelect);
+  pillarRow.querySelector('.prop-value').appendChild(createPpcSelect({
+    id: 'pPillar',
+    options: pillarSelectOptions(),
+    value: card.pillar,
+    colored: true,
+    onChange: pillar => {
+      updatePpcSelect('pFormat', {
+        options: formatsForPillar(pillar),
+        value: defaultFormatForPillar(pillar)
+      });
+      updatePanelStrip(pillar);
+    }
+  }));
   wrap.appendChild(pillarRow);
 
   const formatRow = document.createElement('div');
   formatRow.className = 'prop-row';
   formatRow.innerHTML = '<span class="prop-label">Format</span><span class="prop-value"></span>';
-  const formatSelect = document.createElement('select');
-  formatSelect.className = 'prop-select';
-  formatSelect.id = 'pFormat';
-  fillSelect(formatSelect, formatsForPillar(card.pillar), false);
-  formatSelect.value = card.format;
-  formatRow.querySelector('.prop-value').appendChild(formatSelect);
+  formatRow.querySelector('.prop-value').appendChild(createPpcSelect({
+    id: 'pFormat',
+    options: formatsForPillar(card.pillar),
+    value: card.format,
+    colored: false
+  }));
   wrap.appendChild(formatRow);
-
-  pillarSelect.addEventListener('change', () => {
-    const pillar = pillarSelect.value;
-    fillSelect(formatSelect, formatsForPillar(pillar), false);
-    formatSelect.value = defaultFormatForPillar(pillar);
-    updatePanelStrip(pillar);
-  });
 }
 
 function updateIdeaSaveBtn() {
   const btn = document.getElementById('panelSaveBtn');
+  const hint = document.getElementById('panelApplyHint');
   if (!btn) return;
-  btn.textContent = (panelMode === 'idea' && prepareExpanded) ? 'Prepare & save' : 'Save changes';
+  if (panelMode === 'idea' && prepareExpanded) {
+    btn.textContent = 'Prepare';
+    if (hint) hint.textContent = 'Enter or Ctrl+Enter to prepare · click outside to close';
+  } else if (panelMode === 'prep' && executeArmed) {
+    btn.textContent = 'Execute';
+    if (hint) hint.textContent = 'Enter or Ctrl+Enter to send to Execution · click outside to close';
+  } else if (panelMode === 'exec' && reviewArmed) {
+    btn.textContent = 'Review';
+    if (hint) hint.textContent = 'Enter or Ctrl+Enter to send to Review · click outside to close';
+  } else if (panelMode === 'review' && scheduleArmed) {
+    btn.textContent = 'Schedule';
+    if (hint) hint.textContent = 'Enter or Ctrl+Enter to send to Calendar · click outside to close';
+  } else {
+    btn.textContent = 'Save changes';
+    if (hint) hint.textContent = 'Ctrl+Enter to save · click outside to close';
+  }
 }
 
 function onPreparePillarChange() {
   const pillarSelect = document.getElementById('preparePillar');
-  const formatSelect = document.getElementById('prepareFormat');
-  if (!pillarSelect || !formatSelect) return;
+  if (!pillarSelect) return;
   const formats = formatsForPillar(pillarSelect.value);
-  fillSelect(formatSelect, formats, false);
-  if (formats.length) formatSelect.value = formats[0].id;
+  updatePpcSelect('prepareFormat', {
+    options: formats,
+    value: formats.length ? formats[0].id : ''
+  });
 }
 
 function buildIdeaActions(idea) {
   const actions = document.getElementById('panelActions');
   actions.innerHTML = '';
   prepareExpanded = false;
+  executeArmed = false;
+  reviewArmed = false;
+  scheduleArmed = false;
 
   const prepBtn = document.createElement('button');
   prepBtn.type = 'button';
@@ -2032,25 +3907,25 @@ function buildIdeaActions(idea) {
   const pillarRow = document.createElement('div');
   pillarRow.className = 'prop-row';
   pillarRow.innerHTML = '<span class="prop-label">Pillar</span><span class="prop-value"></span>';
-  const pillarSelect = document.createElement('select');
-  pillarSelect.className = 'prop-select';
-  pillarSelect.id = 'preparePillar';
-  fillSelect(pillarSelect, PILLARS.map(p => ({ id: p.id, label: p.label })), false);
   const preferred = (idea && idea.cat && pillarById(idea.cat)) ? idea.cat : 'organic';
-  pillarSelect.value = preferred;
-  pillarSelect.addEventListener('change', onPreparePillarChange);
-  pillarRow.querySelector('.prop-value').appendChild(pillarSelect);
+  pillarRow.querySelector('.prop-value').appendChild(createPpcSelect({
+    id: 'preparePillar',
+    options: pillarSelectOptions(),
+    value: preferred,
+    colored: true,
+    onChange: onPreparePillarChange
+  }));
   dest.appendChild(pillarRow);
 
   const formatRow = document.createElement('div');
   formatRow.className = 'prop-row';
   formatRow.innerHTML = '<span class="prop-label">Format</span><span class="prop-value"></span>';
-  const formatSelect = document.createElement('select');
-  formatSelect.className = 'prop-select';
-  formatSelect.id = 'prepareFormat';
-  fillSelect(formatSelect, formatsForPillar(preferred), false);
-  formatSelect.value = defaultFormatForPillar(preferred);
-  formatRow.querySelector('.prop-value').appendChild(formatSelect);
+  formatRow.querySelector('.prop-value').appendChild(createPpcSelect({
+    id: 'prepareFormat',
+    options: formatsForPillar(preferred),
+    value: defaultFormatForPillar(preferred),
+    colored: false
+  }));
   dest.appendChild(formatRow);
 
   prepBtn.addEventListener('click', () => {
@@ -2069,28 +3944,22 @@ function buildPrepActions(card) {
   const actions = document.getElementById('panelActions');
   actions.innerHTML = '';
   prepareExpanded = false;
+  executeArmed = false;
+  reviewArmed = false;
+  scheduleArmed = false;
   updateIdeaSaveBtn();
 
-  const formats = formatsForPillar(card.pillar).filter(f => f.id !== card.format);
-  if (formats.length) {
-    const dupWrap = document.createElement('div');
-    dupWrap.style.display = 'flex';
-    dupWrap.style.flexWrap = 'wrap';
-    dupWrap.style.gap = '8px';
-    dupWrap.style.width = '100%';
-    formats.forEach(f => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'btn-secondary';
-      btn.textContent = 'Duplicate → ' + f.label;
-      btn.addEventListener('click', () => {
-        savePanel(true);
-        duplicatePrepToFormat(card.id, f.id);
-      });
-      dupWrap.appendChild(btn);
-    });
-    actions.appendChild(dupWrap);
-  }
+  const execBtn = document.createElement('button');
+  execBtn.type = 'button';
+  execBtn.className = 'btn-secondary';
+  execBtn.id = 'executeToggle';
+  execBtn.textContent = 'Execute';
+  execBtn.addEventListener('click', () => {
+    executeArmed = !executeArmed;
+    execBtn.classList.toggle('active', executeArmed);
+    updateIdeaSaveBtn();
+  });
+  actions.appendChild(execBtn);
 
   const del = document.createElement('button');
   del.type = 'button';
@@ -2105,15 +3974,236 @@ function buildPrepActions(card) {
   actions.appendChild(del);
 }
 
+function buildExecActions(card) {
+  const actions = document.getElementById('panelActions');
+  actions.innerHTML = '';
+  prepareExpanded = false;
+  executeArmed = false;
+  reviewArmed = false;
+  scheduleArmed = false;
+  updateIdeaSaveBtn();
+
+  const reviewBtn = document.createElement('button');
+  reviewBtn.type = 'button';
+  reviewBtn.className = 'btn-secondary';
+  reviewBtn.id = 'reviewToggle';
+  reviewBtn.textContent = 'Review';
+  reviewBtn.addEventListener('click', () => {
+    reviewArmed = !reviewArmed;
+    reviewBtn.classList.toggle('active', reviewArmed);
+    updateIdeaSaveBtn();
+  });
+  actions.appendChild(reviewBtn);
+
+  const del = document.createElement('button');
+  del.type = 'button';
+  del.className = 'btn-danger';
+  del.textContent = 'Delete card';
+  del.addEventListener('click', () => {
+    if (!confirm('Delete this execution card?')) return;
+    const id = card.id;
+    closePanel();
+    removeExecCard(id);
+  });
+  actions.appendChild(del);
+}
+
+function buildReviewActions(card) {
+  const actions = document.getElementById('panelActions');
+  actions.innerHTML = '';
+  prepareExpanded = false;
+  executeArmed = false;
+  reviewArmed = false;
+  scheduleArmed = false;
+  updateIdeaSaveBtn();
+
+  const scheduleBtn = document.createElement('button');
+  scheduleBtn.type = 'button';
+  scheduleBtn.className = 'btn-secondary';
+  scheduleBtn.id = 'scheduleToggle';
+  scheduleBtn.textContent = 'Schedule';
+  scheduleBtn.addEventListener('click', () => {
+    scheduleArmed = !scheduleArmed;
+    scheduleBtn.classList.toggle('active', scheduleArmed);
+    updateIdeaSaveBtn();
+  });
+  actions.appendChild(scheduleBtn);
+
+  const del = document.createElement('button');
+  del.type = 'button';
+  del.className = 'btn-danger';
+  del.textContent = 'Delete card';
+  del.addEventListener('click', () => {
+    if (!confirm('Delete this review card?')) return;
+    const id = card.id;
+    closePanel();
+    removeReviewCard(id);
+  });
+  actions.appendChild(del);
+}
+
+function buildScheduleActions(card) {
+  const actions = document.getElementById('panelActions');
+  actions.innerHTML = '';
+  prepareExpanded = false;
+  executeArmed = false;
+  reviewArmed = false;
+  scheduleArmed = false;
+  updateIdeaSaveBtn();
+
+  const del = document.createElement('button');
+  del.type = 'button';
+  del.className = 'btn-danger';
+  del.textContent = 'Delete card';
+  del.addEventListener('click', () => {
+    if (!confirm('Delete this scheduled item?')) return;
+    const id = card.id;
+    closePanel();
+    removeScheduleCard(id);
+  });
+  actions.appendChild(del);
+}
+
+function setPlanHintVisible(show) {
+  const hint = document.getElementById('pPlanHint');
+  if (hint) hint.style.display = show ? 'block' : 'none';
+}
+
+function setPanelModeClass(mode) {
+  const panel = document.getElementById('panel');
+  panel.classList.toggle('exec-mode', mode === 'exec');
+  panel.classList.toggle('review-mode', mode === 'review' || mode === 'schedule');
+}
+
+function hideStageExtraFields() {
+  document.getElementById('prepExtraFields').style.display = 'none';
+  document.getElementById('execExtraFields').style.display = 'none';
+  document.getElementById('reviewExtraFields').style.display = 'none';
+  document.getElementById('scheduleExtraFields').style.display = 'none';
+}
+
+function setDescSectionMode(mode) {
+  const label = document.getElementById('descSectionLabel');
+  const desc = document.getElementById('pDesc');
+  const fmt = document.getElementById('descFmtBar');
+  if (label) label.textContent = 'Idea';
+  if (desc) {
+    desc.classList.add('short');
+    desc.setAttribute('placeholder', mode === 'exec' ? 'Idea from Preparation…' : 'Add an idea…');
+  }
+  // Short Idea field matches across Ideas / Prep / Exec (no fmt bar).
+  if (fmt) fmt.style.display = 'none';
+}
+
+function setVideoOpenLink(anchorId, url) {
+  const a = document.getElementById(anchorId);
+  if (!a) return;
+  const clean = (url || '').trim();
+  if (clean) {
+    a.href = clean;
+    a.classList.remove('is-disabled');
+  } else {
+    a.href = '#';
+    a.classList.add('is-disabled');
+  }
+}
+
+function fillReviewInspo(card) {
+  const thumb = document.getElementById('pReviewInspoThumb');
+  const text = document.getElementById('pReviewInspoText');
+  thumb.innerHTML = '';
+  if (card.imageData) {
+    const img = document.createElement('img');
+    img.src = card.imageData;
+    img.alt = '';
+    thumb.appendChild(img);
+  } else {
+    thumb.textContent = 'No inspo';
+  }
+  const plain = stripHtml(card.body || '');
+  text.textContent = plain || 'No idea text';
+}
+
+function fillReviewContext(card) {
+  const wrap = document.getElementById('reviewContext');
+  wrap.innerHTML = '';
+  const rows = [
+    ['Idea', stripHtml(card.body || '')],
+    ['Format', formatLabel(card.pillar, card.format)],
+    ['Production plan', stripHtml(card.productionPlan || '')],
+    ['Products', stripHtml(card.productsUsed || '')],
+    ['Location', stripHtml(card.location || '')],
+    ['Requirements', stripHtml(card.requirements || '')],
+    ['Shoot date', card.dateTime ? formatDateTimeLabel(card.dateTime) : '']
+  ];
+  rows.forEach(([label, value]) => {
+    const row = document.createElement('div');
+    row.className = 'review-context-row' + (value ? '' : ' empty');
+    const strong = document.createElement('strong');
+    strong.textContent = label;
+    row.appendChild(strong);
+    row.appendChild(document.createTextNode(value || '—'));
+    wrap.appendChild(row);
+  });
+  wrap.classList.toggle('open', reviewContextOpen);
+  const chev = document.getElementById('reviewContextChev');
+  if (chev) chev.textContent = reviewContextOpen ? '▾' : '▸';
+}
+
+function setReviewMediaUI(imageData) {
+  const well = document.getElementById('pReviewMediaWell');
+  const img = document.getElementById('pReviewMediaImg');
+  const empty = document.getElementById('pReviewMediaEmpty');
+  if (imageData) {
+    img.src = imageData;
+    img.style.display = 'block';
+    empty.style.display = 'none';
+    well.classList.add('has-image');
+  } else {
+    img.removeAttribute('src');
+    img.style.display = 'none';
+    empty.style.display = 'block';
+    well.classList.remove('has-image');
+  }
+}
+
+function applyReviewMediaResult(result) {
+  pendingReviewMedia = result
+    ? { imageData: result.imageData, imageW: result.imageW, imageH: result.imageH }
+    : { imageData: null, imageW: null, imageH: null };
+  setReviewMediaUI(pendingReviewMedia.imageData);
+}
+
+async function applyImageToReviewMedia(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  try {
+    const result = await readImageFile(file);
+    applyReviewMediaResult(result);
+  } catch (err) {
+    console.warn('Review media load failed:', err);
+  }
+}
+
 function openPanel(ideaId) {
   const idea = DATA.ideas.find(i => i.id === ideaId);
   if (!idea) return;
   panelMode = 'idea';
   activeIdeaId = ideaId;
   activePrepId = null;
+  activeExecId = null;
+  activeReviewId = null;
+  activeScheduleId = null;
+  executeArmed = false;
+  reviewArmed = false;
+  scheduleArmed = false;
+  pendingReviewMedia = null;
+  focusedReviewMedia = false;
+  setPanelModeClass('idea');
+  setDescSectionMode('idea');
   buildIdeaPanelProps(idea);
   buildIdeaActions(idea);
-  document.getElementById('prepExtraFields').style.display = 'none';
+  hideStageExtraFields();
+  setPlanHintVisible(false);
   document.getElementById('pDesc').innerHTML = sanitizeHtml(idea.body || '');
   setPanelImage(idea.imageData);
   updatePanelStrip(idea.cat);
@@ -2128,17 +4218,158 @@ function openPrepPanel(prepId) {
   panelMode = 'prep';
   activePrepId = prepId;
   activeIdeaId = null;
+  activeExecId = null;
+  activeReviewId = null;
+  activeScheduleId = null;
+  executeArmed = false;
+  reviewArmed = false;
+  scheduleArmed = false;
+  pendingReviewMedia = null;
+  focusedReviewMedia = false;
+  setPanelModeClass('prep');
+  setDescSectionMode('prep');
   buildPrepPanelProps(card);
   buildPrepActions(card);
+  hideStageExtraFields();
   document.getElementById('prepExtraFields').style.display = 'block';
   document.getElementById('pDesc').innerHTML = sanitizeHtml(card.body || '');
   document.getElementById('pPlan').innerHTML = sanitizeHtml(card.productionPlan || '');
-  document.getElementById('pFit').innerHTML = sanitizeHtml(card.fitNote || '');
+  setPlanHintVisible(!stripHtml(card.productionPlan || ''));
   setPanelImage(card.imageData);
   updatePanelStrip(card.pillar);
   document.getElementById('panel').classList.add('open');
   document.getElementById('overlay').classList.add('open');
   setTimeout(() => document.getElementById('pPlan').focus(), 50);
+}
+
+function openExecPanel(execId) {
+  const card = execCards().find(c => c.id === execId);
+  if (!card) return;
+  panelMode = 'exec';
+  activeExecId = execId;
+  activeIdeaId = null;
+  activePrepId = null;
+  activeReviewId = null;
+  activeScheduleId = null;
+  executeArmed = false;
+  reviewArmed = false;
+  scheduleArmed = false;
+  pendingReviewMedia = null;
+  focusedReviewMedia = false;
+  setPanelModeClass('exec');
+  setDescSectionMode('exec');
+  buildPrepPanelProps(card);
+  buildExecActions(card);
+  hideStageExtraFields();
+  document.getElementById('execExtraFields').style.display = 'block';
+  document.getElementById('pDesc').innerHTML = sanitizeHtml(card.body || '');
+  document.getElementById('pExecPlan').innerHTML = sanitizeHtml(card.productionPlan || '');
+  document.getElementById('pProducts').innerHTML = sanitizeHtml(card.productsUsed || '');
+  document.getElementById('pLocation').innerHTML = sanitizeHtml(card.location || '');
+  document.getElementById('pRequirements').innerHTML = sanitizeHtml(card.requirements || '');
+  document.getElementById('pDateTime').value = toDateTimeLocalValue(card.dateTime);
+  setPlanHintVisible(false);
+  setPanelImage(card.imageData);
+  updatePanelStrip(card.pillar);
+  document.getElementById('panel').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+  setTimeout(() => document.getElementById('pExecPlan').focus(), 50);
+}
+
+function openReviewPanel(reviewId) {
+  const card = reviewCards().find(c => c.id === reviewId);
+  if (!card) return;
+  panelMode = 'review';
+  activeReviewId = reviewId;
+  activeIdeaId = null;
+  activePrepId = null;
+  activeExecId = null;
+  activeScheduleId = null;
+  executeArmed = false;
+  reviewArmed = false;
+  scheduleArmed = false;
+  reviewContextOpen = false;
+  pendingReviewMedia = {
+    imageData: card.reviewMedia || null,
+    imageW: card.reviewMediaW || null,
+    imageH: card.reviewMediaH || null
+  };
+  focusedReviewMedia = false;
+  setPanelModeClass('review');
+  setDescSectionMode('review');
+  buildPrepPanelProps(card);
+  buildReviewActions(card);
+  hideStageExtraFields();
+  document.getElementById('reviewExtraFields').style.display = 'block';
+  fillReviewInspo(card);
+  fillReviewContext(card);
+  setReviewMediaUI(pendingReviewMedia.imageData);
+  document.getElementById('pReviewVideoUrl').value = card.reviewVideoUrl || '';
+  setVideoOpenLink('pReviewVideoOpen', card.reviewVideoUrl || '');
+  document.getElementById('pOutcome').innerHTML = sanitizeHtml(card.contentOutcome || '');
+  document.getElementById('pTweaks').innerHTML = sanitizeHtml(card.tweaks || '');
+  document.getElementById('pScheduleAt').value = toDateTimeLocalValue(card.scheduleAt);
+  setPlanHintVisible(false);
+  setPanelImage(card.imageData);
+  updatePanelStrip(card.pillar);
+  document.getElementById('panel').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+  setTimeout(() => document.getElementById('pOutcome').focus(), 50);
+}
+
+function openSchedulePanel(scheduleId) {
+  const card = scheduleCards().find(c => c.id === scheduleId);
+  if (!card) return;
+  panelMode = 'schedule';
+  activeScheduleId = scheduleId;
+  activeIdeaId = null;
+  activePrepId = null;
+  activeExecId = null;
+  activeReviewId = null;
+  executeArmed = false;
+  reviewArmed = false;
+  scheduleArmed = false;
+  pendingReviewMedia = null;
+  focusedReviewMedia = false;
+  setPanelModeClass('schedule');
+  setDescSectionMode('schedule');
+  buildPrepPanelProps(card);
+  buildScheduleActions(card);
+  hideStageExtraFields();
+  document.getElementById('scheduleExtraFields').style.display = 'block';
+
+  const thumb = document.getElementById('pScheduleThumb');
+  thumb.innerHTML = '';
+  const src = cardThumbSrc(card);
+  if (src) {
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = '';
+    thumb.appendChild(img);
+  } else {
+    thumb.textContent = 'No media';
+  }
+  document.getElementById('pScheduleIdeaText').textContent = stripHtml(card.body || '') || 'Untitled content';
+  document.getElementById('pScheduleEditAt').value = toDateTimeLocalValue(card.scheduledAt || card.scheduleAt);
+  document.getElementById('pScheduleLayer').value = card.contentLayer || '';
+  populateScheduleAnchorSelect(card.anchorId || '');
+  document.getElementById('pScheduleOutcome').innerHTML = sanitizeHtml(card.contentOutcome || '');
+  document.getElementById('pScheduleVideoUrl').value = card.reviewVideoUrl || '';
+  setVideoOpenLink('pScheduleVideoOpen', card.reviewVideoUrl || '');
+  setPlanHintVisible(false);
+  setPanelImage(src);
+  updatePanelStrip(card.pillar);
+  document.getElementById('panel').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+
+function toDateTimeLocalValue(value) {
+  if (!value) return '';
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return '';
+  const pad = n => String(n).padStart(2, '0');
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
+    'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
 }
 
 function savePanel(silent) {
@@ -2161,7 +4392,7 @@ function savePanel(silent) {
 
     scheduleSave();
     renderBoard();
-    if (!silent) closePanel();
+    // Keep panel open — click outside / Close to leave.
     return;
   }
   if (panelMode === 'prep' && activePrepId) {
@@ -2173,20 +4404,109 @@ function savePanel(silent) {
     card.format = format || defaultFormatForPillar(pillar);
     card.body = sanitizeHtml(document.getElementById('pDesc').innerHTML).trim();
     card.productionPlan = sanitizeHtml(document.getElementById('pPlan').innerHTML).trim();
-    card.fitNote = sanitizeHtml(document.getElementById('pFit').innerHTML).trim();
+    setPlanHintVisible(!stripHtml(card.productionPlan || ''));
+
+    if (executeArmed && !silent) {
+      sendPrepToExecution(card.id);
+      return;
+    }
+
     scheduleSave();
     renderBoard();
-    if (!silent) closePanel();
+    return;
+  }
+  if (panelMode === 'exec' && activeExecId) {
+    const card = execCards().find(c => c.id === activeExecId);
+    if (!card) return;
+    const pillar = document.getElementById('pPillar').value;
+    const format = document.getElementById('pFormat').value;
+    card.pillar = pillar;
+    card.format = format || defaultFormatForPillar(pillar);
+    card.body = sanitizeHtml(document.getElementById('pDesc').innerHTML).trim();
+    card.productionPlan = sanitizeHtml(document.getElementById('pExecPlan').innerHTML).trim();
+    card.productsUsed = sanitizeHtml(document.getElementById('pProducts').innerHTML).trim();
+    card.location = sanitizeHtml(document.getElementById('pLocation').innerHTML).trim();
+    card.requirements = sanitizeHtml(document.getElementById('pRequirements').innerHTML).trim();
+    delete card.executionNotes;
+    const dt = document.getElementById('pDateTime').value;
+    card.dateTime = dt ? new Date(dt).toISOString() : '';
+
+    if (reviewArmed && !silent) {
+      sendExecToReview(card.id);
+      return;
+    }
+
+    scheduleSave();
+    renderBoard();
+    return;
+  }
+  if (panelMode === 'review' && activeReviewId) {
+    const card = reviewCards().find(c => c.id === activeReviewId);
+    if (!card) return;
+    const pillar = document.getElementById('pPillar').value;
+    const format = document.getElementById('pFormat').value;
+    card.pillar = pillar;
+    card.format = format || defaultFormatForPillar(pillar);
+    if (pendingReviewMedia) {
+      card.reviewMedia = pendingReviewMedia.imageData || null;
+      card.reviewMediaW = pendingReviewMedia.imageW || null;
+      card.reviewMediaH = pendingReviewMedia.imageH || null;
+    }
+    card.reviewVideoUrl = (document.getElementById('pReviewVideoUrl').value || '').trim();
+    card.contentOutcome = sanitizeHtml(document.getElementById('pOutcome').innerHTML).trim();
+    card.tweaks = sanitizeHtml(document.getElementById('pTweaks').innerHTML).trim();
+    const st = document.getElementById('pScheduleAt').value;
+    card.scheduleAt = st ? new Date(st).toISOString() : '';
+
+    if (scheduleArmed && !silent) {
+      sendReviewToSchedule(card.id);
+      return;
+    }
+
+    scheduleSave();
+    renderBoard();
+    return;
+  }
+  if (panelMode === 'schedule' && activeScheduleId) {
+    const card = scheduleCards().find(c => c.id === activeScheduleId);
+    if (!card) return;
+    const pillar = document.getElementById('pPillar').value;
+    const format = document.getElementById('pFormat').value;
+    card.pillar = pillar;
+    card.format = format || defaultFormatForPillar(pillar);
+    const st = document.getElementById('pScheduleEditAt').value;
+    card.scheduledAt = st ? new Date(st).toISOString() : '';
+    card.scheduleAt = card.scheduledAt;
+    card.contentLayer = document.getElementById('pScheduleLayer').value || '';
+    card.anchorId = document.getElementById('pScheduleAnchor').value || '';
+    card.contentOutcome = sanitizeHtml(document.getElementById('pScheduleOutcome').innerHTML).trim();
+    card.reviewVideoUrl = (document.getElementById('pScheduleVideoUrl').value || '').trim();
+    scheduleSave();
+    renderBoard();
   }
 }
 
 function closePanel() {
+  closePpcSelects();
   document.getElementById('panel').classList.remove('open');
   document.getElementById('overlay').classList.remove('open');
+  document.getElementById('panel').classList.remove('exec-mode');
+  document.getElementById('panel').classList.remove('review-mode');
   activeIdeaId = null;
   activePrepId = null;
+  activeExecId = null;
+  activeReviewId = null;
+  activeScheduleId = null;
   panelMode = null;
   prepareExpanded = false;
+  executeArmed = false;
+  reviewArmed = false;
+  scheduleArmed = false;
+  reviewContextOpen = false;
+  pendingReviewMedia = null;
+  focusedReviewMedia = false;
+  setPlanHintVisible(false);
+  setDescSectionMode('idea');
   updateIdeaSaveBtn();
 }
 
@@ -2200,8 +4520,43 @@ function plainTextPaste(e) {
   const text = (e.clipboardData || window.clipboardData).getData('text/plain');
   document.execCommand('insertText', false, text);
 }
-['pDesc', 'pPlan', 'pFit'].forEach(id => {
-  document.getElementById(id).addEventListener('paste', plainTextPaste);
+['pDesc', 'pPlan', 'pExecPlan', 'pProducts', 'pLocation', 'pRequirements', 'pOutcome', 'pTweaks', 'pScheduleOutcome'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('paste', plainTextPaste);
+});
+document.getElementById('pPlan').addEventListener('input', () => {
+  if (panelMode === 'prep') setPlanHintVisible(!stripHtml(document.getElementById('pPlan').innerHTML || ''));
+});
+
+document.getElementById('reviewContextToggle').addEventListener('click', () => {
+  reviewContextOpen = !reviewContextOpen;
+  const wrap = document.getElementById('reviewContext');
+  wrap.classList.toggle('open', reviewContextOpen);
+  const chev = document.getElementById('reviewContextChev');
+  if (chev) chev.textContent = reviewContextOpen ? '▾' : '▸';
+});
+
+(function setupReviewMediaWell() {
+  const well = document.getElementById('pReviewMediaWell');
+  if (!well) return;
+  well.addEventListener('click', e => {
+    if (e.target.closest('.review-media-clear')) return;
+    focusedReviewMedia = true;
+    well.classList.add('focused');
+    clearWellFocus();
+  });
+  document.getElementById('pReviewMediaClear').addEventListener('click', e => {
+    e.stopPropagation();
+    applyReviewMediaResult(null);
+  });
+  setupDropZone(well, file => applyImageToReviewMedia(file));
+})();
+
+document.getElementById('pReviewVideoUrl').addEventListener('input', e => {
+  setVideoOpenLink('pReviewVideoOpen', e.target.value);
+});
+document.getElementById('pScheduleVideoUrl').addEventListener('input', e => {
+  setVideoOpenLink('pScheduleVideoOpen', e.target.value);
 });
 
 // ─── MOVE TO PREPARATION ─────────────────────────────────────────────────────
@@ -2221,18 +4576,20 @@ function moveIdeaToPrep(idea, pillar, format) {
     pillar,
     format,
     productionPlan: '',
-    fitNote: '',
+    placementNote: '',
     createdAt: idea.createdAt || new Date().toISOString(),
     movedAt: new Date().toISOString()
   };
 
   DATA.ideas = DATA.ideas.filter(i => i.id !== idea.id);
   prepCards().push(prepCard);
-  restackIdeasIfNeeded(true);
+  restackIdeas();
+  lastIdeaCardSize = ideaCardSize(DATA.ideas.length);
   expandedSections.add('preparation');
   expandedPillars.add(pillar);
   closePanel();
-  scheduleSave();
+  clearTimeout(saveTimer);
+  saveData();
   renderBoard();
   openPrepPanel(prepCard.id);
 }
@@ -2246,20 +4603,57 @@ ctxMenu.querySelector('[data-action="add-card"]').addEventListener('click', () =
 
 document.addEventListener('keydown', e => {
   // Stop browsers from hijacking "/" for find/search while working on the board.
-  if (e.key !== '/' && e.key !== '?') return;
+  if (e.key === '/' || e.key === '?') {
+    const t = e.target;
+    const tag = (t && t.tagName) ? t.tagName.toLowerCase() : '';
+    const editable = tag === 'input' || tag === 'textarea' || tag === 'select' ||
+      (t && t.isContentEditable);
+    if (!editable) e.preventDefault();
+    return;
+  }
+
+  if (e.key !== 'Enter') return;
+  const panel = document.getElementById('panel');
+  if (!panel.classList.contains('open')) return;
   const t = e.target;
   const tag = (t && t.tagName) ? t.tagName.toLowerCase() : '';
-  const editable = tag === 'input' || tag === 'textarea' || tag === 'select' ||
-    (t && t.isContentEditable);
-  if (!editable) e.preventDefault();
+  const inEditable = tag === 'textarea' || (t && t.isContentEditable);
+  const mod = e.metaKey || e.ctrlKey;
+  // Newlines in text fields unless modifier / pipeline action is armed.
+  const armed = prepareExpanded || executeArmed || reviewArmed || scheduleArmed;
+  if (inEditable && !mod && !armed) return;
+  if (inEditable && !mod && armed) {
+    // Still allow Shift+Enter for newline while armed.
+    if (e.shiftKey) return;
+  }
+  if (!mod && !armed) return;
+  e.preventDefault();
+  savePanel();
 });
 
 document.addEventListener('click', e => {
   hideCtxMenu();
   if (!e.target.closest('.image-well')) clearWellFocus();
+  if (!e.target.closest('#pReviewMediaWell')) {
+    focusedReviewMedia = false;
+    const well = document.getElementById('pReviewMediaWell');
+    if (well) well.classList.remove('focused');
+  }
 });
 
 document.addEventListener('paste', async e => {
+  if (focusedReviewMedia && panelMode === 'review') {
+    const items = e.clipboardData && e.clipboardData.items;
+    if (!items) return;
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.startsWith('image/')) {
+        e.preventDefault();
+        const file = items[i].getAsFile();
+        if (file) await applyImageToReviewMedia(file);
+        return;
+      }
+    }
+  }
   if (!focusedWellId) return;
   const items = e.clipboardData && e.clipboardData.items;
   if (!items) return;
@@ -2279,6 +4673,13 @@ document.addEventListener('visibilitychange', () => {
   refreshData();
 });
 
+PPC.mountSettings({
+  onRefresh: async () => { await refreshData(); },
+  onAfterRecover: async (entry) => {
+    if (entry && entry.source === 'marketing') await refreshData();
+  }
+});
+PPC.applyStoredDark();
 initApp();
 </script>
 </body>

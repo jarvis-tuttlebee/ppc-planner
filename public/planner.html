@@ -1,0 +1,3114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PPC Annual Planner 2026–27</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      background: #F7F5F2;
+      color: #2C2C2C;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    .header {
+      background: #F7F5F2;
+      color: #6B7A8D;
+      padding: 16px 32px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      border-bottom: 1px solid #e0ddd8;
+    }
+    .header-logo-link {
+      justify-self: center;
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      line-height: 0;
+    }
+    .header-logo-link:hover { opacity: 0.72; }
+    .header-logo {
+      height: 28px;
+      width: auto;
+      max-width: min(280px, 52vw);
+      display: block;
+    }
+    .header-right {
+      text-align: right;
+    }
+    .header-right .sub {
+      font-size: 11px;
+      opacity: 0.55;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .header-right .phase {
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.45;
+      margin-top: 4px;
+    }
+    .header-right .version {
+      font-size: 9px;
+      letter-spacing: 0.06em;
+      opacity: 0.35;
+      margin-top: 3px;
+    }
+
+    /* TOOLBAR */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 10px 32px;
+      background: #F7F5F2;
+      border-bottom: 1px solid #e0ddd8;
+      align-items: center;
+    }
+
+    /* TABLE */
+    table {
+      border-collapse: collapse;
+      min-width: 1080px;
+      width: 100%;
+    }
+
+    /* MONTH HEADERS */
+    th {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 10px 6px;
+      text-align: center;
+      color: #2C2C2C;
+      background: #F0EDE8;
+      border-bottom: 1px solid #E2DDD5;
+      white-space: nowrap;
+    }
+    th:first-child {
+      background: transparent;
+      color: #6B7A8D;
+      text-align: left;
+      width: 150px;
+      font-size: 10px;
+    }
+    th.now {
+      background: #2C2C2C;
+      color: #F7F5F2;
+    }
+
+    /* CATEGORY LABEL */
+    .cat-label {
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6B7A8D;
+      padding: 12px 8px 12px 0;
+      vertical-align: top;
+      white-space: nowrap;
+      border-top: 1px solid #e0ddd8;
+      font-weight: 400;
+    }
+
+    /* EVENT CELL */
+    .ecell {
+      vertical-align: top;
+      padding: 8px 4px;
+      border-top: 1px solid #e0ddd8;
+      border-left: 1px solid #ede9e3;
+      min-height: 56px;
+    }
+
+    /* PILL */
+    .pill {
+      display: block;
+      padding: 5px 8px;
+      border-radius: 2px;
+      font-size: 11px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      line-height: 1.35;
+      margin-bottom: 4px;
+      cursor: pointer;
+      transition: filter 0.12s, opacity 0.12s;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+      text-decoration: none;
+      border: 1px solid #E2DDD5;
+      position: relative;
+      padding-right: 20px;
+    }
+    .pill:hover { filter: brightness(0.97); }
+    .pill.pill--complete {
+      opacity: 0.55;
+      padding: 2px 18px 2px 6px;
+      font-size: 10px;
+      line-height: 1.2;
+      margin-bottom: 2px;
+    }
+    .pill.pill--complete .pill-project { display: none; }
+    .pill.pill--complete .pill-title {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .pill.pill--complete .pill-datemark { display: none; }
+    .pill-del {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 15px;
+      height: 15px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 2px;
+      background: rgba(44,44,44,0.08);
+      color: #2C2C2C;
+      font-size: 12px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0;
+    }
+    .pill:hover .pill-del { display: flex; }
+    .pill-del:hover { background: #2C2C2C; color: #F7F5F2; }
+    body.dark .pill-del { color: inherit; background: rgba(255,255,255,0.12); }
+
+    /* REVENUE SECTION */
+    .rev-section {
+      padding: 28px 32px 36px;
+    }
+    .rev-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #6B7A8D;
+      margin-bottom: 14px;
+      font-weight: 500;
+    }
+    .rev-chart {
+      width: 100%;
+      max-width: 1200px;
+      display: block;
+      overflow: visible;
+    }
+
+    /* ── NOTION-STYLE PANEL ─────────────────────────────────────── */
+    .panel {
+      position: fixed;
+      right: 0; top: 0; bottom: 0;
+      width: 400px;
+      background: #fff;
+      border-left: 1px solid #e8e5e0;
+      transform: translateX(100%);
+      transition: transform 0.22s ease;
+      z-index: 200;
+      overflow-y: auto;
+      box-shadow: -6px 0 28px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+    }
+    .panel.open { transform: translateX(0); }
+
+    /* Panel header strip (category color) */
+    .panel-strip {
+      height: 5px;
+      flex-shrink: 0;
+    }
+
+    /* Panel body */
+    .panel-body-wrap {
+      padding: 28px 28px 32px;
+      flex: 1;
+    }
+
+    /* Close */
+    .panel-close {
+      position: absolute;
+      top: 12px; right: 14px;
+      font-size: 18px;
+      cursor: pointer;
+      color: #aaa;
+      background: none;
+      border: none;
+      line-height: 1;
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 4px;
+      transition: background 0.12s, color 0.12s;
+    }
+    .panel-close:hover { background: #f3f1ee; color: #555; }
+
+    /* ── SETTINGS SIDEBAR ─────────────────────────────────────── */
+    .settings-panel {
+      position: fixed;
+      right: 0; top: 0; bottom: 0;
+      width: 360px;
+      max-width: 100%;
+      background: #fff;
+      border-left: 1px solid #E2DDD5;
+      transform: translateX(100%);
+      transition: transform 0.22s ease;
+      z-index: 220;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -6px 0 28px rgba(0,0,0,0.08);
+    }
+    .settings-panel.open { transform: translateX(0); }
+    .settings-overlay {
+      position: fixed; inset: 0;
+      background: rgba(44,44,44,0.25);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.18s;
+      z-index: 210;
+    }
+    .settings-overlay.open { opacity: 1; pointer-events: auto; }
+    .settings-head {
+      font-family: 'Forma DJR Display', 'Forma DJR Banner', 'Poppins', 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: #2C2C2C;
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid #E2DDD5;
+    }
+    .settings-tabs { display: flex; border-bottom: 1px solid #E2DDD5; }
+    .settings-tab {
+      flex: 1;
+      padding: 10px 0 9px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #6B7A8D;
+      cursor: pointer;
+      transition: color 0.12s, border-color 0.12s;
+    }
+    .settings-tab:hover { color: #2C2C2C; }
+    .settings-tab.active { color: #2C2C2C; border-bottom-color: #2C2C2C; }
+    .settings-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+    .settings-item {
+      padding: 10px 20px 10px 17px;
+      border-left: 3px solid transparent;
+      border-bottom: 1px solid #F0EDE8;
+    }
+    .settings-item-title { font-size: 12px; font-weight: 600; color: #2C2C2C; line-height: 1.35; }
+    .settings-item-meta { font-size: 10px; color: #6B7A8D; letter-spacing: 0.04em; margin-top: 2px; }
+    .settings-empty { padding: 22px 20px; font-size: 11px; color: #6B7A8D; }
+    .settings-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 20px;
+      border-top: 1px solid #E2DDD5;
+    }
+    .settings-toggle-label { font-size: 11px; color: #2C2C2C; line-height: 1.4; }
+    .settings-toggle-label small { display: block; color: #6B7A8D; font-size: 9.5px; margin-top: 1px; }
+    .switch { position: relative; width: 34px; height: 19px; flex-shrink: 0; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .switch .slider {
+      position: absolute; inset: 0;
+      background: #E2DDD5;
+      border-radius: 19px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .switch .slider::before {
+      content: '';
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 15px; height: 15px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.15s;
+    }
+    .switch input:checked + .slider { background: #2C2C2C; }
+    .switch input:checked + .slider::before { transform: translateX(15px); }
+    body.dark .settings-panel { background: #1e2538; border-left-color: #2e3a55; }
+    body.dark .settings-head, body.dark .settings-item-title, body.dark .settings-toggle-label { color: #f0ede8; }
+    body.dark .settings-head, body.dark .settings-tabs, body.dark .settings-toggle-row { border-color: #2e3a55; }
+    body.dark .settings-item { border-bottom-color: #252e45; }
+    body.dark .settings-tab.active { color: #f0ede8; border-bottom-color: #f0ede8; }
+    body.dark .switch .slider { background: #2e3a55; }
+    body.dark .switch input:checked + .slider { background: #c8c4be; }
+
+    /* Status circle + title row */
+    .panel-title-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .panel-status-dot {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      border: 2px solid #ccc;
+      flex-shrink: 0;
+      margin-top: 7px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      position: relative;
+    }
+    .panel-status-dot.done {
+      background: #4E6E6C;
+      border-color: #4E6E6C;
+    }
+    .panel-status-dot.done::after {
+      content: '';
+      position: absolute;
+      width: 6px; height: 4px;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -65%) rotate(-45deg);
+    }
+    .panel-title-text {
+      font-size: 22px;
+      font-weight: 500;
+      line-height: 1.25;
+      color: #1a1a1a;
+      flex: 1;
+      outline: none;
+      border: none;
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      padding: 2px 4px;
+      border-radius: 4px;
+      min-height: 32px;
+    }
+    .panel-title-text:focus {
+      background: #f8f6f3;
+    }
+    .panel-title-text:empty::before {
+      content: attr(placeholder);
+      color: #bbb;
+    }
+
+    /* Properties */
+    .panel-props {
+      margin-bottom: 20px;
+    }
+    .prop-row {
+      display: flex;
+      align-items: center;
+      padding: 7px 0;
+      border-bottom: 1px solid #f0ede8;
+      gap: 12px;
+    }
+    .prop-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #9a9a9a;
+      width: 90px;
+      flex-shrink: 0;
+    }
+    .prop-value {
+      font-size: 13px;
+      color: #2C2C2C;
+      flex: 1;
+    }
+    .prop-badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+    .prop-status-select {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: #2C2C2C;
+      padding: 3px 8px;
+      border-radius: 3px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    .prop-status-select:focus { background: #f8f6f3; }
+    .prop-status-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .status-dot-small {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .prop-date-input {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      border: none;
+      background: transparent;
+      color: #2C2C2C;
+      outline: none;
+      width: 100%;
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
+    .prop-date-input:focus { background: #f8f6f3; }
+
+    /* Divider */
+    .panel-divider {
+      border: none;
+      border-top: 1px solid #ede9e3;
+      margin: 18px 0;
+    }
+
+    /* Section headers */
+    .panel-section-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #bbb;
+      margin-bottom: 10px;
+    }
+
+    /* Description */
+    .panel-desc {
+      font-size: 13px;
+      line-height: 1.75;
+      color: #444;
+      outline: none;
+      min-height: 60px;
+      padding: 4px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    .panel-desc:focus { background: #f8f6f3; }
+    .panel-desc:empty::before {
+      content: attr(placeholder);
+      color: #ccc;
+    }
+
+    /* Sub-tasks */
+    .subtasks-list {
+      list-style: none;
+      margin-bottom: 10px;
+    }
+    .subtask-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      padding: 5px 0;
+      border-bottom: 1px solid #f4f1ee;
+    }
+    .subtask-check {
+      width: 15px; height: 15px;
+      border-radius: 3px;
+      border: 1.5px solid #ccc;
+      flex-shrink: 0;
+      margin-top: 2px;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background: transparent;
+      position: relative;
+    }
+    .subtask-check:checked {
+      background: #4E6E6C;
+      border-color: #4E6E6C;
+    }
+    .subtask-check:checked::after {
+      content: '';
+      position: absolute;
+      left: 2px; top: -1px;
+      width: 8px; height: 5px;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(-45deg);
+    }
+    .subtask-text {
+      font-size: 13px;
+      color: #2C2C2C;
+      flex: 1;
+      outline: none;
+      line-height: 1.5;
+    }
+    .subtask-text:empty::before {
+      content: 'Action item...';
+      color: #ccc;
+    }
+    .subtask-del {
+      font-size: 16px;
+      color: #ccc;
+      cursor: pointer;
+      background: none;
+      border: none;
+      line-height: 1;
+      padding: 0 2px;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+    .subtask-item:hover .subtask-del { opacity: 1; }
+    .subtask-del:hover { color: #e55; }
+
+    .add-subtask-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      color: #9a9a9a;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .add-subtask-btn:hover { color: #4E6E6C; }
+
+    /* Save indicator */
+    .panel-save-row {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid #ede9e3;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .btn-save {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 7px 16px;
+      background: #344364;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: background 0.15s;
+    }
+    .btn-save:hover { background: #2a3652; }
+    .btn-cancel {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 400;
+      padding: 7px 14px;
+      background: transparent;
+      color: #888;
+      border: 1px solid #e0ddd8;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .btn-cancel:hover { background: #f4f1ee; }
+
+    /* OVERLAY */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+    }
+    .overlay.open { display: block; }
+
+    /* VIEW TOGGLE */
+    .nav-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      padding: 16px 56px 16px 32px;
+      background: #F7F5F2;
+      border-bottom: 1px solid #E2DDD5;
+      position: relative;
+    }
+    .nav-link {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 4px 0;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      color: #6B7A8D;
+      cursor: pointer;
+      transition: color 0.15s;
+      white-space: nowrap;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+    .nav-link:hover { color: #2C2C2C; background: transparent; }
+    .nav-link.active { color: #2C2C2C; background: transparent; font-weight: 600; }
+    .nav-settings-btn {
+      position: absolute;
+      right: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 32px;
+      border-radius: 0;
+      border: none;
+      background: transparent;
+      color: #6B7A8D;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.15s;
+    }
+    .nav-settings-btn:hover { background: transparent; color: #2C2C2C; }
+
+    /* PLUS BUTTON — horizontal grid cell */
+    .add-event-btn {
+      width: 22px; height: 22px;
+      border-radius: 4px;
+      border: 1.5px dashed #d0ccc6;
+      background: transparent;
+      color: #bbb;
+      font-size: 15px;
+      line-height: 1;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: border-color 0.12s, color 0.12s;
+      padding: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .add-event-btn:hover { border-color: #6B7A8D; color: #6B7A8D; }
+
+    /* VERTICAL LAYOUT */
+    .v-wrap {
+      display: block;
+      padding: 20px 32px 36px;
+    }
+    .month-section {
+      margin-bottom: 10px;
+      border: 1px solid #e0ddd8;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .month-section--current { border-color: #2C2C2C; }
+    .month-header {
+      background: #F0EDE8;
+      color: #2C2C2C;
+      font-family: 'Forma DJR Display', 'Forma DJR Banner', 'Poppins', 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 9px 16px;
+      border-bottom: 1px solid #E2DDD5;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .month-section--current .month-header { box-shadow: inset 3px 0 0 #4E6E6C; }
+    .month-tabs { display: flex; gap: 4px; margin-left: auto; }
+    .month-tab {
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid #E2DDD5;
+      background: transparent;
+      color: #6B7A8D;
+      font-size: 10px;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: all 0.12s;
+      letter-spacing: 0.04em;
+      text-transform: none;
+    }
+    .month-tab:hover { border-color: #2C2C2C; color: #2C2C2C; }
+    .month-tab.active { background: #2C2C2C; border-color: #2C2C2C; color: #F7F5F2; }
+    .week-section { }
+    .week-section + .week-section { border-top: 1px solid #f0ede8; }
+    .week-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #344364;
+      padding: 5px 12px 5px 16px;
+      background: #f4f2ef;
+      border-bottom: 1px solid #ece9e4;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .week-label:hover { background: #ede9e4; }
+    .week-label.week-unassigned { color: #9aafb5; }
+    .week-label.week-earlier { color: #8a8580; }
+    .week-collapse-icon { font-size: 7px; margin-right: 6px; opacity: 0.6; }
+    .week-label-text { flex: 1; }
+    .week-earlier-body { display: flex; flex-direction: column; }
+    .week-section--weekend .week-label { opacity: 0.72; }
+    .week-add-area.week-day-row {
+      min-height: 44px;
+    }
+    .week-add-area {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 6px 14px 6px 16px;
+      gap: 5px;
+      min-height: 32px;
+      transition: background 0.12s, outline 0.12s;
+    }
+    .week-add-area.drop-target {
+      background: rgba(71,133,137,0.08);
+      outline: 2px dashed #4E6E6C;
+      outline-offset: -3px;
+      border-radius: 4px;
+    }
+    .cal-dow-header {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(88px, 1fr));
+      gap: 5px;
+      padding: 8px 12px 2px;
+      border-bottom: 1px solid #ece9e4;
+    }
+    .cal-dow-cell {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #6B7A8D;
+      text-align: center;
+      padding: 2px 0 6px;
+    }
+    .cal-dow-cell--weekend { opacity: 0.55; }
+    .week-day-num--today {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: #4E6E6C;
+      color: #F7F5F2 !important;
+      margin-left: 0;
+    }
+    body.dark .cal-dow-header { border-bottom-color: #2e3a55; }
+    body.dark .cal-dow-cell { color: #8a8580; }
+    .week-section--nested + .week-section--nested { border-top: 1px solid #f0ede8; }
+    .week-days-grid {
+      display: grid;
+      /* Always Sun–Sat (7 columns). Out-of-month cells use --na. */
+      grid-template-columns: repeat(7, minmax(88px, 1fr));
+      gap: 5px;
+      padding: 4px 12px 10px;
+      overflow-x: auto;
+    }
+    .week-day-col { display: flex; flex-direction: column; min-width: 0; }
+    .week-day-header {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #9eabc0;
+      padding: 4px 4px 6px;
+      text-align: center;
+    }
+    .week-day-num { color: #2C2C2C; font-weight: 700; margin-left: 0; font-size: 12px; }
+    body.dark .week-day-num { color: #f0ede8; }
+    /* Weekends are shown for a true calendar run, but sit back visually. */
+    .week-day-col--weekend .week-day-header { opacity: 0.5; }
+    .week-day-col--weekend .week-day-body { background: rgba(44,44,44,0.022); border-radius: 4px; }
+    body.dark .week-day-col--weekend .week-day-body { background: rgba(255,255,255,0.03); }
+    .pill-project {
+      display: block; font-size: 8.5px; font-weight: 600; letter-spacing: 0.07em;
+      text-transform: uppercase; opacity: 0.62; margin-bottom: 1px; line-height: 1.25;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .pill-title { display: block; }
+    .pill-datemark { float: right; font-size: 9px; opacity: 0.55; margin-left: 4px; line-height: 1.4; }
+    .pill--dated { border-left-style: double; border-left-width: 4px; }
+    .week-day-na { color: #cfc9bf; font-weight: 400; margin-left: 1px; }
+    .week-day-col--na { opacity: 0.4; }
+    .week-day-col--na .week-day-body { background: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(0,0,0,0.025) 5px, rgba(0,0,0,0.025) 10px); }
+    .week-day-col--bleed { opacity: 0.72; }
+    .week-day-col--bleed .week-day-num { color: #6B7A8D; }
+    .week-day-col--bleed.week-day-col--na { opacity: 0.72; }
+    .week-day-col--bleed .week-day-body {
+      background: rgba(78,110,108,0.04);
+      border-radius: 4px;
+    }
+    .week-day-col--na .week-add-btn { display: none; }
+    .week-day-body {
+      flex: 1;
+      min-height: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 4px;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .week-day-body.drop-target {
+      background: rgba(71,133,137,0.08);
+      border-color: #4E6E6C;
+      outline: none;
+    }
+    .week-day-body .pill { display: block; width: 100%; box-sizing: border-box; }
+    .week-day-body .week-add-btn { margin-top: 2px; }
+    .pill[draggable="true"] { cursor: grab; }
+    .pill.dragging { opacity: 0.3 !important; cursor: grabbing; }
+    .week-add-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px; height: 22px;
+      border-radius: 4px;
+      border: 1.5px dashed #d0ccc6;
+      background: transparent;
+      color: #bbb;
+      font-size: 16px;
+      cursor: pointer;
+      transition: border-color 0.12s, color 0.12s;
+      padding: 0;
+      flex-shrink: 0;
+    }
+    .week-add-btn:hover { border-color: #6B7A8D; color: #6B7A8D; }
+    /* CATEGORY PICKER */
+    .cat-picker {
+      position: fixed;
+      background: #fff;
+      border: 1px solid #e0ddd8;
+      border-radius: 8px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+      padding: 6px;
+      z-index: 900;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 210px;
+    }
+    .cat-picker-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: 'DM Sans', sans-serif;
+      color: #1a1a1a;
+      border: none;
+      background: transparent;
+      text-align: left;
+      width: 100%;
+      transition: background 0.1s;
+    }
+    .cat-picker-item:hover { background: #f4f2ef; }
+    .cat-picker-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    /* MONTH COLLAPSE BUTTON */
+    .month-collapse-btn {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.6);
+      font-size: 9px;
+      cursor: pointer;
+      padding: 0 8px 0 0;
+      line-height: 1;
+      transition: color 0.12s;
+      flex-shrink: 0;
+    }
+    .month-collapse-btn:hover { color: #fff; }
+    .v-table {
+      width: 100%;
+      min-width: 0;
+      border-collapse: collapse;
+    }
+    .v-table tr + tr .v-cat-label,
+    .v-table tr + tr .v-evt-cell { border-top: 1px solid #f0ede8; }
+    .v-cat-label {
+      width: 170px;
+      padding: 9px 10px 9px 16px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #6B7A8D;
+      font-weight: 400;
+      vertical-align: top;
+      white-space: nowrap;
+    }
+    .v-cat-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-right: 7px;
+      vertical-align: middle;
+      margin-top: -1px;
+    }
+    .v-evt-cell {
+      padding: 7px 12px 7px 0;
+      vertical-align: top;
+    }
+    .add-event-btn-inline {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px; height: 20px;
+      border-radius: 4px;
+      border: 1.5px dashed #d0ccc6;
+      background: transparent;
+      color: #bbb;
+      font-size: 14px;
+      cursor: pointer;
+      transition: border-color 0.12s, color 0.12s;
+      padding: 0;
+      vertical-align: top;
+      margin-top: 2px;
+    }
+    .add-event-btn-inline:hover { border-color: #6B7A8D; color: #6B7A8D; }
+
+    /* MOBILE */
+    @media (max-width: 768px) {
+      .header { padding: 14px 16px; }
+      .header-logo { height: 24px; }
+      .header-right .sub { font-size: 9px; }
+      .toolbar { padding: 8px 16px; }
+      .v-wrap { padding: 14px 12px 24px; }
+      .v-cat-label { width: 100px; font-size: 9px; padding: 8px 6px 8px 12px; }
+      .rev-section { padding: 16px 16px 24px; }
+      .panel { width: 100%; }
+
+      /* Day columns become a horizontally-scrollable strip instead of squeezing 6-up */
+      .week-days-grid {
+        display: flex;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        gap: 6px;
+        scroll-snap-type: x proximity;
+      }
+      .week-day-col {
+        flex: 0 0 108px;
+        min-width: 108px;
+        scroll-snap-align: start;
+      }
+      .week-day-header { font-size: 10px; padding: 0 4px 4px; }
+
+      /* Slightly easier to tap without inflating the already-tight layout */
+      .week-add-btn { width: 26px; height: 26px; }
+    }
+
+    /* DARK MODE BUTTON */
+    .dark-mode-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1.5px solid #344364;
+      background: transparent;
+      color: #344364;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .dark-mode-btn:hover { background: #344364; color: #fff; }
+
+    /* ── DARK MODE ──────────────────────────────────────────────────────── */
+    body.dark { background: #141928; color: #f0ede8; }
+    body.dark .header { background: #141928; border-bottom-color: #2e3a55; color: #8a8680; }
+    body.dark .header-logo { filter: invert(1); }
+    body.dark .toolbar { background: #141928; border-bottom-color: #2e3a55; }
+    body.dark .nav-row { background: #1a1f2e; border-bottom-color: #2e3a55; }
+    body.dark .nav-link { color: #8a8580; border: none; background: transparent; }
+    body.dark .nav-link:hover, body.dark .nav-link.active { color: #f0ede8; background: transparent; }
+    body.dark .nav-settings-btn { color: #8a8580; border: none; background: transparent; }
+    body.dark .nav-settings-btn:hover { color: #f0ede8; background: transparent; }
+    body.dark .dark-mode-btn { border-color: #4a5a7f; color: #c8c4be; }
+    body.dark .dark-mode-btn:hover { background: #344364; color: #f0ede8; border-color: #344364; }
+    body.dark th { background: #1e2538; color: #c8c4be; }
+    body.dark th:first-child { background: transparent; color: #8a8680; }
+    body.dark th.now { background: #1a3540; }
+    body.dark .cat-label { color: #c8c4be; border-top-color: #2e3a55; }
+    body.dark .ecell { border-top-color: #2e3a55; border-left-color: #1e2538; }
+    body.dark .v-wrap { background: #141928; }
+    body.dark .month-section { background: #1e2538; border-color: #2e3a55; }
+    body.dark .month-header { background: #141d2e; color: #c8c4be; border-bottom-color: #2e3a55; }
+    body.dark .month-tab { border-color: #2e3a55; color: #8a94ad; }
+    body.dark .month-tab:hover { border-color: #c8c4be; color: #c8c4be; }
+    body.dark .month-tab.active { background: #c8c4be; border-color: #c8c4be; color: #141928; }
+    body.dark .month-section--current { border-color: #4E6E6C; }
+    body.dark .month-section--current .month-header { box-shadow: inset 3px 0 0 #4E6E6C; }
+    body.dark .v-table tr + tr .v-cat-label, body.dark .v-table tr + tr .v-evt-cell { border-top-color: #252e45; }
+    body.dark .v-cat-label { color: #c8c4be; }
+    body.dark .week-label { background: #141d2e; border-bottom-color: #252e45; color: #c8c4be; }
+    body.dark .week-label:hover { background: #19223a; }
+    body.dark .week-label.week-unassigned { color: #7a7570; }
+    body.dark .week-label.week-earlier { color: #8a8580; }
+    body.dark .week-day-header { color: #c8c4be; }
+    body.dark .week-day-body { border-color: transparent; }
+    body.dark .week-day-body.drop-target { background: rgba(71,133,137,0.12); border-color: #4E6E6C; }
+    body.dark .add-event-btn-inline, body.dark .week-add-btn, body.dark .add-event-btn { border-color: #3e4f70; color: #7a7570; }
+    body.dark .add-event-btn-inline:hover, body.dark .week-add-btn:hover, body.dark .add-event-btn:hover { border-color: #c8c4be; color: #f0ede8; }
+    body.dark .rev-section { background: #141928; }
+    body.dark .rev-title { color: #c8c4be; }
+    body.dark .panel { background: #1e2538; border-left-color: #2e3a55; box-shadow: -6px 0 28px rgba(0,0,0,0.4); }
+    body.dark .panel-close { color: #c8c4be; }
+    body.dark .panel-close:hover { background: #252e45; color: #f0ede8; }
+    body.dark .panel-title-text { color: #f0ede8; }
+    body.dark .panel-title-text:focus { background: #252e45; }
+    body.dark .panel-title-text:empty::before { color: #4a5a7f; }
+    body.dark .prop-row { border-bottom-color: #252e45; }
+    body.dark .prop-label { color: #c8c4be; }
+    body.dark .prop-value { color: #f0ede8; }
+    body.dark .prop-status-select { color: #f0ede8; }
+    body.dark .prop-status-select:focus { background: #252e45; }
+    body.dark .prop-date-input { color: #f0ede8; }
+    body.dark .prop-date-input:focus { background: #252e45; }
+    body.dark .panel-divider { border-top-color: #252e45; }
+    body.dark .panel-section-label { color: #c8c4be; }
+    body.dark .panel-desc { color: #f0ede8; }
+    body.dark .panel-desc:focus { background: #252e45; }
+    body.dark .panel-desc:empty::before { color: #4a5a7f; }
+    body.dark .subtask-item { border-bottom-color: #252e45; }
+    body.dark .subtask-text { color: #f0ede8; }
+    body.dark .subtask-check { border-color: #3e4f70; }
+    body.dark .add-subtask-btn { color: #c8c4be; }
+    body.dark .add-subtask-btn:hover { color: #4E6E6C; }
+    body.dark .panel-save-row { border-top-color: #252e45; }
+    body.dark .btn-cancel { color: #c8c4be; border-color: #3e4f70; }
+    body.dark .btn-cancel:hover { background: #252e45; }
+    body.dark .cat-picker { background: #1e2538; border-color: #2e3a55; box-shadow: 0 4px 24px rgba(0,0,0,0.5); }
+    body.dark .cat-picker-item { color: #f0ede8; }
+    body.dark .cat-picker-item:hover { background: #252e45; }
+    body.dark .add-section-btn { color: #c8c4be; }
+    body.dark .add-section-btn:hover { color: #f0ede8; }
+    /* ── VIEW-ONLY MODE (no edit-mode class on body) ── */
+    body:not(.edit-mode) .week-add-btn,
+    body:not(.edit-mode) .add-event-btn-inline,
+    body:not(.edit-mode) .add-event-btn,
+    body:not(.edit-mode) .add-section-btn,
+    body:not(.edit-mode) .add-subtask-btn,
+    body:not(.edit-mode) .btn-save { display: none !important; }
+    body:not(.edit-mode) .pill { cursor: default !important; }
+    body:not(.edit-mode) #panel input,
+    body:not(.edit-mode) #panel select,
+    body:not(.edit-mode) #panel [contenteditable] { pointer-events: none !important; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-spacer"></div>
+  <a class="header-logo-link" href="/" title="Home">
+    <img class="header-logo" src="/assets/pressplay-logo-black.png?v=3" alt="Press Play Collective">
+  </a>
+  <div class="header-right">
+    <div class="sub">Annual Planner — July 2026 to June 2027</div>
+    <div class="phase">Phase 2</div>
+    <div class="version" id="versionTag"></div>
+  </div>
+</div>
+
+<div class="nav-row">
+  <a class="nav-link active" href="/planner">Annual Planner</a>
+  <a class="nav-link" href="/kanban">Task Board</a>
+  <a class="nav-link" href="/marketing">Marketing</a>
+  <button type="button" class="nav-settings-btn" id="settingsBtn" title="Settings" aria-label="Settings">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+  </button>
+</div>
+
+<div class="toolbar" id="plannerToolbar" style="display:none"></div>
+
+<div class="v-wrap" id="verticalWrap"></div>
+
+<div class="rev-section">
+  <div class="rev-title">Monthly Revenue Target</div>
+  <svg class="rev-chart" id="revChart" height="110"></svg>
+</div>
+
+<div class="overlay" id="overlay" onclick="closePanel()"></div>
+
+<!-- Legacy projects/releases settings kept in DOM but unused this pass -->
+<div class="settings-overlay" id="settingsOverlay" style="display:none"></div>
+<div class="settings-panel" id="settingsPanel" style="display:none" aria-hidden="true">
+  <button class="panel-close" onclick="closeSettings()" title="Close">&times;</button>
+  <div class="settings-head">Settings</div>
+  <div class="settings-tabs">
+    <button class="settings-tab active" id="settingsTabProjects" onclick="setSettingsTab('projects')">Projects</button>
+    <button class="settings-tab" id="settingsTabReleases" onclick="setSettingsTab('releases')">Product Releases</button>
+  </div>
+  <div class="settings-list" id="settingsList"></div>
+  <div class="settings-toggle-row">
+    <div class="settings-toggle-label">Auto-add new Task Board cards to this week
+      <small>New kanban tasks without a due date land in Unassigned / Any</small>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="autoAssignToggle" onchange="toggleKanbanAutoAssign(this)">
+      <span class="slider"></span>
+    </label>
+  </div>
+</div>
+
+<div class="panel" id="panel">
+  <div class="panel-strip" id="panelStrip"></div>
+  <button class="panel-close" id="panelClose" onclick="closePanel()">&#x2715;</button>
+
+  <div class="panel-body-wrap">
+
+    <!-- Title row -->
+    <div class="panel-title-row">
+      <div class="panel-status-dot" id="pStatusDot" onclick="toggleDone()"></div>
+      <div class="panel-title-text" id="pTitle" contenteditable="true" placeholder="Event title..."></div>
+    </div>
+
+    <!-- Properties -->
+    <div class="panel-props">
+      <div class="prop-row">
+        <span class="prop-label">Category</span>
+        <span class="prop-value">
+          <span class="prop-badge" id="pCatBadge"></span>
+        </span>
+      </div>
+      <div class="prop-row">
+        <span class="prop-label">Status</span>
+        <span class="prop-value">
+          <div class="prop-status-wrap">
+            <div class="status-dot-small" id="pStatusSmall"></div>
+            <select class="prop-status-select" id="pStatus">
+              <option value="planned">Planned</option>
+              <option value="in-progress">In Progress</option>
+              <option value="complete">Complete</option>
+            </select>
+          </div>
+        </span>
+      </div>
+      <div class="prop-row" id="pProjectRow">
+        <span class="prop-label">Project</span>
+        <span class="prop-value">
+          <div class="prop-status-wrap">
+            <select class="prop-status-select" id="pProject"></select>
+          </div>
+        </span>
+      </div>
+      <div class="prop-row" id="pExactDateRow">
+        <span class="prop-label">Date</span>
+        <span class="prop-value">
+          <div class="prop-status-wrap">
+            <input type="date" class="prop-status-select" id="pExactDate" style="padding:4px 6px;" onchange="onExactDateChange()">
+            <span class="exp-toggle" style="margin-left:8px;" onclick="clearExactDate()">clear</span>
+          </div>
+        </span>
+      </div>
+      <!-- Month / Week / Day are derived from the date above. Kept in the DOM
+           (hidden) so placement still works for events with no date set. -->
+      <div class="prop-row" id="pDateRow" style="display:none;">
+        <span class="prop-label">Month</span>
+        <span class="prop-value"><input class="prop-date-input" id="pDate" type="text"></span>
+      </div>
+      <div class="prop-row" id="pWeekRow" style="display:none;">
+        <span class="prop-label">Week</span>
+        <span class="prop-value"><select class="prop-status-select" id="pWeek"></select></span>
+      </div>
+      <!-- Day is a day-of-month number, derived from the date above. -->
+      <div class="prop-row" id="pDayRow" style="display:none;">
+        <span class="prop-label">Day</span>
+        <span class="prop-value"><input id="pDay" type="text"></span>
+      </div>
+    </div>
+
+    <hr class="panel-divider">
+
+    <!-- Description -->
+    <div class="panel-section-label">Description</div>
+    <div class="panel-desc" id="pDesc" contenteditable="true" placeholder="Add a description..."></div>
+
+    <!-- Sub-tasks -->
+    <div class="panel-section-label">Action Items</div>
+    <ul class="subtasks-list" id="subtaskList"></ul>
+    <button class="add-subtask-btn" onclick="addSubtask()">
+      <span style="font-size:16px;line-height:1">+</span> Add action item
+    </button>
+
+    <!-- Save -->
+    <div class="panel-save-row">
+      <button class="btn-cancel" onclick="closePanel()">Cancel</button>
+      <button class="btn-save" onclick="savePanel()">Save changes</button>
+    </div>
+
+  </div>
+</div>
+
+<script src="/js/ppc-select.js"></script>
+<script src="/js/ppc-homebase.js"></script>
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+
+const MONTHS = [
+  'Jul 2026','Aug 2026','Sep 2026','Oct 2026','Nov 2026','Dec 2026',
+  'Jan 2027','Feb 2027','Mar 2027','Apr 2027','May 2027','Jun 2027'
+];
+
+// Brand palette v4 (Colour & Identity Document 2026 v4): muted tertiary family,
+// Signal Yellow retired. Finance has no brand slot — dusty rust derived to fit the family.
+let CATS = [
+  { id: 'col', label: 'Collections & Launches', bg: '#4E6E6C', fg: '#fff' },
+  { id: 'evt', label: 'Events',                  bg: '#C29A3B', fg: '#2C2C2C' },
+  { id: 'mkt', label: 'Marketing & Content',     bg: '#564A5E', fg: '#fff' },
+  { id: 'mfg', label: 'Manufacturing & Fabric',  bg: '#6B7A8D', fg: '#fff' },
+  { id: 'stk', label: 'Stockists',               bg: '#344364', fg: '#fff' },
+  { id: 'fin', label: 'Finance & Admin',         bg: '#8A5A3B', fg: '#fff' },
+  { id: 'per', label: 'Personal Milestones',     bg: '#2C2C2C', fg: '#fff' },
+];
+
+// v3 → v4 colour migration for categories already saved in the cloud payload.
+const CAT_COLOR_MIGRATION = {
+  '#478589': '#4E6E6C',
+  '#edd960': '#C29A3B',
+  '#6b5a9c': '#564A5E',
+  '#d4763b': '#8A5A3B',
+};
+function migrateCatColors(cats) {
+  let changed = false;
+  cats.forEach(c => {
+    const next = CAT_COLOR_MIGRATION[(c.bg || '').toLowerCase()];
+    if (next) { c.bg = next; changed = true; }
+  });
+  return changed;
+}
+
+// Pills use a single calm background; the category color becomes an accent
+// (left border + title text) instead of a full-color fill.
+const PILL_BG = '#F0EDE8';
+function accentTextColor(bg) {
+  // Yellows/mustards are too low-contrast as text — fall back to Graphite
+  // (the coloured left bar still carries the category).
+  const b = bg.toLowerCase();
+  return (b === '#edd960' || b === '#c29a3b') ? '#2C2C2C' : bg;
+}
+
+let EVENTS = [
+  // Collections
+  { cat:'col', m:0,  title:'Phase 2 Begins',           date:'July 2026',               body:'Current stock (~186 units) moving through DTC and Solari. Content system launching this month. Target $1,000 revenue.', status:'in-progress', tasks:[] },
+  { cat:'col', m:3,  title:'008 Explorations in Denim',date:'October 2026',            body:'Two styles: Dark Roast (brown/white stitching) and Darrell Denim (black/yellow stitching) at $379.99 each. ~25 pairs total. Launching at FDW. Target $5,000 revenue month.', status:'planned', tasks:['Sample both styles','Bulk production complete by late Sep','Photography and content ready','Set up product listings on Shopify'] },
+  { cat:'col', m:7,  title:'009 Launch',               date:'February 2027',           body:'Second major collection of Phase 2. First outsourced production run if manufacturing partner confirmed. Targeting 6+ months of compounding content. Target $5,500 revenue month.', status:'planned', tasks:[] },
+  { cat:'col', m:11, title:'010 Planning Begins',      date:'June 2027',               body:'Begin fabric selection and design direction for Collection 010. Should have 3 confirmed stockists and manufacturing fully operational.', status:'planned', tasks:[] },
+
+  // Events
+  { cat:'evt', m:1,  title:'Ode to Sirens',            date:'28 August 2026',          body:'Community event. Direct sales, strong content moment. See Ode to Sirens Event Planning Brief for full detail.', status:'in-progress', tasks:['Confirm venue details','Prepare display setup','Pack stock and swing tags'] },
+  { cat:'evt', m:3,  title:'Fashion Design Week (FDW)',date:'October 2026',            body:'Confirmed. Venue: The Piazza. Stage 2 form due 17 July. Collection 008 launches here. Biggest launch setup PPC has done.', status:'in-progress', tasks:['Submit Stage 2 form (due 17 July)','Confirm The Piazza address','Prepare 008 stock for launch','Plan display and setup'] },
+  { cat:'evt', m:8,  title:'Second Event (TBD)',       date:'March 2027 (target)',     body:'Plan a second event around the 009 launch window. Type and venue TBD. To be discussed with Loui at July meeting.', status:'planned', tasks:[] },
+  { cat:'evt', m:9,  title:'Quarterly Pop-up (TBD)',   date:'April 2027 (target)',     body:'Maintain quarterly event cadence between drops. Format and venue TBD.', status:'planned', tasks:[] },
+
+  // Marketing
+  { cat:'mkt', m:0,  title:'Intern Starts',            date:'July 2026',               body:'5-8hrs/week. 3 posts/week minimum, every week. Jarvis and Loui provide creative direction and assets. Metricool manages scheduling and cadence.', status:'in-progress', tasks:['Onboard intern','Set posting schedule in Metricool','Brief on brand voice and content direction'] },
+  { cat:'mkt', m:0,  title:'Metricool Setup',          date:'July 2026',               body:'Connect Instagram (@pressplay_au), establish posting schedule, build content pipeline in Miro: Ideas > Production > Review.', status:'planned', tasks:['Connect Instagram account','Build Miro content pipeline','Set posting schedule'] },
+  { cat:'mkt', m:1,  title:'Pre-FDW Content Build',   date:'August 2026',             body:'6-8 weeks of pre-launch content. Behind the scenes, fabric story, design process, event teasers. Building audience before the 008 drop.', status:'planned', tasks:[] },
+  { cat:'mkt', m:3,  title:'FDW Launch Campaign',     date:'October 2026',            body:'Full campaign around 008 and FDW. Event content, launch content, product drops. Biggest content push of Phase 2 so far.', status:'planned', tasks:[] },
+  { cat:'mkt', m:4,  title:'Holiday Content',         date:'November–December 2026',  body:'Maintain 3 posts/week through the holiday period. Gift-focused content, brand story, year-in-review moments.', status:'planned', tasks:[] },
+  { cat:'mkt', m:6,  title:'Pre-009 Build',           date:'January 2027',            body:'6-8 weeks of pre-launch content for 009. By this point, 6 months of compounding content means a significantly larger audience than 008.', status:'planned', tasks:[] },
+  { cat:'mkt', m:7,  title:'009 Launch Campaign',     date:'February 2027',           body:'Second major launch campaign. Email list should be actively converting. Target $5,500 revenue.', status:'planned', tasks:[] },
+  { cat:'mkt', m:9,  title:'Email List Focus',        date:'April 2027',              body:'At $8k/month target, email becomes a primary revenue driver. Klaviyo flows and campaigns as ongoing priority.', status:'planned', tasks:[] },
+
+  // Manufacturing & Fabric
+  { cat:'mfg', m:0,  title:'Confirm Darrell Denim Order', date:'July 2026',           body:'Confirm 26m with Potter Textiles (Elita) once freight quote received. Darrell Denim 8480. ~$259 + freight. 250m available.', status:'in-progress', tasks:['Await freight quote from Elita','Confirm order once quote received'] },
+  { cat:'mfg', m:0,  title:'CMT Quote Research',      date:'July 2026',               body:'3-5 quotes from CMT manufacturers. Contacts: Prototype Bali (existing), Perth local contact. Key questions: rate per pair, MOQ, customer-supplied fabric accepted, lead time. Team task for July meeting.', status:'planned', tasks:['Contact Prototype Bali','Contact Perth local manufacturer','Compile 3-5 quotes for comparison'] },
+  { cat:'mfg', m:1,  title:'Manufacturing Decision',  date:'August 2026',             body:'Review quotes with Loui. Decide on manufacturing partner and timing. If costings work, 009 becomes the first outsourced collection.', status:'planned', tasks:[] },
+  { cat:'mfg', m:1,  title:'008 Bulk Production',    date:'August–September 2026',    body:'~25 pairs across Dark Roast and Darrell Denim. 4-5 hours per pair. Complete by end of September for stock ready at FDW.', status:'planned', tasks:['Cut and sew Dark Roast pairs','Cut and sew Darrell Denim pairs','Quality check all units','Stock ready by end of September'] },
+  { cat:'mfg', m:4,  title:'009 Fabric Order',       date:'November 2026',            body:'Order fabric for 009. Rope-dyed Japanese denim from Potter Textiles or alternative if manufacturing partner sources their own.', status:'planned', tasks:[] },
+  { cat:'mfg', m:5,  title:'009 Fabric Arrives',     date:'December 2026',            body:'Fabric ready to send to manufacturer or begin in-house if outsourcing not confirmed in time.', status:'planned', tasks:[] },
+  { cat:'mfg', m:6,  title:'009 Production',         date:'January 2027',             body:'First fully outsourced production run. Target: stock ready for February launch. Frees Jarvis\'s time for marketing and brand building.', status:'planned', tasks:[] },
+
+  // Stockists
+  { cat:'stk', m:0,  title:'Solari (Active)',         date:'Ongoing from July 2026',   body:'Ryan Witcomb. 1 active stockist. Keep relationship warm and initiate reorder conversation when their stock runs low.', status:'in-progress', tasks:[] },
+  { cat:'stk', m:3,  title:'Approach 2nd Stockist',  date:'October 2026',             body:'Target a second Perth retailer aligned with the brand. Begin conversations around the 008 launch. Wholesale pricing and MOQ to be set.', status:'planned', tasks:['Identify target retailers','Prepare wholesale one-pager','Make first contact'] },
+  { cat:'stk', m:6,  title:'2nd Stockist Active',    date:'January 2027',             body:'Second stockist ordering ahead of 009 launch. Adds $1,000-2,000 per collection in recurring wholesale revenue.', status:'planned', tasks:[] },
+  { cat:'stk', m:7,  title:'Approach 3rd Stockist',  date:'February 2027',            body:'Begin third stockist conversations. Three active stockists = $3,000-6,000 per drop in wholesale revenue with minimal extra effort.', status:'planned', tasks:[] },
+  { cat:'stk', m:8,  title:'3rd Stockist Active',    date:'March 2027',               body:'Third stockist confirmed and ordering. Stockist channel is now a meaningful and reliable share of monthly revenue.', status:'planned', tasks:[] },
+
+  // Personal
+  { cat:'per', m:5,  title:'Draw Starts (~$6k/month)',date:'December 2026 (target)',  body:'When PPC hits ~$6k/month, start a small personal draw while still doing some Whatability. Target draw: $1,500/week.', status:'planned', tasks:[] },
+  { cat:'per', m:7,  title:'Whatability Exit Begins', date:'February 2027 (target)',  body:'When PPC hits $8,000/month sustained, begin reducing Whatability hours. The $8k floor replaces the $800-900/week support work income.', status:'planned', tasks:[] },
+  { cat:'per', m:9,  title:'Full-time PPC',           date:'April 2027 (target)',     body:'Stop support work. PPC full-time. Weekends back. $8-10k/month sustained. This is the transition the whole plan is built toward.', status:'planned', tasks:[] },
+  { cat:'per', m:11, title:'Studio Space',            date:'June 2027 (target)',      body:'12 months from now. Fremantle area. PPC operating from a dedicated studio. Marks the start of the next phase.', status:'planned', tasks:[] },
+
+  // ── July operational tasks (week-assigned) ────────────────────────────────
+  { cat:'fin', m:0, week:1, title:'Xero Cleanup', date:'By 17 Jul 2026', body:'Recode personal expenses and COGS reclassification before Mel handles both Whatability and PPC tax returns in week 3 of July. Hard deadline — books need to be clean before she starts.', status:'in-progress', tasks:['Recode personal expenses in Xero','Reclassify COGS correctly','Books ready for Mel by week 3 of July'] },
+  { cat:'fin', m:0, week:1, title:'Map Monthly Fixed Costs', date:'Jul 2026', body:'List all fixed monthly PPC expenses (Shopify, Metricool, domain, Microsoft 365, packaging, materials) to calculate the real Mojo — minimum revenue before any personal draw is possible.', status:'planned', tasks:['List all fixed monthly expenses','Calculate Mojo figure','Update Phase 2 revenue model if numbers differ'] },
+  { cat:'evt', m:0, week:2, title:'FDW Stage 2 Form Due', date:'17 Jul 2026', body:'Stage 2 form for Fremantle Design Week. Event description and host bio already drafted. Hard deadline 17 July — submit or confirm with FDW organisers.', status:'in-progress', tasks:['Submit Stage 2 form by 17 July'] },
+  { cat:'per', m:0, week:3, title:'Loui Returns', date:'~23 Jul 2026', body:'Loui back from Europe. First team meeting of Phase 2. Agenda: manufacturing quotes, 008 design direction, swing tags and hangers, FDW planning, intern direction.', status:'planned', tasks:['Schedule team meeting for week of 23 July','Review CMT quotes together — decide on manufacturing path','Lock in 008 design direction and both colourways','Swing tags and hangers progress check','FDW Stage 2 review and event planning'] },
+  { cat:'col', m:0, week:4, title:'Swing Tags & Packaging', date:'Late Jul 2026', body:'Finalise and order swing tags with Loui. All stock must be tagged before Ode to Sirens on 28 August — allow 2–3 weeks lead time after ordering. Also: hangers, rack design, gift card on Shopify, fabric postcards.', status:'in-progress', tasks:['Finalise swing tag design with Loui','Order swing tags (2–3 week lead time)','Design hangers and rack with Loui','Add gift card product to Shopify','Create fabric postcards for Potter Textiles order'] },
+  { cat:'fin', m:0, week:4, title:'Macquarie Account', date:'Late Jul 2026', body:'Decide whether to open a Macquarie business account or defer. Cash on hand ($1,609) is tight — only move forward if it does not affect the Darrell Denim fabric order.', status:'planned', tasks:['Review current banking setup','Decide: open Macquarie now or defer until post-008 launch'] },
+
+  // ── 008 Design & Sampling (currently missing — bulk production exists but no design phase) ──
+  { cat:'col', m:1, week:1, title:'008 — Design Finalised', date:'Early Aug 2026', body:'Lock in all design details for both 008 styles before cutting samples. Dark Roast: rope-dyed brown denim, white stitching. Darrell Denim: black fabric, yellow stitching. Source all thread and hardware.', status:'planned', tasks:['Finalise Dark Roast proportions and all details','Finalise Darrell Denim proportions and all details','Source thread, hardware and notions for both styles','Confirm Darrell Denim fabric has arrived from Potter Textiles'] },
+  { cat:'mfg', m:1, week:2, title:'008 — Sampling', date:'Mid Aug 2026', body:'Make one sample of each style. Assess fit, proportion, stitch quality and construction. Both samples must be approved before moving to bulk. Photograph for pre-launch content.', status:'planned', tasks:['Make Dark Roast sample pair','Make Darrell Denim sample pair','Assess fit and finish on both — adjust pattern if needed','Approve samples and move to bulk production','Photograph both samples for teaser content'] },
+
+  // ── September ─────────────────────────────────────────────────────────────
+  { cat:'mkt', m:0, week:2, title:'Brand & Creator Voice Doc', date:'Jul 2026', body:'Document PPC brand voice and Jarvis\'s creator voice. Defines tone, language, and what the brand sounds like across captions, stories and email. Primary reference for the intern going forward — should be done before launch content ramps up.', status:'planned', tasks:['Draft brand voice principles with Claude','Draft Jarvis creator voice guidelines','Review with Loui','Hand off to intern as permanent reference'] },
+  { cat:'mkt', m:1, week:1, title:'Website Review — Framer', date:'Aug 2026', body:'Assess Framer as a custom website option. Current Shopify site is functional but generic. PPC\'s design identity warrants a site that reflects it. Decide whether to build before or after 008 launch.', status:'planned', tasks:['Research Framer capabilities and pricing','Assess what a custom site would take to build','Decision: build now, post-008 launch, or defer to 2027'] },
+  { cat:'evt', m:1, week:4, title:'FDW Setup Planning', date:'Late Aug 2026', body:'Plan the physical FDW event in detail before stock is ready. Space layout at The Piazza, rack and display design, 008 stock allocation, signage, info boards, opening night plan (music, drinks, guest list).', status:'planned', tasks:['Plan space layout with Loui','Confirm 008 stock allocation for event','Design signage and information boards (QR codes to socials)','Plan opening evening — venue, drinks, guest invitations','Confirm whether liquor licence is needed'] },
+
+  // ── Post-launch systems (late 2026) ───────────────────────────────────────
+  { cat:'mkt', m:0, week:3, title:'Klaviyo Setup', date:'Jul 2026', body:'Build Klaviyo email flows: welcome series, post-purchase, abandoned cart, collection launch. Email is the highest-converting channel most brands underuse. Build the list now so every future launch goes to a warm audience.', status:'planned', tasks:['Set up Klaviyo account and connect to Shopify','Build welcome flow','Build post-purchase flow','Build abandoned cart flow','Set up launch announcement template'] },
+  { cat:'fin', m:4, title:'009 Budget & Cost Model', date:'Nov 2026', body:'Build a cost model for 009 before fabric order is placed. Include fabric, manufacturing (outsourced), packaging, and photography. Use 008 actuals to calibrate.', status:'planned', tasks:['Cost fabric order for 009','Get firm manufacturing quote for 009 run','Model full cost of collection','Set wholesale and retail pricing'] },
+
+  // ── Personal ──────────────────────────────────────────────────────────────
+  { cat:'per', m:0, week:1, title:'Meal Prep & Gym Plan', date:'Jul 2026', body:'Build a solid meal prep structure around weight goals, Whatability shifts, and gym routine. Current gap: rest periods are unstructured and gym is inconsistent (1/3 last week). Treat this as a system, not willpower.', status:'planned', tasks:['Define weight and body composition goal','Build weekly meal prep template around work schedule','Set gym schedule (target 3–4 days) and specific program','Build rest and recovery structure into the week'] },
+];
+
+const REVENUE = [1000,1800,1500,5000,3000,3500,2000,5500,6500,8000,8000,8000];
+
+// ─── PERSISTENCE (localStorage + Cloudflare Worker sync) ─────────────────────
+const STORAGE_KEY = 'ppc-planner-data';
+const SYNC_URL = 'https://ppc-planner.pressplaycollective.workers.dev/api/data';
+const APP_VERSION = '2.10.2';
+document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
+
+let editMode = true;
+document.body.classList.add('edit-mode');
+
+let SETTINGS = { kanbanAutoAssign: true };
+
+// Bumped when the meaning of an event's `week` number changes. Scheme 2 = real
+// Monday-start calendar weeks (scheme 1 was day-number buckets).
+const WEEK_SCHEME = 5;
+
+function saveToFirestore() {
+  const payload = {
+    cats:   CATS.map(c => ({ ...c })),
+    events: EVENTS.map(e => ({ ...e })),
+    settings: { ...SETTINGS },
+    weekScheme: WEEK_SCHEME
+  };
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  } catch (err) {
+    console.warn('Local save failed:', err);
+  }
+  fetch(SYNC_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(err => console.warn('Cloud sync failed:', err));
+}
+
+async function initApp() {
+  let data = null;
+  try {
+    const res = await fetch(SYNC_URL);
+    if (res.ok) {
+      const remote = await res.json();
+      if (remote && remote.cats && remote.cats.length) data = remote;
+    }
+  } catch (err) {
+    console.warn('Cloud fetch failed, falling back to local storage:', err);
+  }
+  if (!data) {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) data = JSON.parse(raw);
+    } catch (err) {
+      console.warn('Could not load saved data:', err);
+    }
+  }
+  if (data) {
+    if (data.cats   && data.cats.length)   { CATS.length   = 0; data.cats.forEach(c   => CATS.push(c));   }
+    if (data.events && data.events.length) { EVENTS.length = 0; data.events.forEach(e => EVENTS.push(e)); }
+    if (data.settings) Object.assign(SETTINGS, data.settings);
+    let dirty = migrateCatColors(CATS);
+    // Convert week numbers from the old day-bucket scheme, preserving the real
+    // calendar date each event was already sitting on.
+    const stored = data.weekScheme || 1;
+    if (stored < WEEK_SCHEME) { migrateWeekScheme(stored); dirty = true; }
+    EVENTS.forEach(e => {
+      if (e.day == null && e.week != null) { e.week = null; dirty = true; }
+    });
+    if (dirty) saveToFirestore();
+  }
+  // Pull dated Task Board cards onto the timeline (and push dated timeline
+  // events back), so both boards show the same item on the same day.
+  if (await syncDateMirrors()) saveToFirestore();   // also refreshes localStorage
+  renderVertical();
+}
+
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+
+let activeEvt = null;
+let activeCat = null;
+let activeNewMonth = null;
+let activeNewWeek = null;
+let activeNewDay = null;
+const monthCollapsed = {};
+const weekCollapsed = {};
+const earlierExpanded = (() => {
+  try { return JSON.parse(localStorage.getItem('ppc-earlier-expanded') || '{}') || {}; }
+  catch (_) { return {}; }
+})();
+
+function toggleMonthCollapse(mi) {
+  monthCollapsed[mi] = !monthCollapsed[mi];
+  const cw = document.getElementById('month-content-' + mi);
+  const sec = document.getElementById('month-section-' + mi);
+  if (cw) cw.style.display = monthCollapsed[mi] ? 'none' : '';
+  if (sec) { const b = sec.querySelector('.month-collapse-btn'); if (b) b.textContent = monthCollapsed[mi] ? '▶' : '▼'; }
+}
+
+// Title field: Enter = save, Shift+Enter = newline
+document.getElementById('pTitle').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); savePanel(); }
+});
+
+// ─── VERTICAL LAYOUT ─────────────────────────────────────────────────────────
+
+const MONTH_VIEW_KEY = 'ppc-planner-month-views';
+
+function plannerMonthIndexNow() {
+  const now = new Date();
+  return (now.getFullYear() - 2026) * 12 + now.getMonth() - 6;
+}
+
+function defaultMonthViewMode(mi) {
+  // Future months open in Overview; current + past default to Calendar (date list).
+  return mi > plannerMonthIndexNow() ? 'overview' : 'week';
+}
+
+function persistMonthViewModes() {
+  try { localStorage.setItem(MONTH_VIEW_KEY, JSON.stringify({ ...monthViewModes })); }
+  catch (err) { console.warn('Could not save month view prefs:', err); }
+}
+
+const monthViewModes = {};
+(function initMonthViewModes() {
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(MONTH_VIEW_KEY) || 'null'); }
+  catch (err) { saved = null; }
+  for (let i = 0; i < 12; i++) {
+    if (saved && (saved[i] === 'week' || saved[i] === 'overview')) monthViewModes[i] = saved[i];
+    else monthViewModes[i] = defaultMonthViewMode(i);
+  }
+})();
+
+function renderVertical() {
+  const wrap = document.getElementById('verticalWrap');
+  wrap.innerHTML = '';
+
+  MONTHS.forEach((monthName, mi) => {
+    const section = document.createElement('div');
+    section.className = 'month-section' + (mi === plannerMonthIndexNow() ? ' month-section--current' : '');
+    section.id = 'month-section-' + mi;
+
+    // Header with collapse button + tabs
+    const mHead = document.createElement('div');
+    mHead.className = 'month-header';
+    const colBtn = document.createElement('button');
+    colBtn.className = 'month-collapse-btn';
+    colBtn.textContent = monthCollapsed[mi] ? '▶' : '▼';
+    colBtn.onclick = (e) => { e.stopPropagation(); toggleMonthCollapse(mi); };
+    mHead.appendChild(colBtn);
+    const mTitle = document.createElement('span');
+    mTitle.textContent = monthName;
+    mHead.appendChild(mTitle);
+
+    const tabs = document.createElement('div');
+    tabs.className = 'month-tabs';
+    const tabOv = document.createElement('button');
+    tabOv.className = 'month-tab' + (monthViewModes[mi] !== 'week' ? ' active' : '');
+    tabOv.textContent = 'Overview';
+    tabOv.onclick = (e) => { e.stopPropagation(); monthViewModes[mi] = 'overview'; persistMonthViewModes(); refreshMonthContent(mi); };
+    const tabWk = document.createElement('button');
+    tabWk.className = 'month-tab' + (monthViewModes[mi] === 'week' ? ' active' : '');
+    tabWk.textContent = 'Calendar';
+    tabWk.onclick = (e) => { e.stopPropagation(); monthViewModes[mi] = 'week'; persistMonthViewModes(); refreshMonthContent(mi); };
+    tabs.appendChild(tabOv);
+    tabs.appendChild(tabWk);
+    mHead.appendChild(tabs);
+    section.appendChild(mHead);
+
+    const contentWrap = document.createElement('div');
+    contentWrap.id = 'month-content-' + mi;
+    if (monthCollapsed[mi]) contentWrap.style.display = 'none';
+    section.appendChild(contentWrap);
+
+    wrap.appendChild(section);
+    if (!monthCollapsed[mi]) refreshMonthContent(mi);
+  });
+}
+
+function refreshMonthContent(mi) {
+  const contentWrap = document.getElementById('month-content-' + mi);
+  if (!contentWrap) return;
+  contentWrap.innerHTML = '';
+  // Sync tab active states
+  const section = document.getElementById('month-section-' + mi);
+  if (section) {
+    const [tabOv, tabWk] = section.querySelectorAll('.month-tab');
+    if (monthViewModes[mi] === 'week') {
+      tabOv.classList.remove('active'); tabWk.classList.add('active');
+    } else {
+      tabOv.classList.add('active'); tabWk.classList.remove('active');
+    }
+  }
+  if (monthViewModes[mi] === 'week') {
+    renderMonthWeeks(contentWrap, mi);
+  } else {
+    renderMonthOverview(contentWrap, mi);
+  }
+}
+
+function renderMonthOverview(container, mi) {
+  const table = document.createElement('table');
+  table.className = 'v-table';
+
+  CATS.forEach(cat => {
+    const evts = EVENTS.filter(e => e.cat === cat.id && e.m === mi);
+    const tr = document.createElement('tr');
+
+    const catCell = document.createElement('td');
+    catCell.className = 'v-cat-label';
+    const dot = document.createElement('span');
+    dot.className = 'v-cat-dot';
+    dot.style.background = cat.bg;
+    catCell.appendChild(dot);
+    catCell.appendChild(document.createTextNode(cat.label));
+    tr.appendChild(catCell);
+
+    const evtCell = document.createElement('td');
+    evtCell.className = 'v-evt-cell';
+    evts.forEach(evt => {
+      const pill = document.createElement('span');
+      pill.className = 'pill';
+      pill.textContent = evt.title;
+      pill.style.background = PILL_BG;
+      pill.style.borderLeft = '3px solid ' + cat.bg;
+      pill.style.color = accentTextColor(cat.bg);
+      pill.style.fontWeight = '600';
+      pill.style.display = 'inline-block';
+      pill.style.marginRight = '6px';
+      pill.style.marginBottom = '4px';
+      if (evt.status === 'complete') pill.classList.add('pill--complete');
+      pill.addEventListener('click', e => { e.stopPropagation(); openPanel(evt, cat); });
+      attachPillDelete(pill, evt, mi);
+      evtCell.appendChild(pill);
+    });
+    const addBtn = document.createElement('button');
+    addBtn.className = 'add-event-btn-inline';
+    addBtn.textContent = '+';
+    addBtn.title = 'Add event';
+    addBtn.onclick = (e) => { e.stopPropagation(); openNewEventPanel(cat, mi, null); };
+    evtCell.appendChild(addBtn);
+    tr.appendChild(evtCell);
+    table.appendChild(tr);
+  });
+
+  // "Add section" row at the bottom
+  const addSecRow = document.createElement('tr');
+  const addSecCell = document.createElement('td');
+  addSecCell.colSpan = 2;
+  addSecCell.style.cssText = 'padding:6px 12px 6px 16px;border-top:1px solid #f0ede8;';
+  const addSecBtn = document.createElement('button');
+  addSecBtn.className = 'add-section-btn';
+  addSecBtn.style.cssText = "background:none;border:none;font-family:'DM Sans',sans-serif;font-size:11px;color:#bbb;cursor:pointer;padding:0;display:flex;align-items:center;gap:5px;letter-spacing:0.03em;transition:color 0.12s;";
+  addSecBtn.innerHTML = '<span style="font-size:13px;line-height:1">+</span> Add section';
+  addSecBtn.onmouseenter = () => { if (!addSecBtn.style.color.includes('478589')) addSecBtn.style.color = '#6B7A8D'; };
+  addSecBtn.onmouseleave = () => { addSecBtn.style.color = '#bbb'; };
+  addSecBtn.onclick = (e) => { e.stopPropagation(); showAddSectionPicker(addSecBtn, mi); };
+  addSecCell.appendChild(addSecBtn);
+  addSecRow.appendChild(addSecCell);
+  table.appendChild(addSecRow);
+
+  container.appendChild(table);
+}
+
+const IS_TOUCH = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+
+/* ─── WEEK BANDS ──────────────────────────────────────────────────────────────
+   True Sunday–Saturday weeks owned by the month of their Sunday. Always 7
+   columns; days in the adjacent month are live bleed cells (so July has 4
+   weeks, not 5 — early July days sit in June's last week).
+
+   scheme 5: week = Sun–Sat week starting in this month,
+             day  = day-of-month (null + week null = Unassigned / Any) */
+
+const DAY_DOW = { sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6 };
+const DOW_LABELS = { 0: 'Sun', 1: 'Mon', 2: 'Tue', 3: 'Wed', 4: 'Thu', 5: 'Fri', 6: 'Sat' };
+
+// The planner year runs Jul 2026 (mi=0) → Jun 2027 (mi=11).
+function monthYear(mi) { return 2026 + Math.floor((6 + mi) / 12); }
+function monthIndex(mi) { return (6 + mi) % 12; }
+function daysInMonth(mi) { return new Date(monthYear(mi), monthIndex(mi) + 1, 0).getDate(); }
+
+function plannerMiFromParts(y, m) {
+  return (y - 2026) * 12 + m - 6;
+}
+
+function isoFromMonthDay(mi, d) {
+  return monthYear(mi) + '-' + String(monthIndex(mi) + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+}
+
+/* Sun–Sat weeks starting in this month. A leading week is added only when
+   its Sunday is before the planner year (July needs this for Jul 1–4). Later
+   months get early days via the previous month's trailing bleed — no duplicate
+   rows. Trailing weeks bleed into the next month as live cells. */
+function monthWeekBands(mi) {
+  const y = monthYear(mi), m = monthIndex(mi), last = daysInMonth(mi);
+  const bands = [];
+  let key = 1;
+  const firstDow = new Date(y, m, 1).getDay();
+  // Leading week only when its Sunday sits outside the planner year (e.g. late
+  // June before Jul 2026). Otherwise that week already lives in the previous
+  // month section and bleeds forward — avoid duplicating it here.
+  if (firstDow !== 0) {
+    const start = 1 - firstDow;
+    const sun = new Date(y, m, start);
+    const sunMi = plannerMiFromParts(sun.getFullYear(), sun.getMonth());
+    if (sunMi < 0) {
+      bands.push({ key, from: start, to: start + 6 });
+      key += 1;
+    }
+  }
+  for (let d = 1; d <= last; d++) {
+    if (new Date(y, m, d).getDay() !== 0) continue;
+    bands.push({ key, from: d, to: d + 6 });
+    key += 1;
+  }
+  return bands;
+}
+
+function bandForDate(mi, d) {
+  if (d == null) return null;
+  return monthWeekBands(mi).find(b => d >= b.from && d <= b.to) || null;
+}
+
+function bandLabelRange(mi, band) {
+  const last = daysInMonth(mi);
+  const y = monthYear(mi), m = monthIndex(mi);
+  const end = new Date(y, m, band.to);
+  const endInMonth = end.getMonth() === m && end.getFullYear() === y;
+  return {
+    from: band.from,
+    to: endInMonth ? end.getDate() : last,
+    bleedsNext: !endInMonth
+  };
+}
+
+// Always seven Sun–Sat columns. Adjacent-month days are live bleed cells.
+function dayColumnsForBand(mi, band) {
+  if (!band) return [];
+  const y = monthYear(mi), m = monthIndex(mi), cols = [];
+  for (let offset = 0; offset < 7; offset++) {
+    const cell = new Date(y, m, band.from + offset);
+    const cy = cell.getFullYear(), cm = cell.getMonth(), cd = cell.getDate();
+    const inSection = cy === y && cm === m;
+    const cellMi = plannerMiFromParts(cy, cm);
+    const inPlanner = cellMi >= 0 && cellMi <= 11;
+    const dow = cell.getDay();
+    cols.push({
+      date: cd,
+      cellMi: inPlanner ? cellMi : null,
+      outside: !inSection,
+      bleed: !inSection && inPlanner,
+      inert: !inSection && !inPlanner,
+      dow,
+      label: DOW_LABELS[dow],
+      weekend: dow === 0 || dow === 6
+    });
+  }
+  return cols;
+}
+
+// 1st / 2nd / 3rd … 11th–13th are the exceptions to the digit rule.
+function ordinal(n) {
+  const r = n % 100;
+  if (r >= 11 && r <= 13) return n + 'th';
+  return n + ({ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th');
+}
+
+/* Convert stored placement to the current scheme, preserving the real calendar
+   date each event is already shown on. Runs once per scheme bump.
+
+   scheme 1: week = day-bucket,      day = 'mon'…'fri'
+   scheme 2: week = real Mon–Sun week, day = 'mon'…'fri'
+   scheme 3: week = day-bucket (1–7/8–14…), day = date number
+   scheme 4: week = Sun–Sat intersecting month (incl. leading empty cells)
+   scheme 5: week = Sun–Sat starting in month; adjacent days bleed live */
+function migrateWeekScheme(fromScheme) {
+  const y = mi => monthYear(mi), mo = mi => monthIndex(mi);
+
+  EVENTS.forEach(e => {
+    if (e.m == null) return;
+    const last = daysInMonth(e.m);
+
+    // Work out the real date this event currently sits on.
+    let date = null;
+    if (typeof e.day === 'number') {
+      date = e.day;                                  // already scheme 3
+    } else if (e.day && e.week != null) {
+      const dow = DAY_DOW[e.day];
+      let from, to;
+      if (fromScheme >= 2) {
+        // Scheme 2 bands were real Mon–Sun weeks; rebuild the one it was in.
+        let d = 1, k = 0;
+        while (d <= last) {
+          const wd = new Date(y(e.m), mo(e.m), d).getDay();
+          const end = Math.min(d + (wd === 0 ? 0 : 7 - wd), last);
+          if (++k === e.week) { from = d; to = end; break; }
+          d = end + 1;
+        }
+      } else {
+        from = (e.week - 1) * 7 + 1;
+        to = e.week === 4 ? last : e.week * 7;
+      }
+      if (from != null) {
+        for (let d = from; d <= Math.min(to, last); d++) {
+          if (new Date(y(e.m), mo(e.m), d).getDay() === dow) { date = d; break; }
+        }
+      }
+    }
+
+    if (date != null) {
+      e.day = date;
+      const band = bandForDate(e.m, date);
+      e.week = band ? band.key : 1;
+    } else {
+      // No specific day — former "Any" column cards park in Unassigned / Any.
+      e.day = null;
+      e.week = null;
+    }
+  });
+}
+
+/* ─── DATE MIRRORING (Task Board ⇄ Timeline) ──────────────────────────────────
+   Any pill carrying a date sits on the timeline at exactly that date, and the
+   same item shows on both boards. Links are by id (`srcCardId` / `srcEventId`),
+   reconciled here in one pass so the two stores can never drift or loop. */
+
+const KANBAN_URL = 'https://ppc-planner.pressplaycollective.workers.dev/api/kanban';
+const KANBAN_PATCH_URL = KANBAN_URL + '/patch';
+
+// Task Board projects, cached so the timeline can label pills and offer the
+// same project list without refetching.
+let BOARD_PROJECTS = [];
+function projectName(id) {
+  const p = BOARD_PROJECTS.find(x => x.id === id);
+  return p ? p.name : null;
+}
+
+// Single-card writes to the board. Server-side merge keeps fields we don't send
+// (column, assignees) and avoids clobbering the whole board.
+async function patchBoard(upsert, remove) {
+  try {
+    await fetch(KANBAN_PATCH_URL, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ upsert: upsert || [], remove: remove || [] })
+    });
+  } catch (err) { console.warn('Task Board patch failed:', err); }
+}
+
+// A real date → the timeline slot representing it. Every day of the week has a
+// column now, so any date maps straight onto its own.
+function dateToPlannerSlot(iso) {
+  if (!iso) return null;
+  const [y, mo, d] = iso.split('-').map(Number);
+  if (!y || !mo || !d) return null;
+  const mi = (y - 2026) * 12 + (mo - 1) - 6;
+  if (mi < 0 || mi > 11) return null;
+  const band = bandForDate(mi, d);
+  // Day is enough to place; week may be null for leading days before the first Sunday.
+  return { m: mi, week: band ? band.key : null, day: d };
+}
+
+// The inverse: a timeline slot → the date it represents.
+function slotToDate(mi, week, day) {
+  if (mi == null) return null;
+  if (typeof day === 'number') return isoFromMonthDay(mi, day);
+  if (week == null) return null;
+  const band = monthWeekBands(mi).find(b => b.key === week);
+  if (!band) return null;
+  return isoFromMonthDay(mi, band.from);
+}
+
+function stripHtml(html) {
+  const t = document.createElement('div');
+  t.innerHTML = html || '';
+  return (t.textContent || '').trim();
+}
+
+// Timeline events need stable ids so the Task Board can link back to them.
+function ensureEventIds() {
+  let changed = false;
+  EVENTS.forEach(e => {
+    if (!e.id) { e.id = 'e' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4); changed = true; }
+  });
+  return changed;
+}
+
+function statusToColumn(status) {
+  return status === 'complete' ? 'done' : status === 'in-progress' ? 'active' : 'backlog';
+}
+
+/* Reconcile both directions in a single pass, then write each store once. */
+async function syncDateMirrors() {
+  let board = null;
+  try {
+    const res = await fetch(KANBAN_URL);
+    if (res.ok) board = await res.json();
+  } catch (err) { return false; }                      // offline: leave mirrors alone
+  if (!board || !Array.isArray(board.cards)) return false;
+  BOARD_PROJECTS = Array.isArray(board.projects) ? board.projects : [];
+
+  let eventsChanged = ensureEventIds();
+
+  // ── Task Board → Timeline ────────────────────────────────────────────────
+  const datedCards = new Map();
+  board.cards.forEach(c => { if (c.dueDate && !c.srcEventId) datedCards.set(c.id, c); });
+
+  for (let i = EVENTS.length - 1; i >= 0; i--) {
+    const e = EVENTS[i];
+    if (e.srcCardId && !datedCards.has(e.srcCardId)) {
+      // Parked in Unassigned / Any after clearing the due date — keep it.
+      if (e.week == null) continue;
+      EVENTS.splice(i, 1); eventsChanged = true;
+    }
+  }
+  datedCards.forEach((card, id) => {
+    const slot = dateToPlannerSlot(card.dueDate);
+    const idx = EVENTS.findIndex(e => e.srcCardId === id);
+    if (!slot) { if (idx >= 0) { EVENTS.splice(idx, 1); eventsChanged = true; } return; }
+    const next = {
+      srcCardId: id, mirrored: true,
+      cat: CATS.some(c => c.id === card.cat) ? card.cat : CATS[0].id,
+      m: slot.m, week: slot.week, day: slot.day,
+      title: card.title || 'Untitled task', date: MONTHS[slot.m],
+      body: stripHtml(card.body), status: card.status || 'planned',
+      tasks: (card.tasks || []).slice(), dueDate: card.dueDate,
+      project: card.project || null
+    };
+    if (idx < 0) { next.id = 'mir-' + id; EVENTS.push(next); eventsChanged = true; return; }
+    const e = EVENTS[idx];
+    if (['cat','m','week','day','title','status','body','dueDate','project'].some(f => e[f] !== next[f])) {
+      Object.assign(e, next); eventsChanged = true;
+    }
+  });
+
+  // ── Timeline → Task Board ────────────────────────────────────────────────
+  // A dated timeline event gets its own card, so the item lives on both boards.
+  // Writes go through the single-card patch endpoint, never a whole-board POST.
+  const datedEvents = EVENTS.filter(e => e.dueDate && !e.srcCardId);
+  const liveEventIds = new Set(datedEvents.map(e => e.id));
+  const upserts = [];
+  const removals = board.cards
+    .filter(c => c.srcEventId && !liveEventIds.has(c.srcEventId))
+    .map(c => c.id);
+
+  datedEvents.forEach(evt => {
+    const existing = board.cards.find(c => c.srcEventId === evt.id);
+    const desired = {
+      id: existing ? existing.id : 'kmir-' + evt.id,
+      srcEventId: evt.id, mirrored: true,
+      title: evt.title, cat: evt.cat, status: evt.status || 'planned',
+      dueDate: evt.dueDate, project: evt.project || undefined
+    };
+    if (!existing) {
+      // Only set these on creation — afterwards they're the board's to own.
+      desired.column = statusToColumn(evt.status);
+      desired.body = evt.body || '';
+      desired.tasks = (evt.tasks || []).slice();
+      desired.assignees = [];
+      upserts.push(desired);
+    } else if (['title','cat','status','dueDate','project'].some(f => existing[f] !== desired[f])) {
+      desired.column = statusToColumn(evt.status);
+      upserts.push(desired);
+    }
+  });
+
+  if (upserts.length || removals.length) await patchBoard(upserts, removals);
+
+  return eventsChanged;
+}
+
+// Write a date back to a linked card (null clears it, retiring the mirror).
+// Single-card patch — never rewrites the rest of the board.
+async function pushDueDateToCard(cardId, iso) {
+  await patchBoard([{ id: cardId, dueDate: iso || null }], []);
+}
+
+async function pushStatusToCard(cardId, status) {
+  if (!cardId) return;
+  const patch = { id: cardId, status: status || 'planned' };
+  patch.column = statusToColumn(status);
+  if (status === 'complete') patch.doneAt = new Date().toISOString();
+  await patchBoard([patch], []);
+}
+
+/** Push all editable fields from a linked timeline pill back to its Task Board card. */
+async function pushEventToCard(evt) {
+  if (!evt || !evt.srcCardId) return;
+  const patch = {
+    id: evt.srcCardId,
+    title: evt.title || 'Untitled task',
+    body: evt.body || '',
+    tasks: Array.isArray(evt.tasks) ? evt.tasks.slice() : [],
+    status: evt.status || 'planned',
+    column: statusToColumn(evt.status),
+    dueDate: evt.dueDate || null,
+    project: evt.project || null
+  };
+  if (evt.status === 'complete') patch.doneAt = new Date().toISOString();
+  await patchBoard([patch], []);
+}
+
+function showToast(msg) {
+  let el = document.getElementById('ppcToast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'ppcToast';
+    el.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;background:#2C2C2C;color:#F7F5F2;font-family:DM Sans,sans-serif;font-size:13px;padding:10px 18px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.2);max-width:90vw;opacity:0;transition:opacity 0.2s;pointer-events:none;';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.opacity = '1';
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => { el.style.opacity = '0'; }, 3200);
+}
+
+/* Every slot change funnels through here so a dated pill's date follows it. */
+async function applyEventSlot(evt, week, dayKey, cellMi) {
+  if (cellMi != null && cellMi !== evt.m) {
+    evt.m = cellMi;
+    evt.date = MONTHS[cellMi];
+  }
+  evt.day = dayKey;
+  if (typeof dayKey === 'number') {
+    const band = bandForDate(evt.m, dayKey);
+    evt.week = band ? band.key : null;
+  } else {
+    evt.week = week;
+    evt.day = null;
+  }
+  const iso = typeof dayKey === 'number' ? isoFromMonthDay(evt.m, dayKey) : null;
+  if (evt.dueDate || evt.srcCardId) {
+    if (iso) evt.dueDate = iso; else delete evt.dueDate;
+  }
+  if (evt.srcCardId) await pushDueDateToCard(evt.srcCardId, iso);
+}
+
+function attachPillDelete(pill, evt, mi) {
+  const del = document.createElement('button');
+  del.className = 'pill-del';
+  del.innerHTML = '&times;';
+  del.title = 'Delete event';
+  del.onclick = async (e) => {
+    e.stopPropagation();
+    const linked = !!evt.srcCardId;
+    const msg = linked
+      ? 'Remove "' + evt.title + '" from the timeline? It stays on the Task Board, just without a due date.'
+      : 'Delete "' + evt.title + '"? You can recover it from Settings → Archive for 30 days.';
+    if (!confirm(msg)) return;
+    if (linked) {
+      pushDueDateToCard(evt.srcCardId, null);
+    } else {
+      try {
+        const snap = JSON.parse(JSON.stringify(evt));
+        if (!snap.id) snap.id = 'e' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
+        evt.id = snap.id;
+        await PPC.archivePush({
+          source: 'planner',
+          item: snap,
+          restoreMeta: { m: evt.m, week: evt.week, day: evt.day },
+          label: evt.title || 'Untitled event'
+        });
+      } catch (_) {}
+    }
+    const i = EVENTS.indexOf(evt);
+    if (i > -1) EVENTS.splice(i, 1);
+    saveToRepos();
+    if (mi != null) refreshMonthContent(mi);
+    else renderVertical();
+  };
+  pill.appendChild(del);
+}
+
+function makePill(evt, mi) {
+  const cat = CATS.find(c => c.id === evt.cat);
+  if (!cat) return document.createTextNode('');
+  const pill = document.createElement('span');
+  pill.className = 'pill';
+  setPillLabel(pill, evt, accentTextColor(cat.bg));
+  pill.style.background = PILL_BG;
+  pill.style.borderLeft = '3px solid ' + cat.bg;
+  pill.style.color = accentTextColor(cat.bg);
+  pill.style.fontWeight = '600';
+  pill.style.cursor = 'grab';
+  if (evt.status === 'complete') pill.classList.add('pill--complete');
+  // Native HTML5 drag doesn't work via touch and blocks the scroll gesture instead — skip it on touch devices.
+  pill.draggable = !IS_TOUCH;
+  pill.addEventListener('dragstart', (e) => {
+    if (!editMode) { e.preventDefault(); return; }
+    _dragEvt = evt; _dragMi = mi;
+    e.dataTransfer.effectAllowed = 'move';
+    setTimeout(() => pill.classList.add('dragging'), 0);
+  });
+  pill.addEventListener('dragend', () => {
+    pill.classList.remove('dragging');
+    _dragEvt = null; _dragMi = null;
+  });
+  if (IS_TOUCH) attachTouchDrag(pill, evt, mi);
+  pill.addEventListener('click', e => { e.stopPropagation(); if (_touchJustDragged) return; openPanel(evt, cat); });
+  markDatedPill(pill, evt);
+  attachPillDelete(pill, evt, mi);
+  return pill;
+}
+
+// Project name sits in small text above the title, so it's clear at a glance
+// what the item belongs to.
+function setPillLabel(pill, evt, accent) {
+  pill.textContent = '';
+  const proj = projectName(evt.project);
+  if (proj) {
+    const tag = document.createElement('span');
+    tag.className = 'pill-project';
+    tag.textContent = proj;
+    pill.appendChild(tag);
+  }
+  const title = document.createElement('span');
+  title.className = 'pill-title';
+  title.textContent = evt.title;
+  pill.appendChild(title);
+}
+
+// Pills pinned to a date get a marker; ones linked to a Task Board card say so.
+function markDatedPill(pill, evt) {
+  if (!evt.dueDate && !evt.srcCardId) return;
+  const tag = document.createElement('span');
+  tag.className = 'pill-datemark';
+  tag.textContent = evt.srcCardId ? '⇄' : '◆';
+  tag.title = evt.srcCardId
+    ? 'Linked to the Task Board — moving it here updates the task\'s due date'
+    : 'Pinned to ' + evt.dueDate;
+  pill.appendChild(tag);
+  pill.classList.add('pill--dated');
+}
+
+// ── Touch drag: hold a pill ~half a second to pick it up, drag to a day/week cell ──
+let _touchGhost = null;
+let _touchTarget = null;
+let _touchJustDragged = false;
+
+function attachTouchDrag(pill, evt, mi) {
+  let timer = null, dragging = false, startX = 0, startY = 0;
+
+  const cleanup = () => {
+    clearTimeout(timer); timer = null;
+    if (_touchGhost) { _touchGhost.remove(); _touchGhost = null; }
+    if (_touchTarget) { _touchTarget.classList.remove('drop-target'); _touchTarget = null; }
+    pill.classList.remove('dragging');
+    dragging = false;
+    _dragEvt = null; _dragMi = null;
+  };
+
+  pill.addEventListener('touchstart', (e) => {
+    if (!editMode) return;
+    const t = e.touches[0];
+    startX = t.clientX; startY = t.clientY;
+    timer = setTimeout(() => {
+      dragging = true;
+      _dragEvt = evt; _dragMi = mi;
+      pill.classList.add('dragging');
+      if (navigator.vibrate) navigator.vibrate(30);
+      _touchGhost = pill.cloneNode(true);
+      _touchGhost.classList.remove('dragging');
+      _touchGhost.style.cssText = 'position:fixed;z-index:99999;pointer-events:none;opacity:0.92;box-shadow:0 6px 18px rgba(0,0,0,0.3);width:' + pill.offsetWidth + 'px;left:' + (startX - pill.offsetWidth / 2) + 'px;top:' + (startY - 34) + 'px;margin:0;';
+      document.body.appendChild(_touchGhost);
+    }, 450);
+  }, { passive: true });
+
+  pill.addEventListener('touchmove', (e) => {
+    const t = e.touches[0];
+    if (!dragging) {
+      // Finger moved before the hold completed — it's a scroll, not a drag.
+      if (Math.abs(t.clientX - startX) > 10 || Math.abs(t.clientY - startY) > 10) { clearTimeout(timer); timer = null; }
+      return;
+    }
+    e.preventDefault();
+    _touchGhost.style.left = (t.clientX - _touchGhost.offsetWidth / 2) + 'px';
+    _touchGhost.style.top = (t.clientY - 34) + 'px';
+    const el = document.elementFromPoint(t.clientX, t.clientY);
+    const target = el && el.closest('[data-drop-mi]');
+    if (_touchTarget && _touchTarget !== target) _touchTarget.classList.remove('drop-target');
+    const tMi = target && target.dataset.dropMi !== '' ? parseInt(target.dataset.dropMi) : NaN;
+    _touchTarget = (target && !isNaN(tMi) && tMi >= 0 && tMi <= 11) ? target : null;
+    if (_touchTarget) _touchTarget.classList.add('drop-target');
+  }, { passive: false });
+
+  pill.addEventListener('touchend', async () => {
+    if (!dragging) { clearTimeout(timer); timer = null; return; }
+    _touchJustDragged = true;
+    setTimeout(() => { _touchJustDragged = false; }, 400);
+    if (_touchTarget) {
+      const destMi = _touchTarget.dataset.dropMi !== '' && _touchTarget.dataset.dropMi != null
+        ? parseInt(_touchTarget.dataset.dropMi) : mi;
+      await applyEventSlot(evt,
+        _touchTarget.dataset.dropWeek ? parseInt(_touchTarget.dataset.dropWeek) : null,
+        _touchTarget.dataset.dropDay ? parseInt(_touchTarget.dataset.dropDay) : null,
+        destMi);
+      cleanup();
+      saveToFirestore();
+      refreshMonthContent(mi);
+      if (destMi !== mi) refreshMonthContent(destMi);
+      return;
+    }
+    cleanup();
+  });
+
+  pill.addEventListener('touchcancel', cleanup);
+}
+
+function weekBandEndsBeforeToday(mi, band, now) {
+  const y = monthYear(mi), m = monthIndex(mi);
+  const end = new Date(y, m, band.to);
+  end.setHours(23, 59, 59, 999);
+  return end.getTime() < now.getTime();
+}
+
+function renderWeekDayGrid(parent, mi, band, collapsed) {
+  const daysGrid = document.createElement('div');
+  daysGrid.className = 'week-days-grid';
+  if (collapsed) daysGrid.style.display = 'none';
+  daysGrid.style.gridTemplateColumns = 'repeat(7, minmax(88px, 1fr))';
+
+  const cols = dayColumnsForBand(mi, band);
+  cols.forEach(({ date, label: dayLabel, weekend, outside, bleed, inert, cellMi }) => {
+    const col = document.createElement('div');
+    col.className = 'week-day-col'
+      + (weekend ? ' week-day-col--weekend' : '')
+      + (outside ? ' week-day-col--na' : '')
+      + (bleed ? ' week-day-col--bleed' : '');
+
+    const header = document.createElement('div');
+    header.className = 'week-day-header';
+    if (inert) {
+      header.innerHTML = '<span class="week-day-na">·</span>';
+    } else {
+      const today = new Date();
+      const isToday = cellMi != null
+        && monthYear(cellMi) === today.getFullYear()
+        && monthIndex(cellMi) === today.getMonth()
+        && date === today.getDate();
+      header.innerHTML = '<span class="week-day-num' + (isToday ? ' week-day-num--today' : '') + '">' + date + '</span>';
+    }
+    col.appendChild(header);
+
+    const body = document.createElement('div');
+    body.className = 'week-day-body';
+
+    if (inert || cellMi == null) {
+      col.appendChild(body);
+      daysGrid.appendChild(col);
+      return;
+    }
+
+    body.dataset.dropMi = cellMi;
+    body.dataset.dropWeek = String(band.key);
+    body.dataset.dropDay = String(date);
+
+    body.addEventListener('dragover', (e) => {
+      if (_dragEvt) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; body.classList.add('drop-target'); }
+    });
+    body.addEventListener('dragleave', (e) => {
+      if (!body.contains(e.relatedTarget)) body.classList.remove('drop-target');
+    });
+    body.addEventListener('drop', async (e) => {
+      e.preventDefault(); body.classList.remove('drop-target');
+      if (!_dragEvt) return;
+      const destMi = cellMi;
+      await applyEventSlot(_dragEvt, band.key, date, destMi);
+      const srcMi = _dragMi;
+      _dragEvt = null; _dragMi = null;
+      saveToRepos();
+      if (srcMi != null) refreshMonthContent(srcMi);
+      refreshMonthContent(destMi);
+      if (destMi > 0) refreshMonthContent(destMi - 1);
+      if (destMi < 11) refreshMonthContent(destMi + 1);
+    });
+
+    EVENTS.filter(e => {
+      const cat = CATS.find(c => c.id === e.cat);
+      return cat && e.m === cellMi && e.day === date;
+    }).forEach(evt => body.appendChild(makePill(evt, cellMi)));
+
+    const addBtn = document.createElement('button');
+    addBtn.className = 'week-add-btn';
+    addBtn.textContent = '+';
+    addBtn.title = 'Add to ' + dayLabel + ' ' + ordinal(date);
+    addBtn.onclick = (e) => {
+      e.stopPropagation();
+      const _band = bandForDate(cellMi, date);
+      showCatPicker(addBtn, cellMi, _band ? _band.key : null, date);
+    };
+    body.appendChild(addBtn);
+
+    col.appendChild(body);
+    daysGrid.appendChild(col);
+  });
+
+  parent.appendChild(daysGrid);
+  return daysGrid;
+}
+
+function renderMonthWeeks(container, mi) {
+  // Month grid: Sun–Sat week rows (calendar layout). Past weeks collapse.
+  const calYear = monthYear(mi);
+  const calMonth = monthIndex(mi);
+  const monShort = new Date(calYear, calMonth, 1).toLocaleDateString('en-AU', { month: 'short' });
+  const BANDS = monthWeekBands(mi);
+  const now = new Date();
+  const isCurrentMonth = calYear === now.getFullYear() && calMonth === now.getMonth();
+
+  // Shared day-of-week header (calendar chrome)
+  const dowHead = document.createElement('div');
+  dowHead.className = 'cal-dow-header';
+  for (let d = 0; d < 7; d++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-dow-cell' + (d === 0 || d === 6 ? ' cal-dow-cell--weekend' : '');
+    cell.textContent = DOW_LABELS[d];
+    dowHead.appendChild(cell);
+  }
+  container.appendChild(dowHead);
+
+  const pastBands = [];
+  const liveBands = [];
+  BANDS.forEach(b => {
+    if (isCurrentMonth && weekBandEndsBeforeToday(mi, b, now)) pastBands.push(b);
+    else liveBands.push(b);
+  });
+
+  if (pastBands.length) {
+    const eKey = 'earlier_weeks_' + mi;
+    const expanded = !!earlierExpanded[eKey];
+    const weekSec = document.createElement('div');
+    weekSec.className = 'week-section week-section--earlier';
+
+    const wLabel = document.createElement('div');
+    wLabel.className = 'week-label week-earlier';
+    const colIcon = document.createElement('span');
+    colIcon.className = 'week-collapse-icon';
+    colIcon.textContent = expanded ? '▼' : '▶';
+    wLabel.appendChild(colIcon);
+    const labelText = document.createElement('span');
+    labelText.className = 'week-label-text';
+    labelText.textContent = 'Earlier weeks · ' + pastBands.length;
+    wLabel.appendChild(labelText);
+    weekSec.appendChild(wLabel);
+
+    const body = document.createElement('div');
+    body.className = 'week-earlier-body';
+    if (!expanded) body.style.display = 'none';
+
+    pastBands.forEach(band => {
+      const wrap = document.createElement('div');
+      wrap.className = 'week-section week-section--nested';
+      renderWeekDayGrid(wrap, mi, band, false);
+      body.appendChild(wrap);
+    });
+    weekSec.appendChild(body);
+
+    wLabel.onclick = () => {
+      earlierExpanded[eKey] = !earlierExpanded[eKey];
+      try { localStorage.setItem('ppc-earlier-expanded', JSON.stringify(earlierExpanded)); } catch (_) {}
+      colIcon.textContent = earlierExpanded[eKey] ? '▼' : '▶';
+      body.style.display = earlierExpanded[eKey] ? '' : 'none';
+    };
+
+    container.appendChild(weekSec);
+  }
+
+  liveBands.forEach(band => {
+    const weekSec = document.createElement('div');
+    weekSec.className = 'week-section';
+    renderWeekDayGrid(weekSec, mi, band, false);
+    container.appendChild(weekSec);
+  });
+
+  // Unassigned / Any
+  {
+    const wKey = mi + '_null';
+    const collapsed = !!weekCollapsed[wKey];
+    const weekSec = document.createElement('div');
+    weekSec.className = 'week-section';
+
+    const wLabel = document.createElement('div');
+    wLabel.className = 'week-label week-unassigned';
+    const colIcon = document.createElement('span');
+    colIcon.className = 'week-collapse-icon';
+    colIcon.textContent = collapsed ? '▶' : '▼';
+    wLabel.appendChild(colIcon);
+    const labelText = document.createElement('span');
+    labelText.className = 'week-label-text';
+    labelText.textContent = 'Unassigned / Any';
+    wLabel.appendChild(labelText);
+    weekSec.appendChild(wLabel);
+
+    const addArea = document.createElement('div');
+    addArea.className = 'week-add-area';
+    addArea.dataset.dropMi = mi; addArea.dataset.dropWeek = ''; addArea.dataset.dropDay = '';
+    if (collapsed) addArea.style.display = 'none';
+
+    wLabel.onclick = () => {
+      weekCollapsed[wKey] = !weekCollapsed[wKey];
+      colIcon.textContent = weekCollapsed[wKey] ? '▶' : '▼';
+      addArea.style.display = weekCollapsed[wKey] ? 'none' : '';
+    };
+
+    addArea.addEventListener('dragover', (e) => {
+      if (_dragEvt) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; addArea.classList.add('drop-target'); }
+    });
+    addArea.addEventListener('dragleave', (e) => {
+      if (!addArea.contains(e.relatedTarget)) addArea.classList.remove('drop-target');
+    });
+    addArea.addEventListener('drop', async (e) => {
+      e.preventDefault(); addArea.classList.remove('drop-target');
+      if (!_dragEvt) return;
+      const srcMi = _dragMi;
+      await applyEventSlot(_dragEvt, null, null, mi);
+      _dragEvt = null; _dragMi = null;
+      saveToRepos();
+      if (srcMi != null && srcMi !== mi) refreshMonthContent(srcMi);
+      refreshMonthContent(mi);
+    });
+
+    EVENTS.filter(e => {
+      const cat = CATS.find(c => c.id === e.cat);
+      return cat && e.m === mi && e.week == null && e.day == null;
+    }).forEach(evt => addArea.appendChild(makePill(evt, mi)));
+
+    const addBtn = document.createElement('button');
+    addBtn.className = 'week-add-btn';
+    addBtn.textContent = '+';
+    addBtn.title = 'Add to Unassigned / Any';
+    addBtn.onclick = (e) => { e.stopPropagation(); showCatPicker(addBtn, mi, null, null); };
+    addArea.appendChild(addBtn);
+    weekSec.appendChild(addArea);
+    container.appendChild(weekSec);
+  }
+}
+
+
+// ─── DARK MODE ───────────────────────────────────────────────────────────────
+
+async function refreshPlanner() {
+  await initApp();
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible') return;
+  if (document.getElementById('panel').classList.contains('open')) return;
+  refreshPlanner();
+});
+
+let darkMode = false;
+function toggleDarkMode() {
+  darkMode = PPC.toggleDark();
+}
+
+// ─── CATEGORY PICKER ─────────────────────────────────────────────────────────
+
+let activePicker = null;
+let _dragEvt = null;
+let _dragMi  = null;
+
+function _positionPicker(picker, anchor) {
+  document.body.appendChild(picker);
+  activePicker = picker;
+  const rect = anchor.getBoundingClientRect();
+  const below = window.innerHeight - rect.bottom;
+  const top = below > 270 ? rect.bottom + 4 : rect.top - 300 - 4;
+  picker.style.top = Math.max(8, top) + 'px';
+  picker.style.left = Math.min(rect.left, window.innerWidth - 290) + 'px';
+  setTimeout(() => document.addEventListener('click', closeCatPickerOutside), 0);
+}
+
+function getFgForBg(hex) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return (0.299*r + 0.587*g + 0.114*b) > 160 ? '#2C2C2C' : '#fff';
+}
+
+function buildColorGrid(selectedColor, onSelect) {
+  const COLOR_LIB = [
+    // Teals
+    '#b2d8db','#89c0c4','#60a8ad','#478589','#3a6e72','#2d5658','#1f3e3f','#122526',
+    // Sky blues
+    '#c8e6f4','#9dcce9','#73b2de','#4898d3','#2f7fc9','#2365ae','#1a4c93','#103478',
+    // Navys
+    '#c2cde6','#94a6cf','#667fb8','#4965a1','#344364','#263252','#182141','#0c1030',
+    // Purples
+    '#d4cde8','#b5a9d5','#9585c2','#7a62af','#6B5A9C','#574888','#433674','#302460',
+    // Reds/corals
+    '#f5c2b8','#ec9889','#e36e5a','#da442b','#c94a4a','#b03030','#921818','#740000',
+    // Oranges
+    '#f8dbb0','#f4c078','#f0a540','#ec8a08','#d4763b','#b85c20','#9c4208','#802800',
+    // Yellows
+    '#fdf2a8','#fae97a','#f7e04c','#f4d71e','#EDD960','#d4c140','#baa920','#a09100',
+    // Greens
+    '#b8e6c8','#88d4a4','#58c280','#28b05c','#4a8a5c','#3a7048','#2a5634','#1a3c20',
+    // Warm neutrals
+    '#f4f0eb','#e8e0d6','#d4c8b8','#c0b0a0','#a89688','#8e7c6c','#746250','#5a4834',
+    // Cool grays
+    '#e4e8ed','#c8d0d9','#acb8c5','#90a0b1','#6B7A8D','#556070','#3f4853','#2a3036',
+    // Darks
+    '#8c8c8c','#6e6e6e','#505050','#404040','#2C2C2C','#1e1e1e','#101010','#000000',
+  ];
+  const grid = document.createElement('div');
+  grid.style.cssText = 'display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin-bottom:10px;';
+  COLOR_LIB.forEach(color => {
+    const sw = document.createElement('button');
+    const isSel = color.toLowerCase() === (selectedColor||'').toLowerCase();
+    sw.style.cssText = `width:100%;aspect-ratio:1;border-radius:4px;background:${color};border:2.5px solid ${isSel ? '#fff' : 'transparent'};outline:${isSel ? '2px solid #344364' : 'none'};outline-offset:-1px;cursor:pointer;padding:0;transition:transform 0.1s;`;
+    sw.title = color;
+    sw.onmouseenter = () => { sw.style.transform = 'scale(1.18)'; };
+    sw.onmouseleave = () => { sw.style.transform = ''; };
+    sw.onclick = (e) => {
+      e.stopPropagation();
+      grid.querySelectorAll('button').forEach(b => { b.style.borderColor = 'transparent'; b.style.outline = 'none'; });
+      sw.style.borderColor = '#fff';
+      sw.style.outline = '2px solid #344364';
+      sw.style.outlineOffset = '-1px';
+      selectedColor = color;
+      onSelect(color);
+    };
+    grid.appendChild(sw);
+  });
+  return grid;
+}
+
+function showCatPicker(anchor, mi, weekKey, dayKey = null) {
+  closeCatPicker();
+  const picker = document.createElement('div');
+  picker.className = 'cat-picker';
+  picker.id = 'activeCatPicker';
+
+  const hint = document.createElement('div');
+  hint.style.cssText = 'font-size:9px;color:#aaa;padding:2px 8px 6px;letter-spacing:0.04em;';
+  hint.textContent = 'click to use · double-click to edit';
+  picker.appendChild(hint);
+
+  let _clickTimer = null;
+  CATS.forEach(cat => {
+    const item = document.createElement('button');
+    item.className = 'cat-picker-item';
+    const dot = document.createElement('span');
+    dot.className = 'cat-picker-dot';
+    dot.style.background = cat.bg;
+    item.appendChild(dot);
+    item.appendChild(document.createTextNode(cat.label));
+    item.onclick = (e) => {
+      e.stopPropagation();
+      if (_clickTimer) {
+        clearTimeout(_clickTimer);
+        _clickTimer = null;
+        showEditCatForm(picker, cat, mi, weekKey);
+      } else {
+        _clickTimer = setTimeout(() => {
+          _clickTimer = null;
+          closeCatPicker();
+          openNewEventPanel(cat, mi, weekKey, dayKey);
+        }, 260);
+      }
+    };
+    picker.appendChild(item);
+  });
+
+  // Separator + Add custom option
+  const sep = document.createElement('div');
+  sep.style.cssText = 'height:1px;background:#e0ddd8;margin:4px 6px;';
+  picker.appendChild(sep);
+  const addCustomBtn = document.createElement('button');
+  addCustomBtn.className = 'cat-picker-item';
+  addCustomBtn.style.color = '#888';
+  const plusCircle = document.createElement('span');
+  plusCircle.style.cssText = 'width:10px;height:10px;border-radius:50%;border:1.5px dashed #aaa;flex-shrink:0;display:inline-block;';
+  addCustomBtn.appendChild(plusCircle);
+  addCustomBtn.appendChild(document.createTextNode('Add custom category'));
+  addCustomBtn.onclick = (e) => { e.stopPropagation(); showCustomCatForm(picker, mi, weekKey, dayKey); };
+  picker.appendChild(addCustomBtn);
+
+  _positionPicker(picker, anchor);
+}
+
+function showAddSectionPicker(anchor, mi) {
+  closeCatPicker();
+  const picker = document.createElement('div');
+  picker.className = 'cat-picker';
+  picker.id = 'activeCatPicker';
+  _positionPicker(picker, anchor);
+  showCustomCatForm(picker, mi, null);
+}
+
+function showCustomCatForm(picker, mi, weekKey, dayKey = null) {
+  picker.innerHTML = '';
+  picker.style.minWidth = '280px';
+  const isDark = document.body.classList.contains('dark');
+  const surfaceBg = isDark ? '#252e45' : '#f8f6f3';
+  const borderCol = isDark ? '#2e3a55' : '#e0ddd8';
+  const textCol   = isDark ? '#e0ddd8'  : '#2C2C2C';
+
+  const title = document.createElement('div');
+  title.style.cssText = 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#6B7A8D;padding:4px 8px 8px;';
+  title.textContent = 'New Section';
+  picker.appendChild(title);
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.placeholder = 'Section name...';
+  input.style.cssText = `width:100%;padding:7px 10px;border:1px solid ${borderCol};border-radius:5px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;margin-bottom:8px;background:${surfaceBg};color:${textCol};`;
+  picker.appendChild(input);
+
+  let selectedColor = '#4E6E6C';
+  const colorGrid = buildColorGrid(selectedColor, (color) => { selectedColor = color; });
+  picker.appendChild(colorGrid);
+
+  const btnRow = document.createElement('div');
+  btnRow.style.cssText = 'display:flex;gap:6px;';
+
+  const cancelBtn = document.createElement('button');
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.style.cssText = `flex:1;padding:7px;border:1px solid ${borderCol};border-radius:5px;background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;color:#888;`;
+  cancelBtn.onclick = (e) => { e.stopPropagation(); closeCatPicker(); };
+
+  const confirmBtn = document.createElement('button');
+  confirmBtn.textContent = 'Add';
+  confirmBtn.style.cssText = "flex:1;padding:7px;border:none;border-radius:5px;background:#344364;color:#fff;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;font-weight:500;";
+  confirmBtn.onclick = (e) => {
+    e.stopPropagation();
+    const name = input.value.trim();
+    if (!name) { input.focus(); return; }
+    const id = 'custom_' + Date.now();
+    const fg = getFgForBg(selectedColor);
+    const newCat = { id, label: name, bg: selectedColor, fg };
+    CATS.push(newCat);
+    saveToFirestore();
+    closeCatPicker();
+    if (weekKey !== undefined && weekKey !== 'overview') {
+      openNewEventPanel(newCat, mi, weekKey, dayKey);
+    }
+    renderVertical();
+  };
+
+  btnRow.appendChild(cancelBtn);
+  btnRow.appendChild(confirmBtn);
+  picker.appendChild(btnRow);
+  setTimeout(() => input.focus(), 50);
+}
+
+function showEditCatForm(picker, cat, mi, weekKey) {
+  picker.innerHTML = '';
+  picker.style.minWidth = '280px';
+  const isDark = document.body.classList.contains('dark');
+  const surfaceBg = isDark ? '#252e45' : '#f8f6f3';
+  const borderCol = isDark ? '#2e3a55' : '#e0ddd8';
+  const textCol   = isDark ? '#e0ddd8'  : '#2C2C2C';
+
+  const title = document.createElement('div');
+  title.style.cssText = 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#6B7A8D;padding:4px 8px 8px;';
+  title.textContent = 'Edit Category';
+  picker.appendChild(title);
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = cat.label;
+  input.placeholder = 'Category name...';
+  input.style.cssText = `width:100%;padding:7px 10px;border:1px solid ${borderCol};border-radius:5px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;margin-bottom:8px;background:${surfaceBg};color:${textCol};box-sizing:border-box;`;
+  picker.appendChild(input);
+
+  let selectedColor = cat.bg;
+  const colorGrid = buildColorGrid(selectedColor, (color) => { selectedColor = color; });
+  picker.appendChild(colorGrid);
+
+  const btnRow = document.createElement('div');
+  btnRow.style.cssText = 'display:flex;gap:6px;';
+
+  const cancelBtn = document.createElement('button');
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.style.cssText = `flex:1;padding:7px;border:1px solid ${borderCol};border-radius:5px;background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;color:#888;`;
+  cancelBtn.onclick = (e) => { e.stopPropagation(); closeCatPicker(); };
+
+  const confirmBtn = document.createElement('button');
+  confirmBtn.textContent = 'Save';
+  confirmBtn.style.cssText = "flex:1;padding:7px;border:none;border-radius:5px;background:#344364;color:#fff;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;font-weight:500;";
+  confirmBtn.onclick = (e) => {
+    e.stopPropagation();
+    const name = input.value.trim();
+    if (!name) { input.focus(); return; }
+    cat.label = name;
+    cat.bg = selectedColor;
+    cat.fg = getFgForBg(selectedColor);
+    saveToFirestore();
+    closeCatPicker();
+    renderVertical();
+  };
+
+  btnRow.appendChild(cancelBtn);
+  btnRow.appendChild(confirmBtn);
+  picker.appendChild(btnRow);
+  setTimeout(() => input.focus(), 50);
+}
+
+function closeCatPickerOutside(e) {
+  if (!e.target.closest('#activeCatPicker')) closeCatPicker();
+}
+
+function closeCatPicker() {
+  if (activePicker) { activePicker.remove(); activePicker = null; }
+  document.removeEventListener('click', closeCatPickerOutside);
+}
+
+// ─── STATUS HELPERS ──────────────────────────────────────────────────────────
+
+function getStatusColor(s) {
+  if (s === 'complete')    return '#4E6E6C';
+  if (s === 'in-progress') return '#C29A3B';
+  return '#6B7A8D';
+}
+
+const PLANNER_STATUS_COLORS = {
+  planned: '#6B7A8D',
+  'in-progress': '#C29A3B',
+  complete: '#4E6E6C'
+};
+
+function initPanelSelects() {
+  replaceNativeSelect(document.getElementById('pStatus'), {
+    bare: true,
+    colored: true,
+    colorMap: PLANNER_STATUS_COLORS,
+    onChange: updateStatusColor
+  });
+  replaceNativeSelect(document.getElementById('pProject'), { bare: true, colored: false });
+  replaceNativeSelect(document.getElementById('pWeek'), { bare: true, colored: false });
+}
+initPanelSelects();
+
+function updateStatusColor() {
+  const s = document.getElementById('pStatus').value;
+  const c = getStatusColor(s);
+  document.getElementById('pStatusSmall').style.background = c;
+  document.getElementById('pStatusDot').style.borderColor = c;
+  if (s === 'complete') {
+    document.getElementById('pStatusDot').classList.add('done');
+  } else {
+    document.getElementById('pStatusDot').classList.remove('done');
+  }
+}
+
+function toggleDone() {
+  const sel = document.getElementById('pStatus');
+  const next = sel.value === 'complete' ? 'planned' : 'complete';
+  setPpcSelectValue('pStatus', next);
+  updateStatusColor();
+}
+
+// ─── SUBTASKS ────────────────────────────────────────────────────────────────
+
+function createSubtaskItem(text, checked) {
+  const li = document.createElement('li');
+  li.className = 'subtask-item';
+
+  const check = document.createElement('input');
+  check.type = 'checkbox';
+  check.className = 'subtask-check';
+  check.checked = !!checked;
+
+  const textSpan = document.createElement('span');
+  textSpan.className = 'subtask-text';
+  textSpan.contentEditable = 'true';
+  textSpan.textContent = text || '';
+
+  // Enter → new checkbox below; Shift+Enter → newline in this item
+  textSpan.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      const newLi = createSubtaskItem('', false);
+      li.after(newLi);
+      newLi.querySelector('.subtask-text').focus();
+    }
+    // Shift+Enter falls through to default (inserts newline)
+  });
+
+  const del = document.createElement('button');
+  del.className = 'subtask-del';
+  del.textContent = '×';
+  del.onclick = () => li.remove();
+
+  li.appendChild(check);
+  li.appendChild(textSpan);
+  li.appendChild(del);
+  return li;
+}
+
+function renderSubtasks(tasks) {
+  const list = document.getElementById('subtaskList');
+  list.innerHTML = '';
+  (tasks || []).forEach(t => {
+    const checked = t.startsWith('[x] ');
+    list.appendChild(createSubtaskItem(t.replace(/^\[x\] /, ''), checked));
+  });
+}
+
+function addSubtask(text) {
+  const list = document.getElementById('subtaskList');
+  const li = createSubtaskItem(text || '', false);
+  list.appendChild(li);
+  if (!text) setTimeout(() => li.querySelector('.subtask-text').focus(), 10);
+}
+
+function readSubtasks() {
+  const items = document.querySelectorAll('.subtask-item');
+  const result = [];
+  items.forEach(li => {
+    const check = li.querySelector('.subtask-check');
+    const text = li.querySelector('.subtask-text').textContent.trim();
+    if (text) result.push((check.checked ? '[x] ' : '') + text);
+  });
+  return result;
+}
+
+// ─── PANEL ───────────────────────────────────────────────────────────────────
+
+function openNewEventPanel(cat, monthIdx, weekNum, dayKey = null) {
+  activeEvt = null;
+  activeCat = cat;
+  activeNewMonth = monthIdx;
+  activeNewWeek = weekNum !== undefined ? weekNum : null;
+  activeNewDay = dayKey;
+
+  document.getElementById('panelStrip').style.background = cat.bg;
+  document.getElementById('pTitle').textContent = '';
+  document.getElementById('pCatBadge').textContent = cat.label;
+  document.getElementById('pCatBadge').style.background = cat.bg + '22';
+  document.getElementById('pCatBadge').style.color = accentTextColor(cat.bg);
+  setPpcSelectValue('pStatus', 'planned');
+  document.getElementById('pDate').value = MONTHS[monthIdx];
+  fillWeekSelect(monthIdx, activeNewWeek);
+  document.getElementById('pDay').value = dayKey || '';
+  document.getElementById('pExactDate').value = '';
+  fillProjectSelect('');
+  document.getElementById('pDesc').textContent = '';
+  renderSubtasks([]);
+  updateStatusColor();
+
+  document.getElementById('panel').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+  setTimeout(() => document.getElementById('pTitle').focus(), 50);
+}
+
+// Project list mirrors the Task Board's, so an item is filed the same on both.
+function fillProjectSelect(selected) {
+  updatePpcSelect('pProject', {
+    options: [{ id: '', label: 'Misc — no project' }].concat(
+      BOARD_PROJECTS.map(p => ({ id: p.id, label: p.name }))
+    ),
+    value: selected || ''
+  });
+}
+
+// Week options depend on the month — a month can span 4, 5 or 6 calendar weeks.
+function fillWeekSelect(mi, selected) {
+  const monShort = (mi == null) ? '' : new Date(monthYear(mi), monthIndex(mi), 1).toLocaleDateString('en-AU', { month: 'short' });
+  const bands = (mi == null) ? [] : monthWeekBands(mi);
+  const options = [{ id: '', label: 'Unassigned / Any' }].concat(
+    bands.map(b => {
+      const r = bandLabelRange(mi, b);
+      return { id: String(b.key), label: 'Week ' + b.key + ' — ' + r.from + '–' + r.to + ' ' + monShort };
+    })
+  );
+  updatePpcSelect('pWeek', { options, value: selected != null && selected !== '' ? String(selected) : '' });
+}
+
+// Picking an exact date drives placement — keep Month/Week/Day in step with it.
+function onExactDateChange() {
+  const iso = document.getElementById('pExactDate').value;
+  if (!iso) return;
+  const slot = dateToPlannerSlot(iso);
+  if (!slot) {
+    alert('That date sits outside the planner year (Jul 2026 – Jun 2027).');
+    document.getElementById('pExactDate').value = activeEvt && activeEvt.dueDate ? activeEvt.dueDate : '';
+    return;
+  }
+  document.getElementById('pDate').value = MONTHS[slot.m];
+  fillWeekSelect(slot.m, slot.week);
+  document.getElementById('pDay').value = slot.day || '';
+}
+function clearExactDate() {
+  document.getElementById('pExactDate').value = '';
+}
+
+function openPanel(evt, cat) {
+  activeEvt = evt;
+  activeCat = cat;
+  activeNewMonth = null;
+  activeNewWeek = null;
+
+  document.getElementById('panelStrip').style.background = cat.bg;
+  document.getElementById('pTitle').textContent = evt.title;
+  document.getElementById('pCatBadge').textContent = cat.label;
+  document.getElementById('pCatBadge').style.background = cat.bg + '22';
+  document.getElementById('pCatBadge').style.color = accentTextColor(cat.bg);
+  setPpcSelectValue('pStatus', evt.status || 'planned');
+  document.getElementById('pDate').value = evt.date || '';
+  fillWeekSelect(evt.m, evt.week);
+  document.getElementById('pDay').value = evt.day || '';
+  document.getElementById('pExactDate').value = evt.dueDate || '';
+  fillProjectSelect(evt.project || '');
+  document.getElementById('pDesc').textContent = evt.body || '';
+  renderSubtasks(evt.tasks || []);
+  updateStatusColor();
+
+  document.getElementById('panel').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+
+async function savePanel() {
+  const title = document.getElementById('pTitle').textContent.trim();
+  if (!title) {
+    showToast('Add a title before saving');
+    document.getElementById('pTitle').focus();
+    return;
+  }
+
+  let weekVal = document.getElementById('pWeek').value;
+  let week = weekVal ? parseInt(weekVal) : null;
+  const rawDay = document.getElementById('pDay').value;
+  let dayVal = rawDay === '' || rawDay == null ? null : parseInt(rawDay, 10);
+  if (isNaN(dayVal)) dayVal = null;
+  const exactDate = document.getElementById('pExactDate').value || null;
+  const projectId = document.getElementById('pProject').value || null;
+
+  // An exact date wins: it pins the pill to that day on the timeline.
+  let monthIdx = activeEvt ? activeEvt.m : activeNewMonth;
+  if (exactDate) {
+    const slot = dateToPlannerSlot(exactDate);
+    if (slot) { monthIdx = slot.m; week = slot.week; dayVal = slot.day; }
+  }
+
+  if (!activeEvt) {
+    const created = {
+      id:     'e' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4),
+      cat:    activeCat.id,
+      m:      monthIdx,
+      week:   week,
+      day:    dayVal,
+      title:  title,
+      date:   MONTHS[monthIdx] || document.getElementById('pDate').value,
+      body:   document.getElementById('pDesc').textContent.trim(),
+      status: document.getElementById('pStatus').value,
+      tasks:  readSubtasks()
+    };
+    if (exactDate) created.dueDate = exactDate;
+    if (projectId) created.project = projectId;
+    EVENTS.push(created);
+  } else {
+    activeEvt.title  = title;
+    activeEvt.m      = monthIdx;
+    activeEvt.week   = week;
+    activeEvt.day    = dayVal;
+    activeEvt.status = document.getElementById('pStatus').value;
+    activeEvt.date   = MONTHS[monthIdx] || document.getElementById('pDate').value;
+    activeEvt.body   = document.getElementById('pDesc').textContent.trim();
+    activeEvt.tasks  = readSubtasks();
+    if (exactDate) activeEvt.dueDate = exactDate; else delete activeEvt.dueDate;
+    if (projectId) activeEvt.project = projectId; else delete activeEvt.project;
+    if (activeEvt.srcCardId) await pushEventToCard(activeEvt);
+  }
+
+  saveToRepos();
+  renderVertical();
+  closePanel();
+  const changed = await syncDateMirrors();
+  if (changed) { saveToRepos(); renderVertical(); }
+}
+
+function closePanel() {
+  document.getElementById('panel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+  activeEvt = null;
+  activeCat = null;
+  activeNewMonth = null;
+  activeNewWeek = null;
+  activeNewDay = null;
+}
+
+// ─── REVENUE CHART ───────────────────────────────────────────────────────────
+
+function drawChart() {
+  const svg = document.getElementById('revChart');
+  svg.innerHTML = '';
+  const W = svg.parentElement.offsetWidth;
+  const H = 110;
+  const padB = 22;
+  const chartH = H - padB;
+  const colW = W / 12;
+  const barW = colW * 0.55;
+  const max = 8000;
+
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  REVENUE.forEach((rev, i) => {
+    const barH = Math.round((rev / max) * (chartH - 10));
+    const x = i * colW + (colW - barW) / 2;
+    const y = chartH - barH;
+    const fill = rev >= 8000 ? '#4E6E6C' : rev >= 4000 ? '#344364' : '#6B7A8D';
+
+    const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('x', x);
+    rect.setAttribute('y', y);
+    rect.setAttribute('width', barW);
+    rect.setAttribute('height', barH);
+    rect.setAttribute('fill', fill);
+    rect.setAttribute('rx', '2');
+    svg.appendChild(rect);
+
+    const lbl = document.createElementNS('http://www.w3.org/2000/svg','text');
+    lbl.setAttribute('x', i * colW + colW / 2);
+    lbl.setAttribute('y', H - 5);
+    lbl.setAttribute('text-anchor','middle');
+    lbl.setAttribute('font-size','10');
+    lbl.setAttribute('fill','#6B7A8D');
+    lbl.setAttribute('font-family','DM Sans, sans-serif');
+    lbl.textContent = rev >= 1000 ? `$${(rev/1000).toFixed(1)}k` : `$${rev}`;
+    svg.appendChild(lbl);
+  });
+
+  const targetY = chartH - Math.round((8000/max)*(chartH-10));
+  const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+  line.setAttribute('x1',0); line.setAttribute('x2',W);
+  line.setAttribute('y1',targetY); line.setAttribute('y2',targetY);
+  line.setAttribute('stroke','#EDD960'); line.setAttribute('stroke-width','1');
+  line.setAttribute('stroke-dasharray','4 4');
+  svg.appendChild(line);
+
+  const lineLabel = document.createElementNS('http://www.w3.org/2000/svg','text');
+  lineLabel.setAttribute('x', W - 4);
+  lineLabel.setAttribute('y', targetY - 4);
+  lineLabel.setAttribute('text-anchor','end');
+  lineLabel.setAttribute('font-size','9');
+  lineLabel.setAttribute('fill','#EDD960');
+  lineLabel.setAttribute('font-family','DM Sans, sans-serif');
+  lineLabel.textContent = '$8k target';
+  svg.appendChild(lineLabel);
+}
+
+// ─── SETTINGS SIDEBAR ────────────────────────────────────────────────────────
+
+let settingsTab = 'projects';
+
+function openSettings() {
+  document.getElementById('autoAssignToggle').checked = SETTINGS.kanbanAutoAssign !== false;
+  renderSettingsList();
+  document.getElementById('settingsPanel').classList.add('open');
+  document.getElementById('settingsOverlay').classList.add('open');
+}
+
+function closeSettings() {
+  document.getElementById('settingsPanel').classList.remove('open');
+  document.getElementById('settingsOverlay').classList.remove('open');
+}
+
+function setSettingsTab(tab) {
+  settingsTab = tab;
+  document.getElementById('settingsTabProjects').classList.toggle('active', tab === 'projects');
+  document.getElementById('settingsTabReleases').classList.toggle('active', tab === 'releases');
+  renderSettingsList();
+}
+
+function renderSettingsList() {
+  const list = document.getElementById('settingsList');
+  list.innerHTML = '';
+
+  let items, emptyMsg;
+  if (settingsTab === 'projects') {
+    // Active projects = events currently in progress
+    items = EVENTS.filter(e => e.status === 'in-progress');
+    emptyMsg = 'No active projects right now.';
+  } else {
+    // Product releases = Collections & Launches events
+    items = EVENTS.filter(e => e.cat === 'col');
+    emptyMsg = 'No release events yet.';
+  }
+  items = items.slice().sort((a, b) => (a.m ?? 0) - (b.m ?? 0));
+
+  if (!items.length) {
+    const empty = document.createElement('div');
+    empty.className = 'settings-empty';
+    empty.textContent = emptyMsg;
+    list.appendChild(empty);
+    return;
+  }
+
+  items.forEach(evt => {
+    const cat = CATS.find(c => c.id === evt.cat);
+    const item = document.createElement('div');
+    item.className = 'settings-item';
+    if (cat) item.style.borderLeftColor = cat.bg;
+
+    const title = document.createElement('div');
+    title.className = 'settings-item-title';
+    title.textContent = evt.title;
+    item.appendChild(title);
+
+    const meta = document.createElement('div');
+    meta.className = 'settings-item-meta';
+    const bits = [evt.date || MONTHS[evt.m] || ''];
+    if (settingsTab === 'projects' && cat) bits.push(cat.label);
+    if (settingsTab === 'releases') bits.push(evt.status === 'in-progress' ? 'In progress' : (evt.status === 'complete' ? 'Complete' : 'Planned'));
+    meta.textContent = bits.filter(Boolean).join(' · ');
+    item.appendChild(meta);
+
+    item.style.cursor = 'pointer';
+    item.onclick = () => { closeSettings(); if (cat) openPanel(evt, cat); };
+    list.appendChild(item);
+  });
+}
+
+function toggleKanbanAutoAssign(cb) {
+  SETTINGS.kanbanAutoAssign = cb.checked;
+  saveToFirestore();
+}
+
+PPC.mountSettings({
+  onRefresh: async () => { await refreshPlanner(); },
+  onAfterRecover: async (entry) => {
+    if (entry && entry.source === 'planner') await refreshPlanner();
+  }
+});
+darkMode = PPC.applyStoredDark();
+initApp();
+drawChart();
+window.addEventListener('resize', drawChart);
+</script>
+</body>
+</html>
