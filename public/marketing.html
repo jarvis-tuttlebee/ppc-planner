@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Marketing System</title>
+  <title>PPC - HOMEBASE · Marketing</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
@@ -120,11 +120,145 @@
     }
     .nav-settings-btn:hover { background: transparent; color: #2C2C2C; }
 
+    .view-modes {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 6px 18px;
+      padding: 10px 24px 0;
+      max-width: 1680px;
+      margin: 0 auto;
+    }
+    .view-mode-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 4px 0;
+      border: none;
+      border-bottom: 2px solid transparent;
+      background: transparent;
+      color: #6B7A8D;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .view-mode-btn:hover { color: #2C2C2C; }
+    .view-mode-btn.active {
+      color: #2C2C2C;
+      font-weight: 600;
+      border-bottom-color: #2C2C2C;
+    }
+    body.dark .view-mode-btn { color: #8a8580; }
+    body.dark .view-mode-btn:hover,
+    body.dark .view-mode-btn.active { color: #f0ede8; border-bottom-color: #f0ede8; }
+
     .board {
       display: block;
-      padding: 28px 32px 60px;
-      max-width: 1180px;
+      padding: 16px 24px 60px;
+      max-width: 1680px;
       margin: 0 auto;
+    }
+    .board-cal-pane,
+    .board-pipe-pane {
+      min-width: 0;
+    }
+    .board-cal-pane .board-section,
+    .board-pipe-pane .board-section:first-child {
+      border-top: 1px solid #E2DDD5;
+    }
+    .board.board--calendar-only .board-pipe-pane,
+    .board.board--pipeline-only .board-cal-pane,
+    .board.board--calendar-only .board-split-gutter,
+    .board.board--pipeline-only .board-split-gutter {
+      display: none;
+    }
+    .board-split-gutter {
+      display: none;
+    }
+    @media (min-width: 1100px) {
+      /* Split: resizable calendar | gutter | pipeline */
+      .board.board--split {
+        display: flex;
+        align-items: stretch;
+        gap: 0;
+      }
+      .board.board--split .board-cal-pane {
+        flex: 0 0 var(--split-cal-pct, 36%);
+        width: var(--split-cal-pct, 36%);
+        max-width: 72%;
+        min-width: 220px;
+        position: sticky;
+        top: 72px;
+        max-height: calc(100vh - 88px);
+        overflow: auto;
+        padding-right: 2px;
+      }
+      .board.board--split .board-split-gutter {
+        display: flex;
+        flex: 0 0 10px;
+        width: 10px;
+        margin: 0 4px;
+        align-items: stretch;
+        justify-content: center;
+        cursor: col-resize;
+        touch-action: none;
+        user-select: none;
+        position: relative;
+        align-self: stretch;
+        min-height: 120px;
+      }
+      .board.board--split .board-split-gutter::before {
+        content: '';
+        width: 2px;
+        border-radius: 2px;
+        background: #E2DDD5;
+        transition: background 0.12s, width 0.12s;
+      }
+      .board.board--split .board-split-gutter:hover::before,
+      .board.board--split .board-split-gutter.is-dragging::before {
+        width: 3px;
+        background: #6B7A8D;
+      }
+      body.dark .board.board--split .board-split-gutter::before { background: #2e3a55; }
+      body.dark .board.board--split .board-split-gutter:hover::before,
+      body.dark .board.board--split .board-split-gutter.is-dragging::before { background: #8a8580; }
+      .board.board--split .board-pipe-pane {
+        flex: 1 1 auto;
+        min-width: 280px;
+      }
+      body.is-split-resizing { cursor: col-resize; user-select: none; }
+      body.is-split-resizing iframe,
+      body.is-split-resizing .mood-viewport { pointer-events: none; }
+      .board.board--split .cal-month-grid,
+      .board.board--split .cal-week-grid,
+      .board.board--split .cal-dow-header {
+        grid-template-columns: repeat(7, minmax(44px, 1fr));
+        gap: 3px;
+        padding-left: 2px;
+        padding-right: 2px;
+      }
+      .board.board--split .cal-day { min-height: 52px; }
+      .board.board--split .cal-day-num { font-size: 11px; }
+      .board.board--split .cal-day-cue { font-size: 7px; padding: 1px 3px; }
+      .board.board--split .cal-slot {
+        font-size: 9px;
+        padding: 2px 4px;
+      }
+      .board.board--split .cal-slot-title {
+        font-size: 9px;
+        line-height: 1.25;
+      }
+      .board.board--split .cal-add-btn {
+        width: 18px;
+        height: 18px;
+        font-size: 12px;
+      }
+      .board.board--split .cal-phase-strip,
+      .board.board--split .cal-week-target {
+        font-size: 11px;
+      }
     }
     .board-section { border-bottom: 1px solid #E2DDD5; }
     .board-section:first-child { border-top: 1px solid #E2DDD5; }
@@ -193,13 +327,13 @@
 
     .mood-viewport {
       position: relative;
-      height: 380px;
+      height: var(--mood-h, 380px);
       overflow: hidden;
       background-color: #fff;
       background-image: radial-gradient(circle, #e4e0da 1px, transparent 1px);
       background-size: 28px 28px;
       border: 1px solid #e8e5e0;
-      border-radius: 10px;
+      border-radius: 10px 10px 0 0;
       cursor: grab;
       user-select: none;
     }
@@ -221,6 +355,41 @@
       z-index: 5;
       pointer-events: none;
     }
+    .mood-resize-gutter {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 10px;
+      margin-bottom: 4px;
+      cursor: row-resize;
+      touch-action: none;
+      user-select: none;
+      border: 1px solid #e8e5e0;
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      background: #faf9f7;
+    }
+    .mood-resize-gutter::before {
+      content: '';
+      width: 36px;
+      height: 3px;
+      border-radius: 2px;
+      background: #E2DDD5;
+      transition: background 0.12s, width 0.12s;
+    }
+    .mood-resize-gutter:hover::before,
+    .mood-resize-gutter.is-dragging::before {
+      width: 48px;
+      background: #6B7A8D;
+    }
+    body.dark .mood-resize-gutter {
+      background: #1a1f2e;
+      border-color: #2e3a55;
+    }
+    body.dark .mood-resize-gutter::before { background: #2e3a55; }
+    body.dark .mood-resize-gutter:hover::before,
+    body.dark .mood-resize-gutter.is-dragging::before { background: #8a8580; }
+    body.is-mood-resizing { cursor: row-resize; user-select: none; }
     .mood-canvas {
       position: absolute;
       top: 0;
@@ -851,6 +1020,29 @@
       margin-top: auto;
       padding-top: 4px;
     }
+    .review-need-strip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      background: rgba(194,154,59,0.12);
+      border: 1px solid rgba(194,154,59,0.35);
+      font-size: 12px;
+      color: #8a6a1a;
+      font-weight: 600;
+    }
+    .exec-card--need-date {
+      box-shadow: inset 3px 0 0 #C29A3B;
+    }
+    .exec-chip--need-date {
+      color: #8a6a1a;
+      background: rgba(194,154,59,0.18);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
     .exec-chip {
       font-size: 10px;
       color: #6B7A8D;
@@ -1107,8 +1299,8 @@
     .cal-phase-strip {
       display: flex;
       flex-wrap: wrap;
-      align-items: baseline;
-      gap: 8px 16px;
+      align-items: center;
+      gap: 10px 14px;
       padding: 12px 14px;
       margin-bottom: 12px;
       background: #faf9f7;
@@ -1117,13 +1309,78 @@
       font-size: 12px;
       color: #6B7A8D;
     }
-    .cal-phase-strip strong {
-      font-size: 13px;
+    .cal-phase-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
       color: #2C2C2C;
-      font-weight: 600;
     }
-    .cal-phase-targets { font-size: 11px; letter-spacing: 0.02em; }
+    .cal-phase-note {
+      flex: 1 1 180px;
+      min-width: 140px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      border: 1px solid #E2DDD5;
+      border-radius: 6px;
+      padding: 6px 8px;
+      background: #fff;
+      color: #2C2C2C;
+    }
+    .cal-phase-note:focus {
+      outline: none;
+      border-color: #6B7A8D;
+    }
+    .cal-phase-metrics {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 12px;
+    }
+    .cal-phase-metric {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: #6B7A8D;
+    }
+    .cal-phase-metric input[type="number"] {
+      width: 42px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid #E2DDD5;
+      border-radius: 5px;
+      padding: 4px 6px;
+      background: #fff;
+      color: #2C2C2C;
+      text-align: center;
+    }
+    .cal-phase-metric input[type="number"]:focus {
+      outline: none;
+      border-color: #6B7A8D;
+    }
     .cal-phase-fill { font-size: 11px; color: #4E6E6C; font-weight: 600; }
+    .cal-week-summary {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 12px;
+      padding: 6px 12px 10px;
+      font-size: 10px;
+      color: #9a958d;
+      letter-spacing: 0.02em;
+    }
+    .cal-week-summary .cal-phase-metric input[type="number"] {
+      width: 36px;
+      font-size: 11px;
+      padding: 3px 4px;
+    }
+    .cal-week-summary .cal-phase-note {
+      flex: 1 1 140px;
+      font-size: 11px;
+      padding: 4px 7px;
+    }
     .cal-nav {
       display: flex;
       align-items: center;
@@ -1167,44 +1424,224 @@
       padding: 4px 0;
     }
     .cal-week-block { margin-bottom: 4px; }
-    .cal-week-grid {
+    .cal-week-grid,
+    .cal-month-grid {
       display: grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr));
-      gap: 4px;
-      padding: 4px 8px;
+      grid-template-columns: repeat(7, minmax(88px, 1fr));
+      gap: 5px;
+      padding: 4px 8px 6px;
+      overflow-x: auto;
     }
     .cal-day {
-      min-height: 88px;
-      border: 1px solid #ece9e4;
-      border-radius: 6px;
-      background: #fff;
       display: flex;
       flex-direction: column;
       min-width: 0;
+      min-height: 72px;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      cursor: default;
     }
-    .cal-day--other { opacity: 0.45; background: #faf9f7; }
-    .cal-day--today { border-color: #4E6E6C; box-shadow: inset 0 0 0 1px #4E6E6C; }
+    .cal-day--other { opacity: 0.4; }
+    .cal-day--today .cal-day-body {
+      box-shadow: inset 0 0 0 1px #4E6E6C;
+      border-radius: 4px;
+    }
+    .cal-day--target .cal-day-body {
+      background: rgba(194,154,59,0.07);
+      border-radius: 4px;
+    }
+    .cal-day--filled .cal-day-body {
+      background: rgba(78,110,108,0.05);
+      border-radius: 4px;
+    }
+    .cal-day--weekend .cal-day-body {
+      background: rgba(44,44,44,0.022);
+      border-radius: 4px;
+    }
+    .cal-day-cues {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2px;
+      margin-top: 2px;
+    }
+    .cal-day-cue {
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 1px 4px;
+      border-radius: 3px;
+      line-height: 1.3;
+    }
+    .cal-day-cue--grid { background: rgba(86,74,94,0.14); color: #564A5E; }
+    .cal-day-cue--story { background: rgba(78,110,108,0.14); color: #4E6E6C; }
+    .cal-day-cue--pin { background: rgba(194,154,59,0.18); color: #8a6a1a; }
+    .cal-day-cue--done { opacity: 0.45; }
     .cal-day-head {
       display: flex;
       flex-direction: column;
       gap: 2px;
-      padding: 4px 5px 2px;
-      border-bottom: 1px solid #f0ede8;
+      padding: 2px 2px 4px;
+      border-bottom: none;
     }
     .cal-day-num {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
       color: #2C2C2C;
+      text-align: center;
     }
     .cal-day-num--today {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 20px;
-      height: 20px;
-      border-radius: 5px;
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
       background: #4E6E6C;
       color: #F7F5F2;
+      margin: 0 auto;
+    }
+    .cal-day-body {
+      flex: 1;
+      min-height: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 4px;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      overflow: hidden;
+    }
+    .cal-add-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      border: 1.5px dashed #d0ccc6;
+      background: transparent;
+      color: #bbb;
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+      margin-top: 2px;
+      font-family: inherit;
+    }
+    .cal-add-btn:hover { border-color: #6B7A8D; color: #6B7A8D; }
+    .cal-slot {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 11px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      line-height: 1.35;
+      padding: 5px 8px;
+      border-radius: 2px;
+      border: 1px solid #E2DDD5;
+      border-left: 3px solid #564A5E;
+      background: #F0EDE8;
+      cursor: pointer;
+      overflow: hidden;
+      min-width: 0;
+      position: relative;
+    }
+    .cal-slot:hover { filter: brightness(0.97); }
+    .cal-slot-meta {
+      display: block;
+      font-size: 8.5px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0.62;
+      margin-bottom: 1px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .cal-slot-title {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #2C2C2C;
+    }
+    .cal-slot--need {
+      background: #faf9f7;
+      border-style: solid;
+      border-left-style: solid;
+    }
+    .cal-slot--need .cal-slot-title {
+      color: #8a6a1a;
+      font-style: italic;
+      font-weight: 500;
+    }
+    .cal-slot-flag {
+      display: inline-block;
+      margin-top: 3px;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 1px 5px;
+      border-radius: 3px;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .cal-slot-flag--need {
+      color: #8a6a1a;
+      background: rgba(194,154,59,0.16);
+    }
+    .cal-slot-flag--ready {
+      color: #4E6E6C;
+      background: rgba(78,110,108,0.12);
+    }
+    .cal-day-add-hint { display: none; }
+    .cal-day { cursor: default; }
+    .cal-day--other { cursor: default; }
+    .cal-need-menu {
+      position: fixed;
+      z-index: 9000;
+      min-width: 168px;
+      background: #fff;
+      border: 1px solid #E2DDD5;
+      border-radius: 8px;
+      box-shadow: 0 10px 28px rgba(44,44,44,0.12);
+      padding: 5px;
+      display: none;
+    }
+    .cal-need-menu.open { display: block; }
+    .cal-need-menu-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #9a958d;
+      padding: 6px 10px 4px;
+    }
+    .cal-need-menu button {
+      display: block;
+      width: 100%;
+      border: none;
+      background: transparent;
+      text-align: left;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #2C2C2C;
+      padding: 8px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .cal-need-menu button:hover {
+      background: rgba(194,154,59,0.12);
+      transform: translateY(-1px);
     }
     .cal-anchor-pin {
       font-size: 8px;
@@ -1221,32 +1658,23 @@
     }
     .cal-anchor-pin--event { background: rgba(194,154,59,0.2); color: #8a6a1a; }
     .cal-anchor-pin--release { background: rgba(52,67,100,0.12); color: #344364; }
-    .cal-day-body {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      padding: 3px 4px 4px;
-      overflow: hidden;
-    }
-    .cal-slot {
-      font-size: 9px;
-      line-height: 1.25;
-      padding: 3px 4px;
-      border-radius: 4px;
-      border-left: 3px solid #564A5E;
-      background: #F0EDE8;
-      cursor: pointer;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .cal-slot:hover { box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
-    .cal-slot-meta {
-      font-size: 8px;
-      opacity: 0.75;
-      letter-spacing: 0.03em;
+    .schedule-status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
+      padding: 3px 7px;
+      border-radius: 4px;
+      width: fit-content;
+    }
+    .schedule-status-chip .chip-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
     }
     .cal-week-summary {
       display: flex;
@@ -1421,7 +1849,7 @@
     @media (max-width: 700px) {
       .header, .nav-row { padding-left: 16px; padding-right: 16px; }
       .board { padding: 20px 16px 40px; }
-      .mood-viewport { height: 300px; }
+      .mood-viewport { height: var(--mood-h, 300px); }
       .panel.exec-mode .panel-exec-layout { grid-template-columns: 1fr; }
       .exec-card { grid-template-columns: 96px 1fr; min-height: 0; }
       .exec-card-thumb { width: 96px; height: 96px; }
@@ -1435,7 +1863,7 @@
 <div class="header">
   <div class="header-spacer"></div>
   <a class="header-logo-link" href="/" title="Home">
-    <img class="header-logo" src="/assets/pressplay-logo-black.png?v=3" alt="Press Play Collective">
+    <img class="header-logo" src="/assets/pressplay-logo-black.png?v=5" alt="Press Play Collective">
   </a>
   <div class="header-right">
     <div class="sub">Marketing System</div>
@@ -1452,6 +1880,11 @@
   </button>
 </div>
 
+<div class="view-modes" id="viewModes" role="tablist" aria-label="Marketing layout">
+  <button type="button" class="view-mode-btn active" data-mode="split" role="tab" aria-selected="true">Split</button>
+  <button type="button" class="view-mode-btn" data-mode="calendar" role="tab" aria-selected="false">Calendar</button>
+  <button type="button" class="view-mode-btn" data-mode="pipeline" role="tab" aria-selected="false">Pipeline</button>
+</div>
 <div class="board" id="board"></div>
 
 <div class="overlay" id="overlay" onclick="closePanel()"></div>
@@ -1555,7 +1988,14 @@
             <button type="button" class="fmt-btn" title="Bulleted list" onclick="fmtField('pTweaks','insertUnorderedList')">&#8226;</button>
             <button type="button" class="fmt-btn wide" title="Clear formatting" onclick="fmtField('pTweaks','removeFormat')">Clear</button>
           </div>
-          <div class="panel-desc" id="pTweaks" contenteditable="true" placeholder="Edits, crop, caption, colour grade…"></div>
+          <div class="panel-desc" id="pTweaks" contenteditable="true" placeholder="Edits, crop, colour grade…"></div>
+          <hr class="panel-divider">
+          <div class="panel-section-label">Caption</div>
+          <textarea class="prop-select" id="pCaption" rows="4" style="resize:vertical;min-height:88px;font-family:inherit;margin-top:2px" placeholder="Post caption…"></textarea>
+          <div class="panel-section-label" style="margin-top:14px">Tags</div>
+          <input class="prop-select" id="pTags" type="text" style="margin-top:2px" placeholder="#pressplay #ode …">
+          <div class="panel-section-label" style="margin-top:14px">Music</div>
+          <input class="prop-select" id="pMusic" type="text" style="margin-top:2px" placeholder="Track name or link…">
           <hr class="panel-divider">
           <div class="panel-section-label">Ready to schedule</div>
           <div class="panel-field-hint">Pick the publish date. Content type uses Pillar + Format above.</div>
@@ -1573,17 +2013,20 @@
           <div class="panel-section-label">Publish date</div>
           <input class="prop-select" id="pScheduleEditAt" type="datetime-local" style="margin-top:2px">
           <hr class="panel-divider">
+          <div class="panel-section-label">Status</div>
+          <div id="pScheduleStatusWrap" style="margin-top:2px"></div>
+          <hr class="panel-divider">
           <div class="panel-section-label">Content layer</div>
-          <select class="prop-select" id="pScheduleLayer">
-            <option value="">— None —</option>
-            <option value="acquisition">Acquisition</option>
-            <option value="identity">Identity</option>
-            <option value="conversion">Conversion</option>
-          </select>
+          <div id="pScheduleLayerWrap" style="margin-top:2px"></div>
           <div class="panel-section-label" style="margin-top:12px">Campaign anchor</div>
-          <select class="prop-select" id="pScheduleAnchor">
-            <option value="">— None —</option>
-          </select>
+          <div id="pScheduleAnchorWrap" style="margin-top:2px"></div>
+          <hr class="panel-divider">
+          <div class="panel-section-label">Caption</div>
+          <textarea class="prop-select" id="pScheduleCaption" rows="4" style="resize:vertical;min-height:88px;font-family:inherit;margin-top:2px" placeholder="Post caption…"></textarea>
+          <div class="panel-section-label" style="margin-top:14px">Tags</div>
+          <input class="prop-select" id="pScheduleTags" type="text" style="margin-top:2px" placeholder="#pressplay #ode …">
+          <div class="panel-section-label" style="margin-top:14px">Music</div>
+          <input class="prop-select" id="pScheduleMusic" type="text" style="margin-top:2px" placeholder="Track name or link…">
           <hr class="panel-divider">
           <div class="panel-section-label">Content outcome</div>
           <div class="panel-desc short" id="pScheduleOutcome" contenteditable="true" placeholder="Outcome notes…"></div>
@@ -1618,6 +2061,14 @@
   </div>
 </div>
 
+<div class="cal-need-menu" id="calNeedMenu">
+  <div class="cal-need-menu-label">Need content</div>
+  <button type="button" data-format="ig-post">IG Post</button>
+  <button type="button" data-format="ig-story">IG Story</button>
+  <button type="button" data-format="pinterest">Pinterest/Cosmos</button>
+  <button type="button" data-format="ig-reel">IG Reel</button>
+</div>
+
 <div class="ctx-menu" id="ctxMenu">
   <div class="ctx-item" data-action="add-card">Add card</div>
 </div>
@@ -1626,15 +2077,299 @@
 <script src="/js/ppc-homebase.js"></script>
 <script>
 const STORAGE_KEY = 'ppc-marketing-data';
-const SYNC_URL = 'https://ppc-planner.pressplaycollective.workers.dev/api/marketing';
-const APP_VERSION = '0.9.1';
+const SYNC_URL = '/api/marketing';
+const APP_VERSION = '0.10.3';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
+
+const VIEW_MODE_KEY = 'ppc-marketing-view-mode';
+const SPLIT_PCT_KEY = 'ppc-marketing-split-pct';
+const MOOD_H_KEY = 'ppc-marketing-mood-h';
+const SPLIT_PCT_DEFAULT = 36;
+const SPLIT_PCT_MIN = 22;
+const SPLIT_PCT_MAX = 68;
+const MOOD_H_DEFAULT = 380;
+const MOOD_H_MIN = 220;
+const MOOD_H_MAX = 900;
+
+function loadViewMode() {
+  try {
+    const v = localStorage.getItem(VIEW_MODE_KEY);
+    if (v === 'split' || v === 'calendar' || v === 'pipeline') return v;
+  } catch (_) {}
+  return 'split';
+}
+function loadSplitPct() {
+  try {
+    const n = parseFloat(localStorage.getItem(SPLIT_PCT_KEY));
+    if (!Number.isNaN(n) && n >= SPLIT_PCT_MIN && n <= SPLIT_PCT_MAX) return n;
+  } catch (_) {}
+  return SPLIT_PCT_DEFAULT;
+}
+function loadMoodHeight() {
+  try {
+    const n = parseFloat(localStorage.getItem(MOOD_H_KEY));
+    if (!Number.isNaN(n) && n >= MOOD_H_MIN && n <= MOOD_H_MAX) return n;
+  } catch (_) {}
+  return MOOD_H_DEFAULT;
+}
+let marketingViewMode = loadViewMode();
+let marketingSplitPct = loadSplitPct();
+let marketingMoodH = loadMoodHeight();
+
+function setMarketingViewMode(mode) {
+  if (mode !== 'split' && mode !== 'calendar' && mode !== 'pipeline') mode = 'split';
+  marketingViewMode = mode;
+  try { localStorage.setItem(VIEW_MODE_KEY, mode); } catch (_) {}
+  document.querySelectorAll('#viewModes .view-mode-btn').forEach(btn => {
+    const on = btn.dataset.mode === mode;
+    btn.classList.toggle('active', on);
+    btn.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+  applyBoardViewMode();
+}
+
+function applySplitPct(pct) {
+  const board = document.getElementById('board');
+  if (!board) return;
+  const clamped = Math.max(SPLIT_PCT_MIN, Math.min(SPLIT_PCT_MAX, pct));
+  marketingSplitPct = clamped;
+  board.style.setProperty('--split-cal-pct', clamped + '%');
+}
+
+function persistSplitPct() {
+  try { localStorage.setItem(SPLIT_PCT_KEY, String(Math.round(marketingSplitPct * 10) / 10)); } catch (_) {}
+}
+
+function applyMoodHeight(px) {
+  const clamped = Math.max(MOOD_H_MIN, Math.min(MOOD_H_MAX, px));
+  marketingMoodH = clamped;
+  const vp = document.getElementById('moodViewport');
+  if (vp) vp.style.setProperty('--mood-h', clamped + 'px');
+}
+
+function persistMoodHeight() {
+  try { localStorage.setItem(MOOD_H_KEY, String(Math.round(marketingMoodH))); } catch (_) {}
+}
+
+function bindMoodResizeGutter(gutter, viewport) {
+  if (!gutter || gutter._moodBound) return;
+  gutter._moodBound = true;
+  gutter.title = 'Drag to resize Ideas board · double-click to reset';
+  gutter.setAttribute('role', 'separator');
+  gutter.setAttribute('aria-orientation', 'horizontal');
+  gutter.setAttribute('aria-label', 'Resize Ideas board height');
+  gutter.tabIndex = 0;
+
+  let dragging = false;
+  let startY = 0;
+  let startH = 0;
+
+  const stop = () => {
+    if (!dragging) return;
+    dragging = false;
+    gutter.classList.remove('is-dragging');
+    document.body.classList.remove('is-mood-resizing');
+    window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerup', onPointerUp);
+    window.removeEventListener('pointercancel', onPointerUp);
+    persistMoodHeight();
+  };
+
+  const onPointerMove = (e) => {
+    if (!dragging) return;
+    e.preventDefault();
+    applyMoodHeight(startH + (e.clientY - startY));
+  };
+  const onPointerUp = () => stop();
+
+  gutter.addEventListener('pointerdown', e => {
+    if (e.button != null && e.button !== 0) return;
+    dragging = true;
+    startY = e.clientY;
+    startH = marketingMoodH;
+    gutter.classList.add('is-dragging');
+    document.body.classList.add('is-mood-resizing');
+    try { gutter.setPointerCapture(e.pointerId); } catch (_) {}
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
+    e.preventDefault();
+  });
+
+  gutter.addEventListener('keydown', e => {
+    const step = e.shiftKey ? 40 : 20;
+    if (e.key === 'ArrowUp') {
+      applyMoodHeight(marketingMoodH - step);
+      persistMoodHeight();
+      e.preventDefault();
+    } else if (e.key === 'ArrowDown') {
+      applyMoodHeight(marketingMoodH + step);
+      persistMoodHeight();
+      e.preventDefault();
+    } else if (e.key === 'Home') {
+      applyMoodHeight(MOOD_H_MIN);
+      persistMoodHeight();
+      e.preventDefault();
+    } else if (e.key === 'End') {
+      applyMoodHeight(MOOD_H_MAX);
+      persistMoodHeight();
+      e.preventDefault();
+    }
+  });
+
+  gutter.addEventListener('dblclick', () => {
+    applyMoodHeight(MOOD_H_DEFAULT);
+    persistMoodHeight();
+  });
+
+  if (viewport) applyMoodHeight(marketingMoodH);
+}
+
+function applyBoardViewMode() {
+  const board = document.getElementById('board');
+  if (!board) return;
+  board.classList.remove('board--split', 'board--calendar-only', 'board--pipeline-only');
+  if (marketingViewMode === 'calendar') board.classList.add('board--calendar-only');
+  else if (marketingViewMode === 'pipeline') board.classList.add('board--pipeline-only');
+  else {
+    board.classList.add('board--split');
+    applySplitPct(marketingSplitPct);
+  }
+}
+
+function bindSplitGutter(gutter) {
+  if (!gutter || gutter._splitBound) return;
+  gutter._splitBound = true;
+  gutter.title = 'Drag to resize';
+  gutter.setAttribute('role', 'separator');
+  gutter.setAttribute('aria-orientation', 'vertical');
+  gutter.setAttribute('aria-label', 'Resize calendar and pipeline');
+  gutter.tabIndex = 0;
+
+  let dragging = false;
+
+  const onMove = (clientX) => {
+    const board = document.getElementById('board');
+    if (!board) return;
+    const rect = board.getBoundingClientRect();
+    if (rect.width < 1) return;
+    applySplitPct(((clientX - rect.left) / rect.width) * 100);
+  };
+
+  const stop = () => {
+    if (!dragging) return;
+    dragging = false;
+    gutter.classList.remove('is-dragging');
+    document.body.classList.remove('is-split-resizing');
+    window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerup', onPointerUp);
+    window.removeEventListener('pointercancel', onPointerUp);
+    persistSplitPct();
+  };
+
+  const onPointerMove = (e) => {
+    if (!dragging) return;
+    e.preventDefault();
+    onMove(e.clientX);
+  };
+  const onPointerUp = () => stop();
+
+  gutter.addEventListener('pointerdown', e => {
+    if (marketingViewMode !== 'split') return;
+    if (e.button != null && e.button !== 0) return;
+    dragging = true;
+    gutter.classList.add('is-dragging');
+    document.body.classList.add('is-split-resizing');
+    try { gutter.setPointerCapture(e.pointerId); } catch (_) {}
+    onMove(e.clientX);
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
+    e.preventDefault();
+  });
+
+  gutter.addEventListener('keydown', e => {
+    if (marketingViewMode !== 'split') return;
+    const step = e.shiftKey ? 4 : 2;
+    if (e.key === 'ArrowLeft') {
+      applySplitPct(marketingSplitPct - step);
+      persistSplitPct();
+      e.preventDefault();
+    } else if (e.key === 'ArrowRight') {
+      applySplitPct(marketingSplitPct + step);
+      persistSplitPct();
+      e.preventDefault();
+    } else if (e.key === 'Home') {
+      applySplitPct(SPLIT_PCT_MIN);
+      persistSplitPct();
+      e.preventDefault();
+    } else if (e.key === 'End') {
+      applySplitPct(SPLIT_PCT_MAX);
+      persistSplitPct();
+      e.preventDefault();
+    }
+  });
+
+  gutter.addEventListener('dblclick', () => {
+    applySplitPct(SPLIT_PCT_DEFAULT);
+    persistSplitPct();
+  });
+}
+
+document.getElementById('viewModes').addEventListener('click', e => {
+  const btn = e.target.closest('.view-mode-btn');
+  if (!btn) return;
+  setMarketingViewMode(btn.dataset.mode);
+});
 
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'];
 const DOW_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-const DEFAULT_CADENCE = { gridPostsPerWeek: 2, storiesDaysPerWeek: 2, reelsPerWeek: 0 };
+const DEFAULT_PUBLISH_DAYS = {
+  // Press Play work days: Mon / Tue / Thu / Fri — primary IG grid on Mon/Thu
+  grid: [1, 4],
+  gridExtra: [2, 5],
+  // Stories usually ride with the grid post on the same day
+  stories: [1, 4],
+  storiesExtra: [2, 5],
+  // Existing-library Pinterest — every second weekday
+  pinterest: [1, 3, 5]
+};
+const DEFAULT_CADENCE = {
+  gridPostsPerWeek: 1,
+  storiesDaysPerWeek: 1,
+  reelsPerWeek: 0,
+  pinterestDaysPerWeek: 3,
+  rhythm: 'press-play-v2',
+  publishDays: {
+    grid: [1, 4],
+    gridExtra: [2, 5],
+    stories: [1, 4],
+    storiesExtra: [2, 5],
+    pinterest: [1, 3, 5]
+  }
+};
+
+function cloneCadence(src) {
+  const c = src || DEFAULT_CADENCE;
+  const pd = c.publishDays || DEFAULT_PUBLISH_DAYS;
+  return {
+    gridPostsPerWeek: c.gridPostsPerWeek != null ? c.gridPostsPerWeek : DEFAULT_CADENCE.gridPostsPerWeek,
+    storiesDaysPerWeek: c.storiesDaysPerWeek != null ? c.storiesDaysPerWeek : DEFAULT_CADENCE.storiesDaysPerWeek,
+    reelsPerWeek: c.reelsPerWeek != null ? c.reelsPerWeek : DEFAULT_CADENCE.reelsPerWeek,
+    pinterestDaysPerWeek: c.pinterestDaysPerWeek != null ? c.pinterestDaysPerWeek : DEFAULT_CADENCE.pinterestDaysPerWeek,
+    carouselsPerWeek: c.carouselsPerWeek,
+    rhythm: c.rhythm || DEFAULT_CADENCE.rhythm,
+    publishDays: {
+      grid: Array.isArray(pd.grid) ? [...pd.grid] : [...DEFAULT_PUBLISH_DAYS.grid],
+      gridExtra: Array.isArray(pd.gridExtra) ? [...pd.gridExtra] : [...DEFAULT_PUBLISH_DAYS.gridExtra],
+      stories: Array.isArray(pd.stories) ? [...pd.stories] : [...DEFAULT_PUBLISH_DAYS.stories],
+      storiesExtra: Array.isArray(pd.storiesExtra) ? [...pd.storiesExtra] : [...DEFAULT_PUBLISH_DAYS.storiesExtra],
+      pinterest: Array.isArray(pd.pinterest) ? [...pd.pinterest] : [...DEFAULT_PUBLISH_DAYS.pinterest]
+    }
+  };
+}
 
 const DEFAULT_ANCHORS = [
   {
@@ -1644,7 +2379,7 @@ const DEFAULT_ANCHORS = [
     startDate: '2026-09-04',
     endDate: '2026-09-04',
     eventNightDate: null,
-    notes: 'Pop-up at the bar. Five-week lead-up from late July — signal, tease, details, countdown.'
+    notes: 'Pop-up Fri 4 Sep. Aim 5–6 IG posts in lead-up (not 8+). Venue shoot Fri 7 Aug with Loui. Poster ~3 weeks out (~14 Aug). World-building fills gaps if capacity allows.'
   },
   {
     id: 'anchor-fdw',
@@ -1678,7 +2413,7 @@ const FORMATS = {
     { id: 'ig-post',    label: 'IG Post' },
     { id: 'ig-reel',    label: 'IG Reel' },
     { id: 'ig-story',   label: 'IG Story' },
-    { id: 'pinterest',  label: 'Pinterest' },
+    { id: 'pinterest',  label: 'Pinterest/Cosmos' },
     { id: 'tiktok',     label: 'TikTok' }
   ],
   email: [
@@ -1733,11 +2468,12 @@ function defaultFormatForPillar(pillarId) {
 }
 
 const SECTIONS = [
+  // Calendar first — plan dates; production pipeline feeds it from below.
+  { id: 'schedule', name: 'Content Calendar', swatch: '#344364', built: true },
   { id: 'ideas', name: 'Content Ideas', swatch: '#564A5E', built: true },
   { id: 'preparation', name: 'Content Preparation', swatch: '#4E6E6C', built: true },
   { id: 'execution', name: 'Content Execution', swatch: '#C29A3B', built: true },
-  { id: 'review', name: 'Content Review', swatch: '#6B7A8D', built: true },
-  { id: 'schedule', name: 'Content Calendar', swatch: '#344364', built: true }
+  { id: 'review', name: 'Content Review', swatch: '#6B7A8D', built: true }
 ];
 
 const SAMPLE_IDEAS = [
@@ -1810,8 +2546,8 @@ const SAMPLE_PREP = [
   }
 ];
 
-let DATA = { ideas: [], sections: { preparation: [], execution: [], review: [], schedule: [] }, anchors: [], cadence: { ...DEFAULT_CADENCE } };
-const expandedSections = new Set(['ideas', 'preparation']);
+let DATA = { ideas: [], sections: { preparation: [], execution: [], review: [], schedule: [] }, anchors: [], cadence: cloneCadence(), weekGoals: {} };
+const expandedSections = new Set(['schedule']);
 const expandedPillars = new Set(PILLARS.filter(p => p.defaultOpen).map(p => p.id));
 let saveTimer = null;
 let scheduleViewYear = new Date().getFullYear();
@@ -1892,6 +2628,9 @@ function migrateReview(card) {
   if (card.reviewVideoUrl == null) card.reviewVideoUrl = '';
   if (card.contentOutcome == null) card.contentOutcome = '';
   if (card.tweaks == null) card.tweaks = '';
+  if (card.caption == null) card.caption = '';
+  if (card.tags == null) card.tags = '';
+  if (card.music == null) card.music = '';
   if (card.scheduleAt == null) card.scheduleAt = '';
   return card;
 }
@@ -1903,7 +2642,26 @@ function migrateSchedule(card) {
   }
   if (card.contentLayer == null) card.contentLayer = '';
   if (card.anchorId == null) card.anchorId = '';
+  if (card.publishStatus !== 'scheduled' && card.publishStatus !== 'unscheduled') {
+    card.publishStatus = card.scheduledAt ? 'scheduled' : 'unscheduled';
+  }
+  if (card.needContent == null) {
+    card.needContent = !stripHtml(card.body || '').trim();
+  }
   return card;
+}
+
+const PUBLISH_STATUS_OPTIONS = [
+  { id: 'unscheduled', label: 'Unscheduled', color: '#C29A3B' },
+  { id: 'scheduled', label: 'Scheduled', color: '#4E6E6C' }
+];
+const PUBLISH_STATUS_COLORS = { unscheduled: '#C29A3B', scheduled: '#4E6E6C' };
+
+function publishStatusOf(card) {
+  if (card && (card.publishStatus === 'scheduled' || card.publishStatus === 'unscheduled')) {
+    return card.publishStatus;
+  }
+  return card && card.scheduledAt ? 'scheduled' : 'unscheduled';
 }
 
 function migrateAnchor(anchor) {
@@ -1925,7 +2683,7 @@ function anchors() {
 }
 
 function cadenceSettings() {
-  if (!DATA.cadence) DATA.cadence = { ...DEFAULT_CADENCE };
+  if (!DATA.cadence) DATA.cadence = cloneCadence();
   const c = DATA.cadence;
   if (c.gridPostsPerWeek == null) {
     const legacy = (c.reelsPerWeek || 0) + (c.carouselsPerWeek || 0);
@@ -1933,7 +2691,51 @@ function cadenceSettings() {
   }
   if (c.storiesDaysPerWeek == null) c.storiesDaysPerWeek = DEFAULT_CADENCE.storiesDaysPerWeek;
   if (c.reelsPerWeek == null) c.reelsPerWeek = DEFAULT_CADENCE.reelsPerWeek;
+  ensurePublishDays(c);
   return c;
+}
+
+function ensurePublishDays(c) {
+  const base = DEFAULT_PUBLISH_DAYS;
+  // Upgrade older rhythms to Press Play v2 (incl. Pinterest days).
+  if (c.rhythm !== 'press-play-v2') {
+    c.publishDays = {
+      grid: [...base.grid],
+      gridExtra: [...base.gridExtra],
+      stories: [...base.stories],
+      storiesExtra: [...base.storiesExtra],
+      pinterest: [...base.pinterest]
+    };
+    if (c.gridPostsPerWeek == null || c.rhythm === 'press-play-v1') {
+      c.gridPostsPerWeek = DEFAULT_CADENCE.gridPostsPerWeek;
+      c.storiesDaysPerWeek = DEFAULT_CADENCE.storiesDaysPerWeek;
+    }
+    if (c.pinterestDaysPerWeek == null) c.pinterestDaysPerWeek = DEFAULT_CADENCE.pinterestDaysPerWeek;
+    c.rhythm = 'press-play-v2';
+    return c.publishDays;
+  }
+  if (!c.publishDays || typeof c.publishDays !== 'object') {
+    c.publishDays = {
+      grid: [...base.grid],
+      gridExtra: [...base.gridExtra],
+      stories: [...base.stories],
+      storiesExtra: [...base.storiesExtra],
+      pinterest: [...base.pinterest]
+    };
+    return c.publishDays;
+  }
+  const pd = c.publishDays;
+  if (!Array.isArray(pd.grid)) pd.grid = [...base.grid];
+  if (!Array.isArray(pd.gridExtra)) pd.gridExtra = [...base.gridExtra];
+  if (!Array.isArray(pd.stories)) pd.stories = [...base.stories];
+  if (!Array.isArray(pd.storiesExtra)) pd.storiesExtra = [...base.storiesExtra];
+  if (!Array.isArray(pd.pinterest)) pd.pinterest = [...base.pinterest];
+  if (c.pinterestDaysPerWeek == null) c.pinterestDaysPerWeek = DEFAULT_CADENCE.pinterestDaysPerWeek;
+  return pd;
+}
+
+function publishDaysSettings() {
+  return ensurePublishDays(cadenceSettings());
 }
 
 function seedAnchorsIfEmpty() {
@@ -2118,7 +2920,7 @@ function setupMoodCanvas(viewport, canvas) {
   applyCanvasTransform();
 
   viewport.addEventListener('wheel', e => {
-    if (!e.ctrlKey && !e.metaKey) return;
+    // Scroll over the board zooms (no Ctrl needed). Page scroll stays elsewhere.
     e.preventDefault();
     const rect = viewport.getBoundingClientRect();
     const mx = e.clientX - rect.left;
@@ -2174,7 +2976,8 @@ function defaultData() {
       schedule: []
     },
     anchors: DEFAULT_ANCHORS.map(a => ({ ...a })),
-    cadence: { ...DEFAULT_CADENCE }
+    cadence: cloneCadence(),
+    weekGoals: {}
   };
 }
 
@@ -2230,7 +3033,8 @@ function saveData() {
       schedule: scheduleCards().map(c => ({ ...c }))
     },
     anchors: anchors().map(a => ({ ...a })),
-    cadence: { ...cadenceSettings() }
+    cadence: cloneCadence(cadenceSettings()),
+    weekGoals: { ...(DATA.weekGoals || {}) }
   };
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); } catch (e) {}
   fetch(SYNC_URL, {
@@ -2248,19 +3052,22 @@ function normalizeLoaded(data) {
   let schedule = Array.isArray(sections.schedule) ? sections.schedule.map(migrateSchedule) : [];
   let loadedAnchors = Array.isArray(data.anchors) ? data.anchors.map(migrateAnchor).filter(Boolean) : [];
   const cadence = data.cadence && typeof data.cadence === 'object'
-    ? { ...DEFAULT_CADENCE, ...data.cadence }
-    : { ...DEFAULT_CADENCE };
+    ? cloneCadence({ ...DEFAULT_CADENCE, ...data.cadence, publishDays: data.cadence.publishDays || DEFAULT_PUBLISH_DAYS })
+    : cloneCadence();
   if (cadence.gridPostsPerWeek == null) {
     const legacy = (cadence.reelsPerWeek || 0) + (cadence.carouselsPerWeek || 0);
     cadence.gridPostsPerWeek = legacy || DEFAULT_CADENCE.gridPostsPerWeek;
   }
   if (cadence.storiesDaysPerWeek == null) cadence.storiesDaysPerWeek = DEFAULT_CADENCE.storiesDaysPerWeek;
   if (cadence.reelsPerWeek == null) cadence.reelsPerWeek = DEFAULT_CADENCE.reelsPerWeek;
+  ensurePublishDays(cadence);
+  const weekGoals = (data.weekGoals && typeof data.weekGoals === 'object') ? { ...data.weekGoals } : {};
   return {
     ideas: (data.ideas || []).map(migrateIdea),
     sections: { preparation, execution, review, schedule },
     anchors: loadedAnchors,
-    cadence
+    cadence,
+    weekGoals
   };
 }
 
@@ -2644,7 +3451,7 @@ function renderIdeasBody() {
 
   const hint = document.createElement('div');
   hint.className = 'mood-viewport-hint';
-  hint.textContent = 'Ctrl + scroll to zoom · drag empty space to pan · drag cards to reposition';
+  hint.textContent = 'Scroll to zoom · drag empty space to pan · drag cards to reposition';
   viewport.appendChild(hint);
 
   const canvas = document.createElement('div');
@@ -2681,7 +3488,13 @@ function renderIdeasBody() {
 
   DATA.ideas.forEach(idea => canvas.appendChild(renderIdeaCard(idea, cardSize)));
   viewport.appendChild(canvas);
+  applyMoodHeight(marketingMoodH);
   body.appendChild(viewport);
+
+  const moodGutter = document.createElement('div');
+  moodGutter.className = 'mood-resize-gutter';
+  bindMoodResizeGutter(moodGutter, viewport);
+  body.appendChild(moodGutter);
 
   setupMoodCanvas(viewport, canvas);
   return body;
@@ -2835,6 +3648,9 @@ function sendExecToReview(id) {
     reviewVideoUrl: card.reviewVideoUrl || '',
     contentOutcome: card.contentOutcome || '',
     tweaks: card.tweaks || '',
+    caption: card.caption || '',
+    tags: card.tags || '',
+    music: card.music || '',
     scheduleAt: card.scheduleAt || '',
     reviewedAt: new Date().toISOString()
   });
@@ -3116,6 +3932,16 @@ function renderReviewBody() {
     return body;
   }
 
+  const needDateCount = cards.filter(c => !c.scheduleAt || !String(c.scheduleAt).trim()).length;
+  if (needDateCount) {
+    const strip = document.createElement('div');
+    strip.className = 'review-need-strip';
+    strip.textContent = needDateCount === 1
+      ? '1 card needs a date'
+      : needDateCount + ' cards need a date';
+    body.appendChild(strip);
+  }
+
   const list = document.createElement('div');
   list.className = 'exec-list';
   cards.forEach(card => list.appendChild(renderReviewCard(card)));
@@ -3128,6 +3954,9 @@ function renderReviewCard(card) {
   el.className = 'exec-card';
   el.dataset.reviewId = card.id;
   applyPrepCardStyle(el, card.pillar);
+
+  const needsDate = !card.scheduleAt || !String(card.scheduleAt).trim();
+  if (needsDate) el.classList.add('exec-card--need-date');
 
   const thumbSrc = cardThumbSrc(card);
   const thumb = document.createElement('div');
@@ -3160,6 +3989,12 @@ function renderReviewCard(card) {
 
   const chips = document.createElement('div');
   chips.className = 'exec-card-chips';
+  if (needsDate) {
+    const needChip = document.createElement('span');
+    needChip.className = 'exec-chip exec-chip--need-date';
+    needChip.textContent = 'Need date';
+    chips.appendChild(needChip);
+  }
   const chipBits = [
     stripHtml(card.contentOutcome || '') && ('Outcome: ' + stripHtml(card.contentOutcome)),
     stripHtml(card.tweaks || '') && ('Tweaks: ' + stripHtml(card.tweaks)),
@@ -3172,7 +4007,7 @@ function renderReviewCard(card) {
     chip.textContent = text;
     chips.appendChild(chip);
   });
-  if (chipBits.length) body.appendChild(chips);
+  if (chips.childNodes.length) body.appendChild(chips);
 
   el.appendChild(body);
   el.addEventListener('click', () => openReviewPanel(card.id));
@@ -3184,17 +4019,10 @@ function renderScheduleBody() {
   body.className = 'section-body cal-wrap';
 
   const phaseRef = new Date();
-  const phase = getContentPhase(phaseRef);
-  const weekStart = weekStartSunday(phaseRef);
+  const weekStart = weekStartMonday(phaseRef);
   const counts = countWeekFormats(weekStart);
-
-  const phaseStrip = document.createElement('div');
-  phaseStrip.className = 'cal-phase-strip';
-  phaseStrip.innerHTML =
-    '<strong>' + escapeHtml(phase.name) + '</strong>' +
-    '<span class="cal-phase-targets">Target this week: ' + formatPhaseTargets(phase) + '</span>' +
-    '<span class="cal-phase-fill">Scheduled: ' + formatPhaseFill(phase, counts) + '</span>';
-  body.appendChild(phaseStrip);
+  body.appendChild(buildWeekGoalControls(weekStart, counts));
+  scheduleWeekGoalRefresh();
 
   const nav = document.createElement('div');
   nav.className = 'cal-nav';
@@ -3248,73 +4076,96 @@ function renderScheduleBody() {
   const daysInMonth = new Date(scheduleViewYear, scheduleViewMonth + 1, 0).getDate();
   const totalCells = Math.ceil((startPad + daysInMonth) / 7) * 7;
 
-  let dayNum = 1 - startPad;
-  for (let w = 0; w < totalCells / 7; w++) {
-    const weekBlock = document.createElement('div');
-    weekBlock.className = 'cal-week-block';
-    const grid = document.createElement('div');
-    grid.className = 'cal-week-grid';
-    const weekDays = [];
+  const grid = document.createElement('div');
+  grid.className = 'cal-month-grid';
 
-    for (let d = 0; d < 7; d++) {
-      const cellDate = new Date(scheduleViewYear, scheduleViewMonth, dayNum);
-      const inMonth = dayNum >= 1 && dayNum <= daysInMonth;
-      weekDays.push(cellDate);
+  for (let i = 0; i < totalCells; i++) {
+    const dayNum = 1 - startPad + i;
+    const cellDate = new Date(scheduleViewYear, scheduleViewMonth, dayNum);
+    const inMonth = dayNum >= 1 && dayNum <= daysInMonth;
 
-      const col = document.createElement('div');
-      col.className = 'cal-day' + (inMonth ? '' : ' cal-day--other');
-      if (inMonth && isSameCalendarDay(cellDate, today)) col.classList.add('cal-day--today');
+    const col = document.createElement('div');
+    col.className = 'cal-day' + (inMonth ? '' : ' cal-day--other');
+    if (inMonth && isSameCalendarDay(cellDate, today)) col.classList.add('cal-day--today');
 
-      const head = document.createElement('div');
-      head.className = 'cal-day-head';
-      const num = document.createElement('div');
-      num.className = 'cal-day-num' + (inMonth && isSameCalendarDay(cellDate, today) ? ' cal-day-num--today' : '');
-      num.textContent = inMonth ? String(dayNum) : '';
-      head.appendChild(num);
-
-      anchors().forEach(anchor => {
-        if (!anchorOnDate(anchor, cellDate)) return;
-        const pin = document.createElement('div');
-        pin.className = 'cal-anchor-pin cal-anchor-pin--' + anchor.type;
-        pin.textContent = anchor.title;
-        pin.title = anchor.title;
-        pin.addEventListener('click', e => {
-          e.stopPropagation();
-          openAnchorPanel(anchor.id);
-        });
-        head.appendChild(pin);
-      });
-      col.appendChild(head);
-
-      const dayBody = document.createElement('div');
-      dayBody.className = 'cal-day-body';
-      if (inMonth) {
-        const key = dateKey(cellDate);
-        const dayCards = cardsByDay[key] || [];
-        dayCards.forEach(card => {
-          dayBody.appendChild(renderCalSlot(card));
-        });
+    let targetState = null;
+    if (inMonth) {
+      targetState = dayTargetState(cellDate, cardsByDay);
+      if (targetState) {
+        if (targetState.needs) col.classList.add('cal-day--target');
+        else col.classList.add('cal-day--filled');
       }
-      col.appendChild(dayBody);
-      grid.appendChild(col);
-      dayNum++;
     }
 
-    weekBlock.appendChild(grid);
+    const head = document.createElement('div');
+    head.className = 'cal-day-head';
+    const num = document.createElement('div');
+    num.className = 'cal-day-num' + (inMonth && isSameCalendarDay(cellDate, today) ? ' cal-day-num--today' : '');
+    num.textContent = inMonth ? String(dayNum) : '';
+    head.appendChild(num);
 
-    const wkStart = weekStartSunday(weekDays[0]);
-    const wkPhase = getContentPhase(wkStart);
-    const wkCounts = countWeekFormats(wkStart);
-    const summary = document.createElement('div');
-    summary.className = 'cal-week-summary';
-    summary.innerHTML =
-      '<span><strong>Week</strong> ' + formatShortDate(wkStart) + ' — ' + escapeHtml(wkPhase.name) + '</span>' +
-      '<span>Grid ' + wkCounts.gridPosts + '/' + wkPhase.gridPosts + '</span>' +
-      '<span>Stories ' + wkCounts.stories + '/' + wkPhase.stories + '</span>' +
-      (wkPhase.reels || wkCounts.reels ? '<span>Reels ' + wkCounts.reels + (wkPhase.reels ? '/' + wkPhase.reels : '') + '</span>' : '');
-    weekBlock.appendChild(summary);
-    body.appendChild(weekBlock);
+    if (targetState) {
+      const cues = document.createElement('div');
+      cues.className = 'cal-day-cues';
+      if (targetState.wantGrid) {
+        const cue = document.createElement('span');
+        cue.className = 'cal-day-cue cal-day-cue--grid' + (targetState.hasGrid ? ' cal-day-cue--done' : '');
+        cue.textContent = 'Grid';
+        cues.appendChild(cue);
+      }
+      if (targetState.wantStory) {
+        const cue = document.createElement('span');
+        cue.className = 'cal-day-cue cal-day-cue--story' + (targetState.hasStory ? ' cal-day-cue--done' : '');
+        cue.textContent = 'Story';
+        cues.appendChild(cue);
+      }
+      if (targetState.wantPin) {
+        const cue = document.createElement('span');
+        cue.className = 'cal-day-cue cal-day-cue--pin' + (targetState.hasPin ? ' cal-day-cue--done' : '');
+        cue.textContent = 'Discover';
+        cues.appendChild(cue);
+      }
+      head.appendChild(cues);
+    }
+
+    anchors().forEach(anchor => {
+      if (!anchorOnDate(anchor, cellDate)) return;
+      const pin = document.createElement('div');
+      pin.className = 'cal-anchor-pin cal-anchor-pin--' + anchor.type;
+      pin.textContent = anchor.title;
+      pin.title = anchor.title;
+      pin.addEventListener('click', e => {
+        e.stopPropagation();
+        openAnchorPanel(anchor.id);
+      });
+      head.appendChild(pin);
+    });
+    col.appendChild(head);
+
+    const dayBody = document.createElement('div');
+    dayBody.className = 'cal-day-body';
+    if (inMonth) {
+      const key = dateKey(cellDate);
+      const dayCards = cardsByDay[key] || [];
+      dayCards.forEach(card => {
+        dayBody.appendChild(renderCalSlot(card));
+      });
+      const addBtn = document.createElement('button');
+      addBtn.type = 'button';
+      addBtn.className = 'cal-add-btn';
+      addBtn.textContent = '+';
+      addBtn.title = 'Need content';
+      addBtn.setAttribute('aria-label', 'Add need content');
+      addBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        openCalNeedMenu(e.clientX, e.clientY, cellDate);
+      });
+      dayBody.appendChild(addBtn);
+    }
+    col.appendChild(dayBody);
+    grid.appendChild(col);
   }
+  body.appendChild(grid);
 
   const unscheduled = scheduleCards().filter(c => !c.scheduledAt || !String(c.scheduledAt).trim());
   const unschedWrap = document.createElement('div');
@@ -3386,60 +4237,137 @@ function phaseAt(y, month1, day) {
 function formatPhaseTargets(phase) {
   let s = phase.gridPosts + ' grid post' + (phase.gridPosts === 1 ? '' : 's');
   s += ', ' + phase.stories + ' story day' + (phase.stories === 1 ? '' : 's');
+  if ((phase.pinterest || 0) > 0) {
+    s += ', ' + phase.pinterest + ' Discover day' + (phase.pinterest === 1 ? '' : 's');
+  }
   if (phase.reels > 0) {
     s += ', up to ' + phase.reels + ' Reel' + (phase.reels === 1 ? '' : 's') + ' if ready';
   }
   return s;
 }
 
-function formatPhaseFill(phase, counts) {
-  let s = counts.gridPosts + '/' + phase.gridPosts + ' grid';
-  s += ' · ' + counts.stories + '/' + phase.stories + ' stories';
-  if (phase.reels > 0 || counts.reels > 0) {
+function formatPhaseFill(targets, counts) {
+  let s = counts.gridPosts + '/' + targets.gridPosts + ' grid';
+  s += ' · ' + counts.stories + '/' + targets.stories + ' stories';
+  if ((targets.pinterest || 0) > 0 || (counts.pinterest || 0) > 0) {
+    s += ' · ' + (counts.pinterest || 0) + '/' + (targets.pinterest || 0) + ' Discover';
+  }
+  if ((targets.reels || 0) > 0 || counts.reels > 0) {
     s += ' · ' + counts.reels + ' Reel' + (counts.reels === 1 ? '' : 's');
-    if (phase.reels > 0) s += ' (target ≤' + phase.reels + ')';
+    if (targets.reels > 0) s += ' (≤' + targets.reels + ')';
   }
   return s;
 }
 
-function getContentPhase(forDate) {
+function getWeekTargets(forDate) {
   const d = forDate instanceof Date ? forDate : new Date(forDate);
-  const t = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
-
-  if (t >= phaseAt(2026, 7, 30) && t < phaseAt(2026, 8, 4)) {
-    return { name: 'Steady grid (ramp-up)', gridPosts: 2, reels: 0, stories: 2 };
-  }
-  if (t >= phaseAt(2026, 8, 4) && t < phaseAt(2026, 8, 18)) {
-    return { name: 'Ode warm-up', gridPosts: 2, reels: 0, stories: 2 };
-  }
-  if (t >= phaseAt(2026, 8, 18) && t < phaseAt(2026, 8, 25)) {
-    return { name: 'Ode warm-up', gridPosts: 2, reels: 0, stories: 3 };
-  }
-  if (t >= phaseAt(2026, 8, 25) && t < phaseAt(2026, 9, 4)) {
-    return { name: 'Ode warm-up', gridPosts: 3, reels: 0, stories: 3 };
-  }
-  if (t === phaseAt(2026, 9, 4)) {
-    return { name: 'Ode event day', gridPosts: 0, reels: 0, stories: 3 };
-  }
-  if (t >= phaseAt(2026, 9, 5) && t < phaseAt(2026, 9, 15)) {
-    return { name: '008 tease', gridPosts: 2, reels: 0, stories: 2 };
-  }
-  if (t >= phaseAt(2026, 9, 15) && t < phaseAt(2026, 10, 6)) {
-    return { name: '008 product reveal', gridPosts: 2, reels: 1, stories: 2 };
-  }
-  if (t >= phaseAt(2026, 10, 6) && t < phaseAt(2026, 10, 20)) {
-    return { name: 'FDW context', gridPosts: 2, reels: 0, stories: 3 };
-  }
-  if (t >= phaseAt(2026, 10, 20) && t < phaseAt(2026, 10, 26)) {
-    return { name: 'Launch week', gridPosts: 3, reels: 1, stories: 4 };
-  }
-  const c = cadenceSettings();
+  const wk = weekStartMonday(d);
+  const key = dateKey(wk);
+  if (!DATA.weekGoals) DATA.weekGoals = {};
+  const stored = DATA.weekGoals[key] || {};
   return {
-    name: 'Steady grid',
-    gridPosts: c.gridPostsPerWeek || 2,
-    reels: c.reelsPerWeek || 0,
-    stories: c.storiesDaysPerWeek || 2
+    key,
+    weekStart: wk,
+    note: stored.note != null ? String(stored.note) : '',
+    gridPosts: stored.gridPosts != null ? Number(stored.gridPosts) : 0,
+    stories: stored.stories != null ? Number(stored.stories) : 0,
+    pinterest: stored.pinterest != null ? Number(stored.pinterest) : 0,
+    reels: stored.reels != null ? Number(stored.reels) : 0
   };
+}
+
+function getContentPhase(forDate) {
+  const t = getWeekTargets(forDate);
+  return {
+    name: '',
+    gridPosts: t.gridPosts,
+    stories: t.stories,
+    pinterest: t.pinterest,
+    reels: t.reels
+  };
+}
+
+function setWeekGoalField(weekStart, field, value) {
+  if (!DATA.weekGoals) DATA.weekGoals = {};
+  const key = dateKey(weekStartMonday(weekStart));
+  const cur = getWeekTargets(weekStart);
+  const next = {
+    note: cur.note,
+    gridPosts: cur.gridPosts,
+    stories: cur.stories,
+    pinterest: cur.pinterest,
+    reels: cur.reels
+  };
+  if (field === 'note') {
+    next.note = String(value || '');
+  } else {
+    const n = parseInt(value, 10);
+    next[field] = Number.isFinite(n) && n >= 0 ? n : 0;
+  }
+  DATA.weekGoals[key] = next;
+  scheduleSave();
+}
+
+function buildWeekGoalControls(weekStart, counts) {
+  const targets = getWeekTargets(weekStart);
+  const wrap = document.createElement('div');
+  wrap.className = 'cal-phase-strip';
+  wrap.addEventListener('click', e => e.stopPropagation());
+
+  const label = document.createElement('span');
+  label.className = 'cal-phase-label';
+  label.textContent = 'Target this week';
+  wrap.appendChild(label);
+
+  const note = document.createElement('input');
+  note.type = 'text';
+  note.className = 'cal-phase-note';
+  note.placeholder = 'This week’s goal…';
+  note.value = targets.note;
+  note.addEventListener('change', () => {
+    setWeekGoalField(weekStart, 'note', note.value.trim());
+  });
+  note.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      note.blur();
+    }
+  });
+  wrap.appendChild(note);
+
+  const metrics = document.createElement('div');
+  metrics.className = 'cal-phase-metrics';
+
+  function metric(field, labelText) {
+    const row = document.createElement('label');
+    row.className = 'cal-phase-metric';
+    const filled = field === 'gridPosts' ? counts.gridPosts
+      : field === 'stories' ? counts.stories
+      : field === 'pinterest' ? counts.pinterest
+      : counts.reels;
+    const span = document.createElement('span');
+    span.textContent = labelText + ' ' + filled + '/';
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.min = '0';
+    input.step = '1';
+    input.value = String(targets[field] || 0);
+    input.addEventListener('change', () => {
+      setWeekGoalField(weekStart, field, input.value);
+      renderBoard();
+    });
+    row.appendChild(span);
+    row.appendChild(input);
+    metrics.appendChild(row);
+  }
+
+  metric('gridPosts', 'Grid');
+  metric('stories', 'Stories');
+  metric('pinterest', 'Discover');
+  if ((targets.reels || 0) > 0 || (counts.reels || 0) > 0) metric('reels', 'Reels');
+
+  wrap.appendChild(metrics);
+  return wrap;
 }
 
 function weekStartSunday(d) {
@@ -3448,12 +4376,36 @@ function weekStartSunday(d) {
   return x;
 }
 
+/** Mon–Sun week used for Target this week (refreshes Monday after Sunday ends). */
+function weekStartMonday(d) {
+  const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const day = x.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  x.setDate(x.getDate() + diff);
+  return x;
+}
+
+let weekGoalRefreshTimer = null;
+function scheduleWeekGoalRefresh() {
+  if (weekGoalRefreshTimer) clearTimeout(weekGoalRefreshTimer);
+  const now = new Date();
+  const nextWeek = weekStartMonday(now);
+  nextWeek.setDate(nextWeek.getDate() + 7);
+  const ms = Math.max(1000, nextWeek.getTime() - now.getTime() + 250);
+  weekGoalRefreshTimer = setTimeout(() => {
+    weekGoalRefreshTimer = null;
+    if (typeof renderBoard === 'function') renderBoard();
+    scheduleWeekGoalRefresh();
+  }, ms);
+}
+
 function countWeekFormats(weekStart) {
   const end = new Date(weekStart);
   end.setDate(end.getDate() + 7);
   let gridPosts = 0;
   let reels = 0;
-  let stories = 0;
+  let pinterest = 0;
+  const storyDays = new Set();
   scheduleCards().forEach(card => {
     if (!card.scheduledAt) return;
     const sd = new Date(card.scheduledAt);
@@ -3461,11 +4413,94 @@ function countWeekFormats(weekStart) {
     const day = new Date(sd.getFullYear(), sd.getMonth(), sd.getDate());
     if (day < weekStart || day >= end) return;
     const fmt = card.format;
-    if (fmt === 'ig-post' || fmt === 'pinterest') gridPosts++;
-    else if (fmt === 'ig-reel' || fmt === 'tiktok') reels++;
-    else if (fmt === 'ig-story') stories++;
+    if (fmt === 'ig-post') {
+      gridPosts++;
+      storyDays.add(dateKey(day)); // companion stories assumed with grid
+    } else if (fmt === 'pinterest') {
+      pinterest++;
+    } else if (fmt === 'ig-reel' || fmt === 'tiktok') {
+      reels++;
+    } else if (fmt === 'ig-story') {
+      storyDays.add(dateKey(day));
+    }
   });
-  return { gridPosts, reels, stories };
+  return { gridPosts, reels, stories: storyDays.size, pinterest };
+}
+
+function weekdayPool(primary, extra, needed, avoid) {
+  const pool = [];
+  const seen = new Set();
+  const push = wd => {
+    if (seen.has(wd)) return;
+    seen.add(wd);
+    pool.push(wd);
+  };
+  (primary || []).forEach(push);
+  (extra || []).forEach(push);
+  if (pool.length < needed) {
+    for (let wd = 0; wd < 7; wd++) {
+      if (avoid && avoid.has(wd)) continue;
+      push(wd);
+      if (pool.length >= needed) break;
+    }
+  }
+  if (pool.length < needed) {
+    for (let wd = 0; wd < 7; wd++) {
+      push(wd);
+      if (pool.length >= needed) break;
+    }
+  }
+  return pool;
+}
+
+function dayHasFormat(dayDate, kind, cardsByDay) {
+  const key = dateKey(dayDate);
+  const map = cardsByDay || groupScheduleByDay();
+  const cards = map[key] || [];
+  return cards.some(c => {
+    if (kind === 'grid') return c.format === 'ig-post';
+    if (kind === 'story') {
+      // Companion stories usually go with the grid post — count either.
+      return c.format === 'ig-story' || c.format === 'ig-post';
+    }
+    if (kind === 'pinterest') return c.format === 'pinterest';
+    return false;
+  });
+}
+
+function dayTargetState(dayDate, cardsByDay) {
+  const phase = getWeekTargets(dayDate);
+  const pd = publishDaysSettings();
+  const wd = dayDate.getDay();
+
+  const gridNeed = phase.gridPosts || 0;
+  const storyNeed = phase.stories || 0;
+  const pinNeed = phase.pinterest || 0;
+  if (!gridNeed && !storyNeed && !pinNeed) return null;
+
+  const gridChosen = weekdayPool(pd.grid, pd.gridExtra, gridNeed, null).slice(0, gridNeed);
+  const storyChosen = weekdayPool(pd.stories, pd.storiesExtra, storyNeed, null).slice(0, storyNeed);
+  const pinChosen = weekdayPool(pd.pinterest || DEFAULT_PUBLISH_DAYS.pinterest, [], pinNeed, null).slice(0, pinNeed);
+
+  const isGridTarget = gridChosen.includes(wd);
+  const isStoryTarget = storyChosen.includes(wd);
+  const isPinTarget = pinChosen.includes(wd);
+  if (!isGridTarget && !isStoryTarget && !isPinTarget) return null;
+
+  const hasGrid = isGridTarget && dayHasFormat(dayDate, 'grid', cardsByDay);
+  const hasStory = isStoryTarget && dayHasFormat(dayDate, 'story', cardsByDay);
+  const hasPin = isPinTarget && dayHasFormat(dayDate, 'pinterest', cardsByDay);
+  const needs = (isGridTarget && !hasGrid) || (isStoryTarget && !hasStory) || (isPinTarget && !hasPin);
+  return {
+    wantGrid: isGridTarget,
+    wantStory: isStoryTarget,
+    wantPin: isPinTarget,
+    hasGrid,
+    hasStory,
+    hasPin,
+    needs,
+    filled: !needs
+  };
 }
 
 function groupScheduleByDay() {
@@ -3500,18 +4535,120 @@ function shiftScheduleMonth(delta) {
   renderBoard();
 }
 
+function newScheduleId() {
+  return 'sched-' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
+}
+
+function isNeedContentCard(card) {
+  if (!card) return false;
+  if (card.needContent === true) return true;
+  return !stripHtml(card.body || '').trim();
+}
+
+let calNeedMenuDate = null;
+
+function openCalNeedMenu(x, y, dayDate) {
+  calNeedMenuDate = new Date(dayDate.getFullYear(), dayDate.getMonth(), dayDate.getDate(), 10, 0, 0);
+  const menu = document.getElementById('calNeedMenu');
+  menu.style.left = Math.min(x, window.innerWidth - 180) + 'px';
+  menu.style.top = Math.min(y, window.innerHeight - 200) + 'px';
+  menu.classList.add('open');
+}
+
+function closeCalNeedMenu() {
+  calNeedMenuDate = null;
+  document.getElementById('calNeedMenu').classList.remove('open');
+}
+
+function addNeedContentSlot(format, dayDate) {
+  const when = dayDate || calNeedMenuDate;
+  if (!when) return;
+  const iso = when.toISOString();
+  const card = migrateSchedule({
+    id: newScheduleId(),
+    body: '',
+    pillar: 'organic',
+    format: format || 'ig-post',
+    needContent: true,
+    publishStatus: 'unscheduled',
+    scheduledAt: iso,
+    scheduleAt: iso,
+    contentLayer: '',
+    anchorId: '',
+    createdAt: new Date().toISOString()
+  });
+  // Auto-link Ode if within lead-up window
+  if (when.getTime() >= phaseAt(2026, 8, 4) && when.getTime() <= phaseAt(2026, 9, 4)) {
+    card.anchorId = 'anchor-ode';
+  }
+  scheduleCards().push(card);
+  expandedSections.add('schedule');
+  closeCalNeedMenu();
+  clearTimeout(saveTimer);
+  saveData();
+  renderBoard();
+  openSchedulePanel(card.id);
+}
+
+function setPublishStatus(cardId, status, opts) {
+  const card = scheduleCards().find(c => c.id === cardId);
+  if (!card) return;
+  if (status !== 'scheduled' && status !== 'unscheduled') return;
+  card.publishStatus = status;
+  scheduleSave();
+  if (!(opts && opts.silent)) renderBoard();
+}
+
+function renderPublishStatusSelect(card, opts) {
+  const options = opts || {};
+  return createPpcSelect({
+    id: options.id || '',
+    options: PUBLISH_STATUS_OPTIONS,
+    value: publishStatusOf(card),
+    colored: true,
+    bare: !!options.bare,
+    onChange: val => {
+      if (options.onChange) options.onChange(val);
+      else setPublishStatus(card.id, val);
+    }
+  });
+}
+
 function renderCalSlot(card) {
   const el = document.createElement('div');
-  el.className = 'cal-slot';
+  el.className = 'cal-slot' + (isNeedContentCard(card) ? ' cal-slot--need' : '');
+  el.dataset.scheduleId = card.id;
   const cat = catById(card.pillar);
   if (cat) {
     el.style.borderLeftColor = cat.bg;
-    el.style.background = '#F0EDE8';
   }
-  const title = stripHtml(card.body || '') || 'Untitled';
+  if (!isNeedContentCard(card)) el.style.background = '#F0EDE8';
+  const title = stripHtml(card.body || '') || 'Need content';
   const meta = formatLabel(card.pillar, card.format);
-  el.innerHTML = '<span class="cal-slot-meta">' + escapeHtml(meta) + '</span> ' + escapeHtml(title);
-  el.title = title;
+
+  const metaEl = document.createElement('span');
+  metaEl.className = 'cal-slot-meta';
+  metaEl.textContent = meta;
+  el.appendChild(metaEl);
+
+  const titleEl = document.createElement('span');
+  titleEl.className = 'cal-slot-title';
+  titleEl.textContent = title;
+  titleEl.title = title;
+  el.appendChild(titleEl);
+
+  const status = publishStatusOf(card);
+  const flag = document.createElement('span');
+  const needsAttention = isNeedContentCard(card) || status === 'unscheduled';
+  flag.className = 'cal-slot-flag ' + (needsAttention ? 'cal-slot-flag--need' : 'cal-slot-flag--ready');
+  flag.textContent = isNeedContentCard(card) ? 'Need' : (status === 'unscheduled' ? 'Open' : 'Ready');
+  flag.title = status === 'scheduled' ? 'Scheduled — click to mark unscheduled' : 'Unscheduled — click to mark scheduled';
+  flag.addEventListener('click', e => {
+    e.stopPropagation();
+    setPublishStatus(card.id, status === 'scheduled' ? 'unscheduled' : 'scheduled');
+  });
+  el.appendChild(flag);
+
   el.addEventListener('click', e => {
     e.stopPropagation();
     openSchedulePanel(card.id);
@@ -3519,17 +4656,36 @@ function renderCalSlot(card) {
   return el;
 }
 
+const CONTENT_LAYER_OPTIONS = [
+  { id: 'acquisition', label: 'Acquisition' },
+  { id: 'identity', label: 'Identity' },
+  { id: 'conversion', label: 'Conversion' }
+];
+
+function buildScheduleLayerSelect(selectedId) {
+  const wrap = document.getElementById('pScheduleLayerWrap');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  wrap.appendChild(createPpcSelect({
+    id: 'pScheduleLayer',
+    options: CONTENT_LAYER_OPTIONS,
+    value: selectedId || '',
+    includeNone: true,
+    noneLabel: '— None —'
+  }));
+}
+
 function populateScheduleAnchorSelect(selectedId) {
-  const sel = document.getElementById('pScheduleAnchor');
-  if (!sel) return;
-  sel.innerHTML = '<option value="">— None —</option>';
-  anchors().forEach(a => {
-    const opt = document.createElement('option');
-    opt.value = a.id;
-    opt.textContent = a.title;
-    if (a.id === selectedId) opt.selected = true;
-    sel.appendChild(opt);
-  });
+  const wrap = document.getElementById('pScheduleAnchorWrap');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  wrap.appendChild(createPpcSelect({
+    id: 'pScheduleAnchor',
+    options: anchors().map(a => ({ id: a.id, label: a.title })),
+    value: selectedId || '',
+    includeNone: true,
+    noneLabel: '— None —'
+  }));
 }
 
 function openAnchorPanel(anchorId) {
@@ -3685,6 +4841,12 @@ function formatDateTimeLabel(value) {
 function renderBoard() {
   const board = document.getElementById('board');
   board.innerHTML = '';
+  applyBoardViewMode();
+
+  const calPane = document.createElement('div');
+  calPane.className = 'board-cal-pane';
+  const pipePane = document.createElement('div');
+  pipePane.className = 'board-pipe-pane';
 
   SECTIONS.forEach(section => {
     const open = expandedSections.has(section.id);
@@ -3738,8 +4900,18 @@ function renderBoard() {
       wrap.appendChild(section.built ? sectionBodyFor(section) : renderSkeletonBody());
     }
 
-    board.appendChild(wrap);
+    if (section.id === 'schedule') calPane.appendChild(wrap);
+    else pipePane.appendChild(wrap);
   });
+
+  const gutter = document.createElement('div');
+  gutter.className = 'board-split-gutter';
+  bindSplitGutter(gutter);
+
+  board.appendChild(calPane);
+  board.appendChild(gutter);
+  board.appendChild(pipePane);
+  applySplitPct(marketingSplitPct);
 }
 
 const ctxMenu = document.getElementById('ctxMenu');
@@ -4308,6 +5480,9 @@ function openReviewPanel(reviewId) {
   setVideoOpenLink('pReviewVideoOpen', card.reviewVideoUrl || '');
   document.getElementById('pOutcome').innerHTML = sanitizeHtml(card.contentOutcome || '');
   document.getElementById('pTweaks').innerHTML = sanitizeHtml(card.tweaks || '');
+  document.getElementById('pCaption').value = card.caption || '';
+  document.getElementById('pTags').value = card.tags || '';
+  document.getElementById('pMusic').value = card.music || '';
   document.getElementById('pScheduleAt').value = toDateTimeLocalValue(card.scheduleAt);
   setPlanHintVisible(false);
   setPanelImage(card.imageData);
@@ -4349,9 +5524,15 @@ function openSchedulePanel(scheduleId) {
   } else {
     thumb.textContent = 'No media';
   }
-  document.getElementById('pScheduleIdeaText').textContent = stripHtml(card.body || '') || 'Untitled content';
+  document.getElementById('pScheduleIdeaText').textContent = stripHtml(card.body || '') || (isNeedContentCard(card) ? 'Need content — fill from Ideas / Prep' : 'Untitled content');
   document.getElementById('pScheduleEditAt').value = toDateTimeLocalValue(card.scheduledAt || card.scheduleAt);
-  document.getElementById('pScheduleLayer').value = card.contentLayer || '';
+  const statusWrap = document.getElementById('pScheduleStatusWrap');
+  statusWrap.innerHTML = '';
+  statusWrap.appendChild(renderPublishStatusSelect(card, {
+    id: 'pScheduleStatus',
+    onChange: val => setPublishStatus(card.id, val, { silent: true })
+  }));
+  buildScheduleLayerSelect(card.contentLayer || '');
   populateScheduleAnchorSelect(card.anchorId || '');
   document.getElementById('pScheduleOutcome').innerHTML = sanitizeHtml(card.contentOutcome || '');
   document.getElementById('pScheduleVideoUrl').value = card.reviewVideoUrl || '';
@@ -4474,11 +5655,19 @@ function savePanel(silent) {
     const format = document.getElementById('pFormat').value;
     card.pillar = pillar;
     card.format = format || defaultFormatForPillar(pillar);
+    card.body = sanitizeHtml(document.getElementById('pDesc').innerHTML).trim();
+    card.needContent = !stripHtml(card.body || '').trim();
     const st = document.getElementById('pScheduleEditAt').value;
     card.scheduledAt = st ? new Date(st).toISOString() : '';
     card.scheduleAt = card.scheduledAt;
-    card.contentLayer = document.getElementById('pScheduleLayer').value || '';
-    card.anchorId = document.getElementById('pScheduleAnchor').value || '';
+    const statusEl = document.getElementById('pScheduleStatus');
+    if (statusEl && (statusEl.value === 'scheduled' || statusEl.value === 'unscheduled')) {
+      card.publishStatus = statusEl.value;
+    } else if (!card.publishStatus) {
+      card.publishStatus = card.scheduledAt ? 'scheduled' : 'unscheduled';
+    }
+    card.contentLayer = (document.getElementById('pScheduleLayer') || {}).value || '';
+    card.anchorId = (document.getElementById('pScheduleAnchor') || {}).value || '';
     card.contentOutcome = sanitizeHtml(document.getElementById('pScheduleOutcome').innerHTML).trim();
     card.reviewVideoUrl = (document.getElementById('pScheduleVideoUrl').value || '').trim();
     scheduleSave();
@@ -4601,6 +5790,13 @@ ctxMenu.querySelector('[data-action="add-card"]').addEventListener('click', () =
   addIdea(x, y);
 });
 
+document.getElementById('calNeedMenu').querySelectorAll('button[data-format]').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    addNeedContentSlot(btn.getAttribute('data-format'));
+  });
+});
+
 document.addEventListener('keydown', e => {
   // Stop browsers from hijacking "/" for find/search while working on the board.
   if (e.key === '/' || e.key === '?') {
@@ -4633,6 +5829,7 @@ document.addEventListener('keydown', e => {
 
 document.addEventListener('click', e => {
   hideCtxMenu();
+  if (!e.target.closest('#calNeedMenu')) closeCalNeedMenu();
   if (!e.target.closest('.image-well')) clearWellFocus();
   if (!e.target.closest('#pReviewMediaWell')) {
     focusedReviewMedia = false;
@@ -4681,6 +5878,7 @@ PPC.mountSettings({
 });
 PPC.applyStoredDark();
 initApp();
+setMarketingViewMode(marketingViewMode);
 </script>
 </body>
 </html>

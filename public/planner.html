@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>PPC Annual Planner 2026–27</title>
+  <title>PPC - HOMEBASE · Annual Planner</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
@@ -1122,7 +1122,7 @@
 <div class="header">
   <div class="header-spacer"></div>
   <a class="header-logo-link" href="/" title="Home">
-    <img class="header-logo" src="/assets/pressplay-logo-black.png?v=3" alt="Press Play Collective">
+    <img class="header-logo" src="/assets/pressplay-logo-black.png?v=5" alt="Press Play Collective">
   </a>
   <div class="header-right">
     <div class="sub">Annual Planner — July 2026 to June 2027</div>
@@ -1383,8 +1383,8 @@ const REVENUE = [1000,1800,1500,5000,3000,3500,2000,5500,6500,8000,8000,8000];
 
 // ─── PERSISTENCE (localStorage + Cloudflare Worker sync) ─────────────────────
 const STORAGE_KEY = 'ppc-planner-data';
-const SYNC_URL = 'https://ppc-planner.pressplaycollective.workers.dev/api/data';
-const APP_VERSION = '2.10.2';
+const SYNC_URL = '/api/data';
+const APP_VERSION = '2.10.4';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 
 let editMode = true;
@@ -1411,14 +1411,15 @@ function saveToFirestore() {
   fetch(SYNC_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
+    cache: 'no-store'
   }).catch(err => console.warn('Cloud sync failed:', err));
 }
 
 async function initApp() {
   let data = null;
   try {
-    const res = await fetch(SYNC_URL);
+    const res = await fetch(SYNC_URL, { cache: 'no-store' });
     if (res.ok) {
       const remote = await res.json();
       if (remote && remote.cats && remote.cats.length) data = remote;
@@ -1806,7 +1807,7 @@ function migrateWeekScheme(fromScheme) {
    same item shows on both boards. Links are by id (`srcCardId` / `srcEventId`),
    reconciled here in one pass so the two stores can never drift or loop. */
 
-const KANBAN_URL = 'https://ppc-planner.pressplaycollective.workers.dev/api/kanban';
+const KANBAN_URL = '/api/kanban';
 const KANBAN_PATCH_URL = KANBAN_URL + '/patch';
 
 // Task Board projects, cached so the timeline can label pills and offer the
@@ -1821,11 +1822,17 @@ function projectName(id) {
 // (column, assignees) and avoids clobbering the whole board.
 async function patchBoard(upsert, remove) {
   try {
-    await fetch(KANBAN_PATCH_URL, {
+    const res = await fetch(KANBAN_PATCH_URL, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ upsert: upsert || [], remove: remove || [] })
+      body: JSON.stringify({ upsert: upsert || [], remove: remove || [] }),
+      cache: 'no-store'
     });
-  } catch (err) { console.warn('Task Board patch failed:', err); }
+    if (!res.ok) throw new Error('Task Board patch HTTP ' + res.status);
+    return true;
+  } catch (err) {
+    console.warn('Task Board patch failed:', err);
+    return false;
+  }
 }
 
 // A real date → the timeline slot representing it. Every day of the week has a
@@ -1871,16 +1878,22 @@ function statusToColumn(status) {
 }
 
 /* Reconcile both directions in a single pass, then write each store once. */
-async function syncDateMirrors() {
+async function syncDateMirrors(opts) {
+  const options = opts || {};
+  const preferLocalIds = options.preferLocalIds instanceof Set
+    ? options.preferLocalIds
+    : new Set(options.preferLocalId ? [options.preferLocalId] : []);
+
   let board = null;
   try {
-    const res = await fetch(KANBAN_URL);
+    const res = await fetch(KANBAN_URL, { cache: 'no-store' });
     if (res.ok) board = await res.json();
   } catch (err) { return false; }                      // offline: leave mirrors alone
   if (!board || !Array.isArray(board.cards)) return false;
   BOARD_PROJECTS = Array.isArray(board.projects) ? board.projects : [];
 
   let eventsChanged = ensureEventIds();
+  const liveCardIds = new Set(board.cards.map(c => c.id));
 
   // ── Task Board → Timeline ────────────────────────────────────────────────
   const datedCards = new Map();
@@ -1888,16 +1901,32 @@ async function syncDateMirrors() {
 
   for (let i = EVENTS.length - 1; i >= 0; i--) {
     const e = EVENTS[i];
-    if (e.srcCardId && !datedCards.has(e.srcCardId)) {
-      // Parked in Unassigned / Any after clearing the due date — keep it.
-      if (e.week == null) continue;
+    if (!e.srcCardId) continue;
+    // Drop mirrors whose Task Board card was deleted.
+    if (!liveCardIds.has(e.srcCardId)) {
       EVENTS.splice(i, 1); eventsChanged = true;
+      continue;
+    }
+    if (!datedCards.has(e.srcCardId)) {
+      // Undated (or date cleared) → keep parked in Unassigned / Any.
+      if (e.week != null || e.day != null || e.dueDate) {
+        e.week = null; e.day = null; delete e.dueDate;
+        eventsChanged = true;
+      }
     }
   }
   datedCards.forEach((card, id) => {
     const slot = dateToPlannerSlot(card.dueDate);
     const idx = EVENTS.findIndex(e => e.srcCardId === id);
-    if (!slot) { if (idx >= 0) { EVENTS.splice(idx, 1); eventsChanged = true; } return; }
+    if (!slot) {
+      if (idx >= 0) {
+        const e = EVENTS[idx];
+        if (preferLocalIds.has(e.id)) return;
+        e.week = null; e.day = null; delete e.dueDate;
+        eventsChanged = true;
+      }
+      return;
+    }
     const next = {
       srcCardId: id, mirrored: true,
       cat: CATS.some(c => c.id === card.cat) ? card.cat : CATS[0].id,
@@ -1909,6 +1938,7 @@ async function syncDateMirrors() {
     };
     if (idx < 0) { next.id = 'mir-' + id; EVENTS.push(next); eventsChanged = true; return; }
     const e = EVENTS[idx];
+    if (preferLocalIds.has(e.id)) return; // just saved from the panel — don't clobber
     if (['cat','m','week','day','title','status','body','dueDate','project'].some(f => e[f] !== next[f])) {
       Object.assign(e, next); eventsChanged = true;
     }
@@ -1941,6 +1971,11 @@ async function syncDateMirrors() {
       upserts.push(desired);
     } else if (['title','cat','status','dueDate','project'].some(f => existing[f] !== desired[f])) {
       desired.column = statusToColumn(evt.status);
+      // Keep body/tasks in sync when the planner panel just saved this event.
+      if (preferLocalIds.has(evt.id)) {
+        desired.body = evt.body || '';
+        desired.tasks = (evt.tasks || []).slice();
+      }
       upserts.push(desired);
     }
   });
@@ -1966,7 +2001,7 @@ async function pushStatusToCard(cardId, status) {
 
 /** Push all editable fields from a linked timeline pill back to its Task Board card. */
 async function pushEventToCard(evt) {
-  if (!evt || !evt.srcCardId) return;
+  if (!evt || !evt.srcCardId) return true;
   const patch = {
     id: evt.srcCardId,
     title: evt.title || 'Untitled task',
@@ -1978,7 +2013,7 @@ async function pushEventToCard(evt) {
     project: evt.project || null
   };
   if (evt.status === 'complete') patch.doneAt = new Date().toISOString();
-  await patchBoard([patch], []);
+  return patchBoard([patch], []);
 }
 
 function showToast(msg) {
@@ -2045,7 +2080,7 @@ function attachPillDelete(pill, evt, mi) {
     }
     const i = EVENTS.indexOf(evt);
     if (i > -1) EVENTS.splice(i, 1);
-    saveToRepos();
+    saveToFirestore();
     if (mi != null) refreshMonthContent(mi);
     else renderVertical();
   };
@@ -2248,7 +2283,7 @@ function renderWeekDayGrid(parent, mi, band, collapsed) {
       await applyEventSlot(_dragEvt, band.key, date, destMi);
       const srcMi = _dragMi;
       _dragEvt = null; _dragMi = null;
-      saveToRepos();
+      saveToFirestore();
       if (srcMi != null) refreshMonthContent(srcMi);
       refreshMonthContent(destMi);
       if (destMi > 0) refreshMonthContent(destMi - 1);
@@ -2395,7 +2430,7 @@ function renderMonthWeeks(container, mi) {
       const srcMi = _dragMi;
       await applyEventSlot(_dragEvt, null, null, mi);
       _dragEvt = null; _dragMi = null;
-      saveToRepos();
+      saveToFirestore();
       if (srcMi != null && srcMi !== mi) refreshMonthContent(srcMi);
       refreshMonthContent(mi);
     });
@@ -2787,12 +2822,13 @@ function addSubtask(text) {
 }
 
 function readSubtasks() {
-  const items = document.querySelectorAll('.subtask-item');
   const result = [];
-  items.forEach(li => {
+  document.querySelectorAll('#subtaskList .subtask-item').forEach(li => {
     const check = li.querySelector('.subtask-check');
-    const text = li.querySelector('.subtask-text').textContent.trim();
-    if (text) result.push((check.checked ? '[x] ' : '') + text);
+    const textEl = li.querySelector('.subtask-text');
+    if (!textEl) return;
+    const text = (textEl.textContent || '').trim();
+    if (text) result.push(((check && check.checked) ? '[x] ' : '') + text);
   });
   return result;
 }
@@ -2893,63 +2929,90 @@ function openPanel(evt, cat) {
 }
 
 async function savePanel() {
-  const title = document.getElementById('pTitle').textContent.trim();
-  if (!title) {
-    showToast('Add a title before saving');
-    document.getElementById('pTitle').focus();
-    return;
+  try {
+    const titleEl = document.getElementById('pTitle');
+    const title = (titleEl && titleEl.textContent || '').replace(/\u00a0/g, ' ').trim();
+    if (!title) {
+      showToast('Add a title before saving');
+      if (titleEl) titleEl.focus();
+      return;
+    }
+
+    const weekEl = document.getElementById('pWeek');
+    const dayEl = document.getElementById('pDay');
+    const statusEl = document.getElementById('pStatus');
+    const projectEl = document.getElementById('pProject');
+    const dateEl = document.getElementById('pExactDate');
+    const descEl = document.getElementById('pDesc');
+
+    let weekVal = weekEl ? weekEl.value : '';
+    let week = weekVal ? parseInt(weekVal, 10) : null;
+    if (isNaN(week)) week = null;
+    const rawDay = dayEl ? dayEl.value : '';
+    let dayVal = rawDay === '' || rawDay == null ? null : parseInt(rawDay, 10);
+    if (isNaN(dayVal)) dayVal = null;
+    const exactDate = (dateEl && dateEl.value) || null;
+    const projectId = (projectEl && projectEl.value) || null;
+    const status = (statusEl && statusEl.value) || 'planned';
+    const body = (descEl && descEl.textContent || '').trim();
+    const tasks = readSubtasks();
+
+    // An exact date wins: it pins the pill to that day on the timeline.
+    let monthIdx = activeEvt ? activeEvt.m : activeNewMonth;
+    if (exactDate) {
+      const slot = dateToPlannerSlot(exactDate);
+      if (slot) { monthIdx = slot.m; week = slot.week; dayVal = slot.day; }
+    } else if (activeEvt && activeEvt.srcCardId) {
+      // Linked Task Board card with date cleared → Unassigned / Any.
+      week = null;
+      dayVal = null;
+    }
+
+    let savedEvt = null;
+    if (!activeEvt) {
+      const created = {
+        id:     'e' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4),
+        cat:    activeCat.id,
+        m:      monthIdx,
+        week:   week,
+        day:    dayVal,
+        title:  title,
+        date:   MONTHS[monthIdx] || (document.getElementById('pDate') || {}).value || '',
+        body:   body,
+        status: status,
+        tasks:  tasks
+      };
+      if (exactDate) created.dueDate = exactDate;
+      if (projectId) created.project = projectId;
+      EVENTS.push(created);
+      savedEvt = created;
+    } else {
+      activeEvt.title  = title;
+      activeEvt.m      = monthIdx;
+      activeEvt.week   = week;
+      activeEvt.day    = dayVal;
+      activeEvt.status = status;
+      activeEvt.date   = MONTHS[monthIdx] || (document.getElementById('pDate') || {}).value || activeEvt.date;
+      activeEvt.body   = body;
+      activeEvt.tasks  = tasks;
+      if (exactDate) activeEvt.dueDate = exactDate; else delete activeEvt.dueDate;
+      if (projectId) activeEvt.project = projectId; else delete activeEvt.project;
+      if (activeEvt.srcCardId) {
+        const ok = await pushEventToCard(activeEvt);
+        if (!ok) showToast('Saved on planner — Task Board sync failed, will retry on refresh');
+      }
+      savedEvt = activeEvt;
+    }
+
+    saveToFirestore();
+    renderVertical();
+    closePanel();
+    const changed = await syncDateMirrors({ preferLocalId: savedEvt && savedEvt.id });
+    if (changed) { saveToFirestore(); renderVertical(); }
+  } catch (err) {
+    console.error('savePanel failed:', err);
+    showToast('Could not save — try again');
   }
-
-  let weekVal = document.getElementById('pWeek').value;
-  let week = weekVal ? parseInt(weekVal) : null;
-  const rawDay = document.getElementById('pDay').value;
-  let dayVal = rawDay === '' || rawDay == null ? null : parseInt(rawDay, 10);
-  if (isNaN(dayVal)) dayVal = null;
-  const exactDate = document.getElementById('pExactDate').value || null;
-  const projectId = document.getElementById('pProject').value || null;
-
-  // An exact date wins: it pins the pill to that day on the timeline.
-  let monthIdx = activeEvt ? activeEvt.m : activeNewMonth;
-  if (exactDate) {
-    const slot = dateToPlannerSlot(exactDate);
-    if (slot) { monthIdx = slot.m; week = slot.week; dayVal = slot.day; }
-  }
-
-  if (!activeEvt) {
-    const created = {
-      id:     'e' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4),
-      cat:    activeCat.id,
-      m:      monthIdx,
-      week:   week,
-      day:    dayVal,
-      title:  title,
-      date:   MONTHS[monthIdx] || document.getElementById('pDate').value,
-      body:   document.getElementById('pDesc').textContent.trim(),
-      status: document.getElementById('pStatus').value,
-      tasks:  readSubtasks()
-    };
-    if (exactDate) created.dueDate = exactDate;
-    if (projectId) created.project = projectId;
-    EVENTS.push(created);
-  } else {
-    activeEvt.title  = title;
-    activeEvt.m      = monthIdx;
-    activeEvt.week   = week;
-    activeEvt.day    = dayVal;
-    activeEvt.status = document.getElementById('pStatus').value;
-    activeEvt.date   = MONTHS[monthIdx] || document.getElementById('pDate').value;
-    activeEvt.body   = document.getElementById('pDesc').textContent.trim();
-    activeEvt.tasks  = readSubtasks();
-    if (exactDate) activeEvt.dueDate = exactDate; else delete activeEvt.dueDate;
-    if (projectId) activeEvt.project = projectId; else delete activeEvt.project;
-    if (activeEvt.srcCardId) await pushEventToCard(activeEvt);
-  }
-
-  saveToRepos();
-  renderVertical();
-  closePanel();
-  const changed = await syncDateMirrors();
-  if (changed) { saveToRepos(); renderVertical(); }
 }
 
 function closePanel() {

@@ -5,6 +5,335 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-07-31 — EOD (Cursor)
+
+### What shipped today
+- **PPC - HOMEBASE** rename live: worker `ppc-homebase`, URL
+  https://ppc-homebase.pressplaycollective.workers.dev (`85db5e40-…`).
+  Old `ppc-planner` worker deleted (404).
+- Marketing polish: Split resize (`0.10.2`) + Ideas height gutter +
+  scroll-zoom (`0.10.3`) — earlier deploys still named under old URL in
+  session notes; canonical host is now homebase.
+- Project rule `.cursor/rules/handoff.mdc` (always apply) so new agents
+  read `HANDOFF.md` first without a long kickoff prompt.
+- Branch `cursor/pressplay-logo-assets` has prior Review/calendar work
+  pushed; local still has uncommitted rename + Marketing polish on top.
+
+### Versions (live)
+- Canonical: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing ~`0.10.3` · Planner / Task Board from prior ship
+- Latest homebase deploy: `85db5e40-60a7-4976-bc4d-1411162fe681`
+
+### Open / next
+1. Open Cursor on `…/Press Play Collective/ppc-homebase` (not the old
+   `ppc-planner-worker` folder); delete old folder when unlocked.
+2. Rename GitHub repo when `gh` is available (remote still `ppc-planner`).
+3. ~~Commit/push remaining local changes on `cursor/pressplay-logo-assets`~~
+   done this session.
+4. Calendar cadence: keep grid-first; tune after real posting weeks.
+5. Project delete UI re-home; planner Projects/Releases parked; dark theme.
+
+### Notes for next session
+- Short kickoff is enough: “continue from handoff” — rule loads HANDOFF.
+- Prefer `wrangler dev` on `:8787`; deploy only when asked.
+- Format **IG Post** fills the calendar grid counter; Reels optional.
+
+---
+
+## 2026-07-31 — Rename to PPC - HOMEBASE (Cursor)
+
+### What was built or decided
+- Worker renamed `ppc-planner` → `ppc-homebase`. Canonical live URL is now
+  https://ppc-homebase.pressplaycollective.workers.dev
+- Branding already in place: titles / Home tag `PPC - HOMEBASE`; tool names
+  stay Annual Planner / Task Board / Marketing. `localStorage` keys unchanged
+  (`ppc-planner-data`, etc.).
+- Local folder rename + GitHub rename attempted in same pass (see Deploy /
+  notes below if anything failed).
+
+### Deployed
+- Live: https://ppc-homebase.pressplaycollective.workers.dev
+- Version: `85db5e40-60a7-4976-bc4d-1411162fe681`
+- Old worker `ppc-planner` deleted; old URL now 404.
+- Local copy at `…/Press Play Collective/ppc-homebase` (in-place rename
+  blocked while Cursor had the old folder open; old `ppc-planner-worker`
+  may still exist — delete manually when unlocked).
+- GitHub rename skipped (`gh` CLI not on PATH); remote still
+  `https://github.com/jarvis-tuttlebee/ppc-planner.git`.
+
+---
+
+## 2026-07-31 — Ideas height + scroll-zoom (Cursor)
+
+### What was built or decided
+- Marketing `0.10.3`: Ideas board has a bottom drag gutter to resize height
+  (persisted). Scroll over the board zooms (no Ctrl); drag empty space pans.
+- Also ships Split horizontal resize gutter from `0.10.2`.
+
+### Deployed
+- Live: https://ppc-planner.pressplaycollective.workers.dev
+- Version: `e843546d-5f9f-4dc2-bfce-8c236541dcd8`
+
+---
+
+## 2026-07-31 — Split view resize drag (Cursor)
+
+### What was built or decided
+- Marketing `0.10.2`: Split layout has a drag gutter between Calendar and
+  Pipeline (persists width %). Double-click gutter resets to default;
+  arrow keys nudge when focused.
+
+### Deployed
+- Included in `e843546d-…` with `0.10.3`.
+
+---
+
+## 2026-07-31 — Dedupes + Marketing view modes (Cursor)
+
+### What was built or decided
+- Removed Homebase duplicates (archived first):
+  - Planner: double-mirror Ode (`mir-kmir-…`), orphan Eliza event, undated
+    Lock in Printer mirror.
+  - Task Board: undated Manufacturer sourcing (kept planner-linked `kmir-…`).
+- Marketing `0.10.1`: layout toggles **Split | Calendar | Pipeline** (persisted).
+  Split uses a narrower/denser calendar so the Ideas→Review pipeline has room.
+  Parked for later: Need-slot → “Fill from Ideas” side panel.
+
+### Deployed
+- Live: https://ppc-planner.pressplaycollective.workers.dev
+- Version: `de4c1e0f-3a49-421a-ad0b-3b23242a2baa`
+
+---
+
+## 2026-07-31 — Planner save crash fix (Cursor)
+
+### What was built or decided
+- Planner `2.10.4`: panel Save (and a few drag/delete paths) called a
+  misspelled persist helper that did not exist → toast
+  "Could not save — try again". Pointed those call sites at the real
+  `saveTo*` function.
+
+### Deployed
+- Live: https://ppc-planner.pressplaycollective.workers.dev
+- Version: `a66fdbeb-e075-4718-b1ec-972a91a0515f`
+
+---
+
+## 2026-07-31 — Review caption / tags / music (Cursor)
+
+### What was built or decided
+- Marketing `0.10.0`: Content Review publish package fields — **Caption**,
+  **Tags**, **Music** (before Ready to schedule). Same fields editable on
+  Calendar panel after handoff. Tweaks placeholder no longer mentions caption.
+
+### Deployed
+- Live: https://ppc-planner.pressplaycollective.workers.dev
+- Version: `3d333a2f-e2ee-4d94-9f31-09c2faad768a`
+- Removed leftover Cursor edit-conflict copy of `marketing.html` before clean redeploy.
+
+---
+
+## 2026-07-31 — Deploy Home + logo (Cursor)
+
+### What was built or decided
+- Deployed Home title fix, master-res logo (`?v=5`), Homebase tag, plus latest
+  planner/kanban/marketing HTML.
+
+### Deployed
+- Live: https://ppc-planner.pressplaycollective.workers.dev
+- Version: `8b312a06-81e1-44da-b683-792aea5367ca`
+
+---
+
+## 2026-07-31 — Home title + logo + Homebase tag (Cursor)
+
+### What was built or decided
+- Fixed Home tab title mojibake (`ΓÇö` → proper `—`): was corrupted UTF-8
+  in `index.html` (`Press Play — Home`). `:8787` is just the local port.
+- Replaced tiny compressed logo (518×126 / 3KB) with master-res wordmark
+  (1346×280); cache `?v=5` on Home / Planner / Kanban / Marketing.
+- Tag under logo: **Internal Tools** → **Homebase**.
+
+### Deployed
+- Local only until asked (or pending prior sync deploy).
+
+---
+
+## 2026-07-31 - Deploy Planner 2.10.3 + Kanban 1.10.4 (Cursor)
+
+### What was built or decided
+- Deployed Planner `2.10.3` + Kanban `1.10.4` save/sync fixes (Marketing already live earlier).
+- Removed leftover Cursor edit-conflict copy of `kanban.html` from `public/` before upload.
+
+### Deployed
+- Live: https://ppc-planner.pressplaycollective.workers.dev
+- Version: `edef956d-242d-4216-9136-dd4862f0957a`
+
+---
+
+## 2026-07-31 — Planner Save + board↔planner sync (Cursor)
+
+### What was built or decided
+- **Save changes bug (planner `2.10.3`):** panel save could throw on
+  subtasks / then `syncDateMirrors` clobber just-saved linked pills from a
+  stale board fetch. Fixed with scoped `readSubtasks`, try/catch + toast,
+  `cache: 'no-store'`, `preferLocalId` so board→planner doesn't overwrite the
+  pill you just saved, and relative `/api/*` URLs.
+- Clearing a linked card's date parks it in **Unassigned / Any** (not deleted).
+- Orphan `srcCardId` mirrors dropped when the Task Board card is gone.
+- **Kanban `1.10.4`:** undated cards → Unassigned / Any; `upsertPlannerMirror`
+  updates parked mirrors instead of deleting them; no race with auto-assign;
+  delete card removes planner mirrors; relative APIs + `cache: 'no-store'`.
+
+### Deployed
+- Local only — deploy when asked.
+
+---
+
+## 2026-07-31 — Deploy Marketing 0.9.9 (Cursor)
+
+### What was built or decided
+- Deployed Marketing `0.9.9` (month grid, one weekly target, split view,
+  planner-family day cells).
+- Removed accidental Cursor edit-conflict copies of `marketing.html` from
+  `public/` and redeployed clean.
+
+### Deployed
+- Live: https://ppc-planner.pressplaycollective.workers.dev
+- Version: `1df2acfd-0b15-4fab-bcd5-9a7ff16ab15e`
+
+---
+
+## 2026-07-31 — Month grid, no week chrome (Cursor)
+
+### What was built or decided
+- Marketing `0.9.9`: calendar is one month grid (month name + dates), not
+  stacked week sections with week-range labels. Target strip label is plain
+  **Target this week** (no Jul 27–Aug 2 range).
+
+### Deployed
+- Local only.
+
+---
+
+## 2026-07-31 — One weekly target strip (Cursor)
+
+### What was built or decided
+- Marketing `0.9.8`: removed per-week goal / Grid·Stories·Discover strips under
+  each calendar week row. Only the top **Target this week** remains.
+- Week goals are Mon–Sun; form clears for the new week after Sunday ends
+  (auto-refresh Monday). Past weeks keep saved numbers for day cues.
+
+### Deployed
+- Local only.
+
+---
+
+## 2026-07-31 — Calendar split + planner-family days (Cursor)
+
+### What was built or decided
+- Marketing `0.9.7`: desktop **split view** — Calendar sticky left, production
+  pipeline (Ideas→Review) right; stacks on narrow screens.
+- Day cells match **Annual Planner** family: pill cards + dashed `+` (not
+  whole-day click / dashed unscheduled box). Target-day highlights + Grid /
+  Story / Discover cues kept.
+- Slot status is a compact **Need / Open / Ready** chip (click toggles
+  scheduled); full Scheduled/Unscheduled select stays in the side panel.
+- Content layer + campaign anchor use homebase `createPpcSelect`.
+
+### Deployed
+- Local only.
+
+---
+
+## 2026-07-31 — Editable weekly targets (Cursor)
+
+### What was built or decided
+- Marketing `0.9.6`: removed phase names (Steady grid / Ode warm-up etc.).
+- **Target this week** is editable: goal note + Grid / Stories / Discover
+  counts. Same controls under each week row. Stored in `DATA.weekGoals`
+  keyed by week-start Sunday. Day highlights follow those numbers.
+
+### Deployed
+- Local only.
+
+---
+
+## 2026-07-31 — Calendar first + quiet week label (Cursor)
+
+### What was built or decided
+- Marketing `0.9.5`: **Content Calendar** moved to top of Marketing sections;
+  production pipeline (Ideas → Prep → Exec → Review) stays below.
+- Calendar expands by default; plan dates first, fill from pipeline under.
+- Removed “Support week (unavailable)” label — that window is neutral
+  **Steady grid** with 0 targets (team doesn’t need the internal reason).
+
+### Deployed
+- Local only.
+
+---
+
+## 2026-07-31 — Calendar-first Need content + Pinterest days (Cursor)
+
+### What was built or decided
+- Marketing `0.9.4`: **click a calendar day** → Need content menu (IG Post /
+  Story / Pinterest / Reel) creates a dashed placeholder slot on that date.
+- Placeholder = `needContent` + Unscheduled; fill Idea text to clear the need.
+- **Pinterest** target days Mon/Wed/Fri (every second weekday) with Pin cues.
+- Ode pace softened to **~1 grid/week** (~5 posts lead-up). Support week 0.
+- Locked plan notes: venue shoot **Fri 7 Aug**; poster **~14 Aug** (3 weeks out);
+  5–6 Ode posts max; world-building fills if capacity allows.
+- `cadence.rhythm = press-play-v2`.
+
+### Open / next
+1. Hard-refresh local `/marketing`; click Aug days to place Ode slots.
+2. Deploy when asked.
+
+### Deployed
+- Local only. Live still `0.9.1` (`c71f06ca-…`).
+
+---
+
+## 2026-07-31 — Press Play days + calendar status (Cursor)
+
+### What was built or decided
+- Marketing `0.9.3`: publish rhythm = **Mon/Thu** (+ Tue/Fri extras) —
+  Press Play days only. Stories share those days (companion with grid).
+- **30 Jul–3 Aug** = Support week (0 targets) — unavailable.
+- Softened later phases (no 3-grid / 4-story ramps); floor stays ~2+2.
+- Calendar cards: **Scheduled / Unscheduled** status dropdown (slot + panel
+  + unscheduled queue), Task Board–style coloured select.
+- `cadence.rhythm = press-play-v1` one-time upgrades old Tue/Fri pattern.
+
+### Open / next
+1. Smoke-test local calendar highlights on Mon/Thu + status dropdown.
+2. Deploy when asked.
+
+### Deployed
+- Local only until asked. Live still `0.9.1` (`c71f06ca-…`).
+
+---
+
+## 2026-07-31 — Calendar target days + Review Need date (Cursor)
+
+### What was built or decided
+- Marketing `0.9.2`: publish rhythm on cadence (`Tue/Fri` grid, `Wed/Sat`
+  stories; extras Sun/Mon when phase needs 3).
+- Calendar day cells highlight **target** (empty) vs **filled**; Grid/Story cues.
+- Review: **Need date** badge + count strip when `scheduleAt` empty.
+- Aug–Sep floor ~18–20 grid posts + ~18–20 story days (phase table).
+- Vault Marketing System todos for day highlight + Need date marked done.
+
+### Open / next
+1. Smoke-test local `/marketing` calendar + Review undated cards.
+2. Schedule 1–2 grid posts onto Tue/Fri this week.
+3. Deploy when asked; project delete UI / dark polish still parked.
+
+### Deployed
+- Local only until asked. Live still `0.9.1` (`c71f06ca-…`).
+
+---
+
 ## 2026-07-30 — EOD (Cursor)
 
 ### What shipped today
@@ -799,7 +1128,7 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ## Quick reference
 
-- **Live:** https://ppc-planner.pressplaycollective.workers.dev
+- **Live:** https://ppc-homebase.pressplaycollective.workers.dev
 - **Deploy:** `npx wrangler deploy` from this folder (needs Node on PATH)
 - **KV binding:** `PLANNER_KV` (id `2f3dc18365c2477595cc76e4f3303746`)
 - **Structure:** `public/index.html` (Home), `public/planner.html` (Annual

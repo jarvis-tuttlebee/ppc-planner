@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Task Board</title>
+  <title>PPC - HOMEBASE · Task Board</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
@@ -873,7 +873,7 @@
 <div class="header">
   <div class="header-spacer"></div>
   <a class="header-logo-link" href="/" title="Home">
-    <img class="header-logo" src="/assets/pressplay-logo-black.png?v=3" alt="Press Play Collective">
+    <img class="header-logo" src="/assets/pressplay-logo-black.png?v=5" alt="Press Play Collective">
   </a>
   <div class="header-right">
     <div class="sub">Task Board</div>
@@ -1197,8 +1197,8 @@ let CARDS = SEED_CARDS.map(c => ({ ...c }));
 
 // ─── PERSISTENCE (localStorage + Cloudflare Worker sync) ─────────────────────
 const STORAGE_KEY = 'kanban-board-data';
-const SYNC_URL = 'https://ppc-planner.pressplaycollective.workers.dev/api/kanban';
-const APP_VERSION = '1.10.3';
+const SYNC_URL = '/api/kanban';
+const APP_VERSION = '1.10.4';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 
 let editMode = true;
@@ -1225,7 +1225,8 @@ function saveBoard() {
   fetch(SYNC_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
+    cache: 'no-store'
   }).catch(err => console.warn('Cloud sync failed:', err));
 }
 
@@ -1508,6 +1509,7 @@ function makeCardPill(card) {
     if (idx !== -1) CARDS.splice(idx, 1);
     saveBoard();
     renderBoard();
+    removePlannerMirror(card.id);
   });
   pill.appendChild(delBtn);
 
@@ -2637,8 +2639,9 @@ function savePanel() {
     applyMeta(newCard);
     moveCardToColumn(newCard, column);
     CARDS.push(newCard);
-    autoAssignToPlanner(newCard);        // undated cards → current week
-    upsertPlannerMirror(newCard);        // dated cards → their exact date
+    // Dated → day cell; undated → Unassigned / Any. Never both (avoids delete race).
+    if (newCard.dueDate) upsertPlannerMirror(newCard);
+    else autoAssignToPlanner(newCard);
   } else {
     activeCard.cat = cat;
     activeCard.status = status;
@@ -2647,7 +2650,7 @@ function savePanel() {
     activeCard.tasks = tasks;
     applyMeta(activeCard);
     moveCardToColumn(activeCard, column);
-    // Setting/changing a date re-places the card's pill on the timeline.
+    // Setting/changing/clearing a date re-places (or parks) the timeline pill.
     upsertPlannerMirror(activeCard);
   }
 
@@ -2667,11 +2670,12 @@ function closePanel() {
 // When a new undated card is created, mirror it into Unassigned / Any on the
 // Annual Planner. Controlled by the planner settings toggle (default on).
 
-const PLANNER_SYNC_URL = 'https://ppc-planner.pressplaycollective.workers.dev/api/data';
+const PLANNER_SYNC_URL = '/api/data';
 const PLANNER_MONTHS = [
   'Jul 2026','Aug 2026','Sep 2026','Oct 2026','Nov 2026','Dec 2026',
   'Jan 2027','Feb 2027','Mar 2027','Apr 2027','May 2027','Jun 2027'
 ];
+const PLANNER_MONTH_LABELS = PLANNER_MONTHS;
 
 /* ─── TIMELINE MIRROR ─────────────────────────────────────────────────────────
    A card with a due date shows on the Annual Planner timeline at exactly that
@@ -2702,67 +2706,131 @@ function plannerSlotForDate(iso) {
   return { m: mi, week, day: d };
 }
 
-const PLANNER_MONTH_LABELS = [
-  'Jul 2026','Aug 2026','Sep 2026','Oct 2026','Nov 2026','Dec 2026',
-  'Jan 2027','Feb 2027','Mar 2027','Apr 2027','May 2027','Jun 2027'
-];
+function plainBody(html) {
+  const el = document.createElement('div');
+  el.innerHTML = html || '';
+  return (el.textContent || '').trim();
+}
+
+function currentPlannerMonth() {
+  const now = new Date();
+  return (now.getFullYear() - 2026) * 12 + (now.getMonth() - 6);
+}
+
+async function fetchPlannerData() {
+  const res = await fetch(PLANNER_SYNC_URL, { cache: 'no-store' });
+  if (!res.ok) return null;
+  const data = await res.json();
+  if (!data || !Array.isArray(data.events)) return null;
+  return data;
+}
+
+async function putPlannerData(data) {
+  await fetch(PLANNER_SYNC_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+    cache: 'no-store'
+  });
+}
+
+async function removePlannerMirror(cardId) {
+  if (!cardId) return;
+  try {
+    const data = await fetchPlannerData();
+    if (!data) return;
+    const before = data.events.length;
+    data.events = data.events.filter(e => e.srcCardId !== cardId);
+    if (data.events.length === before) return;
+    await putPlannerData(data);
+  } catch (err) {
+    console.warn('Timeline mirror remove failed:', err);
+  }
+}
 
 async function upsertPlannerMirror(card) {
   try {
-    const res = await fetch(PLANNER_SYNC_URL);
-    if (!res.ok) return;
-    const data = await res.json();
-    if (!data || !Array.isArray(data.events)) return;
+    const data = await fetchPlannerData();
+    if (!data) return;
 
     const idx = data.events.findIndex(e => e.srcCardId === card.id);
     const slot = card.dueDate ? plannerSlotForDate(card.dueDate) : null;
 
-    if (!slot) {
-      if (idx < 0) return;                 // nothing to do
-      data.events.splice(idx, 1);          // date cleared → retire the mirror
-    } else {
-      const body = document.createElement('div');
-      body.innerHTML = card.body || '';
+    if (slot) {
       const next = {
         id: 'mir-' + card.id, srcCardId: card.id, mirrored: true,
         cat: card.cat, m: slot.m, week: slot.week, day: slot.day,
         title: card.title, date: PLANNER_MONTH_LABELS[slot.m],
-        body: (body.textContent || '').trim(),
+        body: plainBody(card.body),
         status: card.status || 'planned',
         tasks: (card.tasks || []).slice(),
-        dueDate: card.dueDate
+        dueDate: card.dueDate,
+        project: card.project || null
       };
       if (idx < 0) data.events.push(next); else Object.assign(data.events[idx], next);
-    }
-
-    // If this card was spawned from a timeline event, push status back too.
-    if (card.srcEventId) {
-      const ev = data.events.find(e => e.id === card.srcEventId);
-      if (ev && ev.status !== (card.status || 'planned')) {
-        ev.status = card.status || 'planned';
+    } else if (idx >= 0) {
+      // Date cleared — keep parked in Unassigned / Any and refresh fields.
+      const e = data.events[idx];
+      e.title = card.title;
+      e.cat = card.cat;
+      e.body = plainBody(card.body);
+      e.status = card.status || 'planned';
+      e.tasks = (card.tasks || []).slice();
+      e.week = null;
+      e.day = null;
+      delete e.dueDate;
+      if (card.project) e.project = card.project; else delete e.project;
+    } else if (!card.dueDate) {
+      if (!(data.settings && data.settings.kanbanAutoAssign === false)) {
+        const m = currentPlannerMonth();
+        if (m >= 0 && m <= 11) {
+          data.events.push({
+            id: 'mir-' + card.id,
+            srcCardId: card.id,
+            mirrored: true,
+            cat: card.cat,
+            m,
+            week: null,
+            day: null,
+            title: card.title,
+            date: PLANNER_MONTHS[m],
+            body: plainBody(card.body),
+            status: card.status || 'planned',
+            tasks: (card.tasks || []).slice(),
+            project: card.project || null
+          });
+        }
       }
     }
 
-    await fetch(PLANNER_SYNC_URL, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
-    });
+    if (card.srcEventId) {
+      const ev = data.events.find(e => e.id === card.srcEventId);
+      if (ev) {
+        ev.status = card.status || 'planned';
+        ev.title = card.title;
+        ev.body = plainBody(card.body);
+        ev.tasks = (card.tasks || []).slice();
+        if (card.dueDate) ev.dueDate = card.dueDate;
+        else delete ev.dueDate;
+      }
+    }
+
+    await putPlannerData(data);
   } catch (err) { console.warn('Timeline mirror failed:', err); }
 }
 
 async function autoAssignToPlanner(card) {
-  // A dated card gets mirrored onto its exact date instead — don't also drop a
-  // loose copy into the current week.
   if (card.dueDate) return;
   try {
-    const res = await fetch(PLANNER_SYNC_URL);
-    if (!res.ok) return;
-    const data = await res.json();
-    if (!data || !Array.isArray(data.events)) return;
+    const data = await fetchPlannerData();
+    if (!data) return;
     if (data.settings && data.settings.kanbanAutoAssign === false) return;
+    if (data.events.some(e => e.srcCardId === card.id)) {
+      await upsertPlannerMirror(card);
+      return;
+    }
 
-    // Planner year runs July 2026 (m=0) to June 2027 (m=11).
-    const now = new Date();
-    const m = (now.getFullYear() - 2026) * 12 + (now.getMonth() - 6);
+    const m = currentPlannerMonth();
     if (m < 0 || m > 11) return;
 
     data.events.push({
@@ -2775,15 +2843,12 @@ async function autoAssignToPlanner(card) {
       day: null,
       title: card.title,
       date: PLANNER_MONTHS[m],
-      body: card.body || '',
+      body: plainBody(card.body),
       status: card.status || 'planned',
-      tasks: (card.tasks || []).slice()
+      tasks: (card.tasks || []).slice(),
+      project: card.project || null
     });
-    await fetch(PLANNER_SYNC_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
+    await putPlannerData(data);
   } catch (err) {
     console.warn('Auto-assign to planner failed:', err);
   }
