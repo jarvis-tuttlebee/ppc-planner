@@ -1,0 +1,20 @@
+{
+  "name": "ppc-homebase",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Press Play Collective Homebase (planner, task board, marketing)",
+  "scripts": {
+    "backup:pull": "bash scripts/pull-live-backup.sh",
+    "backup:seed-local": "bash scripts/seed-local-from-backup.sh",
+    "dev:local": "wrangler dev --port 8787 --local",
+    "dev:remote": "wrangler dev --port 8787 --remote"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jarvis-tuttlebee/ppc-homebase.git"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "wrangler": "^4.118.0"
+  }
+}
