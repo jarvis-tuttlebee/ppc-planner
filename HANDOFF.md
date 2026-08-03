@@ -5,6 +5,27 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-03 — Cal labels wrap + multi assignees (Cursor)
+
+### What was built or decided
+- Marketing **`0.11.81`**: Calendar card titles / meta / event labels use
+  2-line clamp (less cutoff on longer text). Slot label max 40 chars.
+- Schedule cards support **multiple assignees** (`assignees[]`, migrates
+  legacy `assignee` string). Panel uses Task Board-style multi-tick picker;
+  card footer shows `Name, Name` or `A, B +N`.
+
+### Deployed
+- No — ask before `wrangler deploy`.
+
+### Branch
+- `cursor/cal-labels-multi-assignee-95d6`
+
+### Open / next
+1. Hard-refresh `/marketing` after deploy; assign 2 people on a filled card.
+2. Confirm long Need type labels wrap to 2 lines instead of hard ellipsis.
+
+---
+
 ## 2026-08-03 — EOD (Cursor)
 
 ### Live
