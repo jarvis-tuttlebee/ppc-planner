@@ -14,12 +14,13 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
   (max 24 chars). Create/migrate paths set `needLabel: ''`.
 
 ### Deployed
-- Local only — deploy when asked.
+- Yes — Version ID `af4ede4e-92c4-4a9d-8332-95b163174e2a`
+  https://ppc-homebase.pressplaycollective.workers.dev
 
 ### Open / next
 1. Hard-refresh `/marketing` — empty Ode slots read `IG · Ode…`; open a slot,
    set Slot label to `Reel` or `BTS`, Save; confirm card updates.
-2. Commit/push / deploy when asked.
+2. Commit/push handoff deploy note when convenient.
 
 ---
 
