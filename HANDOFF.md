@@ -5,6 +5,181 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-03 — Deploy Marketing 0.11.65 (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.65`** — Version ID `7d7e640f-bada-44a7-9ce5-ddaad6393b2d`
+- Content outcome removed from schedule panel (still in Details / Review)
+
+### Deployed
+- `npx wrangler deploy` — asset: marketing.html
+
+---
+
+## 2026-08-03 — Drop schedule Content outcome field (Cursor)
+
+### What was built or decided
+- Marketing `0.11.65`: Removed editable **Content outcome** from the calendar
+  schedule panel — outcome stays in Review and in schedule **Details**.
+
+### Deployed
+- Yes — Version ID `7d7e640f-bada-44a7-9ce5-ddaad6393b2d`
+  https://ppc-homebase.pressplaycollective.workers.dev
+
+### Open / next
+1. Hard-refresh live `/marketing` — no Content outcome on calendar cards.
+2. Merge / commit when asked.
+
+---
+
+## 2026-08-03 — Deploy Marketing 0.11.64 (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.64`** — Version ID `b69f7c1c-f164-4a61-a773-7a29e8140845`
+- Ships: Schedule Details · Prep cover thumbs · Review→Schedule caption/tags/music
+  · calendar assignee/status · pillar rename · Add format · Other pillars
+
+### Deployed
+- `npx wrangler deploy` — assets: marketing.html, kanban.html, planner.html
+
+---
+
+## 2026-08-03 — Schedule panel Details (Cursor)
+
+### What was built or decided
+- Marketing `0.11.64`: Schedule panel **Details** toggle under Scheduled content
+  expands idea · plan · requirements · execution · outcome · tweaks (carried
+  from Prep → Exec → Review onto the calendar card).
+
+### Deployed
+- Yes — Version ID `b69f7c1c-f164-4a61-a773-7a29e8140845`
+  https://ppc-homebase.pressplaycollective.workers.dev
+
+### Open / next
+1. Hard-refresh live `/marketing` — Details on scheduled cards.
+2. Merge / commit when asked.
+
+---
+
+## 2026-08-03 — Prep thumbs fill width (Cursor)
+
+### What was built or decided
+- Marketing `0.11.63`: Prep card images use `object-fit: cover` and size height
+  from the real lane width (rAF) so portraits no longer leave white side bars.
+  Thumb background is neutral grey, not white.
+- Also: Review save now writes caption/tags/music before Schedule handoff
+  (Browse Ideas hide + Add pillar Cancel `[hidden]` were already in place).
+
+### Deployed
+- Local only — hard-refresh http://127.0.0.1:8787/marketing
+
+### Open / next
+1. Smoke: drop a portrait into Prep — image fills card width.
+2. Smoke: Review → Schedule carries caption/tags/music; filled calendar hides Browse Ideas.
+3. Deploy when asked.
+
+---
+
+## 2026-08-03 — Pillar rename + Add format everywhere (Cursor)
+
+### What was built or decided
+- Marketing `0.11.62`:
+  - **Rename pillars** — double-click Prep pillar title, or double-click a
+    pillar option in panel selects. Built-ins use `pillarLabels` overrides;
+    custom pillars update their label.
+  - **+ Add format** on Prep (per open pillar), Need menu (format step),
+    and Format selects (`+ Add format…`). Works for Other + custom + built-ins.
+
+### Deployed
+- Local only — hard-refresh http://127.0.0.1:8787/marketing
+
+### Open / next
+1. Smoke: rename Organic; + Add format under Other; Need menu + Add format.
+2. Deploy when asked (also ships pending `0.11.61` calendar assignee/status).
+
+---
+
+## 2026-08-03 — Calendar cards: status + assignee + View details (Cursor)
+
+### What was built or decided
+- Marketing `0.11.61`: Filled calendar cards show **View details**, Assignee,
+  and status chip (Unscheduled / In progress / Scheduled / Complete).
+  Panel: Assignee select (+ Add person) above Status. Staff persisted as
+  `DATA.staff` (Jarvis / Louis / Gregor).
+- Renamed **Loui → Louis** across Homebase (Task Board staff + migrate,
+  Planner sample copy, Marketing notes). Louise unchanged.
+
+### Deployed
+- Local only — hard-refresh http://127.0.0.1:8787/marketing (+ Task Board)
+
+### Open / next
+1. Smoke: filled card footer; View details; cycle status; assign Louis; + Add.
+2. Deploy when asked.
+3. Parked: Fill from Ideas link, project delete, dark theme, Unassigned
+   rollover, “+ Add more” dates.
+
+---
+
+## 2026-08-03 — Deploy schedule panel + Other pillars (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.60`** — Version ID `2848667f-3cf2-452e-8634-b4931df14374`
+- Browse Ideas · publish above caption · Status bottom · Scheduled badge
+- Other pillar + custom pillars (`+ Add pillar`)
+
+### Deployed
+- `npx wrangler deploy` — asset: `marketing.html`
+
+---
+
+## 2026-08-03 — Schedule panel + Other pillars (Cursor)
+
+### What was built or decided
+- Marketing `0.11.60`:
+  - Schedule card panel: **Browse Ideas** jumps to Pipeline → Content Ideas;
+    Publish date moved above Caption; Status moved to bottom.
+  - Filled calendar cards: status badge bottom-right — **Scheduled** / Open.
+  - New **Other** pillar (BTS · Shoot day · Other formats).
+  - **+ Add pillar** (Prep board, Need menu, Pillar selects) — custom pillars
+    persist in KV `customPillars` (+ starter format with same name).
+
+### Deployed
+- Yes — Version ID `2848667f-3cf2-452e-8634-b4931df14374`
+  https://ppc-homebase.pressplaycollective.workers.dev
+
+### Open / next
+1. Hard-refresh live `/marketing` — Other pillar; Browse Ideas; Scheduled badge.
+2. Merge / commit when asked.
+3. Parked: Fill from Ideas (link a specific idea into a Need), project delete,
+   dark theme, Unassigned rollover, “+ Add more” dates.
+
+---
+
+## 2026-08-03 — End of day (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.59`** — Version ID `f520ce76-3729-4322-9551-b84b6a46c98c`
+- Branch `cursor/cloud-agent-1785725967651-xf056` pushed (`bf013d6`). Clean tree.
+
+### Shipped today (high level)
+- Colour settings + 50-swatch picker; Settings Archive accordion; scrollable Settings
+- Calendar cards match planner outlines; sharper week dividers
+- Black titles/dropdowns (Need menus, pillars, Status/Category)
+- Website formats: Landing page · Blog · Feature page
+- Event days: full column wash by event-type colour
+
+### Open / next
+1. Merge branch → `main` when ready
+2. Parked earlier: Fill from Ideas, project delete UI, dark theme polish,
+   Unassigned rollover, “+ Add more” dates
+3. Optional: event wash only behind date number (not full column) if too strong
+
+---
+
 ## 2026-08-03 — Deploy event day wash (Cursor)
 
 ### Live

@@ -1097,7 +1097,7 @@ const PRIORITY_ID = '__priority__';
 
 // Who tasks can be assigned to. Editable and persisted alongside the board;
 // "Unassigned" is the empty state. Tasks can carry more than one assignee.
-let STAFF = ['Jarvis', 'Loui', 'Gregor'];
+let STAFF = ['Jarvis', 'Louis', 'Gregor'];
 
 // Cards used to hold a single `assignee` string. Normalise to an `assignees`
 // array so multi-assignment works without losing existing data.
@@ -1109,6 +1109,23 @@ function migrateAssignees() {
       changed = true;
     }
     delete c.assignee;
+  });
+  // Loui → Louis (canonical spelling across Homebase)
+  const beforeStaff = STAFF.join('\0');
+  STAFF = STAFF.map(n => n === 'Loui' ? 'Louis' : n);
+  const seenStaff = new Set();
+  STAFF = STAFF.filter(n => {
+    if (!n || seenStaff.has(n)) return false;
+    seenStaff.add(n);
+    return true;
+  });
+  if (STAFF.join('\0') !== beforeStaff) changed = true;
+  CARDS.forEach(c => {
+    const next = c.assignees.map(n => n === 'Loui' ? 'Louis' : n);
+    if (next.join('\0') !== c.assignees.join('\0')) {
+      c.assignees = next;
+      changed = true;
+    }
   });
   // Anyone already assigned but missing from the staff list gets added back,
   // otherwise they'd silently vanish from the picker.
@@ -1180,9 +1197,9 @@ const SEED_CARDS = [
   { id: 'k10', title: 'Decide on Macquarie account (open or defer)', body: '', column: 'backlog', cat: 'fin', status: 'planned', tasks: [] },
 
   { id: 'k11', title: 'Ode to Sirens (28 Aug) — brief created, next moves with Louise/Gregor', body: '', column: 'waiting', cat: 'evt', status: 'planned', tasks: [] },
-  { id: 'k12', title: "Marketing system build — waiting on Loui's return + intern onboarding", body: '', column: 'waiting', cat: 'mkt', status: 'planned', tasks: [] },
+  { id: 'k12', title: "Marketing system build — waiting on Louis's return + intern onboarding", body: '', column: 'waiting', cat: 'mkt', status: 'planned', tasks: [] },
   { id: 'k13', title: 'Xero cleanup — scheduled for next week', body: '', column: 'waiting', cat: 'fin', status: 'planned', tasks: [] },
-  { id: 'k14', title: 'Swing tags concept — scheduled with Loui, week of 23 July', body: '', column: 'waiting', cat: 'mfg', status: 'planned', tasks: [] },
+  { id: 'k14', title: 'Swing tags concept — scheduled with Louis, week of 23 July', body: '', column: 'waiting', cat: 'mfg', status: 'planned', tasks: [] },
 
   { id: 'k15', title: 'Manufacturer outreach: add ethics/accreditation question to 5 drafts (HOLD — not sending yet, sequencing TBD)', body: '', column: 'active', cat: 'mfg', status: 'in-progress', tasks: [] },
   { id: 'k16', title: 'Rock Tumbler/IDI board — built, needs ongoing use', body: '', column: 'active', cat: 'per', status: 'in-progress', tasks: [] },

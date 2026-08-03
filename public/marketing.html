@@ -893,7 +893,7 @@
       width: 100%;
       height: 72px;
       border-radius: 5px;
-      background: #fff;
+      background: #E8E5E0;
       border: 1px solid #e8e5e0;
       overflow: hidden;
       margin-bottom: 6px;
@@ -904,7 +904,8 @@
     .prep-card-thumb img {
       width: 100%;
       height: 100%;
-      object-fit: contain;
+      object-fit: cover;
+      object-position: center;
       display: block;
     }
     .prep-card-thumb.empty {
@@ -1118,6 +1119,12 @@
       text-transform: uppercase;
       color: #9a958d;
       margin-bottom: 4px;
+    }
+    .review-inspo-meta .btn-secondary {
+      margin-top: 10px;
+    }
+    .review-inspo-meta .btn-secondary[hidden] {
+      display: none !important;
     }
     .review-context-toggle {
       width: 100%;
@@ -1823,27 +1830,126 @@
     .cal-slot--need-empty .cal-slot-fmt {
       display: none;
     }
-    .cal-slot-flag {
-      display: inline-block;
-      margin-top: 3px;
-      font-size: 8px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
+    .cal-slot:not(.cal-slot--need-empty) {
+      padding: 6px 8px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 2px;
+    }
+    .cal-slot-details {
+      display: block;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: #6B7A8D;
+      cursor: pointer;
+      margin: 1px 0 2px;
+      width: fit-content;
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: inherit;
+      text-align: left;
+    }
+    .cal-slot-details:hover {
+      color: #2C2C2C;
+      text-decoration: underline;
+    }
+    .cal-slot-footer {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 6px;
+      margin-top: 4px;
+      padding-top: 5px;
+      border-top: 1px solid rgba(226,221,213,0.9);
+      min-width: 0;
+    }
+    .cal-slot-assignee {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+    .cal-slot-assignee-label {
+      display: block;
+      font-size: 7.5px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
-      padding: 1px 5px;
-      border-radius: 3px;
-      max-width: 100%;
+      color: #9a958d;
+      margin-bottom: 1px;
+    }
+    .cal-slot-assignee-val {
+      display: block;
+      font-size: 10px;
+      color: #2C2C2C;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+    .cal-slot-assignee-val.empty { color: #b5b0a8; }
+    .cal-slot-flag {
+      position: static;
+      right: auto;
+      bottom: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 0;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 2px 6px 2px 5px;
+      border-radius: 10px;
+      max-width: 48%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .cal-slot-flag .chip-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      flex-shrink: 0;
     }
     .cal-slot-flag--need {
       color: #8a6a1a;
       background: rgba(194,154,59,0.16);
     }
+    .cal-slot-flag--progress {
+      color: #C29A3B;
+      background: rgba(194,154,59,0.16);
+    }
     .cal-slot-flag--ready {
+      color: #6B7A8D;
+      background: rgba(107,122,141,0.14);
+    }
+    .cal-slot-flag--complete {
       color: #4E6E6C;
-      background: rgba(78,110,108,0.12);
+      background: rgba(78,110,108,0.14);
+    }
+    .cal-slot--need-empty .cal-slot-details {
+      margin-top: 2px;
+    }
+    .board.board--split .cal-slot:not(.cal-slot--need-empty) {
+      padding: 3px 5px 5px;
+    }
+    .board.board--split .cal-slot-details { font-size: 8px; }
+    .board.board--split .cal-slot-assignee-label { font-size: 7px; }
+    .board.board--split .cal-slot-assignee-val { font-size: 9px; }
+    .board.board--split .cal-slot-flag { font-size: 7px; padding: 1px 4px; }
+    .staff-add-row {
+      display: none;
+      gap: 6px;
+      margin-top: 8px;
+      align-items: center;
+    }
+    .staff-add-row.open { display: flex; }
+    .staff-add-row input {
+      flex: 1;
+      min-width: 0;
     }
     .cal-day-add-hint { display: none; }
     .cal-day { cursor: default; }
@@ -1896,6 +2002,137 @@
     .cal-need-menu-back:hover {
       background: rgba(107,122,141,0.08) !important;
       transform: none !important;
+    }
+    .cal-need-menu-create {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 6px 8px 8px;
+    }
+    .cal-need-menu-create input {
+      width: 100%;
+      box-sizing: border-box;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12.5px;
+      padding: 7px 8px;
+      border: 1px solid #E2DDD5;
+      border-radius: 6px;
+      color: #2C2C2C;
+      background: #fff;
+    }
+    .cal-need-menu-create-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .cal-need-menu-create-actions button {
+      flex: 1;
+      text-align: center;
+      padding: 7px 8px;
+    }
+    .cal-need-menu button.cal-need-menu-add {
+      color: #6B7A8D;
+      font-weight: 600;
+      border-top: 1px solid #E2DDD5;
+      border-radius: 0;
+      margin-top: 2px;
+    }
+    .cal-need-menu button.cal-need-menu-add:hover {
+      background: rgba(107,122,141,0.08);
+      transform: none;
+    }
+    .prep-add-pillar {
+      margin-top: 10px;
+      width: 100%;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #6B7A8D;
+      background: transparent;
+      border: 1px dashed #E2DDD5;
+      border-radius: 8px;
+      padding: 10px 12px;
+      cursor: pointer;
+    }
+    .prep-add-pillar:hover {
+      color: #2C2C2C;
+      border-color: #c4bfb7;
+      background: #faf9f7;
+    }
+    .prep-add-format {
+      margin-top: 8px;
+      width: 100%;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: #6B7A8D;
+      background: transparent;
+      border: 1px dashed #E2DDD5;
+      border-radius: 6px;
+      padding: 8px 10px;
+      cursor: pointer;
+    }
+    .prep-add-format:hover {
+      color: #2C2C2C;
+      border-color: #c4bfb7;
+      background: #fff;
+    }
+    .prep-inline-form {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .prep-inline-form input {
+      flex: 1 1 140px;
+      min-width: 100px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12.5px;
+      padding: 7px 10px;
+      border: 1px solid #E2DDD5;
+      border-radius: 6px;
+      color: #2C2C2C;
+      background: #fff;
+    }
+    .pillar-title[contenteditable="true"] {
+      outline: none;
+      box-shadow: inset 0 -1.5px 0 #2C2C2C;
+      cursor: text;
+      min-width: 4ch;
+    }
+    .prep-add-pillar-form {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      padding: 10px 12px;
+      border: 1px solid #E2DDD5;
+      border-radius: 8px;
+      background: #faf9f7;
+    }
+    .prep-add-pillar-form[hidden] {
+      display: none !important;
+    }
+    .prep-add-pillar[hidden] {
+      display: none !important;
+    }
+    .prep-add-format[hidden] {
+      display: none !important;
+    }
+    .prep-add-pillar-form input {
+      flex: 1 1 160px;
+      min-width: 120px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      padding: 7px 10px;
+      border: 1px solid #E2DDD5;
+      border-radius: 6px;
+      color: #2C2C2C;
+      background: #fff;
     }
     .cal-day--event {
       border-radius: 6px;
@@ -2729,17 +2966,20 @@
             <div class="review-inspo-meta">
               <strong>Scheduled content</strong>
               <div id="pScheduleIdeaText"></div>
+              <button type="button" class="btn-secondary" id="pScheduleGoIdeas" onclick="goToIdeasFromSchedule()">Browse Ideas</button>
             </div>
           </div>
-          <hr class="panel-divider">
-          <div class="panel-section-label">Publish date</div>
-          <input class="prop-select" id="pScheduleEditAt" type="datetime-local" style="margin-top:2px">
-          <hr class="panel-divider">
-          <div class="panel-section-label">Status</div>
-          <div id="pScheduleStatusWrap" style="margin-top:2px"></div>
+          <button type="button" class="review-context-toggle" id="scheduleContextToggle">
+            <span>Details</span>
+            <span id="scheduleContextChev">▸</span>
+          </button>
+          <div class="review-context" id="scheduleContext"></div>
           <hr class="panel-divider">
           <div class="panel-section-label">Campaign anchor</div>
           <div id="pScheduleAnchorWrap" style="margin-top:2px"></div>
+          <hr class="panel-divider">
+          <div class="panel-section-label">Publish date</div>
+          <input class="prop-select" id="pScheduleEditAt" type="datetime-local" style="margin-top:2px">
           <hr class="panel-divider">
           <div class="panel-section-label">Caption</div>
           <textarea class="prop-select" id="pScheduleCaption" rows="4" style="resize:vertical;min-height:88px;font-family:inherit;margin-top:2px" placeholder="Post caption…"></textarea>
@@ -2748,13 +2988,22 @@
           <div class="panel-section-label" style="margin-top:14px">Music</div>
           <input class="prop-select" id="pScheduleMusic" type="text" style="margin-top:2px" placeholder="Track name or link…">
           <hr class="panel-divider">
-          <div class="panel-section-label">Content outcome</div>
-          <div class="panel-desc short" id="pScheduleOutcome" contenteditable="true" placeholder="Outcome notes…"></div>
-          <div class="panel-section-label" style="margin-top:14px">Video link</div>
+          <div class="panel-section-label">Video link</div>
           <div class="review-video-link">
             <input class="prop-select" id="pScheduleVideoUrl" type="url" placeholder="https://drive.google.com/…">
             <a class="review-video-open is-disabled" id="pScheduleVideoOpen" href="#" target="_blank" rel="noopener noreferrer">Open</a>
           </div>
+          <hr class="panel-divider">
+          <div class="panel-section-label">Assignee</div>
+          <div id="pScheduleAssigneeWrap" style="margin-top:2px"></div>
+          <div class="staff-add-row" id="pScheduleStaffAddRow">
+            <input class="prop-select" id="pScheduleStaffNew" type="text" maxlength="40" placeholder="Staff name…">
+            <button type="button" class="btn-secondary" id="pScheduleStaffAddBtn">Add</button>
+            <button type="button" class="btn-cancel" id="pScheduleStaffCancelBtn">Cancel</button>
+          </div>
+          <hr class="panel-divider">
+          <div class="panel-section-label">Status</div>
+          <div id="pScheduleStatusWrap" style="margin-top:2px"></div>
         </div>
         <div class="panel-actions-row" id="panelActions"></div>
         <div class="panel-save-row">
@@ -2870,7 +3119,7 @@
 <script>
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
-const APP_VERSION = '0.11.59';
+const APP_VERSION = '0.11.65';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 
 /** Default local hour for new calendar publish stamps (5pm). */
@@ -3249,7 +3498,7 @@ const DEFAULT_ANCHORS = [
     startDate: '2026-09-04',
     endDate: '2026-09-04',
     eventNightDate: '2026-09-04',
-    notes: 'Pop-up Fri 4 Sep. Aim 5–6 IG posts in lead-up (not 8+). Venue shoot Fri 7 Aug with Loui. Poster ~3 weeks out (~14 Aug). World-building fills gaps if capacity allows.',
+    notes: 'Pop-up Fri 4 Sep. Aim 5–6 IG posts in lead-up (not 8+). Venue shoot Fri 7 Aug with Louis. Poster ~3 weeks out (~14 Aug). World-building fills gaps if capacity allows.',
     leadUpEnabled: true,
     leadUpRuleId: 'event-3w'
   },
@@ -3281,7 +3530,8 @@ const CATS = [
   { id: 'organic', label: 'Organic', bg: '#564A5E', fg: '#fff' },
   { id: 'email',   label: 'Email',   bg: '#4E6E6C', fg: '#fff' },
   { id: 'ads',     label: 'Ads',     bg: '#C29A3B', fg: '#2C2C2C' },
-  { id: 'website', label: 'Website', bg: '#2C2C2C', fg: '#fff' }
+  { id: 'website', label: 'Website', bg: '#2C2C2C', fg: '#fff' },
+  { id: 'other',   label: 'Other',   bg: '#8e7c6c', fg: '#fff' }
 ];
 const PILL_BG = '#F0EDE8';
 
@@ -3289,7 +3539,14 @@ const PILLARS = [
   { id: 'organic', label: 'Organic', defaultOpen: true },
   { id: 'email',   label: 'Email',   defaultOpen: false },
   { id: 'ads',     label: 'Ads',     defaultOpen: false },
-  { id: 'website', label: 'Website', defaultOpen: false }
+  { id: 'website', label: 'Website', defaultOpen: false },
+  { id: 'other',   label: 'Other',   defaultOpen: false }
+];
+const BUILTIN_PILLAR_IDS = new Set(PILLARS.map(p => p.id));
+const ADD_PILLAR_ID = '__add_pillar__';
+const CUSTOM_PILLAR_COLORS = [
+  '#8e7c6c', '#7a4450', '#a65d3f', '#5c6b3a', '#3d5a80',
+  '#6B5A9C', '#2f6f6a', '#746250', '#4a5080', '#a66d7a'
 ];
 
 const FORMATS = {
@@ -3315,6 +3572,11 @@ const FORMATS = {
     { id: 'design',  label: 'Landing page' },
     { id: 'blog',    label: 'Blog' },
     { id: 'feature', label: 'Feature page' }
+  ],
+  other: [
+    { id: 'bts', label: 'BTS' },
+    { id: 'shoot-day', label: 'Shoot day' },
+    { id: 'misc', label: 'Other' }
   ]
 };
 
@@ -3362,6 +3624,11 @@ const FORMAT_COLORS = {
     'design': '#404040',
     'blog': '#6B7A8D',
     'feature': '#3f4853'
+  },
+  other: {
+    'bts': '#7a4450',
+    'shoot-day': '#a65d3f',
+    'misc': '#8e7c6c'
   }
 };
 
@@ -3602,11 +3869,80 @@ function resetColourPrefs() {
 }
 
 function catById(id) {
-  return CATS.find(c => c.id === id) || null;
+  return allCats().find(c => c.id === id) || null;
 }
 
 function pillarById(id) {
-  return PILLARS.find(p => p.id === id) || null;
+  return allPillars().find(p => p.id === id) || null;
+}
+
+function customPillars() {
+  if (!Array.isArray(DATA.customPillars)) DATA.customPillars = [];
+  return DATA.customPillars;
+}
+
+function pillarLabels() {
+  if (!DATA.pillarLabels || typeof DATA.pillarLabels !== 'object') DATA.pillarLabels = {};
+  return DATA.pillarLabels;
+}
+
+function pillarDisplayLabel(id) {
+  const override = pillarLabels()[id];
+  if (override && String(override).trim()) return String(override).trim().slice(0, 40);
+  const custom = customPillars().find(p => p.id === id);
+  if (custom) return custom.label || id;
+  const built = PILLARS.find(p => p.id === id);
+  return built ? built.label : (id || '');
+}
+
+function allPillars() {
+  return PILLARS.map(p => ({
+    id: p.id,
+    label: pillarDisplayLabel(p.id),
+    defaultOpen: !!p.defaultOpen,
+    custom: false
+  })).concat(customPillars().map(p => ({
+    id: p.id,
+    label: pillarDisplayLabel(p.id),
+    defaultOpen: false,
+    custom: true,
+    color: p.color || '#8e7c6c'
+  })));
+}
+
+function allCats() {
+  return CATS.map(c => ({
+    id: c.id,
+    label: pillarDisplayLabel(c.id),
+    bg: c.bg,
+    fg: c.fg
+  })).concat(customPillars().map(p => ({
+    id: p.id,
+    label: pillarDisplayLabel(p.id),
+    bg: p.color || '#8e7c6c',
+    fg: '#fff'
+  })));
+}
+
+function renamePillar(id, newLabel) {
+  const label = String(newLabel || '').trim().slice(0, 40);
+  if (!label || !id || !pillarById(id)) return false;
+  const clash = allPillars().find(
+    p => p.id !== id && String(p.label || '').toLowerCase() === label.toLowerCase()
+  );
+  if (clash) {
+    PPC.showToast('Name already used');
+    return false;
+  }
+  if (BUILTIN_PILLAR_IDS.has(id)) {
+    pillarLabels()[id] = label;
+  } else {
+    const entry = customPillars().find(p => p.id === id);
+    if (!entry) return false;
+    entry.label = label;
+  }
+  scheduleSave();
+  return true;
 }
 
 function formatsForPillar(pillarId) {
@@ -3617,7 +3953,7 @@ function formatsForPillar(pillarId) {
 
 function allFormatOptions() {
   const out = [];
-  PILLARS.forEach(p => {
+  allPillars().forEach(p => {
     formatsForPillar(p.id).forEach(f => {
       out.push({ pillar: p.id, format: f.id, label: f.label, pillarLabel: p.label });
     });
@@ -3753,7 +4089,29 @@ const SAMPLE_PREP = [
   }
 ];
 
-let DATA = { ideas: [], sections: { preparation: [], execution: [], review: [], schedule: [] }, anchors: [], cadence: cloneCadence(), weekGoals: {}, dayMarks: {}, leadUpRules: DEFAULT_LEAD_UP_RULES.map(r => ({ ...r })), customAnchorTypes: [], customFormats: [], scheduleModeLabels: {}, colourPrefs: { formats: {}, eventTypes: {} }, layoutPrefs: null };
+const PUBLISH_STATUS_OPTIONS = [
+  { id: 'unscheduled', label: 'Unscheduled', color: '#8a6a1a' },
+  { id: 'in-progress', label: 'In progress', color: '#C29A3B' },
+  { id: 'scheduled', label: 'Scheduled', color: '#6B7A8D' },
+  { id: 'complete', label: 'Complete', color: '#4E6E6C' }
+];
+const PUBLISH_STATUS_IDS = new Set(PUBLISH_STATUS_OPTIONS.map(o => o.id));
+const PUBLISH_STATUS_COLORS = {
+  unscheduled: '#8a6a1a',
+  'in-progress': '#C29A3B',
+  scheduled: '#6B7A8D',
+  complete: '#4E6E6C'
+};
+const PUBLISH_STATUS_FLAG_CLASS = {
+  unscheduled: 'cal-slot-flag--need',
+  'in-progress': 'cal-slot-flag--progress',
+  scheduled: 'cal-slot-flag--ready',
+  complete: 'cal-slot-flag--complete'
+};
+const DEFAULT_STAFF = ['Jarvis', 'Louis', 'Gregor'];
+const ADD_STAFF_ID = '__add_staff__';
+
+let DATA = { ideas: [], sections: { preparation: [], execution: [], review: [], schedule: [] }, anchors: [], cadence: cloneCadence(), weekGoals: {}, dayMarks: {}, leadUpRules: DEFAULT_LEAD_UP_RULES.map(r => ({ ...r })), customAnchorTypes: [], customPillars: [], customFormats: [], pillarLabels: {}, staff: DEFAULT_STAFF.slice(), scheduleModeLabels: {}, colourPrefs: { formats: {}, eventTypes: {} }, layoutPrefs: null };
 const expandedSections = new Set(['schedule']);
 const expandedPillars = new Set(PILLARS.filter(p => p.defaultOpen).map(p => p.id));
 let saveTimer = null;
@@ -3792,6 +4150,7 @@ let executeArmed = false;
 let reviewArmed = false;
 let scheduleArmed = false;
 let reviewContextOpen = false;
+let scheduleContextOpen = false;
 let pendingReviewMedia = null; // { imageData, imageW, imageH } while panel open
 let dragCalSlotId = null;
 let calSlotDragMoved = false;
@@ -3869,9 +4228,13 @@ function migrateSchedule(card) {
   }
   if (card.contentLayer == null) card.contentLayer = '';
   if (card.anchorId == null) card.anchorId = '';
-  if (card.publishStatus !== 'scheduled' && card.publishStatus !== 'unscheduled') {
+  if (card.publishStatus === 'open') card.publishStatus = 'unscheduled';
+  if (card.publishStatus === 'ready') card.publishStatus = 'scheduled';
+  if (!PUBLISH_STATUS_IDS.has(card.publishStatus)) {
     card.publishStatus = card.scheduledAt ? 'scheduled' : 'unscheduled';
   }
+  if (card.assignee === 'Loui') card.assignee = 'Louis';
+  if (card.assignee == null) card.assignee = '';
   if (card.needContent == null) {
     card.needContent = !stripHtml(card.body || '').trim();
   }
@@ -3881,17 +4244,40 @@ function migrateSchedule(card) {
   return card;
 }
 
-const PUBLISH_STATUS_OPTIONS = [
-  { id: 'unscheduled', label: 'Unscheduled', color: '#C29A3B' },
-  { id: 'scheduled', label: 'Scheduled', color: '#4E6E6C' }
-];
-const PUBLISH_STATUS_COLORS = { unscheduled: '#C29A3B', scheduled: '#4E6E6C' };
-
 function publishStatusOf(card) {
-  if (card && (card.publishStatus === 'scheduled' || card.publishStatus === 'unscheduled')) {
-    return card.publishStatus;
-  }
+  if (card && PUBLISH_STATUS_IDS.has(card.publishStatus)) return card.publishStatus;
   return card && card.scheduledAt ? 'scheduled' : 'unscheduled';
+}
+
+function publishStatusLabel(status) {
+  const opt = PUBLISH_STATUS_OPTIONS.find(o => o.id === status);
+  return opt ? opt.label : (status || 'Unscheduled');
+}
+
+function marketingStaff() {
+  if (!Array.isArray(DATA.staff) || !DATA.staff.length) {
+    DATA.staff = DEFAULT_STAFF.slice();
+  }
+  // Canonical spelling
+  DATA.staff = DATA.staff.map(n => n === 'Loui' ? 'Louis' : n).filter(Boolean);
+  const seen = new Set();
+  DATA.staff = DATA.staff.filter(n => {
+    if (seen.has(n)) return false;
+    seen.add(n);
+    return true;
+  });
+  return DATA.staff;
+}
+
+function assigneeOf(card) {
+  const name = String(card && card.assignee || '').trim();
+  return name === 'Loui' ? 'Louis' : name;
+}
+
+function assigneeSelectOptions() {
+  const opts = marketingStaff().map(n => ({ id: n, label: n }));
+  opts.push({ id: ADD_STAFF_ID, label: '+ Add person…' });
+  return opts;
 }
 
 const BUILTIN_ANCHOR_TYPES = [
@@ -4436,7 +4822,10 @@ function defaultData() {
     dayMarks: {},
     leadUpRules: DEFAULT_LEAD_UP_RULES.map(r => ({ ...r })),
     customAnchorTypes: [],
+    customPillars: [],
     customFormats: [],
+    pillarLabels: {},
+    staff: DEFAULT_STAFF.slice(),
     scheduleModeLabels: {},
     colourPrefs: { formats: {}, eventTypes: {} },
     layoutPrefs: null
@@ -4511,7 +4900,10 @@ function saveData() {
     dayMarks: { ...(DATA.dayMarks || {}) },
     leadUpRules: leadUpRules().map(r => ({ ...r })),
     customAnchorTypes: customAnchorTypes().map(t => ({ id: t.id, label: t.label })),
+    customPillars: customPillars().map(p => ({ id: p.id, label: p.label, color: p.color })),
     customFormats: customFormats().map(f => ({ id: f.id, label: f.label, pillar: f.pillar })),
+    pillarLabels: { ...pillarLabels() },
+    staff: marketingStaff().slice(),
     scheduleModeLabels: { ...scheduleModeLabels() },
     colourPrefs: {
       formats: { ...(colourPrefs().formats || {}) },
@@ -4528,6 +4920,12 @@ function saveData() {
 }
 
 function normalizeLoaded(data) {
+  // Customs first so migrate helpers can resolve custom pillars / formats.
+  DATA.customPillars = parseCustomPillars(data);
+  DATA.customFormats = parseCustomFormats(data);
+  DATA.pillarLabels = parsePillarLabels(data);
+  DATA.staff = parseMarketingStaff(data);
+
   const sections = data.sections || { preparation: [], execution: [], review: [], schedule: [] };
   let preparation = Array.isArray(sections.preparation) ? sections.preparation.map(migratePrep) : [];
   let execution = Array.isArray(sections.execution) ? sections.execution.map(migrateExec) : [];
@@ -4605,27 +5003,10 @@ function normalizeLoaded(data) {
       });
       return out;
     })(),
-    customFormats: (() => {
-      const out = [];
-      const seen = new Set();
-      if (Array.isArray(data.customFormats)) {
-        data.customFormats.forEach(f => {
-          if (!f || !f.id) return;
-          const pillar = String(f.pillar || 'organic');
-          const id = String(f.id).trim();
-          if (!id || seen.has(pillar + '::' + id)) return;
-          // Skip if it collides with a built-in for that pillar
-          if ((FORMATS[pillar] || []).some(b => b.id === id)) return;
-          seen.add(pillar + '::' + id);
-          out.push({
-            id,
-            label: String(f.label || id).trim().slice(0, 40) || id,
-            pillar
-          });
-        });
-      }
-      return out;
-    })(),
+    customPillars: DATA.customPillars.slice(),
+    customFormats: DATA.customFormats.slice(),
+    pillarLabels: { ...DATA.pillarLabels },
+    staff: DATA.staff.slice(),
     scheduleModeLabels: (() => {
       const src = data.scheduleModeLabels && typeof data.scheduleModeLabels === 'object'
         ? data.scheduleModeLabels
@@ -4662,6 +5043,99 @@ function normalizeLoaded(data) {
       return { formats, eventTypes };
     })()
   };
+}
+
+function parsePillarLabels(data) {
+  const src = data && data.pillarLabels && typeof data.pillarLabels === 'object' ? data.pillarLabels : {};
+  const out = {};
+  Object.keys(src).forEach(id => {
+    const lab = String(src[id] || '').trim().slice(0, 40);
+    if (lab) out[id] = lab;
+  });
+  return out;
+}
+
+function parseMarketingStaff(data) {
+  const out = [];
+  const seen = new Set();
+  const push = (name) => {
+    let n = String(name || '').trim();
+    if (n === 'Loui') n = 'Louis';
+    if (!n || seen.has(n)) return;
+    seen.add(n);
+    out.push(n);
+  };
+  if (Array.isArray(data && data.staff) && data.staff.length) {
+    data.staff.forEach(push);
+  } else {
+    DEFAULT_STAFF.forEach(push);
+  }
+  // Recover assignees already on schedule cards
+  const sections = (data && data.sections) || {};
+  (Array.isArray(sections.schedule) ? sections.schedule : []).forEach(c => {
+    if (c && c.assignee) push(c.assignee);
+  });
+  return out.length ? out : DEFAULT_STAFF.slice();
+}
+
+function parseCustomPillars(data) {
+  const out = [];
+  const seen = new Set(BUILTIN_PILLAR_IDS);
+  if (Array.isArray(data && data.customPillars)) {
+    data.customPillars.forEach(p => {
+      if (!p || !p.id) return;
+      const id = String(p.id).trim();
+      if (!id || seen.has(id) || id === ADD_PILLAR_ID) return;
+      seen.add(id);
+      const color = String(p.color || '').trim();
+      out.push({
+        id,
+        label: String(p.label || id).trim().slice(0, 40) || id,
+        color: /^#[0-9a-fA-F]{6}$/.test(color) ? color : nextCustomPillarColor(out.length)
+      });
+    });
+  }
+  const recover = (id) => {
+    const pid = String(id || '').trim();
+    if (!pid || seen.has(pid) || pid === ADD_PILLAR_ID) return;
+    seen.add(pid);
+    out.push({
+      id: pid,
+      label: pid.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+      color: nextCustomPillarColor(out.length)
+    });
+  };
+  const sections = (data && data.sections) || {};
+  ['preparation', 'execution', 'review', 'schedule'].forEach(key => {
+    (Array.isArray(sections[key]) ? sections[key] : []).forEach(c => recover(c && c.pillar));
+  });
+  (Array.isArray(data && data.customFormats) ? data.customFormats : []).forEach(f => recover(f && f.pillar));
+  return out;
+}
+
+function parseCustomFormats(data) {
+  const out = [];
+  const seen = new Set();
+  if (Array.isArray(data && data.customFormats)) {
+    data.customFormats.forEach(f => {
+      if (!f || !f.id) return;
+      const pillar = String(f.pillar || 'organic');
+      const id = String(f.id).trim();
+      if (!id || seen.has(pillar + '::' + id)) return;
+      if ((FORMATS[pillar] || []).some(b => b.id === id)) return;
+      seen.add(pillar + '::' + id);
+      out.push({
+        id,
+        label: String(f.label || id).trim().slice(0, 40) || id,
+        pillar
+      });
+    });
+  }
+  return out;
+}
+
+function nextCustomPillarColor(index) {
+  return CUSTOM_PILLAR_COLORS[index % CUSTOM_PILLAR_COLORS.length];
 }
 
 async function initApp() {
@@ -5264,9 +5738,23 @@ function sendReviewToSchedule(id) {
     if (!confirm('No schedule date set — send to Calendar anyway?')) return;
   }
   DATA.sections.review = reviewCards().filter(c => c.id !== id);
+  const hasBody = !!stripHtml(card.body || '').trim();
   const scheduleCard = migrateSchedule({
     ...card,
     scheduledAt: card.scheduleAt || new Date().toISOString(),
+    scheduleAt: card.scheduleAt || '',
+    caption: card.caption || '',
+    tags: card.tags || '',
+    music: card.music || '',
+    contentOutcome: card.contentOutcome || '',
+    tweaks: card.tweaks || '',
+    reviewMedia: card.reviewMedia || null,
+    reviewMediaW: card.reviewMediaW || null,
+    reviewMediaH: card.reviewMediaH || null,
+    reviewVideoUrl: card.reviewVideoUrl || '',
+    needContent: !hasBody,
+    publishStatus: 'scheduled',
+    assignee: card.assignee || '',
     movedToScheduleAt: new Date().toISOString()
   });
   scheduleCards().push(scheduleCard);
@@ -5297,12 +5785,18 @@ function duplicatePrepToFormat(id, format) {
 
 function sizePrepThumb(thumb, card) {
   if (!card.imageData) return;
-  if (card.imageW && card.imageH) {
-    const innerW = 136;
-    let desiredH = Math.round((card.imageH / card.imageW) * innerW);
-    desiredH = Math.max(56, Math.min(desiredH, 200));
-    thumb.style.height = desiredH + 'px';
-  }
+  const apply = () => {
+    const innerW = thumb.clientWidth || thumb.offsetWidth || 136;
+    if (card.imageW && card.imageH && card.imageW > 0) {
+      let desiredH = Math.round((card.imageH / card.imageW) * innerW);
+      desiredH = Math.max(72, Math.min(desiredH, 280));
+      thumb.style.height = desiredH + 'px';
+    } else {
+      thumb.style.height = Math.max(96, Math.round(innerW * 1.15)) + 'px';
+    }
+  };
+  // Height must use laid-out width — thumb isn't in the DOM on first call.
+  requestAnimationFrame(apply);
 }
 
 function renderPrepCard(card) {
@@ -5329,15 +5823,16 @@ function renderPrepCard(card) {
   const thumb = document.createElement('div');
   thumb.className = 'prep-card-thumb' + (card.imageData ? '' : ' empty');
   if (card.imageData) {
-    sizePrepThumb(thumb, card);
     const img = document.createElement('img');
     img.src = card.imageData;
     img.alt = '';
     thumb.appendChild(img);
+    el.appendChild(thumb);
+    sizePrepThumb(thumb, card);
   } else {
     thumb.textContent = 'No image';
+    el.appendChild(thumb);
   }
-  el.appendChild(thumb);
 
   const desc = document.createElement('div');
   const plain = stripHtml(card.body || '');
@@ -5418,6 +5913,88 @@ function renderPrepLane(pillarId, format) {
   return lane;
 }
 
+function startPillarTitleRename(titleEl, pillarId) {
+  if (!titleEl || titleEl.isContentEditable) return;
+  const prev = pillarDisplayLabel(pillarId);
+  titleEl.contentEditable = 'true';
+  titleEl.textContent = prev;
+  titleEl.focus();
+  try {
+    const range = document.createRange();
+    range.selectNodeContents(titleEl);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  } catch (_) {}
+
+  const finish = (save) => {
+    titleEl.contentEditable = 'false';
+    titleEl.removeEventListener('keydown', onKey);
+    titleEl.removeEventListener('blur', onBlur);
+    if (save) {
+      const next = (titleEl.textContent || '').trim();
+      if (next && next !== prev) {
+        if (renamePillar(pillarId, next)) {
+          renderBoard();
+          return;
+        }
+      }
+    }
+    titleEl.textContent = pillarDisplayLabel(pillarId);
+  };
+  const onKey = (e) => {
+    e.stopPropagation();
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      finish(true);
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      finish(false);
+    }
+  };
+  const onBlur = () => finish(true);
+  titleEl.addEventListener('keydown', onKey);
+  titleEl.addEventListener('blur', onBlur);
+}
+
+function appendPrepInlineForm(host, placeholder, onConfirm, onCancel) {
+  const form = document.createElement('div');
+  form.className = 'prep-inline-form';
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.maxLength = 40;
+  input.placeholder = placeholder;
+  const confirm = document.createElement('button');
+  confirm.type = 'button';
+  confirm.className = 'btn-secondary';
+  confirm.textContent = 'Add';
+  const cancel = document.createElement('button');
+  cancel.type = 'button';
+  cancel.className = 'btn-cancel';
+  cancel.textContent = 'Cancel';
+  const finish = (save) => {
+    if (save) onConfirm(input.value);
+    else onCancel();
+  };
+  confirm.addEventListener('click', () => finish(true));
+  cancel.addEventListener('click', () => finish(false));
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      finish(true);
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      finish(false);
+    }
+  });
+  form.appendChild(input);
+  form.appendChild(confirm);
+  form.appendChild(cancel);
+  host.appendChild(form);
+  input.focus();
+  return form;
+}
+
 function renderPreparationBody() {
   const body = document.createElement('div');
   body.className = 'section-body';
@@ -5425,7 +6002,7 @@ function renderPreparationBody() {
   const board = document.createElement('div');
   board.className = 'prep-board';
 
-  PILLARS.forEach(pillar => {
+  allPillars().forEach(pillar => {
     const count = prepCards().filter(c => c.pillar === pillar.id).length;
     const open = expandedPillars.has(pillar.id);
     const empty = count === 0;
@@ -5435,11 +6012,20 @@ function renderPreparationBody() {
 
     const header = document.createElement('div');
     header.className = 'pillar-header';
-    header.addEventListener('click', () => togglePillar(pillar.id));
+    header.addEventListener('click', e => {
+      if (e.target.closest('.pillar-title[contenteditable="true"]')) return;
+      togglePillar(pillar.id);
+    });
 
     const title = document.createElement('span');
     title.className = 'pillar-title';
     title.textContent = pillar.label;
+    title.title = 'Double-click to rename';
+    title.addEventListener('dblclick', e => {
+      e.stopPropagation();
+      e.preventDefault();
+      startPillarTitleRename(title, pillar.id);
+    });
 
     const trailing = document.createElement('span');
     trailing.className = 'pillar-trailing';
@@ -5467,6 +6053,31 @@ function renderPreparationBody() {
         lanes.appendChild(renderPrepLane(pillar.id, fmt));
       });
       pBody.appendChild(lanes);
+
+      const addFmtBtn = document.createElement('button');
+      addFmtBtn.type = 'button';
+      addFmtBtn.className = 'prep-add-format';
+      addFmtBtn.textContent = '+ Add format';
+      addFmtBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        addFmtBtn.hidden = true;
+        appendPrepInlineForm(pBody, 'e.g. BTS, Shoot day…', (val) => {
+          const entry = createCustomFormat(pillar.id, val);
+          if (entry) {
+            expandedPillars.add(pillar.id);
+            renderBoard();
+            return;
+          }
+          addFmtBtn.hidden = false;
+          const form = pBody.querySelector('.prep-inline-form');
+          if (form) form.remove();
+        }, () => {
+          addFmtBtn.hidden = false;
+          const form = pBody.querySelector('.prep-inline-form');
+          if (form) form.remove();
+        });
+      });
+      pBody.appendChild(addFmtBtn);
       wrap.appendChild(pBody);
     }
 
@@ -5474,6 +6085,64 @@ function renderPreparationBody() {
   });
 
   body.appendChild(board);
+
+  const addBtn = document.createElement('button');
+  addBtn.type = 'button';
+  addBtn.className = 'prep-add-pillar';
+  addBtn.textContent = '+ Add pillar';
+  addBtn.addEventListener('click', () => {
+    addBtn.hidden = true;
+    form.hidden = false;
+    input.focus();
+  });
+
+  const form = document.createElement('div');
+  form.className = 'prep-add-pillar-form';
+  form.hidden = true;
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.maxLength = 40;
+  input.placeholder = 'e.g. Shoot days, BTS…';
+  input.setAttribute('aria-label', 'New pillar name');
+  const confirm = document.createElement('button');
+  confirm.type = 'button';
+  confirm.className = 'btn-secondary';
+  confirm.textContent = 'Add';
+  const cancel = document.createElement('button');
+  cancel.type = 'button';
+  cancel.className = 'btn-cancel';
+  cancel.textContent = 'Cancel';
+  const finish = (save) => {
+    if (save) {
+      const entry = addCustomPillar(input.value);
+      if (entry) {
+        renderBoard();
+        return;
+      }
+      input.focus();
+      return;
+    }
+    form.hidden = true;
+    addBtn.hidden = false;
+    input.value = '';
+  };
+  confirm.addEventListener('click', () => finish(true));
+  cancel.addEventListener('click', () => finish(false));
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      finish(true);
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      finish(false);
+    }
+  });
+  form.appendChild(input);
+  form.appendChild(confirm);
+  form.appendChild(cancel);
+  body.appendChild(addBtn);
+  body.appendChild(form);
+
   return body;
 }
 
@@ -6359,6 +7028,7 @@ function placeLeadUpNeedSlots(anchor) {
         leadUp: true,
         slotMoved: false,
         publishStatus: 'unscheduled',
+        assignee: '',
         scheduledAt: '',
         scheduleAt: '',
         contentLayer: '',
@@ -6442,6 +7112,7 @@ function ensureLeadUpSlotOnDay(anchor, dayDate) {
     leadUp: true,
     slotMoved: false,
     publishStatus: 'unscheduled',
+    assignee: '',
     scheduledAt: when.toISOString(),
     scheduleAt: when.toISOString(),
     contentLayer: '',
@@ -6732,7 +7403,7 @@ function showAddFormatCustomFields() {
   const pillarSel = document.getElementById('newFormatPillar');
   if (pillarSel) {
     pillarSel.innerHTML = '';
-    PILLARS.forEach(p => {
+    allPillars().forEach(p => {
       const o = document.createElement('option');
       o.value = p.id;
       o.textContent = p.label;
@@ -6789,23 +7460,69 @@ function slugifyFormatId(label) {
   return base;
 }
 
-function addCustomFormat() {
-  const pillarEl = document.getElementById('newFormatPillar');
-  const input = document.getElementById('newFormatLabel');
-  const pillar = (pillarEl && pillarEl.value) || 'organic';
-  const label = ((input && input.value) || '').trim();
+function slugifyPillarId(label) {
+  let base = String(label || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 32);
+  if (!base) base = 'pillar-' + Math.random().toString(36).slice(2, 7);
+  return base;
+}
+
+/** Create a custom pillar (+ starter format with the same name). Returns entry or null. */
+function addCustomPillar(rawLabel, opts) {
+  const options = opts || {};
+  const label = String(rawLabel || '').trim().slice(0, 40);
   if (!label) {
-    PPC.showToast('Format name required');
-    if (input) input.focus();
-    return;
+    if (!options.silent) PPC.showToast('Pillar name required');
+    return null;
+  }
+  const existing = allPillars().find(
+    p => String(p.label || '').toLowerCase() === label.toLowerCase() || p.id === label.toLowerCase()
+  );
+  if (existing) {
+    if (!options.silent) PPC.showToast('Pillar already exists');
+    return existing;
+  }
+  let id = slugifyPillarId(label);
+  const taken = new Set(allPillars().map(p => p.id));
+  taken.add(ADD_PILLAR_ID);
+  let n = 2;
+  let finalId = id;
+  while (taken.has(finalId)) {
+    finalId = id + '-' + n;
+    n += 1;
+  }
+  const entry = {
+    id: finalId,
+    label,
+    color: nextCustomPillarColor(customPillars().length)
+  };
+  customPillars().push(entry);
+  // Seed one format so Need / Prep menus aren't empty.
+  createCustomFormat(finalId, label, { silent: true });
+  expandedPillars.add(finalId);
+  scheduleSave();
+  if (!options.silent) PPC.showToast('Pillar "' + label + '" added');
+  return entry;
+}
+
+/** Create a custom format under a pillar. Returns {id,label,pillar} or existing/null. */
+function createCustomFormat(pillarId, rawLabel, opts) {
+  const options = opts || {};
+  const pillar = (pillarId && pillarById(pillarId)) ? pillarId : 'organic';
+  const label = String(rawLabel || '').trim().slice(0, 40);
+  if (!label) {
+    if (!options.silent) PPC.showToast('Format name required');
+    return null;
   }
   const existing = formatsForPillar(pillar).find(
     f => String(f.label || '').toLowerCase() === label.toLowerCase()
   );
   if (existing) {
-    addVisibleQuotaFormat(quotaKey(pillar, existing.id), 1);
-    PPC.showToast('Format already exists — added');
-    return;
+    if (!options.silent) PPC.showToast('Format already exists');
+    return existing;
   }
   let id = slugifyFormatId(label);
   const taken = new Set(formatsForPillar(pillar).map(f => f.id));
@@ -6815,10 +7532,26 @@ function addCustomFormat() {
     finalId = id + '-' + n;
     n += 1;
   }
-  customFormats().push({ id: finalId, label, pillar });
-  scheduleSave();
-  addVisibleQuotaFormat(quotaKey(pillar, finalId), 1);
-  PPC.showToast('Format "' + label + '" added');
+  const entry = { id: finalId, label, pillar };
+  customFormats().push(entry);
+  if (!options.silent) {
+    scheduleSave();
+    PPC.showToast('Format "' + label + '" added');
+  }
+  return entry;
+}
+
+function addCustomFormat() {
+  const pillarEl = document.getElementById('newFormatPillar');
+  const input = document.getElementById('newFormatLabel');
+  const pillar = (pillarEl && pillarEl.value) || 'organic';
+  const entry = createCustomFormat(pillar, (input && input.value) || '');
+  if (!entry) {
+    if (input) input.focus();
+    return;
+  }
+  hideAddFormatForm();
+  addVisibleQuotaFormat(quotaKey(pillar, entry.id), 1);
 }
 
 function showAddAnchorTypeForm() {
@@ -7630,6 +8363,8 @@ function isNeedContentCard(card) {
 let calNeedMenuDate = null;
 let calNeedMenuSlotId = null;
 let calNeedMenuPillar = null;
+let calNeedMenuAddingPillar = false;
+let calNeedMenuAddingFormat = false;
 
 function activeCalNeedMenuBody() {
   return document.getElementById('calNeedMenuBody');
@@ -7687,8 +8422,78 @@ function renderCalNeedMenuBody() {
   container.innerHTML = '';
   updateCalNeedMenuLabel();
 
-  if (!calNeedMenuPillar) {
-    PILLARS.forEach(p => {
+  if (calNeedMenuAddingPillar) {
+    const back = document.createElement('button');
+    back.type = 'button';
+    back.className = 'cal-need-menu-back';
+    back.textContent = '\u2190 Pillars';
+    back.addEventListener('click', e => {
+      e.stopPropagation();
+      calNeedMenuAddingPillar = false;
+      renderCalNeedMenuBody();
+      clampCalNeedMenu(activeCalNeedMenuEl());
+    });
+    container.appendChild(back);
+
+    const form = document.createElement('div');
+    form.className = 'cal-need-menu-create';
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.maxLength = 40;
+    input.placeholder = 'Pillar name…';
+    input.setAttribute('aria-label', 'New pillar name');
+    const actions = document.createElement('div');
+    actions.className = 'cal-need-menu-create-actions';
+    const confirm = document.createElement('button');
+    confirm.type = 'button';
+    confirm.textContent = 'Add';
+    const cancel = document.createElement('button');
+    cancel.type = 'button';
+    cancel.textContent = 'Cancel';
+    const finish = (save) => {
+      if (save) {
+        const entry = addCustomPillar(input.value);
+        if (!entry) {
+          input.focus();
+          return;
+        }
+        calNeedMenuAddingPillar = false;
+        calNeedMenuPillar = entry.id;
+        renderCalNeedMenuBody();
+        clampCalNeedMenu(activeCalNeedMenuEl());
+        return;
+      }
+      calNeedMenuAddingPillar = false;
+      renderCalNeedMenuBody();
+      clampCalNeedMenu(activeCalNeedMenuEl());
+    };
+    confirm.addEventListener('click', e => {
+      e.stopPropagation();
+      finish(true);
+    });
+    cancel.addEventListener('click', e => {
+      e.stopPropagation();
+      finish(false);
+    });
+    input.addEventListener('keydown', e => {
+      e.stopPropagation();
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        finish(true);
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        finish(false);
+      }
+    });
+    input.addEventListener('click', e => e.stopPropagation());
+    actions.appendChild(confirm);
+    actions.appendChild(cancel);
+    form.appendChild(input);
+    form.appendChild(actions);
+    container.appendChild(form);
+    setTimeout(() => input.focus(), 0);
+  } else if (!calNeedMenuPillar) {
+    allPillars().forEach(p => {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.textContent = p.label;
@@ -7700,6 +8505,17 @@ function renderCalNeedMenuBody() {
       });
       container.appendChild(btn);
     });
+    const addBtn = document.createElement('button');
+    addBtn.type = 'button';
+    addBtn.className = 'cal-need-menu-add';
+    addBtn.textContent = '+ Add pillar…';
+    addBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      calNeedMenuAddingPillar = true;
+      renderCalNeedMenuBody();
+      clampCalNeedMenu(activeCalNeedMenuEl());
+    });
+    container.appendChild(addBtn);
   } else {
     const back = document.createElement('button');
     back.type = 'button';
@@ -7708,21 +8524,91 @@ function renderCalNeedMenuBody() {
     back.addEventListener('click', e => {
       e.stopPropagation();
       calNeedMenuPillar = null;
+      calNeedMenuAddingFormat = false;
       renderCalNeedMenuBody();
       clampCalNeedMenu(activeCalNeedMenuEl());
     });
     container.appendChild(back);
 
-    formatsForPillar(calNeedMenuPillar).forEach(f => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.textContent = f.label || f.id;
-      btn.addEventListener('click', e => {
+    if (calNeedMenuAddingFormat) {
+      const form = document.createElement('div');
+      form.className = 'cal-need-menu-create';
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.maxLength = 40;
+      input.placeholder = 'Format name…';
+      input.setAttribute('aria-label', 'New format name');
+      const actions = document.createElement('div');
+      actions.className = 'cal-need-menu-create-actions';
+      const confirm = document.createElement('button');
+      confirm.type = 'button';
+      confirm.textContent = 'Add';
+      const cancel = document.createElement('button');
+      cancel.type = 'button';
+      cancel.textContent = 'Cancel';
+      const finish = (save) => {
+        if (save) {
+          const entry = createCustomFormat(calNeedMenuPillar, input.value);
+          if (!entry) {
+            input.focus();
+            return;
+          }
+          calNeedMenuAddingFormat = false;
+          onCalNeedFormatPicked(entry.id, calNeedMenuPillar);
+          return;
+        }
+        calNeedMenuAddingFormat = false;
+        renderCalNeedMenuBody();
+        clampCalNeedMenu(activeCalNeedMenuEl());
+      };
+      confirm.addEventListener('click', e => {
         e.stopPropagation();
-        onCalNeedFormatPicked(f.id, calNeedMenuPillar);
+        finish(true);
       });
-      container.appendChild(btn);
-    });
+      cancel.addEventListener('click', e => {
+        e.stopPropagation();
+        finish(false);
+      });
+      input.addEventListener('keydown', e => {
+        e.stopPropagation();
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          finish(true);
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          finish(false);
+        }
+      });
+      input.addEventListener('click', e => e.stopPropagation());
+      actions.appendChild(confirm);
+      actions.appendChild(cancel);
+      form.appendChild(input);
+      form.appendChild(actions);
+      container.appendChild(form);
+      setTimeout(() => input.focus(), 0);
+    } else {
+      formatsForPillar(calNeedMenuPillar).forEach(f => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = f.label || f.id;
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          onCalNeedFormatPicked(f.id, calNeedMenuPillar);
+        });
+        container.appendChild(btn);
+      });
+      const addFmt = document.createElement('button');
+      addFmt.type = 'button';
+      addFmt.className = 'cal-need-menu-add';
+      addFmt.textContent = '+ Add format…';
+      addFmt.addEventListener('click', e => {
+        e.stopPropagation();
+        calNeedMenuAddingFormat = true;
+        renderCalNeedMenuBody();
+        clampCalNeedMenu(activeCalNeedMenuEl());
+      });
+      container.appendChild(addFmt);
+    }
   }
   clampCalNeedMenu(activeCalNeedMenuEl());
 }
@@ -7730,6 +8616,8 @@ function renderCalNeedMenuBody() {
 function openCalNeedMenu(x, y, dayDate) {
   calNeedMenuSlotId = null;
   calNeedMenuPillar = null;
+  calNeedMenuAddingPillar = false;
+  calNeedMenuAddingFormat = false;
   calNeedMenuDate = new Date(dayDate.getFullYear(), dayDate.getMonth(), dayDate.getDate(), DEFAULT_PUBLISH_HOUR, 0, 0);
   const menu = document.getElementById('calNeedMenu');
   menu.style.left = Math.min(x, window.innerWidth - 180) + 'px';
@@ -7742,6 +8630,8 @@ function openCalNeedFormatMenu(x, y, scheduleId) {
   calNeedMenuDate = null;
   calNeedMenuSlotId = scheduleId;
   calNeedMenuPillar = null;
+  calNeedMenuAddingPillar = false;
+  calNeedMenuAddingFormat = false;
   const card = scheduleCards().find(c => c.id === scheduleId);
   if (card && card.pillar && pillarById(card.pillar)) {
     calNeedMenuPillar = card.pillar;
@@ -7757,6 +8647,8 @@ function closeCalNeedMenu() {
   calNeedMenuDate = null;
   calNeedMenuSlotId = null;
   calNeedMenuPillar = null;
+  calNeedMenuAddingPillar = false;
+  calNeedMenuAddingFormat = false;
   const menu = document.getElementById('calNeedMenu');
   if (menu) menu.classList.remove('open');
   const body = document.getElementById('calNeedMenuBody');
@@ -7787,6 +8679,7 @@ function addNeedContentSlot(format, dayDate, pillar) {
     needContent: true,
     needLabel: '',
     publishStatus: 'unscheduled',
+    assignee: '',
     scheduledAt: iso,
     scheduleAt: iso,
     contentLayer: '',
@@ -7808,10 +8701,39 @@ function addNeedContentSlot(format, dayDate, pillar) {
 function setPublishStatus(cardId, status, opts) {
   const card = scheduleCards().find(c => c.id === cardId);
   if (!card) return;
-  if (status !== 'scheduled' && status !== 'unscheduled') return;
+  if (!PUBLISH_STATUS_IDS.has(status)) return;
   card.publishStatus = status;
   scheduleSave();
   if (!(opts && opts.silent)) renderBoard();
+}
+
+function setScheduleAssignee(cardId, name, opts) {
+  const card = scheduleCards().find(c => c.id === cardId);
+  if (!card) return;
+  let next = String(name || '').trim();
+  if (next === 'Loui') next = 'Louis';
+  card.assignee = next;
+  if (next && !marketingStaff().includes(next)) marketingStaff().push(next);
+  scheduleSave();
+  if (!(opts && opts.silent)) renderBoard();
+}
+
+function addMarketingStaff(rawName) {
+  let name = String(rawName || '').trim().slice(0, 40);
+  if (!name) {
+    PPC.showToast('Name required');
+    return null;
+  }
+  if (name === 'Loui') name = 'Louis';
+  const staff = marketingStaff();
+  if (staff.some(s => s.toLowerCase() === name.toLowerCase())) {
+    PPC.showToast('Already in the list');
+    return staff.find(s => s.toLowerCase() === name.toLowerCase());
+  }
+  staff.push(name);
+  scheduleSave();
+  PPC.showToast(name + ' added');
+  return name;
 }
 
 function renderPublishStatusSelect(card, opts) {
@@ -7826,6 +8748,67 @@ function renderPublishStatusSelect(card, opts) {
       if (options.onChange) options.onChange(val);
       else setPublishStatus(card.id, val);
     }
+  });
+}
+
+function hideScheduleStaffAddRow() {
+  const row = document.getElementById('pScheduleStaffAddRow');
+  if (row) row.classList.remove('open');
+  const input = document.getElementById('pScheduleStaffNew');
+  if (input) input.value = '';
+}
+
+function showScheduleStaffAddRow() {
+  const row = document.getElementById('pScheduleStaffAddRow');
+  if (row) row.classList.add('open');
+  const input = document.getElementById('pScheduleStaffNew');
+  if (input) {
+    input.value = '';
+    input.focus();
+  }
+}
+
+function renderScheduleAssigneeSelect(card) {
+  const wrap = document.getElementById('pScheduleAssigneeWrap');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  hideScheduleStaffAddRow();
+  wrap.appendChild(createPpcSelect({
+    id: 'pScheduleAssignee',
+    options: assigneeSelectOptions(),
+    value: assigneeOf(card) || '',
+    includeNone: true,
+    noneLabel: 'Unassigned',
+    colored: false,
+    onChange: val => {
+      if (val === ADD_STAFF_ID) {
+        updatePpcSelect('pScheduleAssignee', {
+          options: assigneeSelectOptions(),
+          value: assigneeOf(card) || ''
+        });
+        showScheduleStaffAddRow();
+        return;
+      }
+      hideScheduleStaffAddRow();
+      setScheduleAssignee(card.id, val, { silent: true });
+    }
+  }));
+}
+
+function confirmScheduleStaffAdd() {
+  const input = document.getElementById('pScheduleStaffNew');
+  const name = addMarketingStaff(input && input.value);
+  if (!name) {
+    if (input) input.focus();
+    return;
+  }
+  hideScheduleStaffAddRow();
+  if (activeScheduleId) setScheduleAssignee(activeScheduleId, name, { silent: true });
+  const card = scheduleCards().find(c => c.id === activeScheduleId) || { assignee: name };
+  renderScheduleAssigneeSelect(card);
+  updatePpcSelect('pScheduleAssignee', {
+    options: assigneeSelectOptions(),
+    value: name
   });
 }
 
@@ -7872,7 +8855,7 @@ function renderCalSlot(card) {
   el.draggable = true;
   el.title = emptyNeed
     ? 'Click type to change · drag to move · × to remove'
-    : 'Drag to another day · click to open';
+    : 'Drag to another day · click View details to open';
   const formatTone = formatColor(card.format, card.pillar);
   el.style.borderColor = '#E2DDD5';
   el.style.borderLeftColor = formatTone;
@@ -7887,6 +8870,12 @@ function renderCalSlot(card) {
     if (eventName) title = eventName;
     else title = 'Need content';
   }
+
+  const openDetails = e => {
+    if (e) e.stopPropagation();
+    if (calSlotDragMoved) return;
+    openSchedulePanel(card.id);
+  };
 
   if (emptyNeed) {
     // Format title black; left bar + wash = format colour; event name = event-type colour.
@@ -7911,6 +8900,13 @@ function renderCalSlot(card) {
       if (eventTone) eventEl.style.color = eventTone;
       el.appendChild(eventEl);
     }
+
+    const details = document.createElement('button');
+    details.type = 'button';
+    details.className = 'cal-slot-details';
+    details.textContent = 'View details';
+    details.addEventListener('click', openDetails);
+    el.appendChild(details);
 
     const del = document.createElement('button');
     del.type = 'button';
@@ -7938,21 +8934,51 @@ function renderCalSlot(card) {
     titleEl.title = title;
     el.appendChild(titleEl);
 
+    const details = document.createElement('button');
+    details.type = 'button';
+    details.className = 'cal-slot-details';
+    details.textContent = 'View details';
+    details.addEventListener('click', openDetails);
+    el.appendChild(details);
+
+    const footer = document.createElement('div');
+    footer.className = 'cal-slot-footer';
+
+    const asg = document.createElement('div');
+    asg.className = 'cal-slot-assignee';
+    const asgLabel = document.createElement('span');
+    asgLabel.className = 'cal-slot-assignee-label';
+    asgLabel.textContent = 'Assignee';
+    const asgVal = document.createElement('span');
+    const who = assigneeOf(card);
+    asgVal.className = 'cal-slot-assignee-val' + (who ? '' : ' empty');
+    asgVal.textContent = who || 'Empty';
+    asg.appendChild(asgLabel);
+    asg.appendChild(asgVal);
+    footer.appendChild(asg);
+
     const status = publishStatusOf(card);
+    const colour = PUBLISH_STATUS_COLORS[status] || '#6B7A8D';
     const flag = document.createElement('span');
-    const needsAttention = status === 'unscheduled';
-    flag.className = 'cal-slot-flag ' + (needsAttention ? 'cal-slot-flag--need' : 'cal-slot-flag--ready');
-    flag.textContent = status === 'unscheduled' ? 'Open' : 'Ready';
-    flag.title = status === 'scheduled' ? 'Scheduled — click to mark unscheduled' : 'Unscheduled — click to mark scheduled';
+    flag.className = 'cal-slot-flag ' + (PUBLISH_STATUS_FLAG_CLASS[status] || 'cal-slot-flag--ready');
+    flag.style.color = colour;
+    flag.style.background = colour + '22';
+    flag.innerHTML = '<span class="chip-dot" style="background:' + colour + '"></span>' + publishStatusLabel(status);
+    flag.title = 'Status: ' + publishStatusLabel(status) + ' — click to cycle';
     flag.addEventListener('click', e => {
       e.stopPropagation();
-      setPublishStatus(card.id, status === 'scheduled' ? 'unscheduled' : 'scheduled');
+      if (calSlotDragMoved) return;
+      const order = PUBLISH_STATUS_OPTIONS.map(o => o.id);
+      const idx = order.indexOf(status);
+      const next = order[(idx + 1) % order.length];
+      setPublishStatus(card.id, next);
     });
-    el.appendChild(flag);
+    footer.appendChild(flag);
+    el.appendChild(footer);
   }
 
   el.addEventListener('dragstart', e => {
-    if (e.target.closest('.cal-slot-del')) {
+    if (e.target.closest('.cal-slot-del, .cal-slot-details')) {
       e.preventDefault();
       return;
     }
@@ -7976,6 +9002,7 @@ function renderCalSlot(card) {
   el.addEventListener('click', e => {
     e.stopPropagation();
     if (calSlotDragMoved) return;
+    if (e.target.closest('.cal-slot-del, .cal-slot-details, .cal-slot-flag, .cal-slot-title')) return;
     openSchedulePanel(card.id);
   });
   return el;
@@ -8167,6 +9194,7 @@ function renderBoard() {
     const open = expandedSections.has(section.id);
     const wrap = document.createElement('div');
     wrap.className = 'board-section' + (open ? ' open' : '');
+    wrap.dataset.sectionId = section.id;
 
     const row = document.createElement('div');
     row.className = 'section-row';
@@ -8265,14 +9293,75 @@ function sanitizeHtml(html) {
 }
 
 function pillarSelectOptions() {
-  return PILLARS.map(p => {
+  const opts = allPillars().map(p => {
     const cat = catById(p.id);
     return { id: p.id, label: p.label, color: cat ? cat.bg : null };
   });
+  opts.push({ id: ADD_PILLAR_ID, label: '+ Add pillar…' });
+  return opts;
+}
+
+function formatSelectOptions(pillarId) {
+  const opts = formatsForPillar(pillarId).map(f => ({ id: f.id, label: f.label || f.id }));
+  opts.push({ id: ADD_FORMAT_ID, label: '+ Add format…' });
+  return opts;
 }
 
 function catSelectOptions() {
-  return CATS.map(c => ({ id: c.id, label: c.label, color: c.bg }));
+  return allCats().map(c => ({ id: c.id, label: c.label, color: c.bg }));
+}
+
+function handlePillarSelectChange(pillar, formatSelectId, prevPillar) {
+  const pillarSelectId = formatSelectId === 'prepareFormat' ? 'preparePillar' : 'pPillar';
+  if (pillar === ADD_PILLAR_ID) {
+    const name = window.prompt('New pillar name');
+    const entry = addCustomPillar(name || '');
+    const fallback = prevPillar && pillarById(prevPillar) ? prevPillar : 'organic';
+    if (!entry) {
+      updatePpcSelect(pillarSelectId, { options: pillarSelectOptions(), value: fallback });
+      return fallback;
+    }
+    updatePpcSelect(pillarSelectId, {
+      options: pillarSelectOptions(),
+      value: entry.id,
+      onRename: (id, lab) => renamePillar(id, lab)
+    });
+    if (formatSelectId) {
+      updatePpcSelect(formatSelectId, {
+        options: formatSelectOptions(entry.id),
+        value: defaultFormatForPillar(entry.id)
+      });
+    }
+    updatePanelStrip(entry.id);
+    return entry.id;
+  }
+  if (formatSelectId) {
+    updatePpcSelect(formatSelectId, {
+      options: formatSelectOptions(pillar),
+      value: defaultFormatForPillar(pillar)
+    });
+  }
+  updatePanelStrip(pillar);
+  return pillar;
+}
+
+function handleFormatSelectChange(format, pillarId, formatSelectId, prevFormat) {
+  if (format !== ADD_FORMAT_ID) return format;
+  const name = window.prompt('New format name');
+  const entry = createCustomFormat(pillarId, name || '');
+  const fallback = prevFormat || defaultFormatForPillar(pillarId);
+  if (!entry) {
+    updatePpcSelect(formatSelectId, {
+      options: formatSelectOptions(pillarId),
+      value: fallback
+    });
+    return fallback;
+  }
+  updatePpcSelect(formatSelectId, {
+    options: formatSelectOptions(pillarId),
+    value: entry.id
+  });
+  return entry.id;
 }
 
 function setPanelImage(imageData) {
@@ -8321,12 +9410,12 @@ function buildPrepPanelProps(card) {
     options: pillarSelectOptions(),
     value: card.pillar,
     colored: false,
+    onRename: (id, lab) => {
+      if (id === ADD_PILLAR_ID) return false;
+      return renamePillar(id, lab);
+    },
     onChange: pillar => {
-      updatePpcSelect('pFormat', {
-        options: formatsForPillar(pillar),
-        value: defaultFormatForPillar(pillar)
-      });
-      updatePanelStrip(pillar);
+      handlePillarSelectChange(pillar, 'pFormat', card.pillar);
     }
   }));
   wrap.appendChild(pillarRow);
@@ -8336,9 +9425,14 @@ function buildPrepPanelProps(card) {
   formatRow.innerHTML = '<span class="prop-label">Format</span><span class="prop-value"></span>';
   formatRow.querySelector('.prop-value').appendChild(createPpcSelect({
     id: 'pFormat',
-    options: formatsForPillar(card.pillar),
+    options: formatSelectOptions(card.pillar),
     value: card.format,
-    colored: false
+    colored: false,
+    onChange: format => {
+      const pillarEl = document.getElementById('pPillar');
+      const pillar = (pillarEl && pillarEl.value) || card.pillar || 'organic';
+      handleFormatSelectChange(format, pillar, 'pFormat', card.format);
+    }
   }));
   wrap.appendChild(formatRow);
 }
@@ -8395,16 +9489,6 @@ function updateIdeaSaveBtn() {
   }
 }
 
-function onPreparePillarChange() {
-  const pillarSelect = document.getElementById('preparePillar');
-  if (!pillarSelect) return;
-  const formats = formatsForPillar(pillarSelect.value);
-  updatePpcSelect('prepareFormat', {
-    options: formats,
-    value: formats.length ? formats[0].id : ''
-  });
-}
-
 function buildIdeaActions(idea) {
   const actions = document.getElementById('panelActions');
   actions.innerHTML = '';
@@ -8432,7 +9516,13 @@ function buildIdeaActions(idea) {
     options: pillarSelectOptions(),
     value: preferred,
     colored: false,
-    onChange: onPreparePillarChange
+    onRename: (id, lab) => {
+      if (id === ADD_PILLAR_ID) return false;
+      return renamePillar(id, lab);
+    },
+    onChange: pillar => {
+      handlePillarSelectChange(pillar, 'prepareFormat', preferred);
+    }
   }));
   dest.appendChild(pillarRow);
 
@@ -8441,9 +9531,14 @@ function buildIdeaActions(idea) {
   formatRow.innerHTML = '<span class="prop-label">Format</span><span class="prop-value"></span>';
   formatRow.querySelector('.prop-value').appendChild(createPpcSelect({
     id: 'prepareFormat',
-    options: formatsForPillar(preferred),
+    options: formatSelectOptions(preferred),
     value: defaultFormatForPillar(preferred),
-    colored: false
+    colored: false,
+    onChange: format => {
+      const pillarEl = document.getElementById('preparePillar');
+      const pillar = (pillarEl && pillarEl.value) || preferred;
+      handleFormatSelectChange(format, pillar, 'prepareFormat', defaultFormatForPillar(preferred));
+    }
   }));
   dest.appendChild(formatRow);
 
@@ -8643,18 +9738,9 @@ function fillReviewInspo(card) {
   text.textContent = plain || 'No idea text';
 }
 
-function fillReviewContext(card) {
-  const wrap = document.getElementById('reviewContext');
+function fillContextRows(wrap, rows, isOpen, chevId) {
+  if (!wrap) return;
   wrap.innerHTML = '';
-  const rows = [
-    ['Idea', stripHtml(card.body || '')],
-    ['Format', formatLabel(card.pillar, card.format)],
-    ['Production plan', stripHtml(card.productionPlan || '')],
-    ['Products', stripHtml(card.productsUsed || '')],
-    ['Location', stripHtml(card.location || '')],
-    ['Requirements', stripHtml(card.requirements || '')],
-    ['Shoot date', card.dateTime ? formatDateTimeLabel(card.dateTime) : '']
-  ];
   rows.forEach(([label, value]) => {
     const row = document.createElement('div');
     row.className = 'review-context-row' + (value ? '' : ' empty');
@@ -8664,9 +9750,38 @@ function fillReviewContext(card) {
     row.appendChild(document.createTextNode(value || '—'));
     wrap.appendChild(row);
   });
-  wrap.classList.toggle('open', reviewContextOpen);
-  const chev = document.getElementById('reviewContextChev');
-  if (chev) chev.textContent = reviewContextOpen ? '▾' : '▸';
+  wrap.classList.toggle('open', !!isOpen);
+  const chev = document.getElementById(chevId);
+  if (chev) chev.textContent = isOpen ? '▾' : '▸';
+}
+
+function fillReviewContext(card) {
+  fillContextRows(document.getElementById('reviewContext'), [
+    ['Idea', stripHtml(card.body || '')],
+    ['Format', formatLabel(card.pillar, card.format)],
+    ['Production plan', stripHtml(card.productionPlan || '')],
+    ['Products', stripHtml(card.productsUsed || '')],
+    ['Location', stripHtml(card.location || '')],
+    ['Requirements', stripHtml(card.requirements || '')],
+    ['Shoot date', card.dateTime ? formatDateTimeLabel(card.dateTime) : '']
+  ], reviewContextOpen, 'reviewContextChev');
+}
+
+function fillScheduleContext(card) {
+  const execBits = [
+    stripHtml(card.productsUsed || '') && ('Products: ' + stripHtml(card.productsUsed || '')),
+    stripHtml(card.location || '') && ('Location: ' + stripHtml(card.location || '')),
+    card.dateTime && ('Shoot: ' + formatDateTimeLabel(card.dateTime))
+  ].filter(Boolean);
+  fillContextRows(document.getElementById('scheduleContext'), [
+    ['Idea', stripHtml(card.body || '')],
+    ['Format', formatLabel(card.pillar, card.format)],
+    ['Production plan', stripHtml(card.productionPlan || '')],
+    ['Requirements', stripHtml(card.requirements || '')],
+    ['Execution', execBits.join(' · ')],
+    ['Outcome', stripHtml(card.contentOutcome || '')],
+    ['Tweaks', stripHtml(card.tweaks || '')]
+  ], scheduleContextOpen, 'scheduleContextChev');
 }
 
 function setReviewMediaUI(imageData) {
@@ -8881,7 +9996,16 @@ function openSchedulePanel(scheduleId) {
   }
   const emptyNeed = isNeedContentCard(card) && !stripHtml(card.body || '').trim();
   document.getElementById('pScheduleIdeaText').textContent = stripHtml(card.body || '') || (emptyNeed ? 'Need content — fill from Ideas / Prep' : 'Untitled content');
+  const goIdeasBtn = document.getElementById('pScheduleGoIdeas');
+  if (goIdeasBtn) {
+    // Only show while the slot still needs content.
+    goIdeasBtn.hidden = !emptyNeed;
+    goIdeasBtn.textContent = 'Browse Ideas to fill';
+  }
+  scheduleContextOpen = false;
+  fillScheduleContext(card);
   document.getElementById('pScheduleEditAt').value = toDateTimeLocalValue(card.scheduledAt || card.scheduleAt);
+  renderScheduleAssigneeSelect(card);
   const statusWrap = document.getElementById('pScheduleStatusWrap');
   statusWrap.innerHTML = '';
   statusWrap.appendChild(renderPublishStatusSelect(card, {
@@ -8892,9 +10016,6 @@ function openSchedulePanel(scheduleId) {
   document.getElementById('pScheduleCaption').value = card.caption || '';
   document.getElementById('pScheduleTags').value = card.tags || '';
   document.getElementById('pScheduleMusic').value = card.music || '';
-  const outcomeEl = document.getElementById('pScheduleOutcome');
-  outcomeEl.innerHTML = '';
-  outcomeEl.innerHTML = sanitizeHtml(card.contentOutcome || '');
   document.getElementById('pScheduleVideoUrl').value = card.reviewVideoUrl || '';
   setVideoOpenLink('pScheduleVideoOpen', card.reviewVideoUrl || '');
   setPlanHintVisible(false);
@@ -8902,6 +10023,18 @@ function openSchedulePanel(scheduleId) {
   updatePanelStrip(card.pillar);
   document.getElementById('panel').classList.add('open');
   document.getElementById('overlay').classList.add('open');
+}
+
+/** Close schedule panel and jump to Content Ideas in the pipeline. */
+function goToIdeasFromSchedule() {
+  closePanel();
+  expandedSections.add('ideas');
+  setMarketingViewMode('pipeline');
+  renderBoard();
+  requestAnimationFrame(() => {
+    const section = document.querySelector('.board-section[data-section-id="ideas"]');
+    if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 }
 
 function toDateTimeLocalValue(value) {
@@ -8924,9 +10057,12 @@ function savePanel(silent) {
     if (prepareExpanded && !silent) {
       const pillarEl = document.getElementById('preparePillar');
       const formatEl = document.getElementById('prepareFormat');
-      const pillar = (pillarEl && pillarEl.value) || idea.cat || 'organic';
+      const pillarRaw = (pillarEl && pillarEl.value) || idea.cat || 'organic';
+      const pillar = pillarById(pillarRaw) ? pillarRaw : 'organic';
       let format = formatEl && formatEl.value;
-      if (!format) format = defaultFormatForPillar(pillar);
+      if (format === ADD_FORMAT_ID || !format || !formatsForPillar(pillar).some(f => f.id === format)) {
+        format = defaultFormatForPillar(pillar);
+      }
       moveIdeaToPrep(idea, pillar, format);
       return;
     }
@@ -8939,8 +10075,12 @@ function savePanel(silent) {
   if (panelMode === 'prep' && activePrepId) {
     const card = prepCards().find(c => c.id === activePrepId);
     if (!card) return;
-    const pillar = document.getElementById('pPillar').value;
-    const format = document.getElementById('pFormat').value;
+    const pillarRaw = document.getElementById('pPillar').value;
+    const pillar = pillarById(pillarRaw) ? pillarRaw : (card.pillar || 'organic');
+    let format = document.getElementById('pFormat').value;
+    if (format === ADD_FORMAT_ID || !formatsForPillar(pillar).some(f => f.id === format)) {
+      format = defaultFormatForPillar(pillar);
+    }
     card.pillar = pillar;
     card.format = format || defaultFormatForPillar(pillar);
     card.body = sanitizeHtml(document.getElementById('pDesc').innerHTML).trim();
@@ -8959,8 +10099,12 @@ function savePanel(silent) {
   if (panelMode === 'exec' && activeExecId) {
     const card = execCards().find(c => c.id === activeExecId);
     if (!card) return;
-    const pillar = document.getElementById('pPillar').value;
-    const format = document.getElementById('pFormat').value;
+    const pillarRaw = document.getElementById('pPillar').value;
+    const pillar = pillarById(pillarRaw) ? pillarRaw : (card.pillar || 'organic');
+    let format = document.getElementById('pFormat').value;
+    if (format === ADD_FORMAT_ID || !formatsForPillar(pillar).some(f => f.id === format)) {
+      format = defaultFormatForPillar(pillar);
+    }
     card.pillar = pillar;
     card.format = format || defaultFormatForPillar(pillar);
     card.body = sanitizeHtml(document.getElementById('pDesc').innerHTML).trim();
@@ -8984,8 +10128,12 @@ function savePanel(silent) {
   if (panelMode === 'review' && activeReviewId) {
     const card = reviewCards().find(c => c.id === activeReviewId);
     if (!card) return;
-    const pillar = document.getElementById('pPillar').value;
-    const format = document.getElementById('pFormat').value;
+    const pillarRaw = document.getElementById('pPillar').value;
+    const pillar = pillarById(pillarRaw) ? pillarRaw : (card.pillar || 'organic');
+    let format = document.getElementById('pFormat').value;
+    if (format === ADD_FORMAT_ID || !formatsForPillar(pillar).some(f => f.id === format)) {
+      format = defaultFormatForPillar(pillar);
+    }
     card.pillar = pillar;
     card.format = format || defaultFormatForPillar(pillar);
     if (pendingReviewMedia) {
@@ -8996,6 +10144,9 @@ function savePanel(silent) {
     card.reviewVideoUrl = (document.getElementById('pReviewVideoUrl').value || '').trim();
     card.contentOutcome = sanitizeHtml(document.getElementById('pOutcome').innerHTML).trim();
     card.tweaks = sanitizeHtml(document.getElementById('pTweaks').innerHTML).trim();
+    card.caption = (document.getElementById('pCaption') || {}).value || '';
+    card.tags = (document.getElementById('pTags') || {}).value || '';
+    card.music = (document.getElementById('pMusic') || {}).value || '';
     const st = document.getElementById('pScheduleAt').value;
     card.scheduleAt = st ? new Date(st).toISOString() : '';
 
@@ -9012,8 +10163,12 @@ function savePanel(silent) {
     const card = scheduleCards().find(c => c.id === activeScheduleId);
     if (!card) return;
     const prevFormat = card.format;
-    const pillar = document.getElementById('pPillar').value;
-    const format = document.getElementById('pFormat').value || defaultFormatForPillar(pillar);
+    const pillarRaw = document.getElementById('pPillar').value;
+    const pillar = pillarById(pillarRaw) ? pillarRaw : (card.pillar || 'organic');
+    let format = document.getElementById('pFormat').value || defaultFormatForPillar(pillar);
+    if (format === ADD_FORMAT_ID || !formatsForPillar(pillar).some(f => f.id === format)) {
+      format = defaultFormatForPillar(pillar);
+    }
     card.pillar = pillar;
     card.format = format;
     // Schedule Idea is read-only (pScheduleIdeaText) — never clobber body from stale pDesc.
@@ -9029,16 +10184,23 @@ function savePanel(silent) {
     card.scheduledAt = st ? new Date(st).toISOString() : '';
     card.scheduleAt = card.scheduledAt;
     const statusEl = document.getElementById('pScheduleStatus');
-    if (statusEl && (statusEl.value === 'scheduled' || statusEl.value === 'unscheduled')) {
+    if (statusEl && PUBLISH_STATUS_IDS.has(statusEl.value)) {
       card.publishStatus = statusEl.value;
-    } else if (!card.publishStatus) {
+    } else if (!PUBLISH_STATUS_IDS.has(card.publishStatus)) {
       card.publishStatus = card.scheduledAt ? 'scheduled' : 'unscheduled';
+    }
+    const asgEl = document.getElementById('pScheduleAssignee');
+    if (asgEl) {
+      let who = asgEl.value === ADD_STAFF_ID ? '' : (asgEl.value || '');
+      if (who === 'Loui') who = 'Louis';
+      card.assignee = who;
+    } else if (card.assignee == null) {
+      card.assignee = '';
     }
     card.anchorId = (document.getElementById('pScheduleAnchor') || {}).value || '';
     card.caption = (document.getElementById('pScheduleCaption') || {}).value || '';
     card.tags = (document.getElementById('pScheduleTags') || {}).value || '';
     card.music = (document.getElementById('pScheduleMusic') || {}).value || '';
-    card.contentOutcome = sanitizeHtml(document.getElementById('pScheduleOutcome').innerHTML).trim();
     card.reviewVideoUrl = (document.getElementById('pScheduleVideoUrl').value || '').trim();
     clearTimeout(saveTimer);
     saveData();
@@ -9064,6 +10226,7 @@ function closePanel() {
   reviewArmed = false;
   scheduleArmed = false;
   reviewContextOpen = false;
+  scheduleContextOpen = false;
   pendingReviewMedia = null;
   focusedReviewMedia = false;
   setPlanHintVisible(false);
@@ -9081,7 +10244,7 @@ function plainTextPaste(e) {
   const text = (e.clipboardData || window.clipboardData).getData('text/plain');
   document.execCommand('insertText', false, text);
 }
-['pDesc', 'pPlan', 'pExecPlan', 'pProducts', 'pLocation', 'pRequirements', 'pOutcome', 'pTweaks', 'pScheduleOutcome'].forEach(id => {
+['pDesc', 'pPlan', 'pExecPlan', 'pProducts', 'pLocation', 'pRequirements', 'pOutcome', 'pTweaks'].forEach(id => {
   const el = document.getElementById(id);
   if (el) el.addEventListener('paste', plainTextPaste);
 });
@@ -9095,6 +10258,14 @@ document.getElementById('reviewContextToggle').addEventListener('click', () => {
   wrap.classList.toggle('open', reviewContextOpen);
   const chev = document.getElementById('reviewContextChev');
   if (chev) chev.textContent = reviewContextOpen ? '▾' : '▸';
+});
+
+document.getElementById('scheduleContextToggle').addEventListener('click', () => {
+  scheduleContextOpen = !scheduleContextOpen;
+  const wrap = document.getElementById('scheduleContext');
+  wrap.classList.toggle('open', scheduleContextOpen);
+  const chev = document.getElementById('scheduleContextChev');
+  if (chev) chev.textContent = scheduleContextOpen ? '▾' : '▸';
 });
 
 (function setupReviewMediaWell() {
@@ -9275,7 +10446,7 @@ PPC.mountSettings({
       });
     }));
 
-    PILLARS.forEach(p => {
+    allPillars().forEach(p => {
       panelBody.appendChild(makeColourSection(p.id, p.label + ' formats', body => {
         formatsForPillar(p.id).forEach(f => {
           body.appendChild(makeBrandColourRow(f.label || f.id, formatColor(f.id, p.id), hex => setFormatColor(p.id, f.id, hex)));
@@ -9297,6 +10468,33 @@ PPC.mountSettings({
 });
 document.addEventListener('click', () => closeColourPopovers());
 PPC.applyStoredDark();
+
+(function wireScheduleStaffAdd() {
+  const addBtn = document.getElementById('pScheduleStaffAddBtn');
+  const cancelBtn = document.getElementById('pScheduleStaffCancelBtn');
+  const input = document.getElementById('pScheduleStaffNew');
+  if (addBtn) addBtn.addEventListener('click', e => {
+    e.preventDefault();
+    confirmScheduleStaffAdd();
+  });
+  if (cancelBtn) cancelBtn.addEventListener('click', e => {
+    e.preventDefault();
+    hideScheduleStaffAddRow();
+    if (activeScheduleId) {
+      const card = scheduleCards().find(c => c.id === activeScheduleId);
+      if (card) renderScheduleAssigneeSelect(card);
+    }
+  });
+  if (input) input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      confirmScheduleStaffAdd();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      hideScheduleStaffAddRow();
+    }
+  });
+})();
 
 (function wireAnchorPanelControls() {
   ensureAnchorPanelSelects();
