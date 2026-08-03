@@ -130,6 +130,7 @@
     if (kind === 'exec') return 'Marketing → Execution';
     if (kind === 'review') return 'Marketing → Review';
     if (kind === 'schedule') return 'Marketing → Calendar';
+    if (kind === 'anchor') return 'Marketing → Events';
     return 'Marketing → Ideas';
   }
 
@@ -175,6 +176,7 @@
       if (!Array.isArray(data.sections.execution)) data.sections.execution = [];
       if (!Array.isArray(data.sections.review)) data.sections.review = [];
       if (!Array.isArray(data.sections.schedule)) data.sections.schedule = [];
+      if (!Array.isArray(data.anchors)) data.anchors = [];
 
       const kind = meta.kind || 'idea';
       if (kind === 'idea') {
@@ -187,6 +189,8 @@
         if (!data.sections.review.some(c => c.id === item.id)) data.sections.review.push(item);
       } else if (kind === 'schedule') {
         if (!data.sections.schedule.some(c => c.id === item.id)) data.sections.schedule.push(item);
+      } else if (kind === 'anchor') {
+        if (!data.anchors.some(a => a.id === item.id)) data.anchors.push(item);
       }
       await fetch('/api/marketing', {
         method: 'POST',

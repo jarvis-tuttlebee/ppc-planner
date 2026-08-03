@@ -3175,12 +3175,14 @@
 </div>
 
 <script src="/js/ppc-select.js?v=6"></script>
-<script src="/js/ppc-homebase.js"></script>
+<script src="/js/ppc-homebase.js?v=8"></script>
 <script>
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
-const APP_VERSION = '0.11.70';
+const APP_VERSION = '0.11.74';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
+let marketingHydrated = false;
+let marketingRev = 0;
 
 /** Default local hour for new calendar publish stamps (5pm). */
 const DEFAULT_PUBLISH_HOUR = 17;
@@ -4754,9 +4756,9 @@ function publishDaysSettings() {
 }
 
 function seedAnchorsIfEmpty() {
-  if (!anchors().length) {
-    DATA.anchors = DEFAULT_ANCHORS.map(a => ({ ...a }));
-  }
+  // Intentionally a no-op. DEFAULT_ANCHORS only seed via defaultData() on a
+  // brand-new board. Re-seeding here made deleted events (Ode/FDW) come back
+  // after every refresh / conflict reload.
 }
 
 function ideaCardSize(count) {
@@ -5048,7 +5050,21 @@ function scheduleSave() {
   saveTimer = setTimeout(saveData, 400);
 }
 
+function boardContentWeight(data) {
+  if (!data || typeof data !== 'object') return 0;
+  const schedule = (data.sections && Array.isArray(data.sections.schedule)) ? data.sections.schedule : [];
+  const anchors = Array.isArray(data.anchors) ? data.anchors : [];
+  const ideas = Array.isArray(data.ideas) ? data.ideas : [];
+  let filled = 0;
+  schedule.forEach(c => {
+    const t = String((c && c.body) || '').replace(/<[^>]+>/g, '').trim();
+    if (t) filled++;
+  });
+  return schedule.length * 10 + filled * 40 + anchors.length * 25 + ideas.length;
+}
+
 function saveData() {
+  if (!marketingHydrated) return;
   // Always persist the live in-memory layout — never prefer stale DATA.layoutPrefs
   // from an earlier cloud load (that was overwriting user resizes on every save).
   syncLayoutPrefsToData();
@@ -5061,6 +5077,7 @@ function saveData() {
     localStorage.setItem(MOOD_H_KEY, String(layoutPrefs.moodH));
   } catch (_) {}
   const payload = {
+    _rev: marketingRev || 0,
     ideas: DATA.ideas.map(i => ({ ...i })),
     sections: {
       preparation: prepCards().map(c => ({ ...c })),
@@ -5090,10 +5107,33 @@ function saveData() {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
+  }).then(async (res) => {
+    if (res.ok) {
+      try {
+        const info = await res.json();
+        if (info && info.rev != null) {
+          marketingRev = Number(info.rev) || marketingRev;
+          payload._rev = marketingRev;
+          try { localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); } catch (_) {}
+        }
+      } catch (_) {}
+      return;
+    }
+    if (res.status !== 409) return;
+    let info = null;
+    try { info = await res.json(); } catch (_) {}
+    console.warn('Marketing sync conflict', info);
+    if (typeof PPC !== 'undefined' && PPC.showToast) {
+      PPC.showToast(info && info.error === 'revision_conflict'
+        ? 'Calendar updated elsewhere — refreshing'
+        : 'Cloud blocked a wipe — refreshing');
+    }
+    if (typeof refreshData === 'function') refreshData();
   }).catch(err => console.warn('Marketing sync failed:', err));
 }
 
 function normalizeLoaded(data) {
+  marketingRev = Number(data && data._rev) || 0;
   // Customs first so migrate helpers can resolve custom pillars / formats.
   DATA.customPillars = parseCustomPillars(data);
   DATA.customFormats = parseCustomFormats(data);
@@ -5335,12 +5375,20 @@ async function initApp() {
   const localIdeas = (local && Array.isArray(local.ideas)) ? local.ideas : null;
   const cloudLooksLikeSamples = cloudIdeas && cloudIdeas.length > 0 &&
     cloudIdeas.every(i => String(i.id || '').startsWith('idea-sample-'));
+  const cloudScheduleLen = (cloudOk && data && data.sections && Array.isArray(data.sections.schedule))
+    ? data.sections.schedule.length : 0;
+  const localScheduleLen = (local && local.sections && Array.isArray(local.sections.schedule))
+    ? local.sections.schedule.length : 0;
+  const cloudWeight = boardContentWeight(cloudOk ? data : null);
+  const localWeight = boardContentWeight(local);
 
-  // Recovery: if cloud was wiped to samples but this browser still has the real board, restore it.
+  // Recovery: only push local → cloud when local is clearly richer (ideas + calendar),
+  // never when local would gut cloud schedule/events.
   if (localIdeas && localIdeas.length > 4 &&
-      (!cloudIdeas || !cloudIdeas.length || cloudLooksLikeSamples || localIdeas.length > cloudIdeas.length)) {
+      (!cloudIdeas || !cloudIdeas.length || cloudLooksLikeSamples || localWeight > cloudWeight + 20)) {
     const localHasReal = localIdeas.some(i => !String(i.id || '').startsWith('idea-sample-'));
-    if (localHasReal) {
+    const localWouldWipe = cloudScheduleLen >= 5 && localScheduleLen < Math.floor(cloudScheduleLen * 0.4);
+    if (localHasReal && !localWouldWipe) {
       data = local;
       shouldRestoreToCloud = true;
     }
@@ -5348,16 +5396,19 @@ async function initApp() {
     data = data;
   } else if (localIdeas && localIdeas.length) {
     data = local;
-    shouldRestoreToCloud = cloudOk;
+    shouldRestoreToCloud = cloudOk && !(cloudScheduleLen > localScheduleLen);
   }
 
   if (data && Array.isArray(data.ideas) && data.ideas.length) {
     DATA = normalizeLoaded(data);
+    marketingHydrated = true;
     if (shouldRestoreToCloud) saveData();
   } else if (cloudOk && data && Array.isArray(data.ideas)) {
     DATA = normalizeLoaded(data);
+    marketingHydrated = true;
   } else if (!cloudOk) {
     DATA = defaultData();
+    marketingHydrated = true;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         ideas: DATA.ideas.map(i => ({ ...i })),
@@ -5369,6 +5420,7 @@ async function initApp() {
     } catch (e) {}
   } else {
     DATA = defaultData();
+    marketingHydrated = true;
     saveData();
   }
 
@@ -5833,7 +5885,7 @@ async function removeScheduleCard(id) {
         source: 'marketing',
         item: JSON.parse(JSON.stringify(card)),
         restoreMeta: { kind: 'schedule', pillar: card.pillar, format: card.format },
-        label: stripHtml(card.body || '') || 'Scheduled content'
+        label: stripHtml(card.body || '') || card.needLabel || 'Scheduled content'
       });
     } catch (_) {}
   }
@@ -5841,6 +5893,112 @@ async function removeScheduleCard(id) {
   clearTimeout(saveTimer);
   saveData();
   renderBoard();
+}
+
+/** Soft-delete schedule cards to Archive before removing them from the board. */
+async function archiveAndRemoveScheduleCards(cards) {
+  const list = (cards || []).filter(Boolean);
+  if (!list.length) return 0;
+  const ids = new Set(list.map(c => c.id));
+  for (const card of list) {
+    try {
+      await PPC.archivePush({
+        source: 'marketing',
+        item: JSON.parse(JSON.stringify(card)),
+        restoreMeta: { kind: 'schedule', pillar: card.pillar, format: card.format },
+        label: stripHtml(card.body || '') || card.needLabel || 'Calendar Need'
+      });
+    } catch (_) {}
+  }
+  DATA.sections.schedule = scheduleCards().filter(c => !ids.has(c.id));
+  return list.length;
+}
+
+async function clearEmptyAutoSlotsForAnchor(anchorId) {
+  if (!anchorId) return 0;
+  const doomed = [];
+  scheduleCards().forEach(c => {
+    if (c.anchorId !== anchorId) return;
+    if (c.slotMoved) return;
+    if (!(c.leadUp || isNeedContentCard(c))) return;
+    if (isNeedContentCard(c) && !stripHtml(c.body || '').trim()) doomed.push(c);
+    else if (c.leadUp) c.leadUp = false;
+  });
+  return archiveAndRemoveScheduleCards(doomed);
+}
+
+function isEmptyAutoNeed(c) {
+  return !!(c && c.leadUp && isNeedContentCard(c) && !stripHtml(c.body || '').trim() && !c.slotMoved);
+}
+
+async function pruneStaleAutoSlots(anchor) {
+  if (!anchor) return 0;
+  const quotas = normalizeContentQuotas(anchor.contentQuotas);
+  const quotaMap = {};
+  quotas.forEach(q => { quotaMap[quotaKey(q.pillar, q.format)] = q.count; });
+  const doomed = [];
+  const mark = (c) => {
+    if (c && !doomed.includes(c)) doomed.push(c);
+  };
+
+  // Drop empty auto Needs whose format is no longer in quotas
+  scheduleCards().forEach(c => {
+    if (c.anchorId !== anchor.id) return;
+    if (!isEmptyAutoNeed(c) && !(isNeedContentCard(c) && !stripHtml(c.body || '').trim() && !c.scheduledAt && !c.slotMoved)) return;
+    const emptyUndated = isNeedContentCard(c) && !stripHtml(c.body || '').trim() && !c.scheduledAt && !c.slotMoved;
+    const emptyAuto = isEmptyAutoNeed(c) || emptyUndated;
+    if (!emptyAuto) return;
+    const key = quotaKey(c.pillar || 'organic', c.format || '');
+    if (quotaMap[key] == null) mark(c);
+  });
+
+  // Trim excess empty Needs per format (prefer removing undated first)
+  quotas.forEach(q => {
+    const empties = scheduleCards().filter(c => {
+      if (doomed.includes(c)) return false;
+      if (c.anchorId !== anchor.id) return false;
+      if ((c.pillar || 'organic') !== q.pillar || c.format !== q.format) return false;
+      if (stripHtml(c.body || '').trim()) return false;
+      if (c.slotMoved && c.scheduledAt) return false;
+      return isNeedContentCard(c) || c.leadUp || !c.scheduledAt;
+    });
+    let keptFilled = 0;
+    scheduleCards().forEach(c => {
+      if (doomed.includes(c)) return;
+      if (c.anchorId !== anchor.id) return;
+      if ((c.pillar || 'organic') !== q.pillar || c.format !== q.format) return;
+      if (stripHtml(c.body || '').trim()) keptFilled++;
+      else if (c.slotMoved && c.scheduledAt) keptFilled++;
+    });
+    const maxEmpty = Math.max(0, q.count - keptFilled);
+    empties.sort((a, b) => {
+      const au = a.scheduledAt ? 1 : 0;
+      const bu = b.scheduledAt ? 1 : 0;
+      if (au !== bu) return au - bu;
+      return String(a.scheduledAt || '').localeCompare(String(b.scheduledAt || ''));
+    });
+    const trimmable = empties.filter(c => !(c.slotMoved && c.scheduledAt));
+    if (trimmable.length <= maxEmpty) return;
+    trimmable.slice(maxEmpty).forEach(mark);
+  });
+  return archiveAndRemoveScheduleCards(doomed);
+}
+
+async function clearLeadUpNeedSlots(anchor) {
+  if (!anchor) return 0;
+  const doomed = [];
+  scheduleCards().forEach(c => {
+    if (c.anchorId !== anchor.id) return;
+    const isLinkedNeed = isNeedContentCard(c) && !stripHtml(c.body || '').trim();
+    // Empty Needs clear when Content schedule is turned off — dated moved slots stay
+    // unless they were auto lead-up empties (leadUp flag). Never delete solely for slotMoved.
+    if (isLinkedNeed && (!!c.leadUp || !c.scheduledAt)) {
+      doomed.push(c);
+      return;
+    }
+    if (c.leadUp) c.leadUp = false;
+  });
+  return archiveAndRemoveScheduleCards(doomed);
 }
 
 function movePrepCard(id, pillar, format) {
@@ -7127,109 +7285,6 @@ function computeLeadUpDates(anchor) {
   return all;
 }
 
-function clearEmptyAutoSlotsForAnchor(anchorId) {
-  if (!anchorId) return 0;
-  const list = scheduleCards();
-  let removed = 0;
-  for (let i = list.length - 1; i >= 0; i--) {
-    const c = list[i];
-    if (c.anchorId !== anchorId) continue;
-    if (c.slotMoved) continue;
-    if (!(c.leadUp || isNeedContentCard(c))) continue;
-    if (isNeedContentCard(c) && !stripHtml(c.body || '').trim()) {
-      list.splice(i, 1);
-      removed++;
-    } else if (c.leadUp) {
-      c.leadUp = false;
-    }
-  }
-  return removed;
-}
-
-function isEmptyAutoNeed(c) {
-  return !!(c && c.leadUp && isNeedContentCard(c) && !stripHtml(c.body || '').trim() && !c.slotMoved);
-}
-
-function pruneStaleAutoSlots(anchor) {
-  if (!anchor) return 0;
-  const quotas = normalizeContentQuotas(anchor.contentQuotas);
-  const quotaMap = {};
-  quotas.forEach(q => { quotaMap[quotaKey(q.pillar, q.format)] = q.count; });
-  const list = scheduleCards();
-  let removed = 0;
-
-  // Drop empty auto Needs whose format is no longer in quotas
-  for (let i = list.length - 1; i >= 0; i--) {
-    const c = list[i];
-    if (c.anchorId !== anchor.id) continue;
-    if (!isEmptyAutoNeed(c) && !(isNeedContentCard(c) && !stripHtml(c.body || '').trim() && !c.scheduledAt && !c.slotMoved)) continue;
-    const emptyUndated = isNeedContentCard(c) && !stripHtml(c.body || '').trim() && !c.scheduledAt && !c.slotMoved;
-    const emptyAuto = isEmptyAutoNeed(c) || emptyUndated;
-    if (!emptyAuto) continue;
-    const key = quotaKey(c.pillar || 'organic', c.format || '');
-    if (quotaMap[key] == null) {
-      list.splice(i, 1);
-      removed++;
-    }
-  }
-
-  // Trim excess empty Needs per format (prefer removing undated first)
-  quotas.forEach(q => {
-    const empties = scheduleCards().filter(c => {
-      if (c.anchorId !== anchor.id) return false;
-      if ((c.pillar || 'organic') !== q.pillar || c.format !== q.format) return false;
-      if (stripHtml(c.body || '').trim()) return false;
-      if (c.slotMoved && c.scheduledAt) return false; // keep user-placed dated empties
-      return isNeedContentCard(c) || c.leadUp || !c.scheduledAt;
-    });
-    let keptFilled = 0;
-    scheduleCards().forEach(c => {
-      if (c.anchorId !== anchor.id) return;
-      if ((c.pillar || 'organic') !== q.pillar || c.format !== q.format) return;
-      if (stripHtml(c.body || '').trim()) keptFilled++;
-      else if (c.slotMoved && c.scheduledAt) keptFilled++; // count placed empties toward quota
-    });
-    const maxEmpty = Math.max(0, q.count - keptFilled);
-    // Sort: undated first (trim these), then dated unmoved
-    empties.sort((a, b) => {
-      const au = a.scheduledAt ? 1 : 0;
-      const bu = b.scheduledAt ? 1 : 0;
-      if (au !== bu) return au - bu;
-      return String(a.scheduledAt || '').localeCompare(String(b.scheduledAt || ''));
-    });
-    // Only trim empties that aren't user-moved dated
-    const trimmable = empties.filter(c => !(c.slotMoved && c.scheduledAt));
-    if (trimmable.length <= maxEmpty) return;
-    trimmable.slice(maxEmpty).forEach(card => {
-      const idx = scheduleCards().indexOf(card);
-      if (idx >= 0) {
-        scheduleCards().splice(idx, 1);
-        removed++;
-      }
-    });
-  });
-  return removed;
-}
-
-function clearLeadUpNeedSlots(anchor) {
-  if (!anchor) return 0;
-  const list = scheduleCards();
-  let removed = 0;
-  for (let i = list.length - 1; i >= 0; i--) {
-    const c = list[i];
-    if (c.anchorId !== anchor.id) continue;
-    const isLinkedNeed = isNeedContentCard(c) && !stripHtml(c.body || '').trim();
-    // Empty Needs (dated or unscheduled) clear when Content schedule is turned off.
-    if (isLinkedNeed && (!!c.leadUp || !c.scheduledAt || c.slotMoved)) {
-      list.splice(i, 1);
-      removed++;
-      continue;
-    }
-    if (c.leadUp) c.leadUp = false;
-  }
-  return removed;
-}
-
 function countAnchorFormatSlots(anchorId, pillar, format) {
   let n = 0;
   scheduleCards().forEach(c => {
@@ -8126,7 +8181,7 @@ function closeAnchorPanel() {
   document.getElementById('anchorPanel').classList.remove('open');
 }
 
-function saveAnchorPanel() {
+async function saveAnchorPanel() {
   const title = (document.getElementById('anchorTitle').value || '').trim();
   if (!title) {
     PPC.showToast('Name is required');
@@ -8225,10 +8280,10 @@ function saveAnchorPanel() {
   let created = 0;
   let cleared = 0;
   if (leadUpEnabled) {
-    cleared = pruneStaleAutoSlots(anchor);
+    cleared = await pruneStaleAutoSlots(anchor);
     created = placeLeadUpNeedSlots(anchor);
   } else {
-    cleared = clearLeadUpNeedSlots(anchor);
+    cleared = await clearLeadUpNeedSlots(anchor);
   }
 
   clearTimeout(saveTimer);
@@ -8250,7 +8305,7 @@ function saveAnchorPanel() {
   }
 }
 
-function deleteAnchorPanel() {
+async function deleteAnchorPanel() {
   if (anchorPanelIsNew || !activeAnchorPanelId) return;
   const anchor = anchors().find(a => a.id === activeAnchorPanelId);
   if (!anchor) return;
@@ -8259,7 +8314,15 @@ function deleteAnchorPanel() {
     return;
   }
   const id = anchor.id;
-  clearEmptyAutoSlotsForAnchor(id);
+  try {
+    await PPC.archivePush({
+      source: 'marketing',
+      item: JSON.parse(JSON.stringify(anchor)),
+      restoreMeta: { kind: 'anchor' },
+      label: name || 'Event'
+    });
+  } catch (_) {}
+  await clearEmptyAutoSlotsForAnchor(id);
   scheduleCards().forEach(c => {
     if (c.anchorId !== id) return;
     c.anchorId = '';
@@ -8270,7 +8333,7 @@ function deleteAnchorPanel() {
   saveData();
   closeAnchorPanel();
   renderBoard();
-  PPC.showToast('Event deleted');
+  PPC.showToast('Event deleted · recoverable from Archive');
 }
 
 function escapeHtml(text) {

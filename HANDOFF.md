@@ -5,6 +5,48 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-03 — Stop deleted events from resurrecting (Cursor)
+
+### What was built or decided
+- Root cause of “deleted events come back”: `seedAnchorsIfEmpty()` re-injected
+  Ode + FDW whenever `anchors` was empty (refresh / conflict reload / init).
+- Now a no-op; defaults only via `defaultData()` for brand-new boards.
+- Marketing `0.11.74`. Cleared live calendar + events so rebuild can start clean
+  (ideas kept; deleted items in Archive).
+
+### Why Obsidian broke the board
+- Obsidian’s webview kept **old localStorage** for the same origin. Pasting the
+  new URL still ran recovery that preferred the fat local copy and overwrote cloud.
+
+### Deployed
+- Version ID: `0102f5b4-6398-4a28-8231-59525ec85791` (Marketing 0.11.74)
+
+### Open / next
+1. Hard-refresh Marketing (close Obsidian embed / old tabs). Confirm v0.11.74.
+2. Rebuild events/cards on empty calendar.
+
+---
+
+## 2026-08-03 — Marketing snapshots + never silent-wipe (Cursor)
+
+### What was built or decided
+- Marketing `0.11.73` + Worker:
+  - **Revision lock** (`_rev`): stale tabs can't overwrite newer cloud boards (409).
+  - **Reject thin/gutting saves** (empty schedule, big card drops, losing filled cards).
+  - **Cloud snapshots** on save (~15m / always on big drops). List/restore APIs.
+  - Archive-first prune/event delete; client hydrate gate + conflict refresh.
+  - Calendar baseline: 2 filled + Ode 6 / FDW 8 / Discover 12 Needs + 4 events.
+
+### Deployed
+- Version ID: `b4878399-70b7-4cf2-b143-6eb14fdbe96d` (Marketing 0.11.73)
+
+### Open / next
+1. **Hard-refresh** live `/marketing` (close extra tabs) — must show **v0.11.73**.
+2. Smoke: edit event, drag Need, Discover status Need→Posted.
+3. Optional Settings UI for snapshot restore.
+
+---
+
 ## 2026-08-03 — Deploy Marketing 0.11.70 (Cursor)
 
 ### Live
