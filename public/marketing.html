@@ -1782,7 +1782,7 @@
       letter-spacing: 0.04em;
       text-transform: uppercase;
       color: #9a958d;
-      margin-right: 4px;
+      margin-right: 2px;
     }
     .cal-slot-flag {
       display: inline-block;
@@ -2612,7 +2612,7 @@
 <script>
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
-const APP_VERSION = '0.11.19';
+const APP_VERSION = '0.11.20';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 
 const VIEW_MODE_KEY = 'ppc-marketing-view-mode';
@@ -3290,6 +3290,7 @@ function migrateSchedule(card) {
   }
   if (card.leadUp == null) card.leadUp = false;
   if (card.slotMoved == null) card.slotMoved = false;
+  if (card.needLabel == null) card.needLabel = '';
   return card;
 }
 
@@ -5632,6 +5633,7 @@ function placeLeadUpNeedSlots(anchor) {
       pillar: 'organic',
       format: anchor.slotFormat || 'ig-post',
       needContent: true,
+      needLabel: '',
       leadUp: true,
       slotMoved: false,
       publishStatus: 'unscheduled',
@@ -5699,6 +5701,7 @@ function ensureLeadUpSlotOnDay(anchor, dayDate) {
     pillar: 'organic',
     format: anchor.slotFormat || 'ig-post',
     needContent: true,
+    needLabel: '',
     leadUp: true,
     slotMoved: false,
     publishStatus: 'unscheduled',
@@ -6745,6 +6748,7 @@ function addNeedContentSlot(format, dayDate) {
     pillar: 'organic',
     format: format || 'ig-post',
     needContent: true,
+    needLabel: '',
     publishStatus: 'unscheduled',
     scheduledAt: iso,
     scheduleAt: iso,
@@ -6835,17 +6839,18 @@ function renderCalSlot(card) {
   }
 
   if (emptyNeed) {
-    // Minimal one-liner. Format only when not default IG post.
-    if (card.format && card.format !== 'ig-post') {
+    // Glance: format (or custom needLabel) + event name.
+    const prefix = String(card.needLabel || '').trim() || formatShortLabel(card.format) || '';
+    if (prefix) {
       const fmt = document.createElement('span');
       fmt.className = 'cal-slot-fmt';
-      fmt.textContent = formatShortLabel(card.format);
+      fmt.textContent = prefix + ' ·';
       el.appendChild(fmt);
     }
     const titleEl = document.createElement('span');
     titleEl.className = 'cal-slot-title';
     titleEl.textContent = title;
-    titleEl.title = title;
+    titleEl.title = (prefix ? prefix + ' · ' : '') + title;
     attachEventTitle(titleEl);
     el.appendChild(titleEl);
   } else {
@@ -7235,6 +7240,36 @@ function buildPrepPanelProps(card) {
     colored: false
   }));
   wrap.appendChild(formatRow);
+}
+
+/** Short glance override for empty Need cards (replaces format prefix on calendar). */
+function buildScheduleNeedLabelProp(card) {
+  const wrap = document.getElementById('panelProps');
+  if (!wrap) return;
+  const existing = document.getElementById('pNeedLabelRow');
+  if (existing) existing.remove();
+  const emptyNeed = isNeedContentCard(card) && !stripHtml(card.body || '').trim();
+  if (!emptyNeed) return;
+  const row = document.createElement('div');
+  row.className = 'prop-row';
+  row.id = 'pNeedLabelRow';
+  const value = document.createElement('span');
+  value.className = 'prop-value';
+  const input = document.createElement('input');
+  input.className = 'prop-select';
+  input.id = 'pNeedLabel';
+  input.type = 'text';
+  input.maxLength = 24;
+  input.placeholder = 'IG, Reel, BTS…';
+  input.value = String(card.needLabel || '').trim();
+  input.setAttribute('aria-label', 'Slot label');
+  value.appendChild(input);
+  const label = document.createElement('span');
+  label.className = 'prop-label';
+  label.textContent = 'Slot label';
+  row.appendChild(label);
+  row.appendChild(value);
+  wrap.appendChild(row);
 }
 
 function updateIdeaSaveBtn() {
@@ -7720,6 +7755,7 @@ function openSchedulePanel(scheduleId) {
   setPanelModeClass('schedule');
   setDescSectionMode('schedule');
   buildPrepPanelProps(card);
+  buildScheduleNeedLabelProp(card);
   buildScheduleActions(card);
   hideStageExtraFields();
   document.getElementById('scheduleExtraFields').style.display = 'block';
@@ -7735,7 +7771,8 @@ function openSchedulePanel(scheduleId) {
   } else {
     thumb.textContent = 'No media';
   }
-  document.getElementById('pScheduleIdeaText').textContent = stripHtml(card.body || '') || (isNeedContentCard(card) ? 'Need content — fill from Ideas / Prep' : 'Untitled content');
+  const emptyNeed = isNeedContentCard(card) && !stripHtml(card.body || '').trim();
+  document.getElementById('pScheduleIdeaText').textContent = stripHtml(card.body || '') || (emptyNeed ? 'Need content — fill from Ideas / Prep' : 'Untitled content');
   document.getElementById('pScheduleEditAt').value = toDateTimeLocalValue(card.scheduledAt || card.scheduleAt);
   const statusWrap = document.getElementById('pScheduleStatusWrap');
   statusWrap.innerHTML = '';
@@ -7877,6 +7914,12 @@ function savePanel(silent) {
     card.format = format || defaultFormatForPillar(pillar);
     card.body = sanitizeHtml(document.getElementById('pDesc').innerHTML).trim();
     card.needContent = !stripHtml(card.body || '').trim();
+    const needLabelEl = document.getElementById('pNeedLabel');
+    if (needLabelEl) {
+      card.needLabel = (needLabelEl.value || '').trim().slice(0, 24);
+    } else if (card.needLabel == null) {
+      card.needLabel = '';
+    }
     const st = document.getElementById('pScheduleEditAt').value;
     card.scheduledAt = st ? new Date(st).toISOString() : '';
     card.scheduleAt = card.scheduledAt;

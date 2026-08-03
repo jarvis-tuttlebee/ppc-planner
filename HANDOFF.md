@@ -5,6 +5,24 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-03 — Need card glance labels (Cursor)
+
+### What was built or decided
+- Marketing `0.11.20`: Empty Need cards always show a short glance prefix —
+  format (`IG` / `Story` / `Pin` / `Reel`) or optional `needLabel` override —
+  then ` · ` + event name. Click card → schedule panel: Format + **Slot label**
+  (max 24 chars). Create/migrate paths set `needLabel: ''`.
+
+### Deployed
+- Local only — deploy when asked.
+
+### Open / next
+1. Hard-refresh `/marketing` — empty Ode slots read `IG · Ode…`; open a slot,
+   set Slot label to `Reel` or `BTS`, Save; confirm card updates.
+2. Commit/push / deploy when asked.
+
+---
+
 ## 2026-08-03 — Twilight Indigo trial removal (Cursor)
 
 ### What was built or decided
