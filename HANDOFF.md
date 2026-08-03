@@ -5,6 +5,32 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-03 — Live board backup → local preview (Cursor)
+
+### What was built or decided
+- Pulled full live KV dumps into `backups/live-20260803T124802Z/` (also
+  pointed by `backups/LATEST`):
+  - Marketing rev **111**: 61 schedule / 4 anchors / 22 ideas (~2.9 MB)
+  - Planner: 65 events · Kanban: 38 cards · Archive: 1 item
+  - Snapshot meta: 8 in-KV marketing snapshots (full snap bodies stay in live KV)
+- Seeded **local-only** wrangler KV (`--local`, never `--remote`). Verified
+  local preview card IDs match live 1:1.
+- Scripts: `npm run backup:pull` · `npm run backup:seed-local` ·
+  `npm run dev:local` (see `backups/README.md`).
+- Branch: `cursor/live-data-backup-95d6` (from xf056 tip).
+
+### Deployed
+- No — backup/tooling only. Live untouched.
+
+### Open / next
+1. On PC: `git pull` this branch, `npm i`, `npm run backup:seed-local`,
+   `npm run dev:local` → http://127.0.0.1:8787/marketing
+2. Re-run `npm run backup:pull` after big board edits.
+3. Worst-case live restore: force-POST dump (docs in `backups/README.md`) or
+   `POST /api/marketing/restore` with a snapshotId.
+
+---
+
 ## 2026-08-03 — EOD (Cursor)
 
 ### Live

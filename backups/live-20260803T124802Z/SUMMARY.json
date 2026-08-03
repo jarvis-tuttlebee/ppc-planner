@@ -1,0 +1,46 @@
+{
+  "takenAt": "2026-08-03T12:48:04.120Z",
+  "source": "https://ppc-homebase.pressplaycollective.workers.dev",
+  "files": {
+    "archive.json": {
+      "bytes": 731,
+      "items": 1
+    },
+    "kanban.json": {
+      "bytes": 14321,
+      "cards": 38
+    },
+    "marketing-snapshots-meta.json": {
+      "bytes": 883,
+      "snapshots": 8,
+      "latest": {
+        "id": "snap-msd2z63qnbi5",
+        "at": "2026-08-03T10:22:55.910Z",
+        "scheduleCount": 20,
+        "anchorCount": 2,
+        "ideaCount": 22
+      }
+    },
+    "marketing.json": {
+      "bytes": 3000267,
+      "rev": 111,
+      "savedAt": "2026-08-03T12:44:53.018Z",
+      "ideas": 22,
+      "anchors": 4,
+      "schedule": 61,
+      "preparation": 0,
+      "scheduleFilled": 2
+    },
+    "planner-main.json": {
+      "bytes": 23407,
+      "topKeys": [
+        "cats",
+        "events",
+        "settings",
+        "monthCatLabels",
+        "weekScheme"
+      ],
+      "events": 65
+    }
+  }
+}
