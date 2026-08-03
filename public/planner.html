@@ -189,9 +189,13 @@
     .pill-del:hover { background: #2C2C2C; color: #F7F5F2; }
     body.dark .pill-del { color: inherit; background: rgba(255,255,255,0.12); }
 
-    /* REVENUE SECTION */
+    /* REVENUE SECTION — hidden until first calendar render (avoids load flash) */
     .rev-section {
       padding: 28px 32px 36px;
+      display: none;
+    }
+    .rev-section.is-ready {
+      display: block;
     }
     .rev-title {
       font-size: 10px;
@@ -956,7 +960,39 @@
       color: #6B7A8D;
       font-weight: 400;
       vertical-align: top;
-      white-space: nowrap;
+      white-space: normal;
+    }
+    .v-cat-label-btn {
+      display: inline;
+      background: none;
+      border: none;
+      padding: 0;
+      margin: 0;
+      font: inherit;
+      letter-spacing: inherit;
+      text-transform: inherit;
+      color: inherit;
+      cursor: text;
+      text-align: left;
+      border-bottom: 1px dashed transparent;
+      max-width: 140px;
+    }
+    .v-cat-label-btn:hover {
+      color: #2C2C2C;
+      border-bottom-color: #c8c4be;
+    }
+    .v-cat-label-input {
+      width: 140px;
+      max-width: 100%;
+      font: inherit;
+      letter-spacing: inherit;
+      text-transform: none;
+      color: #2C2C2C;
+      background: #fff;
+      border: 1px solid #c8c4be;
+      border-radius: 3px;
+      padding: 2px 4px;
+      outline: none;
     }
     .v-cat-dot {
       display: inline-block;
@@ -1062,6 +1098,12 @@
     body.dark .month-section--current .month-header { box-shadow: inset 3px 0 0 #4E6E6C; }
     body.dark .v-table tr + tr .v-cat-label, body.dark .v-table tr + tr .v-evt-cell { border-top-color: #252e45; }
     body.dark .v-cat-label { color: #c8c4be; }
+    body.dark .v-cat-label-btn:hover { color: #e0ddd8; border-bottom-color: #4a5570; }
+    body.dark .v-cat-label-input {
+      background: #1a2236;
+      border-color: #2e3a55;
+      color: #e0ddd8;
+    }
     body.dark .week-label { background: #141d2e; border-bottom-color: #252e45; color: #c8c4be; }
     body.dark .week-label:hover { background: #19223a; }
     body.dark .week-label.week-unassigned { color: #7a7570; }
@@ -1189,7 +1231,9 @@
       <div class="prop-row">
         <span class="prop-label">Category</span>
         <span class="prop-value">
-          <span class="prop-badge" id="pCatBadge"></span>
+          <div class="prop-status-wrap">
+            <select class="prop-status-select" id="pCat"></select>
+          </div>
         </span>
       </div>
       <div class="prop-row">
@@ -1384,13 +1428,16 @@ const REVENUE = [1000,1800,1500,5000,3000,3500,2000,5500,6500,8000,8000,8000];
 // ─── PERSISTENCE (localStorage + Cloudflare Worker sync) ─────────────────────
 const STORAGE_KEY = 'ppc-planner-data';
 const SYNC_URL = '/api/data';
-const APP_VERSION = '2.10.4';
+const APP_VERSION = '2.10.7';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 
 let editMode = true;
 document.body.classList.add('edit-mode');
 
 let SETTINGS = { kanbanAutoAssign: true };
+
+// Per-month overview category label overrides: { [mi]: { [catId]: label } }
+let MONTH_CAT_LABELS = {};
 
 // Bumped when the meaning of an event's `week` number changes. Scheme 2 = real
 // Monday-start calendar weeks (scheme 1 was day-number buckets).
@@ -1401,6 +1448,7 @@ function saveToFirestore() {
     cats:   CATS.map(c => ({ ...c })),
     events: EVENTS.map(e => ({ ...e })),
     settings: { ...SETTINGS },
+    monthCatLabels: JSON.parse(JSON.stringify(MONTH_CAT_LABELS)),
     weekScheme: WEEK_SCHEME
   };
   try {
@@ -1439,6 +1487,13 @@ async function initApp() {
     if (data.cats   && data.cats.length)   { CATS.length   = 0; data.cats.forEach(c   => CATS.push(c));   }
     if (data.events && data.events.length) { EVENTS.length = 0; data.events.forEach(e => EVENTS.push(e)); }
     if (data.settings) Object.assign(SETTINGS, data.settings);
+    if (data.monthCatLabels && typeof data.monthCatLabels === 'object') {
+      MONTH_CAT_LABELS = {};
+      Object.keys(data.monthCatLabels).forEach(k => {
+        const row = data.monthCatLabels[k];
+        if (row && typeof row === 'object') MONTH_CAT_LABELS[k] = { ...row };
+      });
+    }
     let dirty = migrateCatColors(CATS);
     // Convert week numbers from the old day-bucket scheme, preserving the real
     // calendar date each event was already sitting on.
@@ -1453,6 +1508,103 @@ async function initApp() {
   // events back), so both boards show the same item on the same day.
   if (await syncDateMirrors()) saveToFirestore();   // also refreshes localStorage
   renderVertical();
+  revealRevenueChart();
+}
+
+function catLabelForMonth(cat, mi) {
+  const map = MONTH_CAT_LABELS[String(mi)];
+  if (map && map[cat.id]) return map[cat.id];
+  return cat.label;
+}
+
+function setCatLabelForMonth(catId, mi, label) {
+  const key = String(mi);
+  const trimmed = (label || '').trim();
+  const base = (CATS.find(c => c.id === catId) || {}).label || '';
+  if (!MONTH_CAT_LABELS[key]) MONTH_CAT_LABELS[key] = {};
+  if (!trimmed || trimmed.toLowerCase() === base.toLowerCase()) {
+    delete MONTH_CAT_LABELS[key][catId];
+    if (!Object.keys(MONTH_CAT_LABELS[key]).length) delete MONTH_CAT_LABELS[key];
+  } else {
+    MONTH_CAT_LABELS[key][catId] = trimmed;
+  }
+}
+
+let activeOverviewCatRename = null;
+
+function startOverviewCatRename(catCell, cat, mi, labelBtn) {
+  if (activeOverviewCatRename) {
+    try { activeOverviewCatRename.finish(true); } catch (_) {}
+  }
+  if (catCell.querySelector('.v-cat-label-input')) return;
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'v-cat-label-input';
+  input.value = catLabelForMonth(cat, mi);
+  input.title = 'Enter to save · Esc to cancel · clear to restore default';
+  input.setAttribute('aria-label', 'Rename category for this month');
+  labelBtn.replaceWith(input);
+  input.focus();
+  input.select();
+
+  let done = false;
+  const finish = (save) => {
+    if (done) return;
+    done = true;
+    if (activeOverviewCatRename && activeOverviewCatRename.input === input) {
+      activeOverviewCatRename = null;
+    }
+    try {
+      if (save) {
+        setCatLabelForMonth(cat.id, mi, input.value);
+        saveToFirestore();
+      }
+    } catch (err) {
+      console.warn('Category rename save failed:', err);
+    }
+    try {
+      refreshMonthContent(mi);
+    } catch (err) {
+      console.warn('Category rename refresh failed:', err);
+      if (input.parentNode) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'v-cat-label-btn';
+        btn.textContent = catLabelForMonth(cat, mi);
+        btn.title = 'Click to rename for ' + (MONTHS[mi] || 'this month');
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          startOverviewCatRename(catCell, cat, mi, btn);
+        });
+        input.replaceWith(btn);
+      }
+    }
+  };
+
+  activeOverviewCatRename = { input, finish };
+
+  const onEnterOrEsc = (e) => {
+    const isEnter = e.key === 'Enter' || e.code === 'Enter' || e.keyCode === 13;
+    const isEsc = e.key === 'Escape' || e.code === 'Escape' || e.keyCode === 27;
+    if (!isEnter && !isEsc) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+    finish(isEnter);
+  };
+
+  input.addEventListener('keydown', onEnterOrEsc);
+  input.addEventListener('keyup', onEnterOrEsc);
+  input.addEventListener('blur', () => finish(true));
+  input.addEventListener('click', e => e.stopPropagation());
+  input.addEventListener('mousedown', e => e.stopPropagation());
+}
+
+function revealRevenueChart() {
+  const sec = document.querySelector('.rev-section');
+  if (sec) sec.classList.add('is-ready');
+  drawChart();
 }
 
 
@@ -1594,7 +1746,17 @@ function renderMonthOverview(container, mi) {
     dot.className = 'v-cat-dot';
     dot.style.background = cat.bg;
     catCell.appendChild(dot);
-    catCell.appendChild(document.createTextNode(cat.label));
+
+    const labelBtn = document.createElement('button');
+    labelBtn.type = 'button';
+    labelBtn.className = 'v-cat-label-btn';
+    labelBtn.textContent = catLabelForMonth(cat, mi);
+    labelBtn.title = 'Click to rename for ' + (MONTHS[mi] || 'this month');
+    labelBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      startOverviewCatRename(catCell, cat, mi, labelBtn);
+    });
+    catCell.appendChild(labelBtn);
     tr.appendChild(catCell);
 
     const evtCell = document.createElement('td');
@@ -2743,10 +2905,34 @@ function initPanelSelects() {
     colorMap: PLANNER_STATUS_COLORS,
     onChange: updateStatusColor
   });
+  replaceNativeSelect(document.getElementById('pCat'), {
+    bare: true,
+    colored: true,
+    colorMap: {},
+    onChange: onPanelCatChange
+  });
   replaceNativeSelect(document.getElementById('pProject'), { bare: true, colored: false });
   replaceNativeSelect(document.getElementById('pWeek'), { bare: true, colored: false });
 }
 initPanelSelects();
+
+function onPanelCatChange() {
+  const id = (document.getElementById('pCat') || {}).value;
+  const cat = CATS.find(c => c.id === id);
+  if (!cat) return;
+  activeCat = cat;
+  document.getElementById('panelStrip').style.background = cat.bg;
+}
+
+function fillCatSelect(selectedId) {
+  const colorMap = {};
+  CATS.forEach(c => { colorMap[c.id] = c.bg; });
+  updatePpcSelect('pCat', {
+    options: CATS.map(c => ({ id: c.id, label: c.label, color: c.bg })),
+    value: selectedId || (CATS[0] && CATS[0].id) || '',
+    colored: true
+  });
+}
 
 function updateStatusColor() {
   const s = document.getElementById('pStatus').value;
@@ -2844,9 +3030,7 @@ function openNewEventPanel(cat, monthIdx, weekNum, dayKey = null) {
 
   document.getElementById('panelStrip').style.background = cat.bg;
   document.getElementById('pTitle').textContent = '';
-  document.getElementById('pCatBadge').textContent = cat.label;
-  document.getElementById('pCatBadge').style.background = cat.bg + '22';
-  document.getElementById('pCatBadge').style.color = accentTextColor(cat.bg);
+  fillCatSelect(cat.id);
   setPpcSelectValue('pStatus', 'planned');
   document.getElementById('pDate').value = MONTHS[monthIdx];
   fillWeekSelect(monthIdx, activeNewWeek);
@@ -2911,9 +3095,7 @@ function openPanel(evt, cat) {
 
   document.getElementById('panelStrip').style.background = cat.bg;
   document.getElementById('pTitle').textContent = evt.title;
-  document.getElementById('pCatBadge').textContent = cat.label;
-  document.getElementById('pCatBadge').style.background = cat.bg + '22';
-  document.getElementById('pCatBadge').style.color = accentTextColor(cat.bg);
+  fillCatSelect(cat.id);
   setPpcSelectValue('pStatus', evt.status || 'planned');
   document.getElementById('pDate').value = evt.date || '';
   fillWeekSelect(evt.m, evt.week);
@@ -2941,6 +3123,7 @@ async function savePanel() {
     const weekEl = document.getElementById('pWeek');
     const dayEl = document.getElementById('pDay');
     const statusEl = document.getElementById('pStatus');
+    const catEl = document.getElementById('pCat');
     const projectEl = document.getElementById('pProject');
     const dateEl = document.getElementById('pExactDate');
     const descEl = document.getElementById('pDesc');
@@ -2954,6 +3137,7 @@ async function savePanel() {
     const exactDate = (dateEl && dateEl.value) || null;
     const projectId = (projectEl && projectEl.value) || null;
     const status = (statusEl && statusEl.value) || 'planned';
+    const catId = (catEl && catEl.value) || (activeCat && activeCat.id) || (CATS[0] && CATS[0].id);
     const body = (descEl && descEl.textContent || '').trim();
     const tasks = readSubtasks();
 
@@ -2972,7 +3156,7 @@ async function savePanel() {
     if (!activeEvt) {
       const created = {
         id:     'e' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4),
-        cat:    activeCat.id,
+        cat:    catId,
         m:      monthIdx,
         week:   week,
         day:    dayVal,
@@ -2988,6 +3172,7 @@ async function savePanel() {
       savedEvt = created;
     } else {
       activeEvt.title  = title;
+      activeEvt.cat    = catId;
       activeEvt.m      = monthIdx;
       activeEvt.week   = week;
       activeEvt.day    = dayVal;
@@ -3170,8 +3355,9 @@ PPC.mountSettings({
 });
 darkMode = PPC.applyStoredDark();
 initApp();
-drawChart();
-window.addEventListener('resize', drawChart);
+window.addEventListener('resize', () => {
+  if (document.querySelector('.rev-section.is-ready')) drawChart();
+});
 </script>
 </body>
 </html>

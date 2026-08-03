@@ -8,30 +8,272 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 ## 2026-07-31 — EOD (Cursor)
 
 ### What shipped today
+- **Live deploy** `b0dfcc55-…` → https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.6`**:
+  - Cadence / through-dates Need slots (start→end) + clearer density UI;
+    format picker (Pins Mon/Wed/Fri); Type **Cadence** + **+ Add type…**;
+    event-panel `ppc-select` lift menus; lead-up off clears empty slots;
+    lead-up/cadence cues show event name.
+  - Split width + Ideas height memory fixed (stale cloud `layoutPrefs` no
+    longer overwrites live resize on save).
+  - Calendar / Pipeline views full-bleed again (Split inline width no longer
+    sticks when leaving Split).
+- Planner **`2.10.7`**: Overview category names editable per month; panel
+  Category select; Enter-to-save rename fixed (`saveToFirestore` typo).
+- Task Board unchanged `1.10.4`.
+
+### Versions (live)
+- Marketing `0.11.6` · Planner `2.10.7` · Task Board `1.10.4`
+- Latest deploy: `b0dfcc55-d4f7-4de8-9278-a7ffa60ac974`
+
+### Open / next
+1. Commit/push uncommitted work on `cursor/pressplay-logo-assets` when asked
+   (keep `.cursor/settings.json` local).
+2. Smoke: Cadence Pins 3/wk through Jan; Split/Ideas resize survives reload;
+   Calendar tab full width; Overview rename Enter.
+3. Parked: Need-slot → Fill from Ideas; project delete UI; dark theme;
+   Unassigned rollover; cadence tune after real posting weeks.
+
+### Notes for next session
+- Short kickoff: “continue from handoff”.
+- Local: `wrangler dev --port 8787 --remote` for live KV.
+- Deploy only when asked.
+
+---
+
+## 2026-07-31 — Overview rename Enter fix (Cursor)
+
+### What was built or decided
+- Planner `2.10.7`: Overview category rename Enter was a no-op because commit
+  called missing `saveToCloud` (real helper is `saveToFirestore`) — threw before
+  refresh, so the input stayed open. Fixed call + hardened Enter/Esc (keydown
+  + keyup), one rename at a time, always exit edit mode.
+
+### Deployed
+- Live: https://ppc-homebase.pressplaycollective.workers.dev
+- Version: `e1a4f32f-b7ef-49c2-ac5d-b74cb79a0de3`
+- Planner `2.10.7`.
+
+---
+
+## 2026-07-31 — Calendar view full width (Cursor)
+
+### What was built or decided
+- Marketing `0.11.6`: Calendar (and Pipeline) view modes no longer stay stuck
+  at the Split pane width. Inline flex/width from Split resize is cleared when
+  leaving Split; Calendar-only CSS forces full-bleed calendar pane.
+
+### Deployed
+- Live: https://ppc-homebase.pressplaycollective.workers.dev
+- Version: `3d050b6d-85e4-4229-91ea-2902321f7031`
+- Marketing `0.11.6` Calendar full-width fix.
+
+### Open / next
+1. Hard-refresh `/marketing` — Calendar tab should span the page.
+
+---
+
+## 2026-07-31 — Split layout memory fix (Cursor)
+
+### What was built or decided
+- Marketing `0.11.5`: Split calendar width + Ideas board height now stick.
+  Root cause: `saveData` preferred stale cloud `layoutPrefs` over the live
+  resize vars, so any later save (idea edit, etc.) wrote the old width back.
+  Fix: always sync from in-memory split/mood; rewrite localStorage keys on
+  every save; re-apply pane width + Ideas height after every `renderBoard`
+  / refresh / init.
+- Also includes `0.11.4`: event panel `ppc-select` dropdowns + **+ Add type…**
+  (`customAnchorTypes`).
+
+### Deployed
+- Live: https://ppc-homebase.pressplaycollective.workers.dev
+- Version: `7816d528-7c63-4245-9e37-0d0fc6c17289`
+- Marketing `0.11.5` (layout memory + ppc-select/custom types).
+
+### Open / next
+1. Hard-refresh `/marketing` — confirm `v0.11.5` (not cached `v0.5.8`).
+2. Drag split + Ideas height, reload — should restore.
+3. + Event → lift dropdowns; Type → + Add type….
+4. Commit/push when asked.
+
+---
+
+## 2026-07-31 — Event panel ppc-select + custom types (Cursor)
+
+### What was built or decided
+- Marketing `0.11.4`: Event add/edit panel dropdowns use shared `ppc-select`
+  (Type, Slot format, When to place, Density) — lift menus, not native OS.
+- Type dropdown includes **+ Add type…**; inline name form adds a custom type
+  persisted on marketing DATA as `customAnchorTypes: [{id,label}]`. Built-ins
+  stay Event / Release / Cadence. Pins for custom types use cadence-like
+  `.cal-anchor-pin--custom` styling. `normalizeAnchorType` accepts custom ids.
+
+### Deployed
+- Superseded by `0.11.5` / `7816d528-…` (see entry above).
+- Earlier: `5499df55-1791-420f-b4db-422e8596722b`
+
+### Open / next
+- Covered by `0.11.5` entry above.
+
+---
+
+## 2026-07-31 — Cadence slots + clearer density UI (Cursor)
+
+### What was built or decided
+- Marketing `0.11.3`: Event panel content placement redesigned.
+  - **When:** Before start (lead-up) *or* Between start & end (ongoing cadence).
+  - **Slot format:** IG Post / Story / Pinterest / Reel (Pinterest uses Mon/Wed/Fri).
+  - Type **Cadence (ongoing)** defaults to through-dates + Pinterest.
+  - Density presets: clearer Name / Weeks before start / Posts each week labels;
+    weeks hidden in through mode; Add only saves a preset — Save event places slots.
+- Fits “Pinterest 3×/week until January” without AI slot stuffing.
+- Also ships Planner `2.10.6` (per-month overview cat rename + panel category select).
+
+### Deployed
+- Live: https://ppc-homebase.pressplaycollective.workers.dev
+- Version: `76b621df-991c-4f5a-9ece-a4ef1c0b3fb8`
+- Removed accidental Cursor edit-conflict copy of `marketing.html` before clean redeploy.
+
+### Open / next
+1. Hard-refresh `/marketing` — confirm `v0.11.3`; create Cadence Pins through Jan.
+2. Hard-refresh `/planner` — confirm `v2.10.6` overview rename + category select.
+3. Commit/push when asked.
+
+---
+
+## 2026-07-31 — Lead-up off + planner cats (Cursor)
+
+### What was built or decided
+- Marketing `0.11.2`: Lead-up toggle lives on the **event panel** (not Need
+  cards). Uncheck + Save clears empty auto lead-up slots; filled content
+  stays. Day cues + empty Need slots show the event name (not just “Lead-up”).
+- Planner `2.10.6`: Overview category labels editable **per month** (click
+  name → rename; clear restores default). Card panel Category is a coloured
+  select so you can refile pills.
+
+### Deployed
+- Local only — deploy when asked.
+
+### Open / next
+1. Smoke-test: open event → uncheck lead-up → empty slots gone; cues named.
+2. Overview rename for one month only; change a pill’s category in panel.
+3. Commit/push when asked.
+
+---
+
+## 2026-07-31 — EOD (Cursor)
+
+
+### Versions (live)
+- Marketing `0.11.1` · Planner `2.10.5` · Task Board `1.10.4`
+- Latest deploy: `1bf23828-8623-45c4-ba97-5b605762d680`
+
+### Open / next
+1. Commit/push uncommitted Marketing/Planner/HANDOFF on
+   `cursor/pressplay-logo-assets` when asked (`.cursor/settings.json` stay local).
+2. Delete old `ppc-planner-worker` folder when unlocked.
+3. Calendar cadence: tune after real posting weeks; parked project delete UI /
+   dark theme / Unassigned rollover.
+
+### Notes for next session
+- Short kickoff: “continue from handoff”.
+- Local: `wrangler dev --port 8787 --remote` if you need production data.
+- Deploy only when asked.
+
+---
+
+## 2026-07-31 — Marketing layout memory (Cursor)
+
+### What was built or decided
+- Marketing `0.11.1`: Split calendar width + Ideas board height now remember
+  reliably. localStorage remains personal (`ppc-marketing-split-pct` /
+  `ppc-marketing-mood-h`); on drag also writes `DATA.layoutPrefs` into
+  marketing KV for team defaults. Restore: local first → cloud prefs →
+  hardcoded defaults. Remount/`renderBoard` re-applies CSS vars.
+
+### Deployed
+- Live: https://ppc-homebase.pressplaycollective.workers.dev
+- Version: `1bf23828-8623-45c4-ba97-5b605762d680`
+- Also ships Marketing `0.11.0` week calendar + Event lead-up, Planner
+  `2.10.5` revenue-chart load-flash fix.
+
+### Open / next
+1. Hard-refresh live `/marketing` — confirm `v0.11.1`, week rows, + Event,
+   Split/Ideas layout memory.
+2. Hard-refresh `/planner` — confirm `v2.10.5`, no chart flash.
+3. Commit/push when asked (GitHub remote now `ppc-homebase`).
+
+---
+
+## 2026-07-31 — Marketing week calendar + events (Cursor)
+
+### What was built or decided
+- Marketing `0.11.0`: Content Calendar uses Planner-style **week rows** —
+  Earlier weeks collapsed (current month / past months), live weeks open,
+  Prev/Today/Next month nav kept. **+ Event** opens create/edit panel
+  (name, type Event|Release, dates, description, lead-up checkbox + rule).
+- Lead-up: sparse Need `ig-post` slots on **Mon/Tue/Thu/Fri only**, ~2/week;
+  Event = 3 weeks, Release = 4 weeks; **Add rule** for longer windows.
+  Idempotent per anchor+date; days get Lead-up highlight cue.
+- Planner `2.10.5`: hide Monthly Revenue chart until first `renderVertical`
+  (kills load flash of empty chart before calendar paints).
+- Cursor Agents stay keyed to the folder the chat was opened in — use
+  `ppc-homebase` for new threads; old chats stay under `ppc-planner*`.
+
+### Deployed
+- Local only — deploy when asked.
+
+### Open / next
+1. Smoke-test local `/marketing` week collapse + + Event lead-up placement.
+2. Smoke-test `/planner` — no revenue-chart flash on navigate from Home.
+3. Deploy when asked.
+4. Prefer `wrangler dev --remote` when you need live KV data locally
+   (plain `wrangler dev` uses empty local KV — looks like missing/old cards).
+
+### Notes
+- GitHub remote now `https://github.com/jarvis-tuttlebee/ppc-homebase.git`
+  (repo renamed; old Agents threads stay under `ppc-planner*`).
+
+---
+
+## 2026-07-31 — EOD (Cursor)
+
+### What shipped today
 - **PPC - HOMEBASE** rename live: worker `ppc-homebase`, URL
   https://ppc-homebase.pressplaycollective.workers.dev (`85db5e40-…`).
   Old `ppc-planner` worker deleted (404).
-- Marketing polish: Split resize (`0.10.2`) + Ideas height gutter +
-  scroll-zoom (`0.10.3`) — earlier deploys still named under old URL in
-  session notes; canonical host is now homebase.
+- **Marketing calendar** progressed through the day → live ~`0.10.3`:
+  month grid (no week chrome), one Mon–Sun **Target this week** strip,
+  planner-family day pills + dashed `+`, Split | Calendar | Pipeline modes,
+  split resize gutter, Ideas height gutter + scroll-zoom; Review caption /
+  tags / music (`0.10.0`).
+- **Planner ↔ Task Board sync:** Save no longer clobbered by stale board
+  fetch; undated cards → Unassigned / Any; mirrors update (not delete);
+  card delete cleans planner mirrors. Planner `2.10.4` (save crash typo),
+  Kanban `1.10.4`.
+- **Home:** title encoding fix, master-res logo (`?v=5`), tag → Homebase /
+  now **PPC - HOMEBASE**.
+- Deduped bad planner/kanban mirrors earlier in the day.
 - Project rule `.cursor/rules/handoff.mdc` (always apply) so new agents
   read `HANDOFF.md` first without a long kickoff prompt.
 - Branch `cursor/pressplay-logo-assets` has prior Review/calendar work
-  pushed; local still has uncommitted rename + Marketing polish on top.
+  pushed; local still has uncommitted rename + polish on top.
 
 ### Versions (live)
 - Canonical: https://ppc-homebase.pressplaycollective.workers.dev
-- Marketing ~`0.10.3` · Planner / Task Board from prior ship
+- Marketing `0.10.3` · Planner `2.10.4` · Task Board `1.10.4`
 - Latest homebase deploy: `85db5e40-60a7-4976-bc4d-1411162fe681`
 
 ### Open / next
 1. Open Cursor on `…/Press Play Collective/ppc-homebase` (not the old
    `ppc-planner-worker` folder); delete old folder when unlocked.
 2. Rename GitHub repo when `gh` is available (remote still `ppc-planner`).
-3. ~~Commit/push remaining local changes on `cursor/pressplay-logo-assets`~~
-   done this session.
-4. Calendar cadence: keep grid-first; tune after real posting weeks.
-5. Project delete UI re-home; planner Projects/Releases parked; dark theme.
+3. Commit/push remaining local changes on `cursor/pressplay-logo-assets`
+   when asked.
+4. Fix title mojibake again if tabs show `PPC - HOMEBASE � …` (UTF-8 dash).
+5. Calendar cadence: keep grid-first; tune after real posting weeks.
+6. Parked: Need-slot → “Fill from Ideas”; project delete UI re-home;
+   planner Projects/Releases; dark theme; Unassigned month rollover.
 
 ### Notes for next session
 - Short kickoff is enough: “continue from handoff” — rule loads HANDOFF.
