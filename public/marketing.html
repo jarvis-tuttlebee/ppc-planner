@@ -786,6 +786,17 @@
     }
     .pillar-count { font-size: 11px; color: #9a958d; }
     .pillar.is-empty .pillar-count { font-size: 10px; opacity: 0.75; }
+    .pillar-del {
+      border: none;
+      background: transparent;
+      color: #c4bfb7;
+      font-size: 15px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0 2px;
+      font-family: inherit;
+    }
+    .pillar-del:hover { color: #8B3A3A; }
     .pillar-chev { font-size: 11px; color: #9a958d; width: 12px; text-align: center; }
     .pillar.is-empty .pillar-chev { font-size: 10px; color: #c4bfb7; }
     .pillar-body { display: none; padding: 12px; }
@@ -1125,6 +1136,41 @@
     }
     .review-inspo-meta .btn-secondary[hidden] {
       display: none !important;
+    }
+    #pScheduleNoteWrap {
+      display: none;
+      margin-top: 4px;
+    }
+    #pScheduleNoteWrap textarea {
+      width: 100%;
+      min-height: 72px;
+      resize: vertical;
+      font-family: inherit;
+      font-size: 13px;
+      line-height: 1.4;
+      color: #2C2C2C;
+      border: 1px solid #E2DDD5;
+      border-radius: 6px;
+      padding: 8px 10px;
+      background: #fff;
+      box-sizing: border-box;
+    }
+    #panel.schedule-discover #pScheduleIdeaText,
+    #panel.schedule-discover #pScheduleGoIdeas,
+    #panel.schedule-discover #scheduleContextToggle,
+    #panel.schedule-discover #scheduleContext,
+    #panel.schedule-discover #scheduleMusicBlock {
+      display: none !important;
+    }
+    #panel.schedule-discover #pScheduleNoteWrap {
+      display: block;
+    }
+    #panel.schedule-discover .review-inspo-thumb {
+      cursor: pointer;
+    }
+    #panel.schedule-discover .review-inspo-thumb.drop-target {
+      outline: 2px dashed #564A5E;
+      outline-offset: 2px;
     }
     .review-context-toggle {
       width: 100%;
@@ -1918,15 +1964,23 @@
       color: #8a6a1a;
       background: rgba(194,154,59,0.16);
     }
-    .cal-slot-flag--progress {
-      color: #C29A3B;
-      background: rgba(194,154,59,0.16);
-    }
-    .cal-slot-flag--ready {
+    .cal-slot-flag--prep {
       color: #6B7A8D;
       background: rgba(107,122,141,0.14);
     }
-    .cal-slot-flag--complete {
+    .cal-slot-flag--execute {
+      color: #C29A3B;
+      background: rgba(194,154,59,0.18);
+    }
+    .cal-slot-flag--ready {
+      color: #4A7C59;
+      background: rgba(74,124,89,0.14);
+    }
+    .cal-slot-flag--scheduled {
+      color: #5B6B8C;
+      background: rgba(91,107,140,0.16);
+    }
+    .cal-slot-flag--posted {
       color: #4E6E6C;
       background: rgba(78,110,108,0.14);
     }
@@ -2964,8 +3018,11 @@
           <div class="review-inspo" id="pScheduleInspo">
             <div class="review-inspo-thumb" id="pScheduleThumb"></div>
             <div class="review-inspo-meta">
-              <strong>Scheduled content</strong>
+              <strong id="pScheduleInspoTitle">Scheduled content</strong>
               <div id="pScheduleIdeaText"></div>
+              <div id="pScheduleNoteWrap">
+                <textarea id="pScheduleNote" placeholder="Pin note or title…"></textarea>
+              </div>
               <button type="button" class="btn-secondary" id="pScheduleGoIdeas" onclick="goToIdeasFromSchedule()">Browse Ideas</button>
             </div>
           </div>
@@ -2985,10 +3042,13 @@
           <textarea class="prop-select" id="pScheduleCaption" rows="4" style="resize:vertical;min-height:88px;font-family:inherit;margin-top:2px" placeholder="Post caption…"></textarea>
           <div class="panel-section-label" style="margin-top:14px">Tags</div>
           <input class="prop-select" id="pScheduleTags" type="text" style="margin-top:2px" placeholder="#pressplay #ode …">
-          <div class="panel-section-label" style="margin-top:14px">Music</div>
-          <input class="prop-select" id="pScheduleMusic" type="text" style="margin-top:2px" placeholder="Track name or link…">
+          <div id="scheduleMusicBlock">
+            <div class="panel-section-label" style="margin-top:14px">Music</div>
+            <input class="prop-select" id="pScheduleMusic" type="text" style="margin-top:2px" placeholder="Track name or link…">
+          </div>
           <hr class="panel-divider">
-          <div class="panel-section-label">Video link</div>
+          <div class="panel-section-label" id="pScheduleDriveLabel">Video link</div>
+          <div class="panel-field-hint" id="pScheduleDriveHint" hidden>Paste the Drive folder or file link for this pin.</div>
           <div class="review-video-link">
             <input class="prop-select" id="pScheduleVideoUrl" type="url" placeholder="https://drive.google.com/…">
             <a class="review-video-open is-disabled" id="pScheduleVideoOpen" href="#" target="_blank" rel="noopener noreferrer">Open</a>
@@ -3119,7 +3179,7 @@
 <script>
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
-const APP_VERSION = '0.11.65';
+const APP_VERSION = '0.11.70';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 
 /** Default local hour for new calendar publish stamps (5pm). */
@@ -3530,8 +3590,7 @@ const CATS = [
   { id: 'organic', label: 'Organic', bg: '#564A5E', fg: '#fff' },
   { id: 'email',   label: 'Email',   bg: '#4E6E6C', fg: '#fff' },
   { id: 'ads',     label: 'Ads',     bg: '#C29A3B', fg: '#2C2C2C' },
-  { id: 'website', label: 'Website', bg: '#2C2C2C', fg: '#fff' },
-  { id: 'other',   label: 'Other',   bg: '#8e7c6c', fg: '#fff' }
+  { id: 'website', label: 'Website', bg: '#2C2C2C', fg: '#fff' }
 ];
 const PILL_BG = '#F0EDE8';
 
@@ -3539,8 +3598,7 @@ const PILLARS = [
   { id: 'organic', label: 'Organic', defaultOpen: true },
   { id: 'email',   label: 'Email',   defaultOpen: false },
   { id: 'ads',     label: 'Ads',     defaultOpen: false },
-  { id: 'website', label: 'Website', defaultOpen: false },
-  { id: 'other',   label: 'Other',   defaultOpen: false }
+  { id: 'website', label: 'Website', defaultOpen: false }
 ];
 const BUILTIN_PILLAR_IDS = new Set(PILLARS.map(p => p.id));
 const ADD_PILLAR_ID = '__add_pillar__';
@@ -3572,11 +3630,6 @@ const FORMATS = {
     { id: 'design',  label: 'Landing page' },
     { id: 'blog',    label: 'Blog' },
     { id: 'feature', label: 'Feature page' }
-  ],
-  other: [
-    { id: 'bts', label: 'BTS' },
-    { id: 'shoot-day', label: 'Shoot day' },
-    { id: 'misc', label: 'Other' }
   ]
 };
 
@@ -3624,11 +3677,6 @@ const FORMAT_COLORS = {
     'design': '#404040',
     'blog': '#6B7A8D',
     'feature': '#3f4853'
-  },
-  other: {
-    'bts': '#7a4450',
-    'shoot-day': '#a65d3f',
-    'misc': '#8e7c6c'
   }
 };
 
@@ -3945,6 +3993,62 @@ function renamePillar(id, newLabel) {
   return true;
 }
 
+function countCardsUsingPillar(id) {
+  let n = 0;
+  prepCards().forEach(c => { if (c.pillar === id) n++; });
+  execCards().forEach(c => { if (c.pillar === id) n++; });
+  reviewCards().forEach(c => { if (c.pillar === id) n++; });
+  scheduleCards().forEach(c => { if (c.pillar === id) n++; });
+  (DATA.ideas || []).forEach(i => { if (i.cat === id) n++; });
+  return n;
+}
+
+function reassignPillarRefs(fromId, toId) {
+  const target = pillarById(toId) ? toId : 'organic';
+  const fallbackFmt = defaultFormatForPillar(target);
+  const bumpCard = (card) => {
+    if (!card || card.pillar !== fromId) return;
+    card.pillar = target;
+    if (!formatsForPillar(target).some(f => f.id === card.format)) {
+      card.format = fallbackFmt;
+    }
+  };
+  prepCards().forEach(bumpCard);
+  execCards().forEach(bumpCard);
+  reviewCards().forEach(bumpCard);
+  scheduleCards().forEach(bumpCard);
+  (DATA.ideas || []).forEach(idea => {
+    if (idea.cat === fromId) idea.cat = target;
+  });
+}
+
+/** Delete a custom pillar only. Cards move to Organic; formats under it are removed. */
+function deleteCustomPillar(id) {
+  if (!id || BUILTIN_PILLAR_IDS.has(id)) {
+    PPC.showToast('Built-in pillars can’t be deleted');
+    return false;
+  }
+  const entry = customPillars().find(p => p.id === id);
+  if (!entry) return false;
+  const label = pillarDisplayLabel(id);
+  const n = countCardsUsingPillar(id);
+  const msg = n
+    ? 'Delete pillar “‘ + label + ’”? ' + n + ' card' + (n === 1 ? '' : 's') + ' will move to Organic.'
+    : 'Delete pillar “‘ + label + ’”?';
+  if (!confirm(msg)) return false;
+  reassignPillarRefs(id, 'organic');
+  DATA.customFormats = customFormats().filter(f => f.pillar !== id);
+  DATA.customPillars = customPillars().filter(p => p.id !== id);
+  expandedPillars.delete(id);
+  if (pillarLabels()[id]) delete pillarLabels()[id];
+  closePanel();
+  clearTimeout(saveTimer);
+  saveData();
+  renderBoard();
+  PPC.showToast('Pillar “‘ + label + ’” deleted');
+  return true;
+}
+
 function formatsForPillar(pillarId) {
   const base = FORMATS[pillarId] || [];
   const custom = customFormats().filter(f => f.pillar === pillarId);
@@ -4090,24 +4194,78 @@ const SAMPLE_PREP = [
 ];
 
 const PUBLISH_STATUS_OPTIONS = [
-  { id: 'unscheduled', label: 'Unscheduled', color: '#8a6a1a' },
-  { id: 'in-progress', label: 'In progress', color: '#C29A3B' },
-  { id: 'scheduled', label: 'Scheduled', color: '#6B7A8D' },
-  { id: 'complete', label: 'Complete', color: '#4E6E6C' }
+  { id: 'need', label: 'Need', color: '#8a6a1a' },
+  { id: 'prep', label: 'Prep', color: '#6B7A8D' },
+  { id: 'execute', label: 'Execute', color: '#C29A3B' },
+  { id: 'scheduled', label: 'Scheduled', color: '#5B6B8C' },
+  { id: 'posted', label: 'Posted', color: '#4E6E6C' }
 ];
 const PUBLISH_STATUS_IDS = new Set(PUBLISH_STATUS_OPTIONS.map(o => o.id));
 const PUBLISH_STATUS_COLORS = {
-  unscheduled: '#8a6a1a',
-  'in-progress': '#C29A3B',
-  scheduled: '#6B7A8D',
-  complete: '#4E6E6C'
+  need: '#8a6a1a',
+  prep: '#6B7A8D',
+  execute: '#C29A3B',
+  scheduled: '#5B6B8C',
+  posted: '#4E6E6C'
 };
 const PUBLISH_STATUS_FLAG_CLASS = {
-  unscheduled: 'cal-slot-flag--need',
-  'in-progress': 'cal-slot-flag--progress',
-  scheduled: 'cal-slot-flag--ready',
-  complete: 'cal-slot-flag--complete'
+  need: 'cal-slot-flag--need',
+  prep: 'cal-slot-flag--prep',
+  execute: 'cal-slot-flag--execute',
+  scheduled: 'cal-slot-flag--scheduled',
+  posted: 'cal-slot-flag--posted'
 };
+const PUBLISH_STATUS_LEGACY = {
+  open: 'need',
+  unscheduled: 'need',
+  'in-progress': 'execute',
+  complete: 'posted',
+  ready: 'scheduled'
+};
+/** Pinterest/Cosmos — calendar-only lite flow (Drive → pin). */
+const DISCOVER_FORMAT_ID = 'pinterest';
+const DISCOVER_STATUS_IDS = ['need', 'scheduled', 'posted'];
+const DISCOVER_STATUS_OPTIONS = PUBLISH_STATUS_OPTIONS.filter(o => DISCOVER_STATUS_IDS.includes(o.id));
+
+function isDiscoverFormat(format) {
+  return format === DISCOVER_FORMAT_ID;
+}
+
+function isDiscoverCard(card) {
+  return !!(card && isDiscoverFormat(card.format));
+}
+
+function discoverHasAsset(card) {
+  if (!card) return false;
+  return !!(
+    stripHtml(card.body || '').trim() ||
+    (card.reviewVideoUrl || '').trim() ||
+    card.imageData ||
+    card.reviewMedia
+  );
+}
+
+function scheduleSlotHasContent(card) {
+  if (!card) return false;
+  if (isDiscoverCard(card)) return discoverHasAsset(card);
+  return !!(
+    stripHtml(card.body || '').trim() ||
+    (card.reviewVideoUrl || '').trim() ||
+    card.imageData ||
+    card.reviewMedia
+  );
+}
+
+function normalizeDiscoverStatus(status, card) {
+  if (status === 'ready') return 'scheduled';
+  if (DISCOVER_STATUS_IDS.includes(status)) return status;
+  if (status === 'prep' || status === 'execute') return scheduleSlotHasContent(card) ? 'scheduled' : 'need';
+  return scheduleSlotHasContent(card) ? 'scheduled' : 'need';
+}
+
+function statusOptionsForCard(card) {
+  return isDiscoverCard(card) ? DISCOVER_STATUS_OPTIONS : PUBLISH_STATUS_OPTIONS;
+}
 const DEFAULT_STAFF = ['Jarvis', 'Louis', 'Gregor'];
 const ADD_STAFF_ID = '__add_staff__';
 
@@ -4173,14 +4331,21 @@ function migrateIdea(idea) {
   delete idea.description;
   delete idea.types;
   delete idea.rot;
+  // Shoot days / BTS lived under removed built-in Other — fold into Organic.
+  if (idea.cat === 'other') idea.cat = 'organic';
   if (idea.cat && !catById(idea.cat)) idea.cat = 'organic';
   return idea;
 }
 
 function migratePrep(card) {
+  if (card.pillar === 'other') card.pillar = 'organic';
   if (!card.pillar || !pillarById(card.pillar)) card.pillar = 'organic';
   const map = FORMAT_MIGRATE[card.pillar] || {};
   if (card.format && map[card.format]) card.format = map[card.format];
+  // Drop removed Other formats (BTS / Shoot day / misc).
+  if (card.format === 'bts' || card.format === 'shoot-day' || card.format === 'misc') {
+    card.format = null;
+  }
   const formats = formatsForPillar(card.pillar);
   if (!card.format || !formats.some(f => f.id === card.format)) {
     card.format = defaultFormatForPillar(card.pillar);
@@ -4221,6 +4386,11 @@ function migrateReview(card) {
   return card;
 }
 
+function defaultPublishStatus(card) {
+  if (!scheduleSlotHasContent(card)) return 'need';
+  return card && card.scheduledAt ? 'scheduled' : 'need';
+}
+
 function migrateSchedule(card) {
   migrateReview(card);
   if (card.scheduledAt == null) {
@@ -4228,16 +4398,20 @@ function migrateSchedule(card) {
   }
   if (card.contentLayer == null) card.contentLayer = '';
   if (card.anchorId == null) card.anchorId = '';
-  if (card.publishStatus === 'open') card.publishStatus = 'unscheduled';
-  if (card.publishStatus === 'ready') card.publishStatus = 'scheduled';
+  if (PUBLISH_STATUS_LEGACY[card.publishStatus]) {
+    card.publishStatus = PUBLISH_STATUS_LEGACY[card.publishStatus];
+  }
   if (!PUBLISH_STATUS_IDS.has(card.publishStatus)) {
-    card.publishStatus = card.scheduledAt ? 'scheduled' : 'unscheduled';
+    card.publishStatus = defaultPublishStatus(card);
+  }
+  if (isDiscoverCard(card)) {
+    card.publishStatus = normalizeDiscoverStatus(card.publishStatus, card);
+    if (card.needContent == null) card.needContent = !discoverHasAsset(card);
+  } else if (card.needContent == null) {
+    card.needContent = !scheduleSlotHasContent(card);
   }
   if (card.assignee === 'Loui') card.assignee = 'Louis';
   if (card.assignee == null) card.assignee = '';
-  if (card.needContent == null) {
-    card.needContent = !stripHtml(card.body || '').trim();
-  }
   if (card.leadUp == null) card.leadUp = false;
   if (card.slotMoved == null) card.slotMoved = false;
   if (card.needLabel == null) card.needLabel = '';
@@ -4246,12 +4420,12 @@ function migrateSchedule(card) {
 
 function publishStatusOf(card) {
   if (card && PUBLISH_STATUS_IDS.has(card.publishStatus)) return card.publishStatus;
-  return card && card.scheduledAt ? 'scheduled' : 'unscheduled';
+  return defaultPublishStatus(card);
 }
 
 function publishStatusLabel(status) {
   const opt = PUBLISH_STATUS_OPTIONS.find(o => o.id === status);
-  return opt ? opt.label : (status || 'Unscheduled');
+  return opt ? opt.label : (status || 'Need');
 }
 
 function marketingStaff() {
@@ -5085,7 +5259,7 @@ function parseCustomPillars(data) {
     data.customPillars.forEach(p => {
       if (!p || !p.id) return;
       const id = String(p.id).trim();
-      if (!id || seen.has(id) || id === ADD_PILLAR_ID) return;
+      if (!id || seen.has(id) || id === ADD_PILLAR_ID || id === 'other') return;
       seen.add(id);
       const color = String(p.color || '').trim();
       out.push({
@@ -5097,7 +5271,8 @@ function parseCustomPillars(data) {
   }
   const recover = (id) => {
     const pid = String(id || '').trim();
-    if (!pid || seen.has(pid) || pid === ADD_PILLAR_ID) return;
+    // Built-in Other (BTS / Shoot day) was removed — cards migrate to Organic.
+    if (!pid || seen.has(pid) || pid === ADD_PILLAR_ID || pid === 'other') return;
     seen.add(pid);
     out.push({
       id: pid,
@@ -5121,7 +5296,7 @@ function parseCustomFormats(data) {
       if (!f || !f.id) return;
       const pillar = String(f.pillar || 'organic');
       const id = String(f.id).trim();
-      if (!id || seen.has(pillar + '::' + id)) return;
+      if (!id || pillar === 'other' || seen.has(pillar + '::' + id)) return;
       if ((FORMATS[pillar] || []).some(b => b.id === id)) return;
       seen.add(pillar + '::' + id);
       out.push({
@@ -5731,6 +5906,60 @@ function sendExecToReview(id) {
   openReviewPanel(reviewCard.id);
 }
 
+function isEmptyNeedSlot(card) {
+  return !!(card && isNeedContentCard(card) && !stripHtml(card.body || '').trim());
+}
+
+function scheduleDayKey(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  return dateKey(d);
+}
+
+/** Empty Need on the same day + format (prefer same pillar) to fill instead of stacking. */
+function findEmptyNeedToFill(incoming) {
+  if (!incoming) return null;
+  const day = scheduleDayKey(incoming.scheduledAt || incoming.scheduleAt);
+  if (!day) return null;
+  const format = incoming.format;
+  const pillar = incoming.pillar;
+  const empties = scheduleCards().filter(c => {
+    if (!isEmptyNeedSlot(c)) return false;
+    return scheduleDayKey(c.scheduledAt || c.scheduleAt) === day;
+  });
+  if (!empties.length) return null;
+  let match = empties.find(c => c.format === format && c.pillar === pillar);
+  if (match) return match;
+  match = empties.find(c => c.format === format);
+  return match || null;
+}
+
+/** Merge pipeline content into an empty Need slot (keeps slot id / day / anchor). */
+function fillEmptyNeedSlot(slot, content) {
+  const list = scheduleCards();
+  const idx = list.findIndex(c => c.id === slot.id);
+  if (idx < 0) return null;
+  const scheduledAt = content.scheduledAt || content.scheduleAt || slot.scheduledAt || slot.scheduleAt || '';
+  const hasBody = !!stripHtml(content.body || '').trim();
+  const filled = migrateSchedule({
+    ...content,
+    id: slot.id,
+    scheduledAt,
+    scheduleAt: scheduledAt,
+    anchorId: content.anchorId || slot.anchorId || '',
+    leadUp: !!slot.leadUp,
+    slotMoved: slot.slotMoved != null ? slot.slotMoved : false,
+    needLabel: '',
+    needContent: !hasBody,
+    publishStatus: content.publishStatus || 'scheduled',
+    assignee: content.assignee || slot.assignee || '',
+    movedToScheduleAt: content.movedToScheduleAt || new Date().toISOString()
+  });
+  list[idx] = filled;
+  return filled;
+}
+
 function sendReviewToSchedule(id) {
   const card = reviewCards().find(c => c.id === id);
   if (!card) return;
@@ -5739,8 +5968,9 @@ function sendReviewToSchedule(id) {
   }
   DATA.sections.review = reviewCards().filter(c => c.id !== id);
   const hasBody = !!stripHtml(card.body || '').trim();
-  const scheduleCard = migrateSchedule({
+  const payload = migrateSchedule({
     ...card,
+    id: newScheduleId(),
     scheduledAt: card.scheduleAt || new Date().toISOString(),
     scheduleAt: card.scheduleAt || '',
     caption: card.caption || '',
@@ -5757,7 +5987,8 @@ function sendReviewToSchedule(id) {
     assignee: card.assignee || '',
     movedToScheduleAt: new Date().toISOString()
   });
-  scheduleCards().push(scheduleCard);
+  const emptyNeed = findEmptyNeedToFill(payload);
+  const scheduleCard = emptyNeed ? fillEmptyNeedSlot(emptyNeed, payload) : (scheduleCards().push(payload), payload);
   expandedSections.add('schedule');
   scheduleArmed = false;
   closePanel();
@@ -5765,6 +5996,7 @@ function sendReviewToSchedule(id) {
   saveData();
   renderBoard();
   openSchedulePanel(scheduleCard.id);
+  if (emptyNeed) PPC.showToast('Filled Need on calendar');
 }
 
 function duplicatePrepToFormat(id, format) {
@@ -6061,7 +6293,7 @@ function renderPreparationBody() {
       addFmtBtn.addEventListener('click', e => {
         e.stopPropagation();
         addFmtBtn.hidden = true;
-        appendPrepInlineForm(pBody, 'e.g. BTS, Shoot day…', (val) => {
+        appendPrepInlineForm(pBody, 'e.g. Carousel, Lookbook…', (val) => {
           const entry = createCustomFormat(pillar.id, val);
           if (entry) {
             expandedPillars.add(pillar.id);
@@ -6102,7 +6334,7 @@ function renderPreparationBody() {
   const input = document.createElement('input');
   input.type = 'text';
   input.maxLength = 40;
-  input.placeholder = 'e.g. Shoot days, BTS…';
+  input.placeholder = 'e.g. Partnerships, Wholesale…';
   input.setAttribute('aria-label', 'New pillar name');
   const confirm = document.createElement('button');
   confirm.type = 'button';
@@ -7027,7 +7259,7 @@ function placeLeadUpNeedSlots(anchor) {
         needLabel: '',
         leadUp: true,
         slotMoved: false,
-        publishStatus: 'unscheduled',
+        publishStatus: 'need',
         assignee: '',
         scheduledAt: '',
         scheduleAt: '',
@@ -7111,7 +7343,7 @@ function ensureLeadUpSlotOnDay(anchor, dayDate) {
     needLabel: '',
     leadUp: true,
     slotMoved: false,
-    publishStatus: 'unscheduled',
+    publishStatus: 'need',
     assignee: '',
     scheduledAt: when.toISOString(),
     scheduleAt: when.toISOString(),
@@ -8678,7 +8910,7 @@ function addNeedContentSlot(format, dayDate, pillar) {
     format: format || 'ig-post',
     needContent: true,
     needLabel: '',
-    publishStatus: 'unscheduled',
+    publishStatus: 'need',
     assignee: '',
     scheduledAt: iso,
     scheduleAt: iso,
@@ -8738,10 +8970,13 @@ function addMarketingStaff(rawName) {
 
 function renderPublishStatusSelect(card, opts) {
   const options = opts || {};
+  const statusOpts = options.options || statusOptionsForCard(card);
+  let value = publishStatusOf(card);
+  if (isDiscoverCard(card)) value = normalizeDiscoverStatus(value, card);
   return createPpcSelect({
     id: options.id || '',
-    options: PUBLISH_STATUS_OPTIONS,
-    value: publishStatusOf(card),
+    options: statusOpts,
+    value,
     colored: false,
     bare: !!options.bare,
     onChange: val => {
@@ -8960,7 +9195,7 @@ function renderCalSlot(card) {
     const status = publishStatusOf(card);
     const colour = PUBLISH_STATUS_COLORS[status] || '#6B7A8D';
     const flag = document.createElement('span');
-    flag.className = 'cal-slot-flag ' + (PUBLISH_STATUS_FLAG_CLASS[status] || 'cal-slot-flag--ready');
+    flag.className = 'cal-slot-flag ' + (PUBLISH_STATUS_FLAG_CLASS[status] || 'cal-slot-flag--need');
     flag.style.color = colour;
     flag.style.background = colour + '22';
     flag.innerHTML = '<span class="chip-dot" style="background:' + colour + '"></span>' + publishStatusLabel(status);
@@ -8968,9 +9203,11 @@ function renderCalSlot(card) {
     flag.addEventListener('click', e => {
       e.stopPropagation();
       if (calSlotDragMoved) return;
-      const order = PUBLISH_STATUS_OPTIONS.map(o => o.id);
-      const idx = order.indexOf(status);
-      const next = order[(idx + 1) % order.length];
+      const order = statusOptionsForCard(card).map(o => o.id);
+      let cur = status;
+      if (isDiscoverCard(card)) cur = normalizeDiscoverStatus(cur, card);
+      const idx = order.indexOf(cur);
+      const next = order[(idx >= 0 ? idx + 1 : 0) % order.length];
       setPublishStatus(card.id, next);
     });
     footer.appendChild(flag);
@@ -9416,6 +9653,23 @@ function buildPrepPanelProps(card) {
     },
     onChange: pillar => {
       handlePillarSelectChange(pillar, 'pFormat', card.pillar);
+      if (panelMode === 'schedule' && activeScheduleId) {
+        const live = scheduleCards().find(c => c.id === activeScheduleId);
+        if (live) {
+          const fmtEl = document.getElementById('pFormat');
+          live.pillar = pillar === ADD_PILLAR_ID ? live.pillar : pillar;
+          if (fmtEl && fmtEl.value && fmtEl.value !== ADD_FORMAT_ID) live.format = fmtEl.value;
+          applySchedulePanelLayout(live);
+          const statusWrap = document.getElementById('pScheduleStatusWrap');
+          if (statusWrap) {
+            statusWrap.innerHTML = '';
+            statusWrap.appendChild(renderPublishStatusSelect(live, {
+              id: 'pScheduleStatus',
+              onChange: val => setPublishStatus(live.id, val, { silent: true })
+            }));
+          }
+        }
+      }
     }
   }));
   wrap.appendChild(pillarRow);
@@ -9431,7 +9685,24 @@ function buildPrepPanelProps(card) {
     onChange: format => {
       const pillarEl = document.getElementById('pPillar');
       const pillar = (pillarEl && pillarEl.value) || card.pillar || 'organic';
-      handleFormatSelectChange(format, pillar, 'pFormat', card.format);
+      const next = handleFormatSelectChange(format, pillar, 'pFormat', card.format);
+      if (panelMode === 'schedule' && activeScheduleId) {
+        const live = scheduleCards().find(c => c.id === activeScheduleId);
+        if (live) {
+          const noteEl = document.getElementById('pScheduleNote');
+          if (isDiscoverCard(live) && noteEl) live.body = (noteEl.value || '').trim();
+          live.format = next;
+          applySchedulePanelLayout(live);
+          const statusWrap = document.getElementById('pScheduleStatusWrap');
+          if (statusWrap) {
+            statusWrap.innerHTML = '';
+            statusWrap.appendChild(renderPublishStatusSelect(live, {
+              id: 'pScheduleStatus',
+              onChange: val => setPublishStatus(live.id, val, { silent: true })
+            }));
+          }
+        }
+      }
     }
   }));
   wrap.appendChild(formatRow);
@@ -9455,7 +9726,7 @@ function buildScheduleNeedLabelProp(card) {
   input.id = 'pNeedLabel';
   input.type = 'text';
   input.maxLength = 24;
-  input.placeholder = 'IG, Reel, BTS…';
+  input.placeholder = 'IG, Reel, Story…';
   input.value = String(card.needLabel || '').trim();
   input.setAttribute('aria-label', 'Slot label');
   value.appendChild(input);
@@ -9954,6 +10225,75 @@ function openReviewPanel(reviewId) {
   setTimeout(() => document.getElementById('pOutcome').focus(), 50);
 }
 
+function refreshScheduleThumb(card) {
+  const thumb = document.getElementById('pScheduleThumb');
+  if (!thumb) return;
+  thumb.innerHTML = '';
+  const src = cardThumbSrc(card);
+  if (src) {
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = '';
+    thumb.appendChild(img);
+    thumb.title = isDiscoverCard(card) ? 'Drop or paste to replace preview' : '';
+  } else {
+    thumb.textContent = isDiscoverCard(card) ? 'Drop preview' : 'No media';
+    thumb.title = isDiscoverCard(card) ? 'Drop or paste a pin preview image' : '';
+  }
+  setPanelImage(src);
+}
+
+/** Toggle Discover-lite vs full pipeline schedule panel chrome. */
+function applySchedulePanelLayout(card) {
+  const panel = document.getElementById('panel');
+  const discover = isDiscoverCard(card);
+  if (panel) panel.classList.toggle('schedule-discover', discover);
+
+  const title = document.getElementById('pScheduleInspoTitle');
+  if (title) title.textContent = discover ? 'Discover post' : 'Scheduled content';
+
+  const driveLabel = document.getElementById('pScheduleDriveLabel');
+  if (driveLabel) driveLabel.textContent = discover ? 'Drive / asset link' : 'Video link';
+  const driveHint = document.getElementById('pScheduleDriveHint');
+  if (driveHint) driveHint.hidden = !discover;
+
+  const note = document.getElementById('pScheduleNote');
+  const ideaText = document.getElementById('pScheduleIdeaText');
+  if (discover) {
+    if (note) note.value = stripHtml(card.body || '');
+    if (ideaText) ideaText.textContent = '';
+  } else {
+    const emptyNeed = isNeedContentCard(card) && !stripHtml(card.body || '').trim();
+    if (ideaText) {
+      ideaText.textContent = stripHtml(card.body || '') || (emptyNeed ? 'Need content — fill from Ideas / Prep' : 'Untitled content');
+    }
+    if (note) note.value = '';
+  }
+
+  const goIdeasBtn = document.getElementById('pScheduleGoIdeas');
+  if (goIdeasBtn) {
+    if (discover) {
+      goIdeasBtn.hidden = true;
+    } else {
+      const emptyNeed = isNeedContentCard(card) && !stripHtml(card.body || '').trim();
+      goIdeasBtn.hidden = !emptyNeed;
+      goIdeasBtn.textContent = 'Browse Ideas to fill';
+    }
+  }
+
+  scheduleContextOpen = false;
+  if (!discover) fillScheduleContext(card);
+  else {
+    const wrap = document.getElementById('scheduleContext');
+    if (wrap) {
+      wrap.innerHTML = '';
+      wrap.classList.remove('open');
+    }
+  }
+
+  refreshScheduleThumb(card);
+}
+
 function openSchedulePanel(scheduleId) {
   const card = scheduleCards().find(c => c.id === scheduleId);
   if (!card) return;
@@ -9983,27 +10323,7 @@ function openSchedulePanel(scheduleId) {
   const pDesc = document.getElementById('pDesc');
   if (pDesc) pDesc.innerHTML = '';
 
-  const thumb = document.getElementById('pScheduleThumb');
-  thumb.innerHTML = '';
-  const src = cardThumbSrc(card);
-  if (src) {
-    const img = document.createElement('img');
-    img.src = src;
-    img.alt = '';
-    thumb.appendChild(img);
-  } else {
-    thumb.textContent = 'No media';
-  }
-  const emptyNeed = isNeedContentCard(card) && !stripHtml(card.body || '').trim();
-  document.getElementById('pScheduleIdeaText').textContent = stripHtml(card.body || '') || (emptyNeed ? 'Need content — fill from Ideas / Prep' : 'Untitled content');
-  const goIdeasBtn = document.getElementById('pScheduleGoIdeas');
-  if (goIdeasBtn) {
-    // Only show while the slot still needs content.
-    goIdeasBtn.hidden = !emptyNeed;
-    goIdeasBtn.textContent = 'Browse Ideas to fill';
-  }
-  scheduleContextOpen = false;
-  fillScheduleContext(card);
+  applySchedulePanelLayout(card);
   document.getElementById('pScheduleEditAt').value = toDateTimeLocalValue(card.scheduledAt || card.scheduleAt);
   renderScheduleAssigneeSelect(card);
   const statusWrap = document.getElementById('pScheduleStatusWrap');
@@ -10019,7 +10339,6 @@ function openSchedulePanel(scheduleId) {
   document.getElementById('pScheduleVideoUrl').value = card.reviewVideoUrl || '';
   setVideoOpenLink('pScheduleVideoOpen', card.reviewVideoUrl || '');
   setPlanHintVisible(false);
-  setPanelImage(src);
   updatePanelStrip(card.pillar);
   document.getElementById('panel').classList.add('open');
   document.getElementById('overlay').classList.add('open');
@@ -10171,8 +10490,16 @@ function savePanel(silent) {
     }
     card.pillar = pillar;
     card.format = format;
-    // Schedule Idea is read-only (pScheduleIdeaText) — never clobber body from stale pDesc.
-    card.needContent = !stripHtml(card.body || '').trim();
+    // Always read Drive/video URL before computing need/status.
+    card.reviewVideoUrl = (document.getElementById('pScheduleVideoUrl').value || '').trim();
+    if (isDiscoverFormat(format)) {
+      const noteEl = document.getElementById('pScheduleNote');
+      if (noteEl) card.body = (noteEl.value || '').trim();
+      card.music = '';
+    } else {
+      card.music = (document.getElementById('pScheduleMusic') || {}).value || '';
+    }
+    card.needContent = !scheduleSlotHasContent(card);
     const needLabelEl = document.getElementById('pNeedLabel');
     if (needLabelEl) {
       card.needLabel = (needLabelEl.value || '').trim().slice(0, 24);
@@ -10183,11 +10510,13 @@ function savePanel(silent) {
     const st = document.getElementById('pScheduleEditAt').value;
     card.scheduledAt = st ? new Date(st).toISOString() : '';
     card.scheduleAt = card.scheduledAt;
+    // Respect the Status control — never force back to Need on save.
     const statusEl = document.getElementById('pScheduleStatus');
-    if (statusEl && PUBLISH_STATUS_IDS.has(statusEl.value)) {
-      card.publishStatus = statusEl.value;
-    } else if (!PUBLISH_STATUS_IDS.has(card.publishStatus)) {
-      card.publishStatus = card.scheduledAt ? 'scheduled' : 'unscheduled';
+    const allowed = isDiscoverFormat(format) ? DISCOVER_STATUS_IDS : [...PUBLISH_STATUS_IDS];
+    if (statusEl && allowed.includes(statusEl.value)) {
+      card.publishStatus = statusEl.value === 'ready' ? 'scheduled' : statusEl.value;
+    } else if (!PUBLISH_STATUS_IDS.has(card.publishStatus) || card.publishStatus === 'ready') {
+      card.publishStatus = card.needContent ? 'need' : (isDiscoverFormat(format) ? 'scheduled' : 'prep');
     }
     const asgEl = document.getElementById('pScheduleAssignee');
     if (asgEl) {
@@ -10200,8 +10529,6 @@ function savePanel(silent) {
     card.anchorId = (document.getElementById('pScheduleAnchor') || {}).value || '';
     card.caption = (document.getElementById('pScheduleCaption') || {}).value || '';
     card.tags = (document.getElementById('pScheduleTags') || {}).value || '';
-    card.music = (document.getElementById('pScheduleMusic') || {}).value || '';
-    card.reviewVideoUrl = (document.getElementById('pScheduleVideoUrl').value || '').trim();
     clearTimeout(saveTimer);
     saveData();
     renderBoard();
@@ -10215,6 +10542,7 @@ function closePanel() {
   document.getElementById('overlay').classList.remove('open');
   document.getElementById('panel').classList.remove('exec-mode');
   document.getElementById('panel').classList.remove('review-mode');
+  document.getElementById('panel').classList.remove('schedule-discover');
   activeIdeaId = null;
   activePrepId = null;
   activeExecId = null;
@@ -10282,6 +10610,46 @@ document.getElementById('scheduleContextToggle').addEventListener('click', () =>
     applyReviewMediaResult(null);
   });
   setupDropZone(well, file => applyImageToReviewMedia(file));
+})();
+
+async function applyImageToScheduleDiscover(file) {
+  if (panelMode !== 'schedule' || !activeScheduleId) return;
+  const card = scheduleCards().find(c => c.id === activeScheduleId);
+  if (!card || !isDiscoverCard(card)) return;
+  const result = await readImageFile(file);
+  if (!result) return;
+  card.imageData = result.imageData;
+  card.imageW = result.imageW;
+  card.imageH = result.imageH;
+  const noteEl = document.getElementById('pScheduleNote');
+  if (noteEl) card.body = (noteEl.value || '').trim() || card.body;
+  card.reviewVideoUrl = (document.getElementById('pScheduleVideoUrl').value || '').trim() || card.reviewVideoUrl;
+  card.needContent = !discoverHasAsset(card);
+  if (card.publishStatus === 'need' && !card.needContent) card.publishStatus = 'scheduled';
+  refreshScheduleThumb(card);
+  scheduleSave();
+}
+
+(function setupScheduleDiscoverThumb() {
+  const thumb = document.getElementById('pScheduleThumb');
+  if (!thumb) return;
+  setupDropZone(thumb, file => applyImageToScheduleDiscover(file));
+  thumb.addEventListener('paste', async e => {
+    if (panelMode !== 'schedule' || !activeScheduleId) return;
+    const card = scheduleCards().find(c => c.id === activeScheduleId);
+    if (!card || !isDiscoverCard(card)) return;
+    const items = e.clipboardData && e.clipboardData.items;
+    if (!items) return;
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type && items[i].type.indexOf('image') === 0) {
+        e.preventDefault();
+        const file = items[i].getAsFile();
+        if (file) applyImageToScheduleDiscover(file);
+        break;
+      }
+    }
+  });
+  thumb.tabIndex = 0;
 })();
 
 document.getElementById('pReviewVideoUrl').addEventListener('input', e => {

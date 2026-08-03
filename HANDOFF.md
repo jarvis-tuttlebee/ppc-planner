@@ -5,6 +5,136 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-03 — Deploy Marketing 0.11.70 (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.70`** — Version ID `39f7ce61-9e44-4c0d-98b0-808f3d2229ed`
+- Ready removed · status save fix · Discover-lite · fill empty Need
+
+### Deployed
+- `npx wrangler deploy` — asset: marketing.html
+
+---
+
+## 2026-08-03 — Drop Ready status; keep Scheduled (Cursor)
+
+### What was built or decided
+- Marketing `0.11.70`: Removed **Ready** from calendar status.
+  Flow is now **Need → Prep → Execute → Scheduled → Posted**
+  (Discover: Need → Scheduled → Posted). Legacy `ready` migrates to
+  `scheduled`. Review → Calendar lands on Scheduled.
+- Save no longer forces status back to Need — respects the Status control.
+  Drive/media counts as content for Need detection.
+
+### Deployed
+- Yes — Version ID `39f7ce61-9e44-4c0d-98b0-808f3d2229ed`
+  https://ppc-homebase.pressplaycollective.workers.dev
+
+### Open / next
+1. Hard-refresh live `/marketing` — Posted sticks; no Ready option.
+2. Merge / commit when asked.
+
+---
+
+## 2026-08-03 — Discover-lite schedule panel (Cursor)
+
+### What was built or decided
+- Marketing `0.11.69`: Pinterest/Cosmos calendar cards use a **Discover-lite**
+  panel — “Discover post”, note field, Drive link, drop/paste preview; hides
+  Browse Ideas / Details / Music. Status options: Need → Ready → Scheduled →
+  Posted (skips Prep/Execute).
+
+### Deployed
+- Pending deploy this turn
+
+### Open / next
+1. Hard-refresh `/marketing` — open a Pinterest/Cosmos Need.
+2. Merge / commit when asked.
+
+---
+
+## 2026-08-03 — Deploy Marketing 0.11.68 (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.68`** — Version ID `8c928814-898d-477d-80fb-1060e3594157`
+- Review → Calendar fills empty Need (same day + format)
+
+### Deployed
+- `npx wrangler deploy` — asset: marketing.html
+
+---
+
+## 2026-08-03 — Fill empty Need on Schedule handoff (Cursor)
+
+### What was built or decided
+- Marketing `0.11.68`: Review → Calendar **fills** an empty Need on the same
+  day + format (prefer same pillar) instead of stacking a new card.
+  Keeps Need id / day / anchor; status Ready. Toast: “Filled Need on calendar”.
+
+### Deployed
+- Yes — Version ID `8c928814-898d-477d-80fb-1060e3594157`
+  https://ppc-homebase.pressplaycollective.workers.dev
+
+### Open / next
+1. Hard-refresh live `/marketing` — Schedule into a dated empty Need.
+2. Merge / commit when asked.
+3. Parked: Discover-lite panel for Pinterest/Cosmos.
+
+---
+
+## 2026-08-03 — Deploy Marketing 0.11.67 (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.67`** — Version ID `f7e09f93-8d15-46f5-9879-3af98c88fada`
+- Also ships `0.11.66` production statuses (Need → Prep → Execute → Ready →
+  Scheduled → Posted). Other / Shoot day removed.
+
+### Deployed
+- `npx wrangler deploy` — asset: marketing.html
+
+---
+
+## 2026-08-03 — Remove Other / Shoot day from Marketing (Cursor)
+
+### What was built or decided
+- Marketing `0.11.67`: Removed built-in **Other** pillar and formats
+  (BTS · Shoot day · Other). Shoot / content days belong on Planner +
+  Task Board; Marketing stays publish-focused.
+- Existing Other cards/ideas migrate to Organic.
+
+### Deployed
+- Yes — Version ID `f7e09f93-8d15-46f5-9879-3af98c88fada`
+  https://ppc-homebase.pressplaycollective.workers.dev
+
+### Open / next
+1. Hard-refresh live `/marketing` — Other gone; new status chips.
+2. Merge / commit when asked.
+
+---
+
+## 2026-08-03 — Calendar production statuses (Cursor)
+
+### What was built or decided
+- Marketing `0.11.66`: Calendar card status is now production flow —
+  **Need → Prep → Execute → Ready → Scheduled → Posted**.
+  - Scheduled = queued in the social app; Posted = live/done.
+  - Review → Calendar lands on **Ready** (not Scheduled).
+  - Empty Needs default to **Need**; filled content bumps off Need → Prep.
+  - Legacy: unscheduled/open → Need; in-progress → Execute; complete → Posted.
+
+### Deployed
+- Local only — hard-refresh http://127.0.0.1:8787/marketing
+
+### Open / next
+1. Smoke: cycle status on filled card; Review→Schedule shows Ready; empty Need.
+2. Deploy when asked.
+3. Later: Fill from Ideas / send Need into Prep without losing the date.
+
+---
+
 ## 2026-08-03 — Deploy Marketing 0.11.65 (Cursor)
 
 ### Live
