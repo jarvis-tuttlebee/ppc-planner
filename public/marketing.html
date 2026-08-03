@@ -1791,9 +1791,7 @@
       line-height: 1.3;
       pointer-events: none;
     }
-    .cal-slot--need-empty .cal-slot-fmt {
-      display: none;
-    }
+    .cal-slot--need-empty .cal-slot-del {
       position: absolute;
       top: 1px;
       right: 1px;
@@ -2653,7 +2651,7 @@
 <script>
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
-const APP_VERSION = '0.11.21';
+const APP_VERSION = '0.11.22';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 
 const VIEW_MODE_KEY = 'ppc-marketing-view-mode';

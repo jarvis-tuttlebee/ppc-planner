@@ -5,6 +5,17 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-03 — Need cards: no event-open on title (Cursor)
+
+### What was built or decided
+- Marketing `0.11.22`: Empty Need event-name line is display-only (no click →
+  event panel). Edit events via Events chips / panel only.
+
+### Deployed
+- Local only — deploy when asked.
+
+---
+
 ## 2026-08-03 — Need cards: type-first + dropdown + × (Cursor)
 
 ### What was built or decided
