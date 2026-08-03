@@ -5,6 +5,232 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-03 — Branch rename (Cursor)
+
+### What was built or decided
+- Renamed working branch `cursor/pressplay-logo-assets` → `cursor/homebase`
+  (local + GitHub). Old remote branch deleted. Uncommitted Marketing/Planner
+  work unchanged on the new name.
+
+### Deployed
+- No — git-only.
+
+---
+
+## 2026-08-03 — End of day (Cursor)
+
+### Live now
+- Marketing **`0.11.18`** — Version ID `1a2a5247-52c5-47fc-a1a4-319573852964`
+  https://ppc-homebase.pressplaycollective.workers.dev
+- Planner **`2.10.8`** · Task Board **`1.10.4`**
+- Today’s Marketing ship: **ppc-date** picker + minimal empty Need slots;
+  earlier calendar UX (week/month, Events chips, day marks, tint drag) is
+  also on live via those deploys.
+
+### Local vs git
+- Branch `cursor/homebase` — **uncommitted**: `HANDOFF.md`,
+  `public/marketing.html`, `public/js/ppc-select.js`, `public/planner.html`.
+- Do **not** commit `.cursor/settings.json` or `.wrangler-deploy-check/`.
+- Last commit on branch: `e71df93` (Marketing 0.11.6 / Planner 2.10.7).
+
+### Open / next
+- Commit + push when asked (Marketing 0.11.7→0.11.18 + Planner if ready).
+- Smoke: empty Need one-liners, date picker in event panel, week view, day
+  marks, tint drag.
+- Parked: Fill from Ideas, project delete UI, dark theme, Unassigned
+  rollover, cadence tune after real weeks.
+
+### Dev
+- Prefer `npx wrangler dev --port 8787 --remote` → http://127.0.0.1:8787/
+- Deploy only when asked: `npx wrangler deploy`
+
+---
+
+## 2026-08-03 — Minimal empty Need slots (Cursor)
+
+### What was built or decided
+- Marketing `0.11.18`: Empty Need boxes are one accent title line (event name);
+  no `NEED` chip / format row. Non-IG formats get a tiny `Pin`/`Story`/`Reel`
+  prefix. Filled cards keep meta + Ready/Open.
+
+### Deployed
+- Yes — Version ID `1a2a5247-52c5-47fc-a1a4-319573852964`
+  (https://ppc-homebase.pressplaycollective.workers.dev)
+
+---
+
+## 2026-08-03 — Custom date picker (Cursor)
+
+### What was built or decided
+- Marketing `0.11.17`: Event panel dates use **ppc-date** (same lift menu as
+  selects) instead of the native OS date picker. Density option labels
+  shortened (no duplicated weeks).
+
+### Deployed
+- Yes — Version ID `95ac453d-0a46-4614-a22a-31656139d941`
+  (https://ppc-homebase.pressplaycollective.workers.dev)
+
+---
+
+## 2026-08-03 — Vertical stripe tint fix (Cursor)
+
+### What was built or decided
+- Marketing `0.11.16`: Multi-mark day tint uses **vertical** colour bands
+  (`to right`), not horizontal.
+
+### Deployed
+- Local only — deploy when asked.
+
+---
+
+## 2026-08-03 — Remove week target strip (Cursor)
+
+### What was built or decided
+- Marketing `0.11.15`: Removed calendar **Target this week** Grid/Stories/
+  Discover strip — right-click day marks replace it.
+
+### Deployed
+- Local only — deploy when asked.
+
+---
+
+## 2026-08-03 — Vertical day tint + date field polish (Cursor)
+
+### What was built or decided
+- Marketing `0.11.14`: Multi-mark day tint is **vertical** (not diagonal).
+  Event panel date/text fields match ppc-select trigger styling.
+
+### Deployed
+- Local only — deploy when asked.
+
+---
+
+## 2026-08-03 — Day mark × + multi tint (Cursor)
+
+### What was built or decided
+- Marketing `0.11.13`: Marked days get a corner **×** to clear Grid/Story/
+  Discover. Multi-mark days use a split gradient so all category colours
+  show in the day box (not a single tint).
+
+### Deployed
+- Local only — deploy when asked.
+
+---
+
+## 2026-08-03 — Tinted drag + day marks + event panel (Cursor)
+
+### What was built or decided
+- Marketing `0.11.12`:
+  - Dragging a **cue-only tinted day** moves the highlight only (no Need box).
+  - Right-click a day → Grid / Story / Discover marks (manual). Week targets
+    no longer auto-paint weekdays.
+  - Event panel: Place Need slots section **collapses** when unticked; density
+    **+ Add density…** opens a compact add form (same pattern as + Add type).
+
+### Deployed
+- Local only — deploy when asked.
+
+---
+
+## 2026-08-03 — Drag lead-up highlights (Cursor)
+
+### What was built or decided
+- Marketing `0.11.11`: Event lead-up / cadence **highlights** move with
+  placements. Drag the tinted day body or the cue chip (e.g. Ode days).
+  Vacated preferred dates no longer leave empty highlighted boxes; highlight
+  follows the Need on the new day.
+
+### Deployed
+- Local only — deploy when asked.
+
+---
+
+## 2026-08-03 — Draggable cadence slots (Cursor)
+
+### What was built or decided
+- Marketing `0.11.10`: Calendar Need / cadence slots are **draggable** onto
+  other days. Drop persists date (`slotMoved`), keeps event link. Event save
+  no longer wipes moved slots — tops up preferred days only when a week is
+  under its posts/week count.
+
+### Deployed
+- Local only — deploy when asked.
+
+### Open / next
+1. Hard-refresh `/marketing` — drag a Pinterest Need to another day; confirm
+   it sticks after reload / event re-save.
+2. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Week view + Events bar + delete (Cursor)
+
+### What was built or decided
+- Marketing `0.11.9`:
+  - Calendar **Week | Month** toggle (default Week, remembered). Prev/Next
+    move by week or month; taller day cells in week view.
+  - **Events** chip row under the nav (next to `+ Event` area) — click a
+    chip to edit days/cadence. Makes event edit discoverable.
+  - **Delete** on the edit-event panel (empty Need slots removed; filled
+    content stays, unlinked).
+
+### Deployed
+- Local only — deploy when asked.
+
+### Open / next
+1. Hard-refresh `/marketing` — confirm `v0.11.9`; Week view; Events chips;
+   open chip → Delete / edit weekdays.
+2. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Planner collapse + event weekdays / edit (Cursor)
+
+### What was built or decided
+- Planner `2.10.8`: past months start collapsed; current (+ future) open;
+  scroll to current month on load; expand refreshes empty content.
+- Marketing `0.11.8`:
+  - Event panel **Post on** Mon–Sun picks (`slotWeekdays`); drives Need
+    placement (custom days place on every selected weekday). Format change
+    resets to format defaults (Pins → MWF).
+  - Saving with slots on reconciles empty auto-slots (weekday/date edits
+    no longer leave orphans).
+  - Edit event: click Need/slot title (linked), lead-up cue, start/end pin,
+    or **Edit event** in the schedule panel.
+
+### Deployed
+- Local only — deploy when asked.
+
+### Open / next
+1. Hard-refresh `/planner` — July collapsed, August open.
+2. Hard-refresh `/marketing` — open Pinterest flow via slot title → change
+   weekdays → Save; confirm slots move.
+3. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Cadence pin flood fix (Cursor)
+
+### What was built or decided
+- Marketing `0.11.7`: Through/Cadence anchors no longer paint a title pin on
+  every day between start→end (that looked like daily “Pinterest flow” tags).
+  Pins mark start (+ end if different) only. Lead-up/cadence day cues also
+  skip when that day already has a Need/slot card for the same anchor
+  (removes MWF double tags next to the cards).
+- Need slot placement was already correct (Pins Mon/Wed/Fri) — display only.
+
+### Deployed
+- Live: https://ppc-homebase.pressplaycollective.workers.dev
+- Version: `2f0618dc-bd55-419f-a4cd-8a59518f300a`
+- Marketing `0.11.7`.
+
+### Open / next
+1. Hard-refresh `/marketing` — confirm `v0.11.7`; Pinterest flow Need cards
+   on MWF only, no daily grey tags / no doubles on those days.
+2. Commit/push when asked.
+
+---
+
 ## 2026-07-31 — EOD (Cursor)
 
 ### What shipped today
@@ -27,7 +253,7 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 - Latest deploy: `b0dfcc55-d4f7-4de8-9278-a7ffa60ac974`
 
 ### Open / next
-1. Commit/push uncommitted work on `cursor/pressplay-logo-assets` when asked
+1. Commit/push uncommitted work on `cursor/homebase` when asked
    (keep `.cursor/settings.json` local).
 2. Smoke: Cadence Pins 3/wk through Jan; Split/Ideas resize survives reload;
    Calendar tab full width; Overview rename Enter.
@@ -170,7 +396,7 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ### Open / next
 1. Commit/push uncommitted Marketing/Planner/HANDOFF on
-   `cursor/pressplay-logo-assets` when asked (`.cursor/settings.json` stay local).
+   `cursor/homebase` when asked (`.cursor/settings.json` stay local).
 2. Delete old `ppc-planner-worker` folder when unlocked.
 3. Calendar cadence: tune after real posting weeks; parked project delete UI /
    dark theme / Unassigned rollover.
@@ -256,7 +482,7 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 - Deduped bad planner/kanban mirrors earlier in the day.
 - Project rule `.cursor/rules/handoff.mdc` (always apply) so new agents
   read `HANDOFF.md` first without a long kickoff prompt.
-- Branch `cursor/pressplay-logo-assets` has prior Review/calendar work
+- Branch `cursor/homebase` has prior Review/calendar work
   pushed; local still has uncommitted rename + polish on top.
 
 ### Versions (live)
@@ -268,7 +494,7 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 1. Open Cursor on `…/Press Play Collective/ppc-homebase` (not the old
    `ppc-planner-worker` folder); delete old folder when unlocked.
 2. Rename GitHub repo when `gh` is available (remote still `ppc-planner`).
-3. Commit/push remaining local changes on `cursor/pressplay-logo-assets`
+3. Commit/push remaining local changes on `cursor/homebase`
    when asked.
 4. Fix title mojibake again if tabs show `PPC - HOMEBASE � …` (UTF-8 dash).
 5. Calendar cadence: keep grid-first; tune after real posting weeks.

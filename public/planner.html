@@ -1428,7 +1428,7 @@ const REVENUE = [1000,1800,1500,5000,3000,3500,2000,5500,6500,8000,8000,8000];
 // ─── PERSISTENCE (localStorage + Cloudflare Worker sync) ─────────────────────
 const STORAGE_KEY = 'ppc-planner-data';
 const SYNC_URL = '/api/data';
-const APP_VERSION = '2.10.7';
+const APP_VERSION = '2.10.8';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 
 let editMode = true;
@@ -1622,12 +1622,26 @@ const earlierExpanded = (() => {
   catch (_) { return {}; }
 })();
 
+function plannerMonthIndexNow() {
+  const now = new Date();
+  return (now.getFullYear() - 2026) * 12 + now.getMonth() - 6;
+}
+
+(function seedMonthCollapseDefaults() {
+  const cur = plannerMonthIndexNow();
+  for (let i = 0; i < 12; i++) {
+    // Past months start collapsed; current + future open.
+    if (monthCollapsed[i] === undefined) monthCollapsed[i] = i < cur;
+  }
+})();
+
 function toggleMonthCollapse(mi) {
   monthCollapsed[mi] = !monthCollapsed[mi];
   const cw = document.getElementById('month-content-' + mi);
   const sec = document.getElementById('month-section-' + mi);
   if (cw) cw.style.display = monthCollapsed[mi] ? 'none' : '';
   if (sec) { const b = sec.querySelector('.month-collapse-btn'); if (b) b.textContent = monthCollapsed[mi] ? '▶' : '▼'; }
+  if (!monthCollapsed[mi] && cw && !cw.childElementCount) refreshMonthContent(mi);
 }
 
 // Title field: Enter = save, Shift+Enter = newline
@@ -1638,11 +1652,6 @@ document.getElementById('pTitle').addEventListener('keydown', function(e) {
 // ─── VERTICAL LAYOUT ─────────────────────────────────────────────────────────
 
 const MONTH_VIEW_KEY = 'ppc-planner-month-views';
-
-function plannerMonthIndexNow() {
-  const now = new Date();
-  return (now.getFullYear() - 2026) * 12 + now.getMonth() - 6;
-}
 
 function defaultMonthViewMode(mi) {
   // Future months open in Overview; current + past default to Calendar (date list).
@@ -1709,6 +1718,14 @@ function renderVertical() {
     wrap.appendChild(section);
     if (!monthCollapsed[mi]) refreshMonthContent(mi);
   });
+
+  const curSec = document.getElementById('month-section-' + plannerMonthIndexNow());
+  if (curSec && typeof curSec.scrollIntoView === 'function') {
+    requestAnimationFrame(() => {
+      try { curSec.scrollIntoView({ block: 'start', behavior: 'auto' }); }
+      catch (_) { try { curSec.scrollIntoView(true); } catch (__) {} }
+    });
+  }
 }
 
 function refreshMonthContent(mi) {

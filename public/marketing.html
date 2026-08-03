@@ -1324,6 +1324,12 @@
       text-transform: uppercase;
       color: #2C2C2C;
     }
+    .cal-phase-hint {
+      flex: 1 1 100%;
+      font-size: 11px;
+      color: #8a8580;
+      line-height: 1.35;
+    }
     .cal-phase-note {
       flex: 1 1 180px;
       min-width: 140px;
@@ -1395,6 +1401,7 @@
       justify-content: space-between;
       padding: 4px 10px 10px;
       gap: 12px;
+      flex-wrap: wrap;
     }
     .cal-nav-title {
       font-family: 'Forma DJR Display', 'Poppins', sans-serif;
@@ -1403,7 +1410,7 @@
       color: #2C2C2C;
       letter-spacing: -0.01em;
     }
-    .cal-nav-btns { display: flex; gap: 6px; }
+    .cal-nav-btns { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
     .cal-nav-btn {
       font-family: 'DM Sans', sans-serif;
       font-size: 11px;
@@ -1415,6 +1422,98 @@
       cursor: pointer;
     }
     .cal-nav-btn:hover { border-color: #344364; color: #2C2C2C; }
+    .cal-nav-btn.is-active {
+      background: #344364;
+      border-color: #344364;
+      color: #fff;
+    }
+    .cal-range-toggle {
+      display: inline-flex;
+      gap: 2px;
+      padding: 2px;
+      border: 1px solid #E2DDD5;
+      border-radius: 20px;
+      background: #f7f5f1;
+    }
+    .cal-range-toggle .cal-nav-btn {
+      border: none;
+      border-radius: 18px;
+      padding: 5px 10px;
+      background: transparent;
+    }
+    .cal-range-toggle .cal-nav-btn.is-active {
+      background: #fff;
+      color: #2C2C2C;
+      box-shadow: 0 1px 2px rgba(44,44,44,0.08);
+    }
+    .cal-events-bar {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 0 10px 10px;
+      flex-wrap: wrap;
+    }
+    .cal-events-label {
+      flex: 0 0 auto;
+      margin-top: 6px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #8a8580;
+    }
+    .cal-events-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      flex: 1 1 200px;
+      min-width: 0;
+    }
+    .cal-event-chip {
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      max-width: 220px;
+      padding: 5px 10px;
+      border-radius: 6px;
+      border: 1px solid #E2DDD5;
+      background: #fff;
+      color: #344364;
+      cursor: pointer;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: left;
+    }
+    .cal-event-chip:hover { border-color: #344364; }
+    .cal-event-chip--cadence,
+    .cal-event-chip--custom { background: rgba(86,74,94,0.08); }
+    .cal-event-chip--event { background: rgba(194,154,59,0.12); }
+    .cal-event-chip--release { background: rgba(52,67,100,0.1); }
+    .cal-event-chip--empty {
+      border-style: dashed;
+      color: #8a8580;
+      font-weight: 500;
+      cursor: default;
+    }
+    .cal-wrap--week .cal-day { min-height: 160px; }
+    .cal-wrap--week .cal-day-body { min-height: 120px; }
+    .btn-danger {
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border: 1px solid #c45c5c;
+      background: transparent;
+      color: #a33d3d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      cursor: pointer;
+      margin-right: auto;
+    }
+    .btn-danger:hover { background: rgba(196,92,92,0.08); }
+    .btn-danger[hidden] { display: none; }
     .cal-dow-header {
       display: grid;
       grid-template-columns: repeat(7, minmax(0, 1fr));
@@ -1481,17 +1580,37 @@
       box-shadow: inset 0 0 0 1px #4E6E6C;
       border-radius: 4px;
     }
-    .cal-day--target .cal-day-body {
-      background: rgba(194,154,59,0.07);
-      border-radius: 4px;
-    }
+    .cal-day--target .cal-day-body,
     .cal-day--filled .cal-day-body {
-      background: rgba(78,110,108,0.05);
       border-radius: 4px;
     }
     .cal-day--weekend .cal-day-body {
       background: rgba(44,44,44,0.022);
       border-radius: 4px;
+    }
+    .cal-day-body {
+      position: relative;
+    }
+    .cal-day-clear {
+      width: 18px;
+      height: 18px;
+      padding: 0;
+      border: none;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.85);
+      color: #8a8580;
+      font-size: 14px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.7;
+    }
+    .cal-day-clear:hover {
+      opacity: 1;
+      color: #a33d3d;
+      background: #fff;
     }
     .cal-day-cues {
       display: flex;
@@ -1518,6 +1637,19 @@
       gap: 2px;
       padding: 2px 2px 4px;
       border-bottom: none;
+    }
+    .cal-day-num-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      position: relative;
+      min-height: 18px;
+    }
+    .cal-day-num-row .cal-day-clear {
+      position: absolute;
+      top: 0;
+      right: 0;
     }
     .cal-day-num {
       font-size: 12px;
@@ -1579,12 +1711,21 @@
       border: 1px solid #E2DDD5;
       border-left: 3px solid #564A5E;
       background: #F0EDE8;
-      cursor: pointer;
+      cursor: grab;
       overflow: hidden;
       min-width: 0;
       position: relative;
     }
     .cal-slot:hover { filter: brightness(0.97); }
+    .cal-slot.dragging {
+      opacity: 0.45;
+      cursor: grabbing;
+    }
+    .cal-day-body.drag-over {
+      background: rgba(52,67,100,0.1);
+      box-shadow: inset 0 0 0 2px rgba(52,67,100,0.35);
+      border-radius: 4px;
+    }
     .cal-slot-meta {
       display: block;
       font-size: 8.5px;
@@ -1611,8 +1752,35 @@
     }
     .cal-slot--need .cal-slot-title {
       color: #8a6a1a;
-      font-style: italic;
-      font-weight: 500;
+      font-weight: 600;
+    }
+    .cal-slot--need-empty {
+      padding: 3px 6px;
+      background: transparent;
+      border-color: transparent;
+      border-left: 3px solid #C29A3B;
+    }
+    .cal-slot--need-empty .cal-slot-title {
+      color: #8a6a1a;
+      font-style: normal;
+      font-weight: 600;
+    }
+    .cal-slot--need-empty .cal-slot-title--event {
+      text-decoration: none;
+    }
+    .cal-slot--need-empty .cal-slot-title--event:hover {
+      text-decoration: underline;
+      text-decoration-color: rgba(138,106,26,0.45);
+      color: #6e5414;
+    }
+    .cal-slot--need-empty .cal-slot-fmt {
+      display: inline;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #9a958d;
+      margin-right: 4px;
     }
     .cal-slot-flag {
       display: inline-block;
@@ -1806,19 +1974,38 @@
       color: #9a958d;
     }
     .cal-anchor-field input[type="text"],
-    .cal-anchor-field input[type="date"],
     .cal-anchor-field textarea {
-      font-family: inherit;
-      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12.5px;
+      font-weight: 600;
       color: #2C2C2C;
       background: #fff;
-      border: 1px solid #E2DDD5;
-      border-radius: 6px;
-      padding: 8px 10px;
+      border: 1px solid #EAE2D6;
+      border-radius: 7px;
+      padding: 6px 9px;
       width: 100%;
       box-sizing: border-box;
+      transition: border-color 0.12s, box-shadow 0.12s;
     }
-    .cal-anchor-field .ppc-select { width: 100%; }
+    .cal-anchor-field input[type="text"]:hover,
+    .cal-anchor-field textarea:hover,
+    .cal-anchor-field input[type="text"]:focus,
+    .cal-anchor-field textarea:focus {
+      border-color: #cfc8bc;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      outline: none;
+    }
+    .cal-anchor-field .ppc-select,
+    .cal-anchor-field .ppc-date { width: 100%; }
+    .cal-anchor-field .ppc-select-trigger {
+      min-height: 34px;
+    }
+    body.dark .cal-anchor-field input[type="text"],
+    body.dark .cal-anchor-field textarea {
+      background: #2a2a2a;
+      border-color: #3a3a3a;
+      color: #f0ede8;
+    }
     .cal-anchor-add-type {
       display: flex;
       gap: 6px;
@@ -1903,6 +2090,9 @@
       opacity: 0.45;
       pointer-events: none;
     }
+    .cal-anchor-slot-opts.is-collapsed {
+      display: none;
+    }
     .cal-anchor-add-rule {
       display: flex;
       flex-wrap: wrap;
@@ -1965,6 +2155,70 @@
       margin-bottom: 1px;
     }
     .cal-anchor-add-rule button:hover { border-color: #6B7A8D; color: #2C2C2C; }
+    .cal-weekday-picks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .cal-weekday-pick {
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      min-width: 36px;
+      height: 32px;
+      padding: 0 8px;
+      border: 1px solid #d0ccc6;
+      border-radius: 6px;
+      background: #fff;
+      color: #6B7A8D;
+      cursor: pointer;
+    }
+    .cal-weekday-pick:hover { border-color: #6B7A8D; color: #2C2C2C; }
+    .cal-weekday-pick.is-on {
+      background: #344364;
+      border-color: #344364;
+      color: #fff;
+    }
+    .cal-slot-title--event {
+      cursor: pointer;
+      text-decoration: underline;
+      text-decoration-color: rgba(86,74,94,0.35);
+      text-underline-offset: 2px;
+    }
+    .cal-slot-title--event:hover { color: #344364; }
+    .cal-day-cue--leadup {
+      cursor: grab;
+    }
+    .cal-day-cue--leadup.dragging {
+      opacity: 0.45;
+      cursor: grabbing;
+    }
+    .cal-day-body.cal-day-body--movable {
+      cursor: grab;
+    }
+    .cal-day-body.cal-day-body--movable.dragging {
+      cursor: grabbing;
+      opacity: 0.85;
+    }
+    .btn-edit-event {
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border: 1px solid #d0ccc6;
+      background: transparent;
+      color: #6B7A8D;
+      border-radius: 6px;
+      padding: 6px 10px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .btn-edit-event:hover { border-color: #6B7A8D; color: #2C2C2C; }
+    .btn-edit-event[hidden] { display: none; }
     .cal-anchor-close {
       position: absolute;
       top: 12px;
@@ -2216,6 +2470,7 @@
           <div id="pScheduleLayerWrap" style="margin-top:2px"></div>
           <div class="panel-section-label" style="margin-top:12px">Campaign anchor</div>
           <div id="pScheduleAnchorWrap" style="margin-top:2px"></div>
+          <button type="button" class="btn-edit-event" id="pEditEventBtn" hidden>Edit event</button>
           <hr class="panel-divider">
           <div class="panel-section-label">Caption</div>
           <textarea class="prop-select" id="pScheduleCaption" rows="4" style="resize:vertical;min-height:88px;font-family:inherit;margin-top:2px" placeholder="Post caption…"></textarea>
@@ -2269,16 +2524,16 @@
   <div class="cal-anchor-row">
     <div class="cal-anchor-field">
       <label for="anchorStart">Start date</label>
-      <input type="date" id="anchorStart">
+      <div id="anchorStartWrap"></div>
     </div>
     <div class="cal-anchor-field">
       <label for="anchorEnd">End date</label>
-      <input type="date" id="anchorEnd">
+      <div id="anchorEndWrap"></div>
     </div>
   </div>
   <div class="cal-anchor-field">
     <label for="anchorNight">Event night (optional)</label>
-    <input type="date" id="anchorNight">
+    <div id="anchorNightWrap"></div>
   </div>
   <div class="cal-anchor-field">
     <label for="anchorNotes">Description</label>
@@ -2304,37 +2559,38 @@
         <small class="cal-anchor-hint" id="anchorRuleHint">How many weeks + posts per week.</small>
       </div>
     </div>
-    <div class="cal-anchor-field" id="anchorAddRuleWrap">
-      <label>Add density preset</label>
-      <small class="cal-anchor-hint">Creates a reusable option in Density above. Still click <strong>Save event</strong> to place slots.</small>
-      <div class="cal-anchor-add-rule">
-        <label class="cal-rule-chip cal-rule-chip--grow">
-          Name
-          <input type="text" id="newRuleLabel" placeholder="e.g. Pins · 3/wk">
-        </label>
-        <label class="cal-rule-chip cal-rule-chip--num" id="newRuleWeeksChip">
-          Weeks before start
-          <span class="cal-rule-chip-row">
-            <input type="number" id="newRuleWeeks" min="1" max="26" value="3" title="Weeks before start">
-            <em>wk</em>
-          </span>
-        </label>
-        <label class="cal-rule-chip cal-rule-chip--num">
-          Posts each week
-          <span class="cal-rule-chip-row">
-            <input type="number" id="newRulePosts" min="1" max="5" value="2" title="Posts per week">
-            <em>/wk</em>
-          </span>
-        </label>
-        <button type="button" id="addLeadRuleBtn">Add</button>
-      </div>
+    <div class="cal-anchor-add-type" id="anchorAddRuleWrap" hidden>
+      <input type="text" id="newRuleLabel" placeholder="Preset name" maxlength="40">
+      <input type="number" id="newRuleWeeks" min="1" max="26" value="3" title="Weeks before start" style="width:56px">
+      <input type="number" id="newRulePosts" min="1" max="5" value="2" title="Posts per week" style="width:56px">
+      <button type="button" class="primary" id="addLeadRuleBtn">Add</button>
+      <button type="button" id="cancelLeadRuleBtn">Cancel</button>
+    </div>
+    <div class="cal-anchor-field">
+      <label>Post on</label>
+      <div class="cal-weekday-picks" id="anchorWeekdays" role="group" aria-label="Days of the week"></div>
+      <small class="cal-anchor-hint" id="anchorWeekdayHint">Which weekdays get Need slots. Defaults follow the slot format (Pins = Mon/Wed/Fri).</small>
     </div>
   </div>
 
   <div class="panel-save-row" style="margin-top:16px">
+    <button type="button" class="btn-danger" id="anchorDeleteBtn" hidden onclick="deleteAnchorPanel()">Delete</button>
     <button type="button" class="btn-cancel" onclick="closeAnchorPanel()">Cancel</button>
     <button type="button" class="btn-save" id="anchorSaveBtn" onclick="saveAnchorPanel()">Save event</button>
   </div>
+</div>
+
+<div class="cal-need-menu" id="calDayMenu">
+  <div class="cal-need-menu-label">Day target</div>
+  <button type="button" data-mark="grid">Grid</button>
+  <button type="button" data-mark="story">Story</button>
+  <button type="button" data-mark="pin">Discover</button>
+  <button type="button" data-mark="clear">Clear targets</button>
+  <div class="cal-need-menu-label">Need content</div>
+  <button type="button" data-format="ig-post">IG Post</button>
+  <button type="button" data-format="ig-story">IG Story</button>
+  <button type="button" data-format="pinterest">Pinterest/Cosmos</button>
+  <button type="button" data-format="ig-reel">IG Reel</button>
 </div>
 
 <div class="cal-need-menu" id="calNeedMenu">
@@ -2349,18 +2605,19 @@
   <div class="ctx-item" data-action="add-card">Add card</div>
 </div>
 
-<script src="/js/ppc-select.js"></script>
+<script src="/js/ppc-select.js?v=2"></script>
 <script src="/js/ppc-homebase.js"></script>
 <script>
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
-const APP_VERSION = '0.11.6';
+const APP_VERSION = '0.11.18';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 
 const VIEW_MODE_KEY = 'ppc-marketing-view-mode';
 const SPLIT_PCT_KEY = 'ppc-marketing-split-pct';
 const MOOD_H_KEY = 'ppc-marketing-mood-h';
 const EARLIER_WEEKS_KEY = 'ppc-marketing-earlier-weeks';
+const CAL_RANGE_KEY = 'ppc-marketing-cal-range';
 const SPLIT_PCT_DEFAULT = 36;
 const SPLIT_PCT_MIN = 22;
 const SPLIT_PCT_MAX = 68;
@@ -2908,12 +3165,22 @@ const SAMPLE_PREP = [
   }
 ];
 
-let DATA = { ideas: [], sections: { preparation: [], execution: [], review: [], schedule: [] }, anchors: [], cadence: cloneCadence(), weekGoals: {}, leadUpRules: DEFAULT_LEAD_UP_RULES.map(r => ({ ...r })), customAnchorTypes: [], layoutPrefs: null };
+let DATA = { ideas: [], sections: { preparation: [], execution: [], review: [], schedule: [] }, anchors: [], cadence: cloneCadence(), weekGoals: {}, dayMarks: {}, leadUpRules: DEFAULT_LEAD_UP_RULES.map(r => ({ ...r })), customAnchorTypes: [], layoutPrefs: null };
 const expandedSections = new Set(['schedule']);
 const expandedPillars = new Set(PILLARS.filter(p => p.defaultOpen).map(p => p.id));
 let saveTimer = null;
 let scheduleViewYear = new Date().getFullYear();
 let scheduleViewMonth = new Date().getMonth();
+let scheduleViewWeekStart = (() => {
+  const n = new Date();
+  return weekStartSunday(new Date(n.getFullYear(), n.getMonth(), n.getDate()));
+})();
+let scheduleCalRange = (() => {
+  try {
+    const v = localStorage.getItem(CAL_RANGE_KEY);
+    return v === 'month' ? 'month' : 'week';
+  } catch (_) { return 'week'; }
+})();
 let unscheduledQueueOpen = true;
 let activeAnchorPanelId = null;
 let anchorPanelIsNew = false;
@@ -2937,7 +3204,9 @@ let reviewArmed = false;
 let scheduleArmed = false;
 let reviewContextOpen = false;
 let pendingReviewMedia = null; // { imageData, imageW, imageH } while panel open
-let dragPrepId = null;
+let dragCalSlotId = null;
+let calSlotDragMoved = false;
+let dragLeadUp = null; // { anchorId, fromKey, scheduleId }
 let ideaTopZ = 10;
 let canvasZoom = 0.85;
 let canvasPanX = 20;
@@ -3018,6 +3287,7 @@ function migrateSchedule(card) {
     card.needContent = !stripHtml(card.body || '').trim();
   }
   if (card.leadUp == null) card.leadUp = false;
+  if (card.slotMoved == null) card.slotMoved = false;
   return card;
 }
 
@@ -3041,6 +3311,7 @@ const BUILTIN_ANCHOR_TYPES = [
 ];
 const BUILTIN_ANCHOR_TYPE_IDS = new Set(BUILTIN_ANCHOR_TYPES.map(t => t.id));
 const ADD_ANCHOR_TYPE_ID = '__add_type__';
+const ADD_LEAD_RULE_ID = '__add_rule__';
 const SLOT_FORMAT_OPTIONS = [
   { id: 'ig-post', label: 'IG Post' },
   { id: 'ig-story', label: 'IG Story' },
@@ -3083,6 +3354,7 @@ function migrateAnchor(anchor) {
   const type = normalizeAnchorType(anchor.type);
   const format = anchor.slotFormat || 'ig-post';
   const allowed = new Set(['ig-post', 'ig-story', 'pinterest', 'ig-reel']);
+  const slotWeekdays = normalizeSlotWeekdays(anchor.slotWeekdays);
   return {
     id: anchor.id,
     title: anchor.title || 'Untitled',
@@ -3094,8 +3366,82 @@ function migrateAnchor(anchor) {
     leadUpEnabled: anchor.leadUpEnabled !== false,
     leadUpRuleId: anchor.leadUpRuleId || (type === 'release' ? 'release-4w' : 'event-3w'),
     scheduleMode: anchor.scheduleMode === 'through' || type === 'cadence' ? 'through' : 'leadup',
-    slotFormat: allowed.has(format) ? format : 'ig-post'
+    slotFormat: allowed.has(format) ? format : 'ig-post',
+    slotWeekdays,
+    vacatedLeadDates: normalizeVacatedLeadDates(anchor.vacatedLeadDates),
+    extraLeadDates: normalizeVacatedLeadDates(anchor.extraLeadDates)
   };
+}
+
+function normalizeVacatedLeadDates(raw) {
+  if (!Array.isArray(raw) || !raw.length) return [];
+  const seen = new Set();
+  const out = [];
+  raw.forEach(v => {
+    const s = String(v || '').slice(0, 10);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(s) || seen.has(s)) return;
+    seen.add(s);
+    out.push(s);
+  });
+  return out;
+}
+
+function vacatedLeadDateSet(anchor) {
+  return new Set(normalizeVacatedLeadDates(anchor && anchor.vacatedLeadDates));
+}
+
+function markLeadDateVacated(anchor, key) {
+  if (!anchor || !key) return;
+  const list = normalizeVacatedLeadDates(anchor.vacatedLeadDates);
+  if (!list.includes(key)) list.push(key);
+  anchor.vacatedLeadDates = list;
+}
+
+function unvacateLeadDate(anchor, key) {
+  if (!anchor || !key) return;
+  anchor.vacatedLeadDates = normalizeVacatedLeadDates(anchor.vacatedLeadDates).filter(k => k !== key);
+}
+
+function markExtraLeadDate(anchor, key) {
+  if (!anchor || !key) return;
+  const list = normalizeVacatedLeadDates(anchor.extraLeadDates);
+  if (!list.includes(key)) list.push(key);
+  anchor.extraLeadDates = list;
+}
+
+function clearExtraLeadDate(anchor, key) {
+  if (!anchor || !key) return;
+  anchor.extraLeadDates = normalizeVacatedLeadDates(anchor.extraLeadDates).filter(k => k !== key);
+}
+
+const SLOT_WEEKDAY_OPTIONS = [
+  { day: 1, label: 'Mon' },
+  { day: 2, label: 'Tue' },
+  { day: 3, label: 'Wed' },
+  { day: 4, label: 'Thu' },
+  { day: 5, label: 'Fri' },
+  { day: 6, label: 'Sat' },
+  { day: 0, label: 'Sun' }
+];
+
+function normalizeSlotWeekdays(raw) {
+  if (!Array.isArray(raw) || !raw.length) return null;
+  const seen = new Set();
+  const out = [];
+  raw.forEach(v => {
+    const n = Number(v);
+    if (!Number.isInteger(n) || n < 0 || n > 6 || seen.has(n)) return;
+    seen.add(n);
+    out.push(n);
+  });
+  if (!out.length) return null;
+  // Keep Mon→Sun display order for stable placement priority.
+  out.sort((a, b) => {
+    const ra = a === 0 ? 7 : a;
+    const rb = b === 0 ? 7 : b;
+    return ra - rb;
+  });
+  return out;
 }
 
 function leadUpRules() {
@@ -3414,6 +3760,7 @@ function defaultData() {
     anchors: DEFAULT_ANCHORS.map(a => ({ ...a })),
     cadence: cloneCadence(),
     weekGoals: {},
+    dayMarks: {},
     leadUpRules: DEFAULT_LEAD_UP_RULES.map(r => ({ ...r })),
     customAnchorTypes: [],
     layoutPrefs: null
@@ -3485,6 +3832,7 @@ function saveData() {
     anchors: anchors().map(a => ({ ...a })),
     cadence: cloneCadence(cadenceSettings()),
     weekGoals: { ...(DATA.weekGoals || {}) },
+    dayMarks: { ...(DATA.dayMarks || {}) },
     leadUpRules: leadUpRules().map(r => ({ ...r })),
     customAnchorTypes: customAnchorTypes().map(t => ({ id: t.id, label: t.label })),
     layoutPrefs
@@ -3515,6 +3863,7 @@ function normalizeLoaded(data) {
   if (cadence.reelsPerWeek == null) cadence.reelsPerWeek = DEFAULT_CADENCE.reelsPerWeek;
   ensurePublishDays(cadence);
   const weekGoals = (data.weekGoals && typeof data.weekGoals === 'object') ? { ...data.weekGoals } : {};
+  const dayMarks = (data.dayMarks && typeof data.dayMarks === 'object') ? { ...data.dayMarks } : {};
   const builtinIds = new Set(DEFAULT_LEAD_UP_RULES.map(r => r.id));
   let leadUpRulesLoaded = DEFAULT_LEAD_UP_RULES.map(r => ({ ...r }));
   if (Array.isArray(data.leadUpRules)) {
@@ -3547,6 +3896,7 @@ function normalizeLoaded(data) {
     anchors: loadedAnchors,
     cadence,
     weekGoals,
+    dayMarks,
     leadUpRules: leadUpRulesLoaded,
     customAnchorTypes: (() => {
       const seen = new Set(BUILTIN_ANCHOR_TYPE_IDS);
@@ -4535,41 +4885,50 @@ function renderReviewCard(card) {
 
 function renderScheduleBody() {
   const body = document.createElement('div');
-  body.className = 'section-body cal-wrap';
-
-  const phaseRef = new Date();
-  const weekStart = weekStartMonday(phaseRef);
-  const counts = countWeekFormats(weekStart);
-  body.appendChild(buildWeekGoalControls(weekStart, counts));
-  scheduleWeekGoalRefresh();
+  body.className = 'section-body cal-wrap' + (scheduleCalRange === 'week' ? ' cal-wrap--week' : '');
 
   const nav = document.createElement('div');
   nav.className = 'cal-nav';
   const title = document.createElement('div');
   title.className = 'cal-nav-title';
-  title.textContent = MONTH_NAMES[scheduleViewMonth] + ' ' + scheduleViewYear;
+  title.textContent = scheduleNavTitle();
   const btns = document.createElement('div');
   btns.className = 'cal-nav-btns';
+
+  const rangeToggle = document.createElement('div');
+  rangeToggle.className = 'cal-range-toggle';
+  rangeToggle.setAttribute('role', 'tablist');
+  rangeToggle.setAttribute('aria-label', 'Calendar range');
+  ['week', 'month'].forEach(mode => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'cal-nav-btn' + (scheduleCalRange === mode ? ' is-active' : '');
+    btn.textContent = mode === 'week' ? 'Week' : 'Month';
+    btn.setAttribute('aria-selected', scheduleCalRange === mode ? 'true' : 'false');
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      setScheduleCalRange(mode);
+    });
+    rangeToggle.appendChild(btn);
+  });
+
   const prev = document.createElement('button');
   prev.type = 'button';
   prev.className = 'cal-nav-btn';
   prev.textContent = '← Prev';
-  prev.addEventListener('click', e => { e.stopPropagation(); shiftScheduleMonth(-1); });
+  prev.addEventListener('click', e => { e.stopPropagation(); shiftScheduleView(-1); });
   const next = document.createElement('button');
   next.type = 'button';
   next.className = 'cal-nav-btn';
   next.textContent = 'Next →';
-  next.addEventListener('click', e => { e.stopPropagation(); shiftScheduleMonth(1); });
+  next.addEventListener('click', e => { e.stopPropagation(); shiftScheduleView(1); });
   const todayBtn = document.createElement('button');
   todayBtn.type = 'button';
   todayBtn.className = 'cal-nav-btn';
   todayBtn.textContent = 'Today';
   todayBtn.addEventListener('click', e => {
     e.stopPropagation();
-    const n = new Date();
-    scheduleViewYear = n.getFullYear();
-    scheduleViewMonth = n.getMonth();
-    renderBoard();
+    jumpScheduleToDate(new Date());
   });
   const addEventBtn = document.createElement('button');
   addEventBtn.type = 'button';
@@ -4579,6 +4938,7 @@ function renderScheduleBody() {
     e.stopPropagation();
     openNewEventPanel();
   });
+  btns.appendChild(rangeToggle);
   btns.appendChild(prev);
   btns.appendChild(todayBtn);
   btns.appendChild(next);
@@ -4586,6 +4946,7 @@ function renderScheduleBody() {
   nav.appendChild(title);
   nav.appendChild(btns);
   body.appendChild(nav);
+  body.appendChild(buildEventsBar());
 
   const dow = document.createElement('div');
   dow.className = 'cal-dow-header';
@@ -4600,65 +4961,73 @@ function renderScheduleBody() {
   const cardsByDay = groupScheduleByDay();
   const leadUpByDay = collectLeadUpByDay();
   const today = new Date();
-  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const bands = marketingMonthWeekBands(scheduleViewYear, scheduleViewMonth);
-  const isCurrentMonth = scheduleViewYear === today.getFullYear() && scheduleViewMonth === today.getMonth();
-  const isPastMonth = new Date(scheduleViewYear, scheduleViewMonth + 1, 0) < todayStart;
-  const isFutureMonth = new Date(scheduleViewYear, scheduleViewMonth, 1) > todayStart;
 
-  const pastBands = [];
-  const liveBands = [];
-  bands.forEach(band => {
-    if (isFutureMonth) {
-      liveBands.push(band);
-      return;
-    }
-    if (isPastMonth) {
-      pastBands.push(band);
-      return;
-    }
-    // Current month: collapse weeks that ended before today
-    if (weekBandEndsBefore(band, todayStart)) pastBands.push(band);
-    else liveBands.push(band);
-  });
-
-  const eKey = 'earlier_' + scheduleViewYear + '_' + scheduleViewMonth;
-  if (pastBands.length) {
-    const expanded = !!earlierWeeksExpanded[eKey];
-    const weekSec = document.createElement('div');
-    weekSec.className = 'cal-week-section cal-week-section--earlier';
-    const wLabel = document.createElement('div');
-    wLabel.className = 'cal-week-label';
-    const colIcon = document.createElement('span');
-    colIcon.className = 'cal-week-collapse-icon';
-    colIcon.textContent = expanded ? '▼' : '▶';
-    wLabel.appendChild(colIcon);
-    const labelText = document.createElement('span');
-    labelText.textContent = 'Earlier weeks · ' + pastBands.length;
-    wLabel.appendChild(labelText);
-    weekSec.appendChild(wLabel);
-    const earlierBody = document.createElement('div');
-    earlierBody.className = 'cal-week-earlier-body';
-    if (!expanded) earlierBody.style.display = 'none';
-    pastBands.forEach(band => {
-      earlierBody.appendChild(buildMarketingWeekRow(band, cardsByDay, leadUpByDay, today));
-    });
-    weekSec.appendChild(earlierBody);
-    wLabel.addEventListener('click', e => {
-      e.stopPropagation();
-      earlierWeeksExpanded[eKey] = !earlierWeeksExpanded[eKey];
-      try { localStorage.setItem(EARLIER_WEEKS_KEY, JSON.stringify(earlierWeeksExpanded)); } catch (_) {}
-      renderBoard();
-    });
-    body.appendChild(weekSec);
-  }
-
-  liveBands.forEach(band => {
+  if (scheduleCalRange === 'week') {
+    const band = marketingWeekBandFromStart(scheduleViewWeekStart);
     const weekSec = document.createElement('div');
     weekSec.className = 'cal-week-section';
     weekSec.appendChild(buildMarketingWeekRow(band, cardsByDay, leadUpByDay, today));
     body.appendChild(weekSec);
-  });
+  } else {
+    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const bands = marketingMonthWeekBands(scheduleViewYear, scheduleViewMonth);
+    const isCurrentMonth = scheduleViewYear === today.getFullYear() && scheduleViewMonth === today.getMonth();
+    const isPastMonth = new Date(scheduleViewYear, scheduleViewMonth + 1, 0) < todayStart;
+    const isFutureMonth = new Date(scheduleViewYear, scheduleViewMonth, 1) > todayStart;
+
+    const pastBands = [];
+    const liveBands = [];
+    bands.forEach(band => {
+      if (isFutureMonth) {
+        liveBands.push(band);
+        return;
+      }
+      if (isPastMonth) {
+        pastBands.push(band);
+        return;
+      }
+      if (weekBandEndsBefore(band, todayStart)) pastBands.push(band);
+      else liveBands.push(band);
+    });
+
+    const eKey = 'earlier_' + scheduleViewYear + '_' + scheduleViewMonth;
+    if (pastBands.length) {
+      const expanded = !!earlierWeeksExpanded[eKey];
+      const weekSec = document.createElement('div');
+      weekSec.className = 'cal-week-section cal-week-section--earlier';
+      const wLabel = document.createElement('div');
+      wLabel.className = 'cal-week-label';
+      const colIcon = document.createElement('span');
+      colIcon.className = 'cal-week-collapse-icon';
+      colIcon.textContent = expanded ? '▼' : '▶';
+      wLabel.appendChild(colIcon);
+      const labelText = document.createElement('span');
+      labelText.textContent = 'Earlier weeks · ' + pastBands.length;
+      wLabel.appendChild(labelText);
+      weekSec.appendChild(wLabel);
+      const earlierBody = document.createElement('div');
+      earlierBody.className = 'cal-week-earlier-body';
+      if (!expanded) earlierBody.style.display = 'none';
+      pastBands.forEach(band => {
+        earlierBody.appendChild(buildMarketingWeekRow(band, cardsByDay, leadUpByDay, today));
+      });
+      weekSec.appendChild(earlierBody);
+      wLabel.addEventListener('click', e => {
+        e.stopPropagation();
+        earlierWeeksExpanded[eKey] = !earlierWeeksExpanded[eKey];
+        try { localStorage.setItem(EARLIER_WEEKS_KEY, JSON.stringify(earlierWeeksExpanded)); } catch (_) {}
+        renderBoard();
+      });
+      body.appendChild(weekSec);
+    }
+
+    liveBands.forEach(band => {
+      const weekSec = document.createElement('div');
+      weekSec.className = 'cal-week-section';
+      weekSec.appendChild(buildMarketingWeekRow(band, cardsByDay, leadUpByDay, today));
+      body.appendChild(weekSec);
+    });
+  }
 
   const unscheduled = scheduleCards().filter(c => !c.scheduledAt || !String(c.scheduledAt).trim());
   const unschedWrap = document.createElement('div');
@@ -4688,6 +5057,102 @@ function renderScheduleBody() {
   body.appendChild(unschedWrap);
 
   return body;
+}
+
+function scheduleNavTitle() {
+  if (scheduleCalRange === 'week') {
+    const start = scheduleViewWeekStart;
+    const end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 6);
+    const sameMonth = start.getMonth() === end.getMonth();
+    if (sameMonth) {
+      return start.getDate() + '–' + end.getDate() + ' ' + MONTH_NAMES[start.getMonth()] + ' ' + start.getFullYear();
+    }
+    return formatShortDate(start) + ' – ' + formatShortDate(end) + ' ' + end.getFullYear();
+  }
+  return MONTH_NAMES[scheduleViewMonth] + ' ' + scheduleViewYear;
+}
+
+function setScheduleCalRange(mode) {
+  scheduleCalRange = mode === 'month' ? 'month' : 'week';
+  try { localStorage.setItem(CAL_RANGE_KEY, scheduleCalRange); } catch (_) {}
+  if (scheduleCalRange === 'week') {
+    // Keep week aligned with the month currently shown.
+    const mid = new Date(scheduleViewYear, scheduleViewMonth, 15);
+    scheduleViewWeekStart = weekStartSunday(mid);
+  } else {
+    scheduleViewYear = scheduleViewWeekStart.getFullYear();
+    scheduleViewMonth = scheduleViewWeekStart.getMonth();
+  }
+  renderBoard();
+}
+
+function jumpScheduleToDate(d) {
+  const day = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  scheduleViewWeekStart = weekStartSunday(day);
+  scheduleViewYear = day.getFullYear();
+  scheduleViewMonth = day.getMonth();
+  renderBoard();
+}
+
+function shiftScheduleView(delta) {
+  if (scheduleCalRange === 'week') {
+    const s = scheduleViewWeekStart;
+    scheduleViewWeekStart = weekStartSunday(new Date(s.getFullYear(), s.getMonth(), s.getDate() + delta * 7));
+    scheduleViewYear = scheduleViewWeekStart.getFullYear();
+    scheduleViewMonth = scheduleViewWeekStart.getMonth();
+  } else {
+    shiftScheduleMonth(delta);
+    return;
+  }
+  renderBoard();
+}
+
+function marketingWeekBandFromStart(sunStart) {
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const cellDate = new Date(sunStart.getFullYear(), sunStart.getMonth(), sunStart.getDate() + i);
+    days.push({
+      date: cellDate,
+      dayNum: cellDate.getDate(),
+      inMonth: true
+    });
+  }
+  return { days, endDate: days[6].date };
+}
+
+function buildEventsBar() {
+  const bar = document.createElement('div');
+  bar.className = 'cal-events-bar';
+  const label = document.createElement('div');
+  label.className = 'cal-events-label';
+  label.textContent = 'Events';
+  bar.appendChild(label);
+  const chips = document.createElement('div');
+  chips.className = 'cal-events-chips';
+  const list = anchors().slice().sort((a, b) => String(a.startDate || '').localeCompare(String(b.startDate || '')));
+  if (!list.length) {
+    const empty = document.createElement('span');
+    empty.className = 'cal-event-chip cal-event-chip--empty';
+    empty.textContent = 'None yet — use + Event';
+    chips.appendChild(empty);
+  } else {
+    list.forEach(anchor => {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'cal-event-chip cal-event-chip--' + anchorTypePinClass(anchor.type);
+      const mode = anchor.scheduleMode === 'through' ? 'Cadence' : (normalizeAnchorType(anchor.type) === 'release' ? 'Release' : 'Event');
+      const when = (anchor.startDate || '').slice(5) || 'no date';
+      chip.textContent = (anchor.title || 'Untitled') + ' · ' + when;
+      chip.title = mode + ' · click to edit days, cadence, or delete';
+      chip.addEventListener('click', e => {
+        e.stopPropagation();
+        openAnchorPanel(anchor.id);
+      });
+      chips.appendChild(chip);
+    });
+  }
+  bar.appendChild(chips);
+  return bar;
 }
 
 function marketingMonthWeekBands(year, month) {
@@ -4746,6 +5211,13 @@ function buildMarketingDayCell(cell, cardsByDay, leadUpByDay, today) {
   if (inMonth && isSameCalendarDay(cellDate, today)) col.classList.add('cal-day--today');
   const wd = cellDate.getDay();
   if (wd === 0 || wd === 6) col.classList.add('cal-day--weekend');
+  if (inMonth) {
+    col.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      openCalDayMenu(e.clientX, e.clientY, cellDate);
+    });
+  }
 
   let targetState = null;
   if (inMonth) {
@@ -4763,20 +5235,54 @@ function buildMarketingDayCell(cell, cardsByDay, leadUpByDay, today) {
 
   const head = document.createElement('div');
   head.className = 'cal-day-head';
+  const numRow = document.createElement('div');
+  numRow.className = 'cal-day-num-row';
   const num = document.createElement('div');
   num.className = 'cal-day-num' + (inMonth && isSameCalendarDay(cellDate, today) ? ' cal-day-num--today' : '');
   num.textContent = inMonth ? String(cell.dayNum) : '';
-  head.appendChild(num);
+  numRow.appendChild(num);
+  if (inMonth && targetState) {
+    const clearBtn = document.createElement('button');
+    clearBtn.type = 'button';
+    clearBtn.className = 'cal-day-clear';
+    clearBtn.setAttribute('aria-label', 'Clear day targets');
+    clearBtn.title = 'Clear Grid / Story / Discover marks';
+    clearBtn.textContent = '×';
+    clearBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      toggleDayMark(cellDate, 'clear');
+    });
+    numRow.appendChild(clearBtn);
+  }
+  head.appendChild(numRow);
+
+  const dayCards = inMonth ? (cardsByDay[key] || []) : [];
+  const dayAnchorIds = new Set(dayCards.map(c => c.anchorId).filter(Boolean));
 
   if (targetState || isLeadUp) {
     const cues = document.createElement('div');
     cues.className = 'cal-day-cues';
     if (isLeadUp) {
       leadUpAnchors.forEach(anchor => {
+        // Need / filled slots already name the flow — skip redundant cue.
+        if (dayAnchorIds.has(anchor.id)) return;
         const cue = document.createElement('span');
         cue.className = 'cal-day-cue cal-day-cue--leadup';
+        cue.draggable = true;
         cue.textContent = leadUpCueLabel(anchor);
-        cue.title = leadUpCueTitle(anchor);
+        cue.title = leadUpCueTitle(anchor) + ' · drag to move · click to edit';
+        cue.addEventListener('click', e => {
+          e.stopPropagation();
+          if (calSlotDragMoved) return;
+          openAnchorPanel(anchor.id);
+        });
+        cue.addEventListener('dragstart', e => {
+          e.stopPropagation();
+          const slot = findLeadUpSlotOnDay(anchor.id, key);
+          beginLeadUpDrag(anchor.id, key, slot && slot.id, cue, e);
+        });
+        cue.addEventListener('drag', () => { calSlotDragMoved = true; });
+        cue.addEventListener('dragend', () => endLeadUpDrag(cue));
         cues.appendChild(cue);
       });
     }
@@ -4800,12 +5306,12 @@ function buildMarketingDayCell(cell, cardsByDay, leadUpByDay, today) {
         cues.appendChild(cue);
       }
     }
-    head.appendChild(cues);
+    if (cues.childNodes.length) head.appendChild(cues);
   }
 
   if (inMonth) {
     anchors().forEach(anchor => {
-      if (!anchorOnDate(anchor, cellDate)) return;
+      if (!anchorPinOnDate(anchor, cellDate)) return;
       const pin = document.createElement('div');
       pin.className = 'cal-anchor-pin cal-anchor-pin--' + anchorTypePinClass(anchor.type);
       pin.textContent = anchor.title;
@@ -4821,8 +5327,56 @@ function buildMarketingDayCell(cell, cardsByDay, leadUpByDay, today) {
 
   const dayBody = document.createElement('div');
   dayBody.className = 'cal-day-body';
+  if (targetState) {
+    const tint = dayTargetTintStyle(targetState);
+    if (tint) Object.assign(dayBody.style, tint);
+  }
   if (inMonth) {
-    const dayCards = cardsByDay[key] || [];
+    dayBody.dataset.dateKey = key;
+    // Highlighted lead-up / cadence day — drag the tinted body (or cue) to move.
+    if (leadUpAnchors.length) {
+      const preferred = leadUpAnchors.find(anchor => {
+        const slot = findLeadUpSlotOnDay(anchor.id, key);
+        return slot && isNeedContentCard(slot) && !stripHtml(slot.body || '').trim();
+      }) || leadUpAnchors[0];
+      const dragSlot = findLeadUpSlotOnDay(preferred.id, key);
+      dayBody.classList.add('cal-day-body--movable');
+      dayBody.draggable = true;
+      dayBody.title = 'Drag to move this event slot to another day';
+      dayBody.addEventListener('dragstart', e => {
+        if (e.target.closest('.cal-slot, .cal-add-btn')) {
+          e.preventDefault();
+          return;
+        }
+        beginLeadUpDrag(preferred.id, key, dragSlot && dragSlot.id, dayBody, e);
+      });
+      dayBody.addEventListener('drag', () => { calSlotDragMoved = true; });
+      dayBody.addEventListener('dragend', () => endLeadUpDrag(dayBody));
+    }
+    dayBody.addEventListener('dragover', e => {
+      if (!dragCalSlotId && !dragLeadUp) return;
+      e.preventDefault();
+      e.stopPropagation();
+      dayBody.classList.add('drag-over');
+      if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+    });
+    dayBody.addEventListener('dragleave', e => {
+      if (!dayBody.contains(e.relatedTarget)) dayBody.classList.remove('drag-over');
+    });
+    dayBody.addEventListener('drop', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      dayBody.classList.remove('drag-over');
+      if (dragLeadUp) {
+        const payload = dragLeadUp;
+        endLeadUpDrag(null);
+        moveLeadUpPlacement(payload.anchorId, payload.fromKey, cellDate);
+        return;
+      }
+      const id = (e.dataTransfer && e.dataTransfer.getData('text/plain')) || dragCalSlotId;
+      if (!id || String(id).startsWith('leadup:')) return;
+      moveCalSlotToDate(id, cellDate);
+    });
     dayCards.forEach(card => {
       dayBody.appendChild(renderCalSlot(card));
     });
@@ -4844,13 +5398,31 @@ function buildMarketingDayCell(cell, cardsByDay, leadUpByDay, today) {
 
 function collectLeadUpByDay() {
   const map = new Map();
+  const push = (k, anchor) => {
+    if (!map.has(k)) map.set(k, []);
+    if (!map.get(k).some(a => a.id === anchor.id)) map.get(k).push(anchor);
+  };
   anchors().forEach(anchor => {
     if (!anchor.leadUpEnabled) return;
+    const vacated = vacatedLeadDateSet(anchor);
     computeLeadUpDates(anchor).forEach(d => {
       const k = dateKey(d);
-      if (!map.has(k)) map.set(k, []);
-      map.get(k).push(anchor);
+      if (vacated.has(k)) return;
+      push(k, anchor);
     });
+    normalizeVacatedLeadDates(anchor.extraLeadDates).forEach(k => {
+      if (vacated.has(k)) return;
+      push(k, anchor);
+    });
+  });
+  // Highlights follow cards the user dragged onto other days.
+  scheduleCards().forEach(c => {
+    if (!c.anchorId || !c.scheduledAt) return;
+    const anchor = anchors().find(a => a.id === c.anchorId);
+    if (!anchor || !anchor.leadUpEnabled) return;
+    const d = new Date(c.scheduledAt);
+    if (Number.isNaN(d.getTime())) return;
+    push(dateKey(d), anchor);
   });
   return map;
 }
@@ -4869,14 +5441,25 @@ function preferredSlotDays(format) {
   return LEAD_UP_PREFERRED_DAYS.concat(LEAD_UP_EXTRA_DAYS);
 }
 
+function slotDaysForAnchor(anchor) {
+  const custom = normalizeSlotWeekdays(anchor && anchor.slotWeekdays);
+  if (custom && custom.length) return custom;
+  return preferredSlotDays((anchor && anchor.slotFormat) || 'ig-post');
+}
+
 function computeLeadUpDates(anchor) {
   const start = parseDateOnly(anchor.startDate);
   if (!start) return [];
   const rule = leadUpRuleById(anchor.leadUpRuleId) || leadUpRuleById(defaultLeadUpRuleId(anchor.type));
   if (!rule) return [];
-  const postsPerWeek = Math.max(1, Math.min(5, Number(rule.postsPerWeek) || 2));
   const format = anchor.slotFormat || 'ig-post';
-  const dayOrder = preferredSlotDays(format);
+  const customDays = normalizeSlotWeekdays(anchor.slotWeekdays);
+  const dayOrder = customDays || preferredSlotDays(format);
+  // Custom weekday picks place on every selected day; density posts/week
+  // only caps when using format defaults.
+  const postsPerWeek = customDays
+    ? Math.max(1, Math.min(7, customDays.length))
+    : Math.max(1, Math.min(5, Number(rule.postsPerWeek) || 2));
   const mode = anchor.scheduleMode === 'through' ? 'through' : 'leadup';
 
   let windowStart;
@@ -4921,6 +5504,83 @@ function computeLeadUpDates(anchor) {
   return dates;
 }
 
+function clearEmptyAutoSlotsForAnchor(anchorId) {
+  if (!anchorId) return 0;
+  const list = scheduleCards();
+  let removed = 0;
+  for (let i = list.length - 1; i >= 0; i--) {
+    const c = list[i];
+    if (c.anchorId !== anchorId) continue;
+    if (c.slotMoved) continue;
+    if (!(c.leadUp || isNeedContentCard(c))) continue;
+    if (isNeedContentCard(c) && !stripHtml(c.body || '').trim()) {
+      list.splice(i, 1);
+      removed++;
+    } else if (c.leadUp) {
+      c.leadUp = false;
+    }
+  }
+  return removed;
+}
+
+function pruneStaleAutoSlots(anchor) {
+  if (!anchor) return 0;
+  const start = parseDateOnly(anchor.startDate);
+  if (!start) return 0;
+  let windowStart;
+  let windowEndExclusive;
+  if (anchor.scheduleMode === 'through') {
+    const end = parseDateOnly(anchor.endDate || anchor.startDate);
+    if (!end) return 0;
+    windowStart = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    windowEndExclusive = new Date(end.getFullYear(), end.getMonth(), end.getDate() + 1);
+  } else {
+    const rule = leadUpRuleById(anchor.leadUpRuleId) || leadUpRuleById(defaultLeadUpRuleId(anchor.type));
+    const weeks = Math.max(1, Number(rule && rule.weeks) || 3);
+    windowEndExclusive = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    windowStart = new Date(windowEndExclusive);
+    windowStart.setDate(windowStart.getDate() - weeks * 7);
+  }
+  const allowedDays = new Set(slotDaysForAnchor(anchor));
+  const list = scheduleCards();
+  let removed = 0;
+  for (let i = list.length - 1; i >= 0; i--) {
+    const c = list[i];
+    if (c.anchorId !== anchor.id) continue;
+    if (c.slotMoved) continue;
+    if (!c.leadUp) continue;
+    if (!(isNeedContentCard(c) && !stripHtml(c.body || '').trim())) continue;
+    const d = c.scheduledAt ? new Date(c.scheduledAt) : null;
+    if (!d || Number.isNaN(d.getTime())) continue;
+    const t = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+    const outOfWindow = t < windowStart.getTime() || t >= windowEndExclusive.getTime();
+    const wrongWeekday = !allowedDays.has(d.getDay());
+    if (outOfWindow || wrongWeekday) {
+      list.splice(i, 1);
+      removed++;
+    }
+  }
+  return removed;
+}
+
+function postsPerWeekForAnchor(anchor) {
+  const custom = normalizeSlotWeekdays(anchor && anchor.slotWeekdays);
+  if (custom && custom.length) return Math.max(1, Math.min(7, custom.length));
+  const rule = leadUpRuleById(anchor && anchor.leadUpRuleId) || leadUpRuleById(defaultLeadUpRuleId(anchor && anchor.type));
+  return Math.max(1, Math.min(5, Number(rule && rule.postsPerWeek) || 2));
+}
+
+function countAnchorSlotsInWeek(anchorId, weekKey) {
+  let n = 0;
+  scheduleCards().forEach(c => {
+    if (c.anchorId !== anchorId || !c.scheduledAt) return;
+    const d = new Date(c.scheduledAt);
+    if (Number.isNaN(d.getTime())) return;
+    if (dateKey(weekStartSunday(d)) === weekKey) n++;
+  });
+  return n;
+}
+
 function clearLeadUpNeedSlots(anchor) {
   if (!anchor) return 0;
   const leadDates = new Set(computeLeadUpDates(anchor).map(d => dateKey(d)));
@@ -4931,14 +5591,14 @@ function clearLeadUpNeedSlots(anchor) {
     if (c.anchorId !== anchor.id) continue;
     const d = c.scheduledAt ? new Date(c.scheduledAt) : null;
     const onLeadDate = d && !Number.isNaN(d.getTime()) && leadDates.has(dateKey(d));
-    const isAutoLead = !!c.leadUp || onLeadDate;
-    if (!isAutoLead) continue;
-    if (isNeedContentCard(c) && !stripHtml(c.body || '').trim()) {
+    const isLinkedNeed = isNeedContentCard(c) && !stripHtml(c.body || '').trim();
+    // Empty Needs (auto or dragged) clear when placement is turned off.
+    if (isLinkedNeed && (!!c.leadUp || onLeadDate || c.slotMoved)) {
       list.splice(i, 1);
       removed++;
-    } else if (c.leadUp) {
-      c.leadUp = false;
+      continue;
     }
+    if (c.leadUp) c.leadUp = false;
   }
   return removed;
 }
@@ -4953,10 +5613,16 @@ function placeLeadUpNeedSlots(anchor) {
     if (Number.isNaN(d.getTime())) return;
     existing.add(dateKey(d));
   });
+  const ppw = postsPerWeekForAnchor(anchor);
+  const vacated = vacatedLeadDateSet(anchor);
   let created = 0;
   computeLeadUpDates(anchor).forEach(d => {
     const k = dateKey(d);
+    if (vacated.has(k)) return;
     if (existing.has(k)) return;
+    const weekKey = dateKey(weekStartSunday(d));
+    // Respect slots the user already dragged into this week.
+    if (countAnchorSlotsInWeek(anchor.id, weekKey) >= ppw) return;
     const when = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 10, 0, 0);
     const card = migrateSchedule({
       id: newScheduleId(),
@@ -4965,6 +5631,7 @@ function placeLeadUpNeedSlots(anchor) {
       format: anchor.slotFormat || 'ig-post',
       needContent: true,
       leadUp: true,
+      slotMoved: false,
       publishStatus: 'unscheduled',
       scheduledAt: when.toISOString(),
       scheduleAt: when.toISOString(),
@@ -4979,6 +5646,113 @@ function placeLeadUpNeedSlots(anchor) {
   return created;
 }
 
+function moveCalSlotToDate(scheduleId, dayDate) {
+  const card = scheduleCards().find(c => c.id === scheduleId);
+  if (!card || !dayDate) return false;
+  const prev = card.scheduledAt ? new Date(card.scheduledAt) : null;
+  const hours = prev && !Number.isNaN(prev.getTime()) ? prev.getHours() : 10;
+  const mins = prev && !Number.isNaN(prev.getTime()) ? prev.getMinutes() : 0;
+  const when = new Date(dayDate.getFullYear(), dayDate.getMonth(), dayDate.getDate(), hours, mins, 0);
+  if (prev && !Number.isNaN(prev.getTime()) && dateKey(prev) === dateKey(when)) return false;
+  const fromKey = prev && !Number.isNaN(prev.getTime()) ? dateKey(prev) : null;
+  const toKey = dateKey(when);
+  card.scheduledAt = when.toISOString();
+  card.scheduleAt = when.toISOString();
+  card.slotMoved = true;
+  if (card.needContent == null) card.needContent = isNeedContentCard(card);
+  if (card.anchorId) {
+    const anchor = anchors().find(a => a.id === card.anchorId);
+    if (anchor) {
+      if (fromKey) markLeadDateVacated(anchor, fromKey);
+      unvacateLeadDate(anchor, toKey);
+    }
+  }
+  clearTimeout(saveTimer);
+  saveData();
+  renderBoard();
+  PPC.showToast('Moved to ' + formatShortDate(when));
+  return true;
+}
+
+function findLeadUpSlotOnDay(anchorId, dayKey) {
+  const cards = scheduleCards().filter(c => {
+    if (c.anchorId !== anchorId || !c.scheduledAt) return false;
+    const d = new Date(c.scheduledAt);
+    if (Number.isNaN(d.getTime())) return false;
+    return dateKey(d) === dayKey;
+  });
+  if (!cards.length) return null;
+  const emptyNeed = cards.find(c => isNeedContentCard(c) && !stripHtml(c.body || '').trim());
+  return emptyNeed || cards[0];
+}
+
+function ensureLeadUpSlotOnDay(anchor, dayDate) {
+  const key = dateKey(dayDate);
+  const existing = findLeadUpSlotOnDay(anchor.id, key);
+  if (existing) return existing;
+  const when = new Date(dayDate.getFullYear(), dayDate.getMonth(), dayDate.getDate(), 10, 0, 0);
+  const card = migrateSchedule({
+    id: newScheduleId(),
+    body: '',
+    pillar: 'organic',
+    format: anchor.slotFormat || 'ig-post',
+    needContent: true,
+    leadUp: true,
+    slotMoved: false,
+    publishStatus: 'unscheduled',
+    scheduledAt: when.toISOString(),
+    scheduleAt: when.toISOString(),
+    contentLayer: '',
+    anchorId: anchor.id,
+    createdAt: new Date().toISOString()
+  });
+  scheduleCards().push(card);
+  return card;
+}
+
+/** Move an event lead-up / cadence placement (highlight ± Need) to another day. */
+function moveLeadUpPlacement(anchorId, fromKey, dayDate) {
+  const anchor = anchors().find(a => a.id === anchorId);
+  if (!anchor || !fromKey || !dayDate) return false;
+  const toKey = dateKey(dayDate);
+  if (fromKey === toKey) return false;
+  const card = findLeadUpSlotOnDay(anchorId, fromKey);
+  if (card) {
+    // Existing Need / filled card — move the card (highlight follows).
+    return moveCalSlotToDate(card.id, dayDate);
+  }
+  // Cue-only tinted day — move the highlight only, do not mint a Need box.
+  markLeadDateVacated(anchor, fromKey);
+  clearExtraLeadDate(anchor, fromKey);
+  unvacateLeadDate(anchor, toKey);
+  markExtraLeadDate(anchor, toKey);
+  clearTimeout(saveTimer);
+  saveData();
+  renderBoard();
+  PPC.showToast('Moved to ' + formatShortDate(dayDate));
+  return true;
+}
+
+function beginLeadUpDrag(anchorId, fromKey, scheduleId, el, e) {
+  dragLeadUp = { anchorId, fromKey, scheduleId: scheduleId || null };
+  calSlotDragMoved = false;
+  if (el) el.classList.add('dragging');
+  if (e && e.dataTransfer) {
+    e.dataTransfer.setData('text/plain', scheduleId || ('leadup:' + anchorId + ':' + fromKey));
+    e.dataTransfer.effectAllowed = 'move';
+  }
+}
+
+function endLeadUpDrag(el) {
+  dragLeadUp = null;
+  if (el) el.classList.remove('dragging');
+  document.querySelectorAll('.cal-day-body.drag-over, .cal-day-cue--leadup.dragging, .cal-day-body.dragging').forEach(n => {
+    n.classList.remove('drag-over');
+    n.classList.remove('dragging');
+  });
+  setTimeout(() => { calSlotDragMoved = false; }, 0);
+}
+
 function newAnchorId() {
   return 'anchor-' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
 }
@@ -4989,21 +5763,48 @@ function populateLeadUpRuleSelect(selectedId, type) {
   const options = leadUpRules().map(r => ({
     id: r.id,
     label: mode === 'through'
-      ? r.label + ' · ' + r.postsPerWeek + ' posts/week (until end date)'
-      : r.label + ' · ' + r.weeks + ' weeks before · ' + r.postsPerWeek + '/wk'
+      ? r.label + ' · ' + r.postsPerWeek + '/wk until end'
+      : r.label + ' · ' + r.postsPerWeek + '/wk'
   }));
-  if (!options.length) return;
-  const value = options.some(o => o.id === preferred) ? preferred : options[0].id;
-  if (!updatePpcSelect('anchorLeadRule', { options, value })) {
-    const wrap = document.getElementById('anchorLeadRuleWrap');
-    if (!wrap) return;
-    wrap.innerHTML = '';
-    wrap.appendChild(createPpcSelect({
-      id: 'anchorLeadRule',
-      options,
-      value
-    }));
+  options.push({ id: ADD_LEAD_RULE_ID, label: '+ Add density…' });
+  const value = options.some(o => o.id === preferred && o.id !== ADD_LEAD_RULE_ID)
+    ? preferred
+    : (leadUpRules()[0] && leadUpRules()[0].id);
+  const wrap = document.getElementById('anchorLeadRuleWrap');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  wrap.appendChild(createPpcSelect({
+    id: 'anchorLeadRule',
+    options,
+    value,
+    onChange: val => {
+      if (val === ADD_LEAD_RULE_ID) {
+        setPpcSelectValue('anchorLeadRule', value);
+        showAddLeadRuleForm();
+        return;
+      }
+      hideAddLeadRuleForm();
+    }
+  }));
+}
+
+function showAddLeadRuleForm() {
+  const wrap = document.getElementById('anchorAddRuleWrap');
+  if (!wrap) return;
+  wrap.hidden = false;
+  const mode = (document.getElementById('anchorScheduleMode') || {}).value || 'leadup';
+  const weeks = document.getElementById('newRuleWeeks');
+  if (weeks) weeks.style.display = mode === 'through' ? 'none' : '';
+  const label = document.getElementById('newRuleLabel');
+  if (label) {
+    label.value = '';
+    label.focus();
   }
+}
+
+function hideAddLeadRuleForm() {
+  const wrap = document.getElementById('anchorAddRuleWrap');
+  if (wrap) wrap.hidden = true;
 }
 
 function showAddAnchorTypeForm() {
@@ -5093,7 +5894,10 @@ function onAnchorTypeChanged(typeRaw) {
   if (type === 'cadence') {
     setPpcSelectValue('anchorScheduleMode', 'through');
     const fmt = document.getElementById('anchorSlotFormat');
-    if (fmt && fmt.value === 'ig-post') setPpcSelectValue('anchorSlotFormat', 'pinterest');
+    if (fmt && fmt.value === 'ig-post') {
+      setPpcSelectValue('anchorSlotFormat', 'pinterest');
+      seedAnchorWeekdays('pinterest', null);
+    }
   }
   populateLeadUpRuleSelect(defaultLeadUpRuleId(type), type);
   syncAnchorSlotUI();
@@ -5102,6 +5906,7 @@ function onAnchorTypeChanged(typeRaw) {
 function ensureAnchorPanelSelects() {
   if (anchorPanelSelectsReady) {
     refreshAnchorTypeSelect(lastAnchorTypeValue);
+    ensureAnchorDateInputs();
     return;
   }
   const typeWrap = document.getElementById('anchorTypeWrap');
@@ -5128,7 +5933,8 @@ function ensureAnchorPanelSelects() {
     formatWrap.appendChild(createPpcSelect({
       id: 'anchorSlotFormat',
       options: SLOT_FORMAT_OPTIONS,
-      value: 'ig-post'
+      value: 'ig-post',
+      onChange: val => onAnchorSlotFormatChanged(val)
     }));
   }
   const modeWrap = document.getElementById('anchorScheduleModeWrap');
@@ -5142,20 +5948,53 @@ function ensureAnchorPanelSelects() {
     }));
   }
   populateLeadUpRuleSelect(defaultLeadUpRuleId('event'), 'event');
+  ensureAnchorDateInputs();
   anchorPanelSelectsReady = true;
   lastAnchorTypeValue = 'event';
+}
+
+function ensureAnchorDateInputs() {
+  const specs = [
+    { wrapId: 'anchorStartWrap', id: 'anchorStart', placeholder: 'Start date' },
+    { wrapId: 'anchorEndWrap', id: 'anchorEnd', placeholder: 'End date' },
+    { wrapId: 'anchorNightWrap', id: 'anchorNight', placeholder: 'Optional' }
+  ];
+  specs.forEach(spec => {
+    if (document.getElementById(spec.id)) return;
+    const wrap = document.getElementById(spec.wrapId);
+    if (!wrap || typeof createPpcDate !== 'function') return;
+    wrap.innerHTML = '';
+    wrap.appendChild(createPpcDate({
+      id: spec.id,
+      value: '',
+      placeholder: spec.placeholder
+    }));
+  });
+}
+
+function focusPpcDate(id) {
+  const hidden = document.getElementById(id);
+  if (!hidden) return;
+  const wrap = hidden.closest('.ppc-date');
+  const trigger = wrap && wrap.querySelector('.ppc-select-trigger');
+  if (trigger) trigger.focus();
+  else hidden.focus();
 }
 
 function syncAnchorSlotUI() {
   const enabled = !!(document.getElementById('anchorLeadUp') || {}).checked;
   const opts = document.getElementById('anchorSlotOptions');
-  if (opts) opts.classList.toggle('is-disabled', !enabled);
+  if (opts) {
+    opts.classList.toggle('is-collapsed', !enabled);
+    opts.classList.remove('is-disabled');
+  }
+  if (!enabled) hideAddLeadRuleForm();
 
   const modeEl = document.getElementById('anchorScheduleMode');
   const mode = (modeEl && modeEl.value) || 'leadup';
   const through = mode === 'through';
-  const weeksChip = document.getElementById('newRuleWeeksChip');
-  if (weeksChip) weeksChip.style.display = through ? 'none' : '';
+  const weeksInput = document.getElementById('newRuleWeeks');
+  if (weeksInput) weeksInput.style.display = through ? 'none' : '';
 
   const modeHint = document.getElementById('anchorModeHint');
   if (modeHint) {
@@ -5181,9 +6020,50 @@ function syncAnchorSlotUI() {
   );
 }
 
+function renderAnchorWeekdayPicks(selectedDays) {
+  const wrap = document.getElementById('anchorWeekdays');
+  if (!wrap) return;
+  const selected = new Set(normalizeSlotWeekdays(selectedDays) || []);
+  wrap.innerHTML = '';
+  SLOT_WEEKDAY_OPTIONS.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'cal-weekday-pick' + (selected.has(opt.day) ? ' is-on' : '');
+    btn.textContent = opt.label;
+    btn.dataset.day = String(opt.day);
+    btn.setAttribute('aria-pressed', selected.has(opt.day) ? 'true' : 'false');
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('is-on');
+      btn.setAttribute('aria-pressed', btn.classList.contains('is-on') ? 'true' : 'false');
+    });
+    wrap.appendChild(btn);
+  });
+}
+
+function readAnchorWeekdaysFromUI() {
+  const wrap = document.getElementById('anchorWeekdays');
+  if (!wrap) return null;
+  const days = [];
+  wrap.querySelectorAll('.cal-weekday-pick.is-on').forEach(btn => {
+    days.push(Number(btn.dataset.day));
+  });
+  return normalizeSlotWeekdays(days);
+}
+
+function seedAnchorWeekdays(format, existing) {
+  const custom = normalizeSlotWeekdays(existing);
+  renderAnchorWeekdayPicks(custom || preferredSlotDays(format || 'ig-post'));
+}
+
+function onAnchorSlotFormatChanged(format) {
+  seedAnchorWeekdays(format || 'ig-post', null);
+  syncAnchorSlotUI();
+}
+
 function openNewEventPanel() {
   ensureAnchorPanelSelects();
   hideAddAnchorTypeForm();
+  hideAddLeadRuleForm();
   activeAnchorPanelId = null;
   anchorPanelIsNew = true;
   document.getElementById('anchorPanelHeading').textContent = 'New event';
@@ -5192,13 +6072,16 @@ function openNewEventPanel() {
   lastAnchorTypeValue = 'event';
   setPpcSelectValue('anchorSlotFormat', 'ig-post');
   setPpcSelectValue('anchorScheduleMode', 'leadup');
-  document.getElementById('anchorStart').value = '';
-  document.getElementById('anchorEnd').value = '';
-  document.getElementById('anchorNight').value = '';
+  setPpcDateValue('anchorStart', '');
+  setPpcDateValue('anchorEnd', '');
+  setPpcDateValue('anchorNight', '');
   document.getElementById('anchorNotes').value = '';
   document.getElementById('anchorLeadUp').checked = true;
   populateLeadUpRuleSelect(defaultLeadUpRuleId('event'), 'event');
+  seedAnchorWeekdays('ig-post', null);
   syncAnchorSlotUI();
+  const delBtn = document.getElementById('anchorDeleteBtn');
+  if (delBtn) delBtn.hidden = true;
   document.getElementById('anchorSaveBtn').textContent = 'Save event';
   document.getElementById('anchorOverlay').classList.add('open');
   document.getElementById('anchorPanel').classList.add('open');
@@ -5210,6 +6093,7 @@ function openAnchorPanel(anchorId) {
   if (!anchor) return;
   ensureAnchorPanelSelects();
   hideAddAnchorTypeForm();
+  hideAddLeadRuleForm();
   activeAnchorPanelId = anchorId;
   anchorPanelIsNew = false;
   document.getElementById('anchorPanelHeading').textContent = 'Edit event';
@@ -5218,13 +6102,16 @@ function openAnchorPanel(anchorId) {
   refreshAnchorTypeSelect(type);
   setPpcSelectValue('anchorSlotFormat', anchor.slotFormat || 'ig-post');
   setPpcSelectValue('anchorScheduleMode', anchor.scheduleMode === 'through' ? 'through' : 'leadup');
-  document.getElementById('anchorStart').value = (anchor.startDate || '').slice(0, 10);
-  document.getElementById('anchorEnd').value = (anchor.endDate || anchor.startDate || '').slice(0, 10);
-  document.getElementById('anchorNight').value = (anchor.eventNightDate || '').slice(0, 10);
+  setPpcDateValue('anchorStart', (anchor.startDate || '').slice(0, 10));
+  setPpcDateValue('anchorEnd', (anchor.endDate || anchor.startDate || '').slice(0, 10));
+  setPpcDateValue('anchorNight', (anchor.eventNightDate || '').slice(0, 10));
   document.getElementById('anchorNotes').value = anchor.notes || '';
   document.getElementById('anchorLeadUp').checked = anchor.leadUpEnabled !== false;
   populateLeadUpRuleSelect(anchor.leadUpRuleId, anchor.type);
+  seedAnchorWeekdays(anchor.slotFormat || 'ig-post', anchor.slotWeekdays);
   syncAnchorSlotUI();
+  const delBtn = document.getElementById('anchorDeleteBtn');
+  if (delBtn) delBtn.hidden = false;
   document.getElementById('anchorSaveBtn').textContent = 'Save event';
   document.getElementById('anchorOverlay').classList.add('open');
   document.getElementById('anchorPanel').classList.add('open');
@@ -5234,6 +6121,7 @@ function closeAnchorPanel() {
   activeAnchorPanelId = null;
   anchorPanelIsNew = false;
   hideAddAnchorTypeForm();
+  if (typeof closePpcSelects === 'function') closePpcSelects();
   document.getElementById('anchorOverlay').classList.remove('open');
   document.getElementById('anchorPanel').classList.remove('open');
 }
@@ -5249,7 +6137,7 @@ function saveAnchorPanel() {
   const startDate = document.getElementById('anchorStart').value;
   if (!startDate) {
     PPC.showToast('Start date is required');
-    document.getElementById('anchorStart').focus();
+    focusPpcDate('anchorStart');
     return;
   }
   const endDate = document.getElementById('anchorEnd').value || startDate;
@@ -5259,7 +6147,7 @@ function saveAnchorPanel() {
     const e = parseDateOnly(endDate);
     if (!e || e.getTime() < s.getTime()) {
       PPC.showToast('End date must be on or after start for Between start & end');
-      document.getElementById('anchorEnd').focus();
+      focusPpcDate('anchorEnd');
       return;
     }
   }
@@ -5268,6 +6156,11 @@ function saveAnchorPanel() {
   const leadUpEnabled = !!document.getElementById('anchorLeadUp').checked;
   const leadUpRuleId = document.getElementById('anchorLeadRule').value || defaultLeadUpRuleId(type);
   const slotFormat = document.getElementById('anchorSlotFormat').value || 'ig-post';
+  const slotWeekdays = readAnchorWeekdaysFromUI();
+  if (leadUpEnabled && (!slotWeekdays || !slotWeekdays.length)) {
+    PPC.showToast('Pick at least one weekday for Need slots');
+    return;
+  }
 
   let anchor;
   if (anchorPanelIsNew || !activeAnchorPanelId) {
@@ -5282,7 +6175,8 @@ function saveAnchorPanel() {
       leadUpEnabled,
       leadUpRuleId,
       scheduleMode,
-      slotFormat
+      slotFormat,
+      slotWeekdays
     };
     anchors().push(anchor);
   } else {
@@ -5298,27 +6192,59 @@ function saveAnchorPanel() {
     anchor.leadUpRuleId = leadUpRuleId;
     anchor.scheduleMode = scheduleMode;
     anchor.slotFormat = slotFormat;
+    anchor.slotWeekdays = slotWeekdays;
   }
 
   let created = 0;
   let cleared = 0;
-  if (leadUpEnabled) created = placeLeadUpNeedSlots(anchor);
-  else cleared = clearLeadUpNeedSlots(anchor);
+  if (leadUpEnabled) {
+    // Keep user-dragged slots; only prune auto slots outside the window, then
+    // top up preferred days when a week is under its posts/week count.
+    cleared = pruneStaleAutoSlots(anchor);
+    created = placeLeadUpNeedSlots(anchor);
+  } else {
+    cleared = clearLeadUpNeedSlots(anchor);
+  }
 
   clearTimeout(saveTimer);
   saveData();
   closeAnchorPanel();
   expandedSections.add('schedule');
-  // Jump calendar to the event month
   const start = parseDateOnly(anchor.startDate);
-  if (start) {
-    scheduleViewYear = start.getFullYear();
-    scheduleViewMonth = start.getMonth();
+  if (start) jumpScheduleToDate(start);
+  else renderBoard();
+  if (created > 0 && cleared > 0) {
+    PPC.showToast('Saved · ' + created + ' Need slot' + (created === 1 ? '' : 's') + ' · ' + cleared + ' empty removed');
+  } else if (created > 0) {
+    PPC.showToast('Saved · ' + created + ' Need slot' + (created === 1 ? '' : 's') + ' placed');
+  } else if (cleared > 0) {
+    PPC.showToast('Saved · ' + cleared + ' empty slot' + (cleared === 1 ? '' : 's') + ' removed');
+  } else {
+    PPC.showToast('Event saved');
   }
+}
+
+function deleteAnchorPanel() {
+  if (anchorPanelIsNew || !activeAnchorPanelId) return;
+  const anchor = anchors().find(a => a.id === activeAnchorPanelId);
+  if (!anchor) return;
+  const name = (anchor.title || 'this event').trim();
+  if (!confirm('Delete "' + name + '"?\n\nEmpty Need slots for it will be removed. Filled content stays on the calendar (unlinked).')) {
+    return;
+  }
+  const id = anchor.id;
+  clearEmptyAutoSlotsForAnchor(id);
+  scheduleCards().forEach(c => {
+    if (c.anchorId !== id) return;
+    c.anchorId = '';
+    c.leadUp = false;
+  });
+  DATA.anchors = anchors().filter(a => a.id !== id);
+  clearTimeout(saveTimer);
+  saveData();
+  closeAnchorPanel();
   renderBoard();
-  if (created > 0) PPC.showToast('Saved · ' + created + ' Need slot' + (created === 1 ? '' : 's') + ' placed');
-  else if (cleared > 0) PPC.showToast('Saved · slots off · ' + cleared + ' empty slot' + (cleared === 1 ? '' : 's') + ' removed');
-  else PPC.showToast('Event saved');
+  PPC.showToast('Event deleted');
 }
 
 function addCustomLeadUpRule() {
@@ -5348,8 +6274,8 @@ function addCustomLeadUpRule() {
   };
   leadUpRules().push(rule);
   document.getElementById('newRuleLabel').value = '';
+  hideAddLeadRuleForm();
   populateLeadUpRuleSelect(rule.id, document.getElementById('anchorType').value);
-  syncAnchorSlotUI();
   scheduleSave();
   PPC.showToast('Density preset added — still Save event to place slots');
 }
@@ -5385,6 +6311,22 @@ function anchorOnDate(anchor, day) {
   const s = new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime();
   const e = new Date((end || start).getFullYear(), (end || start).getMonth(), (end || start).getDate()).getTime();
   return t >= s && t <= e;
+}
+
+/** Pin marker for the calendar head — not the full through-range paint. */
+function anchorPinOnDate(anchor, day) {
+  if (!anchorOnDate(anchor, day)) return false;
+  // Cadence / through spans: only mark start (+ end if different). Painting
+  // every day in the window looked like daily duplicates of the Need slots.
+  if (anchor.scheduleMode === 'through' || anchor.type === 'cadence') {
+    const start = parseDateOnly(anchor.startDate);
+    const end = parseDateOnly(anchor.endDate || anchor.startDate);
+    if (!start) return false;
+    if (isSameCalendarDay(day, start)) return true;
+    if (end && !isSameCalendarDay(start, end) && isSameCalendarDay(day, end)) return true;
+    return false;
+  }
+  return true;
 }
 
 function phaseAt(y, month1, day) {
@@ -5524,6 +6466,11 @@ function buildWeekGoalControls(weekStart, counts) {
   if ((targets.reels || 0) > 0 || (counts.reels || 0) > 0) metric('reels', 'Reels');
 
   wrap.appendChild(metrics);
+
+  const hint = document.createElement('div');
+  hint.className = 'cal-phase-hint';
+  hint.textContent = 'Right-click a day to mark Grid / Story / Discover targets.';
+  wrap.appendChild(hint);
   return wrap;
 }
 
@@ -5625,23 +6572,74 @@ function dayHasFormat(dayDate, kind, cardsByDay) {
   });
 }
 
+function dayTargetTintStyle(targetState) {
+  if (!targetState) return null;
+  const bands = [];
+  // Match cue chip colours: Grid / Story / Discover
+  if (targetState.wantGrid) bands.push(targetState.hasGrid ? 'rgba(86,74,94,0.08)' : 'rgba(86,74,94,0.18)');
+  if (targetState.wantStory) bands.push(targetState.hasStory ? 'rgba(78,110,108,0.08)' : 'rgba(78,110,108,0.18)');
+  if (targetState.wantPin) bands.push(targetState.hasPin ? 'rgba(194,154,59,0.1)' : 'rgba(194,154,59,0.22)');
+  if (!bands.length) return null;
+  if (bands.length === 1) return { background: bands[0] };
+  const step = 100 / bands.length;
+  const stops = bands.map((c, i) => {
+    const a = (i * step).toFixed(2);
+    const b = ((i + 1) * step).toFixed(2);
+    return c + ' ' + a + '% ' + b + '%';
+  }).join(', ');
+  return { background: 'linear-gradient(to right, ' + stops + ')' };
+}
+
+function dayMarksMap() {
+  if (!DATA.dayMarks || typeof DATA.dayMarks !== 'object') DATA.dayMarks = {};
+  return DATA.dayMarks;
+}
+
+function getDayMarks(dayDate) {
+  const row = dayMarksMap()[dateKey(dayDate)];
+  if (!row || typeof row !== 'object') return { grid: false, story: false, pin: false };
+  return {
+    grid: !!row.grid,
+    story: !!row.story,
+    pin: !!row.pin
+  };
+}
+
+function setDayMark(dayDate, kind, on) {
+  const key = dateKey(dayDate);
+  const map = dayMarksMap();
+  const next = { ...getDayMarks(dayDate) };
+  if (kind === 'grid' || kind === 'story' || kind === 'pin') next[kind] = !!on;
+  if (!next.grid && !next.story && !next.pin) delete map[key];
+  else map[key] = next;
+  clearTimeout(saveTimer);
+  saveData();
+  renderBoard();
+}
+
+function toggleDayMark(dayDate, kind) {
+  const cur = getDayMarks(dayDate);
+  if (kind === 'clear') {
+    const key = dateKey(dayDate);
+    delete dayMarksMap()[key];
+    clearTimeout(saveTimer);
+    saveData();
+    renderBoard();
+    PPC.showToast('Day targets cleared');
+    return;
+  }
+  const on = !cur[kind];
+  setDayMark(dayDate, kind, on);
+  PPC.showToast((kind === 'pin' ? 'Discover' : kind === 'story' ? 'Story' : 'Grid') + (on ? ' marked' : ' unmarked'));
+}
+
 function dayTargetState(dayDate, cardsByDay) {
-  const phase = getWeekTargets(dayDate);
-  const pd = publishDaysSettings();
-  const wd = dayDate.getDay();
-
-  const gridNeed = phase.gridPosts || 0;
-  const storyNeed = phase.stories || 0;
-  const pinNeed = phase.pinterest || 0;
-  if (!gridNeed && !storyNeed && !pinNeed) return null;
-
-  const gridChosen = weekdayPool(pd.grid, pd.gridExtra, gridNeed, null).slice(0, gridNeed);
-  const storyChosen = weekdayPool(pd.stories, pd.storiesExtra, storyNeed, null).slice(0, storyNeed);
-  const pinChosen = weekdayPool(pd.pinterest || DEFAULT_PUBLISH_DAYS.pinterest, [], pinNeed, null).slice(0, pinNeed);
-
-  const isGridTarget = gridChosen.includes(wd);
-  const isStoryTarget = storyChosen.includes(wd);
-  const isPinTarget = pinChosen.includes(wd);
+  // Manual marks only — right-click a day to set Grid / Story / Discover.
+  // Week target counts at the top remain goals; they no longer auto-paint weekdays.
+  const marks = getDayMarks(dayDate);
+  const isGridTarget = !!marks.grid;
+  const isStoryTarget = !!marks.story;
+  const isPinTarget = !!marks.pin;
   if (!isGridTarget && !isStoryTarget && !isPinTarget) return null;
 
   const hasGrid = isGridTarget && dayHasFormat(dayDate, 'grid', cardsByDay);
@@ -5703,8 +6701,10 @@ function isNeedContentCard(card) {
 }
 
 let calNeedMenuDate = null;
+let calDayMenuDate = null;
 
 function openCalNeedMenu(x, y, dayDate) {
+  closeCalDayMenu();
   calNeedMenuDate = new Date(dayDate.getFullYear(), dayDate.getMonth(), dayDate.getDate(), 10, 0, 0);
   const menu = document.getElementById('calNeedMenu');
   menu.style.left = Math.min(x, window.innerWidth - 180) + 'px';
@@ -5715,6 +6715,22 @@ function openCalNeedMenu(x, y, dayDate) {
 function closeCalNeedMenu() {
   calNeedMenuDate = null;
   document.getElementById('calNeedMenu').classList.remove('open');
+}
+
+function openCalDayMenu(x, y, dayDate) {
+  closeCalNeedMenu();
+  calDayMenuDate = new Date(dayDate.getFullYear(), dayDate.getMonth(), dayDate.getDate(), 10, 0, 0);
+  calNeedMenuDate = calDayMenuDate;
+  const menu = document.getElementById('calDayMenu');
+  menu.style.left = Math.min(x, window.innerWidth - 200) + 'px';
+  menu.style.top = Math.min(y, window.innerHeight - 280) + 'px';
+  menu.classList.add('open');
+}
+
+function closeCalDayMenu() {
+  calDayMenuDate = null;
+  const menu = document.getElementById('calDayMenu');
+  if (menu) menu.classList.remove('open');
 }
 
 function addNeedContentSlot(format, dayDate) {
@@ -5771,51 +6787,111 @@ function renderPublishStatusSelect(card, opts) {
   });
 }
 
+function formatShortLabel(formatId) {
+  const map = {
+    'ig-post': 'IG',
+    'ig-story': 'Story',
+    'ig-reel': 'Reel',
+    'pinterest': 'Pin'
+  };
+  return map[formatId] || formatLabel('organic', formatId) || formatId || '';
+}
+
 function renderCalSlot(card) {
   const el = document.createElement('div');
-  el.className = 'cal-slot' + (isNeedContentCard(card) ? ' cal-slot--need' : '');
+  const emptyNeed = isNeedContentCard(card) && !stripHtml(card.body || '').trim();
+  el.className = 'cal-slot' + (emptyNeed ? ' cal-slot--need cal-slot--need-empty' : '');
   el.dataset.scheduleId = card.id;
+  el.draggable = true;
+  el.title = 'Drag to another day · click to open';
   const cat = catById(card.pillar);
-  if (cat) {
+  if (emptyNeed) {
+    el.style.borderLeftColor = '#C29A3B';
+  } else if (cat) {
     el.style.borderLeftColor = cat.bg;
+    el.style.background = '#F0EDE8';
+  } else {
+    el.style.background = '#F0EDE8';
   }
-  if (!isNeedContentCard(card)) el.style.background = '#F0EDE8';
   const anchor = card.anchorId ? anchors().find(a => a.id === card.anchorId) : null;
   let title = stripHtml(card.body || '');
   if (!title) {
-    if (card.leadUp && anchor) {
-      const mode = anchor.scheduleMode === 'through' ? 'Cadence' : 'Lead-up';
-      title = mode + ' · ' + (anchor.title || 'Event');
-    } else if (card.leadUp) title = 'Lead-up';
+    if (anchor) title = anchor.title || 'Event';
+    else if (card.leadUp) title = 'Lead-up';
     else title = 'Need content';
   }
-  const meta = formatLabel(card.pillar, card.format);
 
-  const metaEl = document.createElement('span');
-  metaEl.className = 'cal-slot-meta';
-  metaEl.textContent = meta;
-  el.appendChild(metaEl);
+  function attachEventTitle(titleEl) {
+    if (!(card.anchorId && anchors().some(a => a.id === card.anchorId))) return;
+    titleEl.classList.add('cal-slot-title--event');
+    titleEl.title = 'Edit event · ' + title;
+    titleEl.addEventListener('click', e => {
+      e.stopPropagation();
+      if (calSlotDragMoved) return;
+      openAnchorPanel(card.anchorId);
+    });
+  }
 
-  const titleEl = document.createElement('span');
-  titleEl.className = 'cal-slot-title';
-  titleEl.textContent = title;
-  titleEl.title = title;
-  el.appendChild(titleEl);
+  if (emptyNeed) {
+    // Minimal one-liner. Format only when not default IG post.
+    if (card.format && card.format !== 'ig-post') {
+      const fmt = document.createElement('span');
+      fmt.className = 'cal-slot-fmt';
+      fmt.textContent = formatShortLabel(card.format);
+      el.appendChild(fmt);
+    }
+    const titleEl = document.createElement('span');
+    titleEl.className = 'cal-slot-title';
+    titleEl.textContent = title;
+    titleEl.title = title;
+    attachEventTitle(titleEl);
+    el.appendChild(titleEl);
+  } else {
+    const metaEl = document.createElement('span');
+    metaEl.className = 'cal-slot-meta';
+    metaEl.textContent = formatLabel(card.pillar, card.format);
+    el.appendChild(metaEl);
 
-  const status = publishStatusOf(card);
-  const flag = document.createElement('span');
-  const needsAttention = isNeedContentCard(card) || status === 'unscheduled';
-  flag.className = 'cal-slot-flag ' + (needsAttention ? 'cal-slot-flag--need' : 'cal-slot-flag--ready');
-  flag.textContent = isNeedContentCard(card) ? 'Need' : (status === 'unscheduled' ? 'Open' : 'Ready');
-  flag.title = status === 'scheduled' ? 'Scheduled — click to mark unscheduled' : 'Unscheduled — click to mark scheduled';
-  flag.addEventListener('click', e => {
-    e.stopPropagation();
-    setPublishStatus(card.id, status === 'scheduled' ? 'unscheduled' : 'scheduled');
+    const titleEl = document.createElement('span');
+    titleEl.className = 'cal-slot-title';
+    titleEl.textContent = title;
+    titleEl.title = title;
+    attachEventTitle(titleEl);
+    el.appendChild(titleEl);
+
+    const status = publishStatusOf(card);
+    const flag = document.createElement('span');
+    const needsAttention = status === 'unscheduled';
+    flag.className = 'cal-slot-flag ' + (needsAttention ? 'cal-slot-flag--need' : 'cal-slot-flag--ready');
+    flag.textContent = status === 'unscheduled' ? 'Open' : 'Ready';
+    flag.title = status === 'scheduled' ? 'Scheduled — click to mark unscheduled' : 'Unscheduled — click to mark scheduled';
+    flag.addEventListener('click', e => {
+      e.stopPropagation();
+      setPublishStatus(card.id, status === 'scheduled' ? 'unscheduled' : 'scheduled');
+    });
+    el.appendChild(flag);
+  }
+
+  el.addEventListener('dragstart', e => {
+    calSlotDragMoved = false;
+    dragCalSlotId = card.id;
+    el.classList.add('dragging');
+    if (e.dataTransfer) {
+      e.dataTransfer.setData('text/plain', card.id);
+      e.dataTransfer.effectAllowed = 'move';
+    }
   });
-  el.appendChild(flag);
+  el.addEventListener('dragend', () => {
+    dragCalSlotId = null;
+    el.classList.remove('dragging');
+    document.querySelectorAll('.cal-day-body.drag-over').forEach(n => n.classList.remove('drag-over'));
+    setTimeout(() => { calSlotDragMoved = false; }, 0);
+  });
+  el.addEventListener('drag', () => { calSlotDragMoved = true; });
 
   el.addEventListener('click', e => {
     e.stopPropagation();
+    if (calSlotDragMoved) return;
     openSchedulePanel(card.id);
   });
   return el;
@@ -6667,6 +7743,15 @@ function openSchedulePanel(scheduleId) {
   }));
   buildScheduleLayerSelect(card.contentLayer || '');
   populateScheduleAnchorSelect(card.anchorId || '');
+  const editEvtBtn = document.getElementById('pEditEventBtn');
+  if (editEvtBtn) {
+    const hasAnchor = !!(card.anchorId && anchors().some(a => a.id === card.anchorId));
+    editEvtBtn.hidden = !hasAnchor;
+    editEvtBtn.onclick = hasAnchor ? () => {
+      closePanel();
+      openAnchorPanel(card.anchorId);
+    } : null;
+  }
   document.getElementById('pScheduleOutcome').innerHTML = sanitizeHtml(card.contentOutcome || '');
   document.getElementById('pScheduleVideoUrl').value = card.reviewVideoUrl || '';
   setVideoOpenLink('pScheduleVideoOpen', card.reviewVideoUrl || '');
@@ -6930,6 +8015,26 @@ document.getElementById('calNeedMenu').querySelectorAll('button[data-format]').f
   });
 });
 
+const calDayMenuEl = document.getElementById('calDayMenu');
+if (calDayMenuEl) {
+  calDayMenuEl.querySelectorAll('button[data-mark]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      if (!calDayMenuDate) return;
+      const kind = btn.getAttribute('data-mark');
+      toggleDayMark(calDayMenuDate, kind);
+      closeCalDayMenu();
+    });
+  });
+  calDayMenuEl.querySelectorAll('button[data-format]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      addNeedContentSlot(btn.getAttribute('data-format'), calDayMenuDate);
+      closeCalDayMenu();
+    });
+  });
+}
+
 document.addEventListener('keydown', e => {
   // Stop browsers from hijacking "/" for find/search while working on the board.
   if (e.key === '/' || e.key === '?') {
@@ -6963,6 +8068,7 @@ document.addEventListener('keydown', e => {
 document.addEventListener('click', e => {
   hideCtxMenu();
   if (!e.target.closest('#calNeedMenu')) closeCalNeedMenu();
+  if (!e.target.closest('#calDayMenu')) closeCalDayMenu();
   if (!e.target.closest('.image-well')) clearWellFocus();
   if (!e.target.closest('#pReviewMediaWell')) {
     focusedReviewMedia = false;
@@ -7019,6 +8125,11 @@ PPC.applyStoredDark();
   if (addBtn) addBtn.addEventListener('click', e => {
     e.preventDefault();
     addCustomLeadUpRule();
+  });
+  const cancelRuleBtn = document.getElementById('cancelLeadRuleBtn');
+  if (cancelRuleBtn) cancelRuleBtn.addEventListener('click', e => {
+    e.preventDefault();
+    hideAddLeadRuleForm();
   });
   const addTypeBtn = document.getElementById('addAnchorTypeBtn');
   if (addTypeBtn) addTypeBtn.addEventListener('click', e => {
