@@ -208,29 +208,17 @@ export default {
           || url.searchParams.get('force') === '1';
         const prevRev = boardRev(prev);
         const incomingRev = boardRev(body);
-        // Stale tab guard: once a rev exists, clients must send the current rev
-        // (or force) so an old browser session can't resurrect wiped junk.
-        if (!force && prevRev > 0 && incomingRev !== prevRev) {
-          try { await maybeSnapshotMarketing(env, prev, body); } catch (_) {}
-          return new Response(JSON.stringify({
-            ok: false,
-            error: 'revision_conflict',
-            message: 'Save rejected: calendar changed elsewhere. Hard-refresh, then continue.',
-            prevRev,
-            incomingRev,
-            prevSchedule: scheduleCount(prev),
-            nextSchedule: scheduleCount(body)
-          }), {
-            status: 409,
-            headers: { ...cors, 'Content-Type': 'application/json' }
-          });
-        }
+        // Only hard-reject when a stale/concurrent save would gut the board.
+        // Matching-rev saves and non-destructive concurrent edits (card moves)
+        // last-write-wins after a snapshot — rapid drags must not 409.
         if (!force && isCatastrophicMarketingOverwrite(prev, body)) {
           try { await maybeSnapshotMarketing(env, prev, body); } catch (_) {}
           return new Response(JSON.stringify({
             ok: false,
             error: 'rejected_thin_overwrite',
             message: 'Save rejected: would wipe calendar cards/events. Hard-refresh, then retry. Use force only for intentional resets.',
+            prevRev,
+            incomingRev,
             prevSchedule: scheduleCount(prev),
             nextSchedule: scheduleCount(body),
             prevAnchors: anchorCount(prev),

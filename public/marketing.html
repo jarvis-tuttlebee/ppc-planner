@@ -3193,10 +3193,12 @@
 <script>
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
-const APP_VERSION = '0.11.78';
+const APP_VERSION = '0.11.80';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 let marketingHydrated = false;
 let marketingRev = 0;
+let marketingSaveInFlight = null;
+let marketingSaveWanted = false;
 
 /** Default local hour for new calendar publish stamps (5pm). */
 const DEFAULT_PUBLISH_HOUR = 17;
@@ -5079,10 +5081,7 @@ function boardContentWeight(data) {
   return schedule.length * 10 + filled * 40 + anchors.length * 25 + ideas.length;
 }
 
-function saveData() {
-  if (!marketingHydrated) return;
-  // Always persist the live in-memory layout — never prefer stale DATA.layoutPrefs
-  // from an earlier cloud load (that was overwriting user resizes on every save).
+function buildMarketingPayload() {
   syncLayoutPrefsToData();
   const layoutPrefs = {
     splitPct: Math.round(clampSplitPct(marketingSplitPct) * 10) / 10,
@@ -5092,7 +5091,7 @@ function saveData() {
     localStorage.setItem(SPLIT_PCT_KEY, String(layoutPrefs.splitPct));
     localStorage.setItem(MOOD_H_KEY, String(layoutPrefs.moodH));
   } catch (_) {}
-  const payload = {
+  return {
     _rev: marketingRev || 0,
     ideas: DATA.ideas.map(i => ({ ...i })),
     sections: {
@@ -5118,34 +5117,57 @@ function saveData() {
     },
     layoutPrefs
   };
+}
+
+function saveData() {
+  if (!marketingHydrated) return;
+  marketingSaveWanted = true;
+  if (marketingSaveInFlight) return;
+  marketingSaveInFlight = runMarketingSaveLoop()
+    .catch(err => console.warn('Marketing sync failed:', err))
+    .finally(() => {
+      marketingSaveInFlight = null;
+      // A save may have been requested while the loop was finishing.
+      if (marketingSaveWanted) saveData();
+    });
+}
+
+async function runMarketingSaveLoop() {
+  while (marketingSaveWanted) {
+    marketingSaveWanted = false;
+    await persistMarketingOnce();
+  }
+}
+
+async function persistMarketingOnce() {
+  const payload = buildMarketingPayload();
+  payload._rev = marketingRev || 0;
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); } catch (e) {}
-  fetch(SYNC_URL, {
+  const res = await fetch(SYNC_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
-  }).then(async (res) => {
-    if (res.ok) {
-      try {
-        const info = await res.json();
-        if (info && info.rev != null) {
-          marketingRev = Number(info.rev) || marketingRev;
-          payload._rev = marketingRev;
-          try { localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); } catch (_) {}
-        }
-      } catch (_) {}
-      return;
-    }
-    if (res.status !== 409) return;
-    let info = null;
-    try { info = await res.json(); } catch (_) {}
-    console.warn('Marketing sync conflict', info);
-    if (typeof PPC !== 'undefined' && PPC.showToast) {
-      PPC.showToast(info && info.error === 'revision_conflict'
-        ? 'Calendar updated elsewhere — refreshing'
-        : 'Cloud blocked a wipe — refreshing');
-    }
-    if (typeof refreshData === 'function') refreshData();
-  }).catch(err => console.warn('Marketing sync failed:', err));
+  });
+  if (res.ok) {
+    try {
+      const info = await res.json();
+      if (info && info.rev != null) {
+        marketingRev = Number(info.rev) || marketingRev;
+        payload._rev = marketingRev;
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); } catch (_) {}
+      }
+    } catch (_) {}
+    return;
+  }
+  if (res.status !== 409) return;
+  let info = null;
+  try { info = await res.json(); } catch (_) {}
+  // Only wipe-guards 409 now — never toast “updated elsewhere” on card moves.
+  console.warn('Marketing sync rejected', info);
+  if (typeof PPC !== 'undefined' && PPC.showToast) {
+    PPC.showToast('Cloud blocked a wipe — refreshing');
+  }
+  if (typeof refreshData === 'function') await refreshData();
 }
 
 function normalizeLoaded(data) {
@@ -7381,8 +7403,7 @@ function moveCalSlotToDate(scheduleId, dayDate) {
   dragLeadUp = null;
   calSlotDragMoved = false;
   clearCalDragStyles();
-  clearTimeout(saveTimer);
-  saveData();
+  scheduleSave();
   renderBoard();
   PPC.showToast('Moved to ' + formatShortDate(when));
   return true;
@@ -7445,8 +7466,7 @@ function moveLeadUpPlacement(anchorId, fromKey, dayDate) {
   clearExtraLeadDate(anchor, fromKey);
   unvacateLeadDate(anchor, toKey);
   markExtraLeadDate(anchor, toKey);
-  clearTimeout(saveTimer);
-  saveData();
+  scheduleSave();
   renderBoard();
   PPC.showToast('Moved to ' + formatShortDate(dayDate));
   return true;

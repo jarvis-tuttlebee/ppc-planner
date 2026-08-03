@@ -5,6 +5,63 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-03 — EOD (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.80`** — Version ID `da843831-7c38-43c2-b968-e5616d2dc6d2`
+- Board ~41 schedule / 2 anchors / 22 ideas (rev 64)
+
+### Shipped today (high level)
+- Wipe safeguards: Archive-first deletes, snapshots API, catastrophic thin
+  overwrite reject; soft LWW for normal concurrent saves (no false drag toasts).
+- Deleted events no longer re-seed Ode/FDW.
+- Discover: lite panel, Posted sticky, preview × clear; lighter image embeds.
+- Shared **ppc-date** theme on Marketing / Planner / Kanban (`ppc-select.js?v=7`).
+- Empty Photoshoot colour section hidden in Settings.
+
+### Branch / git
+- `cursor/cloud-agent-1785725967651-xf056` — commits through Marketing 0.11.78
+  polish; later 0.11.79–0.11.80 may be local/deployed only — commit if needed.
+
+### Open / next
+1. Confirm drag toasts gone on v0.11.80 (one Marketing tab only).
+2. Optional: Settings UI for snapshot restore; Fill from Ideas; R2 for images.
+3. Prefer Drive links over dropped photos for heavy assets.
+4. Don’t reopen Marketing inside Obsidian while editing.
+
+---
+
+## 2026-08-03 — Stop false conflict toasts on drags (Cursor)
+
+### What was built or decided
+- Marketing `0.11.80` + Worker: revision mismatch no longer 409s for normal
+  concurrent edits. Only **catastrophic thin overwrites** are rejected.
+  Card moves debounce via `scheduleSave`; save loop won’t drop a trailing save.
+
+### Deployed
+- Version ID: `da843831-7c38-43c2-b968-e5616d2dc6d2` (Marketing 0.11.80)
+
+### Open / next
+1. Hard-refresh v0.11.80; drag several cards — no “updated elsewhere” toast.
+
+---
+
+## 2026-08-03 — Quiet revision retries on card moves (Cursor)
+
+### What was built or decided
+- Marketing `0.11.79`: serialize Marketing saves; on `revision_conflict` from
+  overlapping drags/saves, adopt server rev and retry silently instead of
+  toasting “Calendar updated elsewhere” and refreshing.
+
+### Deployed
+- Version ID: `188217ba-a51d-46e7-9726-04a32f275c67` (Marketing 0.11.79)
+
+### Open / next
+1. Hard-refresh; drag calendar cards — no false conflict toast.
+
+---
+
 ## 2026-08-03 — Shared ppc-date theme everywhere (Cursor)
 
 ### What was built or decided
