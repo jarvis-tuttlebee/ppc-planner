@@ -1757,32 +1757,79 @@
       font-weight: 600;
     }
     .cal-slot--need-empty {
-      padding: 3px 6px;
+      padding: 4px 18px 4px 6px;
       background: transparent;
       border-color: transparent;
       border-left: 3px solid #C29A3B;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1px;
     }
     .cal-slot--need-empty .cal-slot-title {
       color: #8a6a1a;
       font-style: normal;
-      font-weight: 600;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.02em;
+      cursor: pointer;
     }
-    .cal-slot--need-empty .cal-slot-title--event {
-      text-decoration: none;
-    }
-    .cal-slot--need-empty .cal-slot-title--event:hover {
+    .cal-slot--need-empty .cal-slot-title:hover {
       text-decoration: underline;
       text-decoration-color: rgba(138,106,26,0.45);
       color: #6e5414;
     }
-    .cal-slot--need-empty .cal-slot-fmt {
-      display: inline;
+    .cal-slot--need-empty .cal-slot-event {
+      display: block;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
+      font-weight: 500;
       color: #9a958d;
-      margin-right: 2px;
+      line-height: 1.3;
+    }
+    .cal-slot--need-empty .cal-slot-event.cal-slot-title--event {
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .cal-slot--need-empty .cal-slot-event.cal-slot-title--event:hover {
+      color: #6B7A8D;
+      text-decoration: underline;
+      text-decoration-color: rgba(107,122,141,0.45);
+    }
+    .cal-slot--need-empty .cal-slot-del {
+      position: absolute;
+      top: 1px;
+      right: 1px;
+      width: 16px;
+      height: 16px;
+      padding: 0;
+      border: none;
+      border-radius: 3px;
+      background: transparent;
+      color: #b5b0a8;
+      font-size: 13px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      z-index: 2;
+    }
+    .cal-slot--need-empty:hover .cal-slot-del,
+    .cal-slot--need-empty .cal-slot-del:focus {
+      opacity: 0.85;
+    }
+    .cal-slot--need-empty .cal-slot-del:hover {
+      opacity: 1;
+      color: #a33d3d;
+      background: rgba(255,255,255,0.9);
+    }
+    .cal-slot--need-empty .cal-slot-fmt {
+      display: none;
     }
     .cal-slot-flag {
       display: inline-block;
@@ -2612,7 +2659,7 @@
 <script>
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
-const APP_VERSION = '0.11.20';
+const APP_VERSION = '0.11.21';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 
 const VIEW_MODE_KEY = 'ppc-marketing-view-mode';
@@ -6707,11 +6754,27 @@ function isNeedContentCard(card) {
 
 let calNeedMenuDate = null;
 let calDayMenuDate = null;
+let calNeedMenuSlotId = null;
 
 function openCalNeedMenu(x, y, dayDate) {
   closeCalDayMenu();
+  calNeedMenuSlotId = null;
   calNeedMenuDate = new Date(dayDate.getFullYear(), dayDate.getMonth(), dayDate.getDate(), 10, 0, 0);
   const menu = document.getElementById('calNeedMenu');
+  const label = menu.querySelector('.cal-need-menu-label');
+  if (label) label.textContent = 'Need content';
+  menu.style.left = Math.min(x, window.innerWidth - 180) + 'px';
+  menu.style.top = Math.min(y, window.innerHeight - 200) + 'px';
+  menu.classList.add('open');
+}
+
+function openCalNeedFormatMenu(x, y, scheduleId) {
+  closeCalDayMenu();
+  calNeedMenuDate = null;
+  calNeedMenuSlotId = scheduleId;
+  const menu = document.getElementById('calNeedMenu');
+  const label = menu.querySelector('.cal-need-menu-label');
+  if (label) label.textContent = 'Change format';
   menu.style.left = Math.min(x, window.innerWidth - 180) + 'px';
   menu.style.top = Math.min(y, window.innerHeight - 200) + 'px';
   menu.classList.add('open');
@@ -6719,6 +6782,7 @@ function openCalNeedMenu(x, y, dayDate) {
 
 function closeCalNeedMenu() {
   calNeedMenuDate = null;
+  calNeedMenuSlotId = null;
   document.getElementById('calNeedMenu').classList.remove('open');
 }
 
@@ -6736,6 +6800,16 @@ function closeCalDayMenu() {
   calDayMenuDate = null;
   const menu = document.getElementById('calDayMenu');
   if (menu) menu.classList.remove('open');
+}
+
+function setNeedSlotFormat(scheduleId, format) {
+  const card = scheduleCards().find(c => c.id === scheduleId);
+  if (!card || !format) return;
+  card.format = format;
+  card.needLabel = '';
+  clearTimeout(saveTimer);
+  saveData();
+  renderBoard();
 }
 
 function addNeedContentSlot(format, dayDate) {
@@ -6763,10 +6837,10 @@ function addNeedContentSlot(format, dayDate) {
   scheduleCards().push(card);
   expandedSections.add('schedule');
   closeCalNeedMenu();
+  closeCalDayMenu();
   clearTimeout(saveTimer);
   saveData();
   renderBoard();
-  openSchedulePanel(card.id);
 }
 
 function setPublishStatus(cardId, status, opts) {
@@ -6803,13 +6877,26 @@ function formatShortLabel(formatId) {
   return map[formatId] || formatLabel('organic', formatId) || formatId || '';
 }
 
+/** Primary glance label for empty Need cards (type first). */
+function formatGlanceLabel(formatId) {
+  const map = {
+    'ig-post': 'IG Post',
+    'ig-story': 'Story',
+    'ig-reel': 'Reel',
+    'pinterest': 'Pin'
+  };
+  return map[formatId] || formatShortLabel(formatId) || 'Need';
+}
+
 function renderCalSlot(card) {
   const el = document.createElement('div');
   const emptyNeed = isNeedContentCard(card) && !stripHtml(card.body || '').trim();
   el.className = 'cal-slot' + (emptyNeed ? ' cal-slot--need cal-slot--need-empty' : '');
   el.dataset.scheduleId = card.id;
   el.draggable = true;
-  el.title = 'Drag to another day · click to open';
+  el.title = emptyNeed
+    ? 'Click type to change · drag to move · × to remove'
+    : 'Drag to another day · click to open';
   const cat = catById(card.pillar);
   if (emptyNeed) {
     el.style.borderLeftColor = '#C29A3B';
@@ -6820,17 +6907,19 @@ function renderCalSlot(card) {
     el.style.background = '#F0EDE8';
   }
   const anchor = card.anchorId ? anchors().find(a => a.id === card.anchorId) : null;
+  let eventName = '';
+  if (anchor) eventName = anchor.title || 'Event';
+  else if (card.leadUp) eventName = 'Lead-up';
   let title = stripHtml(card.body || '');
   if (!title) {
-    if (anchor) title = anchor.title || 'Event';
-    else if (card.leadUp) title = 'Lead-up';
+    if (eventName) title = eventName;
     else title = 'Need content';
   }
 
   function attachEventTitle(titleEl) {
     if (!(card.anchorId && anchors().some(a => a.id === card.anchorId))) return;
     titleEl.classList.add('cal-slot-title--event');
-    titleEl.title = 'Edit event · ' + title;
+    titleEl.title = 'Edit event · ' + (eventName || title);
     titleEl.addEventListener('click', e => {
       e.stopPropagation();
       if (calSlotDragMoved) return;
@@ -6839,20 +6928,40 @@ function renderCalSlot(card) {
   }
 
   if (emptyNeed) {
-    // Glance: format (or custom needLabel) + event name.
-    const prefix = String(card.needLabel || '').trim() || formatShortLabel(card.format) || '';
-    if (prefix) {
-      const fmt = document.createElement('span');
-      fmt.className = 'cal-slot-fmt';
-      fmt.textContent = prefix + ' ·';
-      el.appendChild(fmt);
+    // Type first (editable via dropdown), event name second.
+    const typeLabel = String(card.needLabel || '').trim() || formatGlanceLabel(card.format);
+    const typeEl = document.createElement('span');
+    typeEl.className = 'cal-slot-title';
+    typeEl.textContent = typeLabel;
+    typeEl.title = 'Change format';
+    typeEl.addEventListener('click', e => {
+      e.stopPropagation();
+      if (calSlotDragMoved) return;
+      openCalNeedFormatMenu(e.clientX, e.clientY, card.id);
+    });
+    el.appendChild(typeEl);
+
+    if (eventName) {
+      const eventEl = document.createElement('span');
+      eventEl.className = 'cal-slot-event';
+      eventEl.textContent = eventName;
+      eventEl.title = eventName;
+      attachEventTitle(eventEl);
+      el.appendChild(eventEl);
     }
-    const titleEl = document.createElement('span');
-    titleEl.className = 'cal-slot-title';
-    titleEl.textContent = title;
-    titleEl.title = (prefix ? prefix + ' · ' : '') + title;
-    attachEventTitle(titleEl);
-    el.appendChild(titleEl);
+
+    const del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'cal-slot-del';
+    del.setAttribute('aria-label', 'Remove need slot');
+    del.title = 'Remove';
+    del.textContent = '\u00d7';
+    del.addEventListener('click', e => {
+      e.stopPropagation();
+      if (calSlotDragMoved) return;
+      removeScheduleCard(card.id);
+    });
+    el.appendChild(del);
   } else {
     const metaEl = document.createElement('span');
     metaEl.className = 'cal-slot-meta';
@@ -6880,6 +6989,10 @@ function renderCalSlot(card) {
   }
 
   el.addEventListener('dragstart', e => {
+    if (e.target.closest('.cal-slot-del')) {
+      e.preventDefault();
+      return;
+    }
     calSlotDragMoved = false;
     dragCalSlotId = card.id;
     el.classList.add('dragging');
@@ -8056,7 +8169,14 @@ ctxMenu.querySelector('[data-action="add-card"]').addEventListener('click', () =
 document.getElementById('calNeedMenu').querySelectorAll('button[data-format]').forEach(btn => {
   btn.addEventListener('click', e => {
     e.stopPropagation();
-    addNeedContentSlot(btn.getAttribute('data-format'));
+    const format = btn.getAttribute('data-format');
+    if (calNeedMenuSlotId) {
+      const id = calNeedMenuSlotId;
+      closeCalNeedMenu();
+      setNeedSlotFormat(id, format);
+      return;
+    }
+    addNeedContentSlot(format);
   });
 });
 

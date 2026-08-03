@@ -5,6 +5,24 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-03 — Need cards: type-first + dropdown + × (Cursor)
+
+### What was built or decided
+- Marketing `0.11.21`: Empty Need cards flipped — **format/type is primary**
+  (`IG Post` / `Story` / `Pin` / `Reel`), event name is secondary quiet line.
+- Click the type line → same Need-format dropdown (Change format); no panel
+  required. `+` add no longer auto-opens the side panel.
+- Hover **×** on empty Need cards deletes (archives) the slot.
+
+### Deployed
+- Local only — deploy when asked (PC: `npx wrangler deploy`).
+
+### Open / next
+1. Hard-refresh `/marketing` — slots read type then event; click type to
+   change; hover × to remove.
+
+---
+
 ## 2026-08-03 — Need card glance labels (Cursor)
 
 ### What was built or decided
