@@ -5,6 +5,23 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-03 — Remove Photoshoot pillar (Cursor)
+
+### What was built or decided
+- Marketing **`0.11.82`**: `photoshoot` is a retired custom pillar — skipped on
+  parse/recover/create; leftover card refs migrate to Organic.
+- Live KV cleaned now: `customPillars` no longer includes Photoshoot (rev 159).
+  Hard-refresh Need content menu — Organic / Email / Ads / Website only.
+
+### Deployed
+- Live **data** updated (pillar list). Code deploy still needed for the
+  permanent retire guard: `npx wrangler deploy` when ready.
+
+### Branch
+- `cursor/cal-labels-multi-assignee-95d6`
+
+---
+
 ## 2026-08-03 — Cal labels wrap + multi assignees (Cursor)
 
 ### What was built or decided
