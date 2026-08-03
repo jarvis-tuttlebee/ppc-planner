@@ -1044,7 +1044,7 @@
   </div>
 </div>
 
-<script src="/js/ppc-select.js"></script>
+<script src="/js/ppc-select.js?v=7"></script>
 <script src="/js/ppc-homebase.js"></script>
 <script>
 // ─── DATA ────────────────────────────────────────────────────────────────────
@@ -2248,6 +2248,14 @@ function initPanelSelects() {
     onChange: updateStatusColor
   });
   replaceNativeSelect(document.getElementById('pProject'), { bare: true, colored: false });
+  if (typeof replaceNativeDate === 'function') {
+    replaceNativeDate(document.getElementById('pDue'), { placeholder: 'Due date' });
+  }
+}
+function setKanbanDueDate(iso) {
+  if (typeof setPpcDateValue === 'function' && setPpcDateValue('pDue', iso || '')) return;
+  const el = document.getElementById('pDue');
+  if (el) el.value = iso || '';
 }
 initPanelSelects();
 
@@ -2599,7 +2607,7 @@ function openNewCardPanel(columnId, sectionId) {
   setPpcSelectValue('pColumn', columnId);
   setPpcSelectValue('pStatus', 'planned');
   document.getElementById('pDesc').innerHTML = '';
-  document.getElementById('pDue').value = '';
+  setKanbanDueDate('');
   // New cards inherit the section they were added from.
   fillPanelSelects([], presetProject);
   renderSubtasks([]);
@@ -2622,7 +2630,7 @@ function openPanel(card) {
   setPpcSelectValue('pColumn', card.column);
   setPpcSelectValue('pStatus', card.status || 'planned');
   document.getElementById('pDesc').innerHTML = sanitizeHtml(card.body || '');
-  document.getElementById('pDue').value = card.dueDate || '';
+  setKanbanDueDate(card.dueDate || '');
   fillPanelSelects(card.assignees || [], card.project || '');
   renderSubtasks(card.tasks || []);
   updateStatusColor();

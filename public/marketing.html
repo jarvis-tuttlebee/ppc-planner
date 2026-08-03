@@ -1094,6 +1094,7 @@
       border-radius: 8px;
     }
     .review-inspo-thumb {
+      position: relative;
       width: 72px;
       height: 72px;
       flex-shrink: 0;
@@ -1108,6 +1109,19 @@
       color: #c4bfb7;
       text-align: center;
       letter-spacing: 0.03em;
+    }
+    .review-inspo-thumb .review-media-clear {
+      top: 4px;
+      right: 4px;
+      width: 22px;
+      height: 22px;
+      font-size: 13px;
+      z-index: 2;
+    }
+    .review-inspo-thumb.has-image .review-media-clear {
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .review-inspo-thumb img {
       width: 100%;
@@ -3174,12 +3188,12 @@
   <div class="ctx-item" data-action="add-card">Add card</div>
 </div>
 
-<script src="/js/ppc-select.js?v=6"></script>
+<script src="/js/ppc-select.js?v=7"></script>
 <script src="/js/ppc-homebase.js?v=8"></script>
 <script>
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
-const APP_VERSION = '0.11.74';
+const APP_VERSION = '0.11.78';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 let marketingHydrated = false;
 let marketingRev = 0;
@@ -4326,7 +4340,9 @@ let moodCanvasEl = null;
 
 const CANVAS_W = 8000;
 const CANVAS_H = 5600;
-const IMAGE_MAX_EDGE = 1200;
+/** Max long-edge for embedded previews (Ideas / Prep / Discover). Keep small — images live in KV as base64. */
+const IMAGE_MAX_EDGE = 720;
+const IMAGE_JPEG_QUALITY = 0.72;
 
 function migrateIdea(idea) {
   if (!idea.body && idea.description) idea.body = idea.description;
@@ -5515,7 +5531,10 @@ function readImageFile(file) {
         canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
         const mime = (file && file.type && file.type.startsWith('image/')) ? file.type : 'image/jpeg';
-        const imageData = (mime === 'image/png') ? canvas.toDataURL(mime) : canvas.toDataURL(mime, 0.85);
+        // Prefer JPEG for size; PNG only when the source is PNG and stays small enough.
+        const imageData = (mime === 'image/png')
+          ? canvas.toDataURL('image/jpeg', IMAGE_JPEG_QUALITY)
+          : canvas.toDataURL('image/jpeg', IMAGE_JPEG_QUALITY);
         resolve({
           imageData,
           imageW: w,
@@ -8996,10 +9015,23 @@ function addNeedContentSlot(format, dayDate, pillar) {
 function setPublishStatus(cardId, status, opts) {
   const card = scheduleCards().find(c => c.id === cardId);
   if (!card) return;
-  if (!PUBLISH_STATUS_IDS.has(status)) return;
-  card.publishStatus = status;
+  let next = String(status || '');
+  if (next === 'ready') next = 'scheduled';
+  if (!PUBLISH_STATUS_IDS.has(next)) return;
+  if (isDiscoverCard(card) && !DISCOVER_STATUS_IDS.includes(next)) {
+    next = scheduleSlotHasContent(card) ? 'scheduled' : 'need';
+  }
+  card.publishStatus = next;
+  // Keep open panel Status control in sync so a later Save doesn't overwrite.
+  if (panelMode === 'schedule' && activeScheduleId === cardId) {
+    if (typeof setPpcSelectValue === 'function') setPpcSelectValue('pScheduleStatus', next);
+    else {
+      const statusEl = document.getElementById('pScheduleStatus');
+      if (statusEl) statusEl.value = next;
+    }
+  }
   scheduleSave();
-  if (!(opts && opts.silent)) renderBoard();
+  renderBoard();
 }
 
 function setScheduleAssignee(cardId, name, opts) {
@@ -10235,7 +10267,7 @@ function openExecPanel(execId) {
   document.getElementById('pProducts').innerHTML = sanitizeHtml(card.productsUsed || '');
   document.getElementById('pLocation').innerHTML = sanitizeHtml(card.location || '');
   document.getElementById('pRequirements').innerHTML = sanitizeHtml(card.requirements || '');
-  document.getElementById('pDateTime').value = toDateTimeLocalValue(card.dateTime);
+  setMarketingDateTime('pDateTime', card.dateTime);
   setPlanHintVisible(false);
   setPanelImage(card.imageData);
   updatePanelStrip(card.pillar);
@@ -10279,7 +10311,7 @@ function openReviewPanel(reviewId) {
   document.getElementById('pCaption').value = card.caption || '';
   document.getElementById('pTags').value = card.tags || '';
   document.getElementById('pMusic').value = card.music || '';
-  document.getElementById('pScheduleAt').value = toDateTimeLocalValue(card.scheduleAt);
+  setMarketingDateTime('pScheduleAt', card.scheduleAt);
   setPlanHintVisible(false);
   setPanelImage(card.imageData);
   updatePanelStrip(card.pillar);
@@ -10288,17 +10320,49 @@ function openReviewPanel(reviewId) {
   setTimeout(() => document.getElementById('pOutcome').focus(), 50);
 }
 
+function clearScheduleDiscoverImage() {
+  if (panelMode !== 'schedule' || !activeScheduleId) return;
+  const card = scheduleCards().find(c => c.id === activeScheduleId);
+  if (!card || !isDiscoverCard(card)) return;
+  card.imageData = null;
+  card.imageW = null;
+  card.imageH = null;
+  card.needContent = !discoverHasAsset(card);
+  if (card.needContent && (card.publishStatus === 'scheduled' || card.publishStatus === 'posted')) {
+    card.publishStatus = 'need';
+  }
+  refreshScheduleThumb(card);
+  scheduleSave();
+  renderBoard();
+}
+
 function refreshScheduleThumb(card) {
   const thumb = document.getElementById('pScheduleThumb');
   if (!thumb) return;
   thumb.innerHTML = '';
+  thumb.classList.remove('has-image');
   const src = cardThumbSrc(card);
   if (src) {
     const img = document.createElement('img');
     img.src = src;
     img.alt = '';
     thumb.appendChild(img);
+    thumb.classList.add('has-image');
     thumb.title = isDiscoverCard(card) ? 'Drop or paste to replace preview' : '';
+    if (isDiscoverCard(card)) {
+      const clearBtn = document.createElement('button');
+      clearBtn.type = 'button';
+      clearBtn.className = 'review-media-clear';
+      clearBtn.title = 'Remove preview photo';
+      clearBtn.setAttribute('aria-label', 'Remove preview photo');
+      clearBtn.textContent = '×';
+      clearBtn.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        clearScheduleDiscoverImage();
+      });
+      thumb.appendChild(clearBtn);
+    }
   } else {
     thumb.textContent = isDiscoverCard(card) ? 'Drop preview' : 'No media';
     thumb.title = isDiscoverCard(card) ? 'Drop or paste a pin preview image' : '';
@@ -10387,7 +10451,7 @@ function openSchedulePanel(scheduleId) {
   if (pDesc) pDesc.innerHTML = '';
 
   applySchedulePanelLayout(card);
-  document.getElementById('pScheduleEditAt').value = toDateTimeLocalValue(card.scheduledAt || card.scheduleAt);
+  setMarketingDateTime('pScheduleEditAt', card.scheduledAt || card.scheduleAt);
   renderScheduleAssigneeSelect(card);
   const statusWrap = document.getElementById('pScheduleStatusWrap');
   statusWrap.innerHTML = '';
@@ -10427,6 +10491,31 @@ function toDateTimeLocalValue(value) {
   return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
     'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
 }
+
+function setMarketingDateTime(id, value) {
+  const local = toDateTimeLocalValue(value);
+  if (typeof setPpcDateTimeValue === 'function' && setPpcDateTimeValue(id, local)) return;
+  const el = document.getElementById(id);
+  if (el) el.value = local;
+}
+
+function initMarketingDateTimePickers() {
+  if (typeof replaceNativeDateTimeLocal !== 'function') return;
+  const defaultTime = String(DEFAULT_PUBLISH_HOUR).padStart(2, '0') + ':00';
+  [
+    { id: 'pDateTime', placeholder: 'Shoot date' },
+    { id: 'pScheduleAt', placeholder: 'Publish date' },
+    { id: 'pScheduleEditAt', placeholder: 'Publish date' }
+  ].forEach(spec => {
+    const el = document.getElementById(spec.id);
+    if (!el || el.dataset.ppcDateReplaced === '1') return;
+    replaceNativeDateTimeLocal(el, {
+      placeholder: spec.placeholder,
+      defaultTime
+    });
+  });
+}
+initMarketingDateTimePickers();
 
 function savePanel(silent) {
   if (panelMode === 'idea' && activeIdeaId) {
@@ -10573,11 +10662,13 @@ function savePanel(silent) {
     const st = document.getElementById('pScheduleEditAt').value;
     card.scheduledAt = st ? new Date(st).toISOString() : '';
     card.scheduleAt = card.scheduledAt;
-    // Respect the Status control — never force back to Need on save.
+    // Respect the Status control — never force back to Need/Scheduled on save.
     const statusEl = document.getElementById('pScheduleStatus');
     const allowed = isDiscoverFormat(format) ? DISCOVER_STATUS_IDS : [...PUBLISH_STATUS_IDS];
-    if (statusEl && allowed.includes(statusEl.value)) {
-      card.publishStatus = statusEl.value === 'ready' ? 'scheduled' : statusEl.value;
+    let nextStatus = statusEl ? statusEl.value : card.publishStatus;
+    if (nextStatus === 'ready') nextStatus = 'scheduled';
+    if (allowed.includes(nextStatus)) {
+      card.publishStatus = nextStatus;
     } else if (!PUBLISH_STATUS_IDS.has(card.publishStatus) || card.publishStatus === 'ready') {
       card.publishStatus = card.needContent ? 'need' : (isDiscoverFormat(format) ? 'scheduled' : 'prep');
     }
@@ -10600,6 +10691,10 @@ function savePanel(silent) {
 }
 
 function closePanel() {
+  // Persist schedule edits (status/note/Drive) even when closing without Save.
+  if (panelMode === 'schedule' && activeScheduleId) {
+    try { savePanel(true); } catch (_) {}
+  }
   closePpcSelects();
   document.getElementById('panel').classList.remove('open');
   document.getElementById('overlay').classList.remove('open');
@@ -10878,8 +10973,10 @@ PPC.mountSettings({
     }));
 
     allPillars().forEach(p => {
+      const formats = formatsForPillar(p.id);
+      if (!formats.length) return;
       panelBody.appendChild(makeColourSection(p.id, p.label + ' formats', body => {
-        formatsForPillar(p.id).forEach(f => {
+        formats.forEach(f => {
           body.appendChild(makeBrandColourRow(f.label || f.id, formatColor(f.id, p.id), hex => setFormatColor(p.id, f.id, hex)));
         });
       }));

@@ -111,12 +111,13 @@ body.dark .ppc-select-option { color: #f0ede8; }
   display: none;
   position: fixed;
   z-index: 9200;
-  width: 268px;
+  width: 280px;
   background: #fff;
-  border: 1px solid #EAE2D6;
-  border-radius: 8px;
-  box-shadow: 0 10px 28px rgba(44,44,44,0.12);
-  padding: 10px;
+  border: 1px solid #E5E1DA;
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(44,44,44,0.10);
+  padding: 12px;
+  box-sizing: border-box;
 }
 .ppc-date.open .ppc-date-menu,
 .ppc-date-menu.is-open { display: block; }
@@ -125,25 +126,27 @@ body.dark .ppc-select-option { color: #f0ede8; }
   align-items: center;
   justify-content: space-between;
   gap: 6px;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .ppc-date-nav-title {
   flex: 1;
   font-family: 'DM Sans', sans-serif;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 700;
-  color: #2C2C2C;
+  color: #3a3a3a;
   text-align: center;
+  letter-spacing: 0.01em;
 }
 .ppc-date-nav button {
   font-family: inherit;
-  font-size: 14px;
-  width: 28px;
-  height: 28px;
-  border: 1px solid #EAE2D6;
-  border-radius: 6px;
+  font-size: 16px;
+  line-height: 1;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #E5E1DA;
+  border-radius: 7px;
   background: #fff;
-  color: #6B7A8D;
+  color: #8a8580;
   cursor: pointer;
 }
 .ppc-date-nav button:hover {
@@ -159,53 +162,75 @@ body.dark .ppc-select-option { color: #f0ede8; }
 .ppc-date-dow span {
   font-family: 'DM Sans', sans-serif;
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #9a958d;
   text-align: center;
-  padding: 4px 0;
+  padding: 6px 0 8px;
 }
 .ppc-date-day {
   font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 600;
   border: none;
   background: transparent;
-  border-radius: 6px;
-  height: 30px;
+  border-radius: 7px;
+  height: 32px;
   color: #2C2C2C;
   cursor: pointer;
+  box-shadow: inset 0 0 0 1px transparent;
 }
-.ppc-date-day:hover { background: #f8f6f3; }
-.ppc-date-day.is-other { color: #b0aaa2; font-weight: 500; }
+.ppc-date-day:hover { background: #f7f5f2; }
+.ppc-date-day.is-other { color: #c4bfb7; font-weight: 500; }
 .ppc-date-day.is-today { box-shadow: inset 0 0 0 1px #4E6E6C; }
 .ppc-date-day.is-selected {
-  background: #2C2C2C;
-  color: #fff;
+  background: #fff;
+  color: #2C2C2C;
+  box-shadow: inset 0 0 0 1.5px #4E6E6C;
 }
-.ppc-date-day.is-selected:hover { background: #2a3650; color: #fff; }
+.ppc-date-day.is-selected:hover { background: #f4f7f6; color: #2C2C2C; }
+.ppc-date-day.is-selected.is-today { box-shadow: inset 0 0 0 1.5px #4E6E6C; }
 .ppc-date-footer {
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid #f0ede8;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #EFEBE4;
 }
 .ppc-date-footer button {
   font-family: 'DM Sans', sans-serif;
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   border: none;
   background: transparent;
-  color: #6B7A8D;
+  color: #5B6B8C;
   cursor: pointer;
   padding: 4px 2px;
 }
 .ppc-date-footer button:hover { color: #2C2C2C; }
+.ppc-datetime {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  width: 100%;
+}
+.ppc-datetime .ppc-date { flex: 1; min-width: 0; }
+.ppc-datetime-time {
+  width: 104px;
+  flex-shrink: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  border: 1px solid #EAE2D6;
+  border-radius: 6px;
+  padding: 8px 10px;
+  background: #fff;
+  color: #2C2C2C;
+  box-sizing: border-box;
+}
 body.dark .ppc-date-menu {
   background: #1e2638;
   border-color: #3a4560;
@@ -220,8 +245,19 @@ body.dark .ppc-date-nav button {
 body.dark .ppc-date-day { color: #f0ede8; }
 body.dark .ppc-date-day:hover { background: #252e45; }
 body.dark .ppc-date-day.is-other { color: #6B7A8D; }
-body.dark .ppc-date-day.is-selected { background: #4E6E6C; color: #fff; }
+body.dark .ppc-date-day.is-today { box-shadow: inset 0 0 0 1px #4E6E6C; }
+body.dark .ppc-date-day.is-selected {
+  background: transparent;
+  color: #f0ede8;
+  box-shadow: inset 0 0 0 1.5px #4E6E6C;
+}
 body.dark .ppc-date-footer { border-top-color: #3a4560; }
+body.dark .ppc-date-footer button { color: #8fa0b8; }
+body.dark .ppc-datetime-time {
+  background: #141d2e;
+  border-color: #2e3a55;
+  color: #f0ede8;
+}
 `;
 
   function ensureStyles() {
@@ -337,7 +373,7 @@ body.dark .ppc-date-footer { border-top-color: #3a4560; }
     function positionMenu() {
       if (!wrap.classList.contains('open')) return;
       const rect = trigger.getBoundingClientRect();
-      const menuW = 268;
+      const menuW = 280;
       const pad = 8;
       const mh = menu.offsetHeight || 320;
       let left = rect.left;
@@ -514,6 +550,123 @@ body.dark .ppc-date-footer { border-top-color: #3a4560; }
     }
     hidden.value = value ? String(value).slice(0, 10) : '';
     return true;
+  }
+
+  /** Swap a native <input type="date"> for the shared ppc-date picker. */
+  function replaceNativeDate(inputEl, opts) {
+    if (!inputEl || inputEl.tagName !== 'INPUT') return null;
+    if (inputEl.closest('.ppc-date') || inputEl.dataset.ppcDateReplaced === '1') return null;
+    const options = opts || {};
+    const id = inputEl.id;
+    const wrap = createPpcDate({
+      id,
+      value: inputEl.value || '',
+      placeholder: options.placeholder || inputEl.getAttribute('placeholder') || 'Pick a date',
+      onChange: val => {
+        if (typeof options.onChange === 'function') options.onChange(val);
+        inputEl.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
+    if (inputEl.className) wrap.className = (wrap.className + ' ' + inputEl.className).trim();
+    if (inputEl.style && inputEl.style.cssText) wrap.style.cssText = inputEl.style.cssText;
+    inputEl.dataset.ppcDateReplaced = '1';
+    inputEl.replaceWith(wrap);
+    return wrap;
+  }
+
+  function pad2(n) {
+    return String(n).padStart(2, '0');
+  }
+
+  function splitDateTimeLocal(value) {
+    const raw = String(value || '');
+    const m = raw.match(/^(\d{4}-\d{2}-\d{2})(?:[T\s](\d{2}):(\d{2}))?/);
+    if (!m) return { date: '', time: '17:00' };
+    return { date: m[1], time: (m[2] != null ? m[2] + ':' + m[3] : '17:00') };
+  }
+
+  /** Date + time control that keeps a datetime-local-compatible hidden value. */
+  function createPpcDateTime({ id, value, placeholder, onChange, defaultTime }) {
+    ensureStyles();
+    const initial = splitDateTimeLocal(value);
+    const fallbackTime = defaultTime || '17:00';
+    const outer = document.createElement('div');
+    outer.className = 'ppc-datetime';
+
+    const hidden = document.createElement('input');
+    hidden.type = 'hidden';
+    if (id) hidden.id = id;
+
+    const dateId = (id || 'ppcDt') + '__date';
+    const dateWrap = createPpcDate({
+      id: dateId,
+      value: initial.date,
+      placeholder: placeholder || 'Pick a date',
+      onChange: () => syncFromParts(true)
+    });
+
+    const time = document.createElement('input');
+    time.type = 'time';
+    time.className = 'ppc-datetime-time';
+    time.value = initial.time || fallbackTime;
+    time.setAttribute('aria-label', 'Time');
+    time.addEventListener('change', () => syncFromParts(true));
+    time.addEventListener('input', () => syncFromParts(false));
+
+    function syncFromParts(fire) {
+      const dateEl = document.getElementById(dateId);
+      const date = dateEl ? dateEl.value : '';
+      const t = time.value || fallbackTime;
+      hidden.value = date ? (date + 'T' + t) : '';
+      if (fire && typeof onChange === 'function') onChange(hidden.value);
+    }
+
+    syncFromParts(false);
+    outer.appendChild(hidden);
+    outer.appendChild(dateWrap);
+    outer.appendChild(time);
+
+    outer._ppcSetDateTime = function (isoLocal) {
+      const parts = splitDateTimeLocal(isoLocal);
+      setPpcDateValue(dateId, parts.date);
+      time.value = parts.time || fallbackTime;
+      syncFromParts(false);
+    };
+
+    return outer;
+  }
+
+  function setPpcDateTimeValue(id, value) {
+    const hidden = document.getElementById(id);
+    if (!hidden) return false;
+    const wrap = hidden.closest('.ppc-datetime');
+    if (wrap && typeof wrap._ppcSetDateTime === 'function') {
+      wrap._ppcSetDateTime(value || '');
+      return true;
+    }
+    hidden.value = value || '';
+    return true;
+  }
+
+  /** Swap a native <input type="datetime-local"> for ppc-date + time. */
+  function replaceNativeDateTimeLocal(inputEl, opts) {
+    if (!inputEl || inputEl.tagName !== 'INPUT') return null;
+    if (inputEl.closest('.ppc-datetime') || inputEl.dataset.ppcDateReplaced === '1') return null;
+    const options = opts || {};
+    const id = inputEl.id;
+    const wrap = createPpcDateTime({
+      id,
+      value: inputEl.value || '',
+      placeholder: options.placeholder || 'Pick a date',
+      defaultTime: options.defaultTime,
+      onChange: val => {
+        if (typeof options.onChange === 'function') options.onChange(val);
+        inputEl.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
+    inputEl.dataset.ppcDateReplaced = '1';
+    inputEl.replaceWith(wrap);
+    return wrap;
   }
 
   function createPpcSelect({
@@ -734,7 +887,7 @@ body.dark .ppc-date-footer { border-top-color: #3a4560; }
   if (!global._ppcSelectClickBound) {
     global._ppcSelectClickBound = true;
     document.addEventListener('click', e => {
-      if (!e.target.closest('.ppc-select, .ppc-date, .ppc-date-menu')) closePpcSelects();
+      if (!e.target.closest('.ppc-select, .ppc-date, .ppc-date-menu, .ppc-datetime')) closePpcSelects();
     });
     document.addEventListener('keydown', e => {
       if (e.key !== 'Escape') return;
@@ -748,9 +901,13 @@ body.dark .ppc-date-footer { border-top-color: #3a4560; }
 
   global.createPpcSelect = createPpcSelect;
   global.createPpcDate = createPpcDate;
+  global.createPpcDateTime = createPpcDateTime;
   global.updatePpcSelect = updatePpcSelect;
   global.setPpcSelectValue = setPpcSelectValue;
   global.setPpcDateValue = setPpcDateValue;
+  global.setPpcDateTimeValue = setPpcDateTimeValue;
   global.replaceNativeSelect = replaceNativeSelect;
+  global.replaceNativeDate = replaceNativeDate;
+  global.replaceNativeDateTimeLocal = replaceNativeDateTimeLocal;
   global.closePpcSelects = closePpcSelects;
 })(typeof window !== 'undefined' ? window : globalThis);

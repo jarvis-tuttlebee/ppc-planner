@@ -5,6 +5,70 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-03 — Shared ppc-date theme everywhere (Cursor)
+
+### What was built or decided
+- Marketing `0.11.78` + shared `ppc-select.js?v=7`:
+  - Date picker restyled to match the outline/sage calendar (selected ring,
+    Clear/Today, Mo–Su).
+  - Planner exact date + Kanban due date use **ppc-date** (no native OS picker).
+  - Marketing datetime fields use **ppc-date + time**.
+
+### Deployed
+- Version ID: `ff8f7c71-124a-41fa-9e27-b44b6f7f3a02` (Marketing 0.11.78 + ppc-select v7)
+
+### Open / next
+1. Hard-refresh Marketing / Planner / Task Board — open any date field.
+
+---
+
+## 2026-08-03 — Drop Photoshoot formats from Settings (Cursor)
+
+### What was built or decided
+- Marketing `0.11.77`: Colour settings skip pillars with no formats (empty
+  “Photoshoot formats” accordion). Removed live custom pillar `photoshoot`.
+
+### Deployed
+- Version ID: `690dd08b-3382-4025-95f9-5ce2fc6bb3ac` (Marketing 0.11.77)
+
+### Open / next
+1. Hard-refresh Settings → Colour settings — no empty Photoshoot formats block.
+
+---
+
+## 2026-08-03 — Posted sticks + lighter embeds (Cursor)
+
+### What was built or decided
+- Marketing `0.11.76`:
+  - Discover/calendar **Posted** no longer gets overwritten by a stale Status
+    control on Save/Close; panel select stays in sync; Close auto-saves schedule.
+  - Discover preview **×** clear (from 0.11.75).
+  - Embedded images shrink harder (max edge 720, JPEG ~0.72) so Ideas/Discover
+    previews weigh less in KV. Prefer Drive links for the real file.
+
+### Deployed
+- Version ID: `a04ea53c-ce2f-4682-a174-657559c4b209` (Marketing 0.11.76)
+
+### Open / next
+1. Hard-refresh `/marketing` — set Discover to Posted; confirm it sticks.
+2. Later: optional image URL field / R2 for Ideas if board still grows heavy.
+
+---
+
+## 2026-08-03 — Discover preview remove (Cursor)
+
+### What was built or decided
+- Marketing `0.11.75`: Discover post thumb gets a **×** to clear the dropped
+  preview (`imageData`) so heavy embeds can be removed without deleting the card.
+
+### Deployed
+- Pending
+
+### Open / next
+1. Deploy when asked; hard-refresh `/marketing`.
+
+---
+
 ## 2026-08-03 — Stop deleted events from resurrecting (Cursor)
 
 ### What was built or decided
