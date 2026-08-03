@@ -98,7 +98,9 @@
       display: inline-flex;
       align-items: center;
     }
+    .nav-link:visited { color: #6B7A8D; }
     .nav-link:hover { color: #2C2C2C; background: transparent; }
+    .nav-link.active:visited { color: #2C2C2C; }
     .nav-link.active { color: #2C2C2C; background: transparent; font-weight: 600; }
     .nav-settings-btn {
       position: absolute;
@@ -280,7 +282,7 @@
       user-select: none;
       transition: background 0.12s;
     }
-    .section-row:hover { background: rgba(52,67,100,0.035); }
+    .section-row:hover { background: rgba(44,44,44,0.035); }
     .section-leading {
       display: flex;
       align-items: center;
@@ -310,7 +312,7 @@
       white-space: nowrap;
     }
     .section-chev { color: #9a958d; font-size: 11px; width: 12px; text-align: center; }
-    .board-section.open .section-title { color: #344364; }
+    .board-section.open .section-title { color: #2C2C2C; }
     .section-body { padding: 4px 2px 22px; }
 
     .section-actions {
@@ -325,13 +327,13 @@
       letter-spacing: 0.06em;
       padding: 6px 14px;
       border-radius: 20px;
-      border: 1.5px solid #344364;
+      border: 1.5px solid #2C2C2C;
       background: transparent;
-      color: #344364;
+      color: #2C2C2C;
       cursor: pointer;
       transition: all 0.15s;
     }
-    .btn-add:hover { background: #344364; color: #fff; }
+    .btn-add:hover { background: #2C2C2C; color: #fff; }
 
     .mood-viewport {
       position: relative;
@@ -520,7 +522,7 @@
       letter-spacing: 0.04em;
       color: #6B7A8D;
     }
-    .idea-card:hover .card-details-link { color: #344364; text-decoration: underline; }
+    .idea-card:hover .card-details-link { color: #2C2C2C; text-decoration: underline; }
 
     .overlay { display: none; position: fixed; inset: 0; z-index: 100; }
     .overlay.open { display: block; }
@@ -636,7 +638,7 @@
       font-size: 12px;
       color: #555;
     }
-    .fmt-btn:hover { background: #F7F5F2; border-color: #344364; }
+    .fmt-btn:hover { background: #F7F5F2; border-color: #2C2C2C; }
     .fmt-btn.wide { width: auto; padding: 0 8px; font-size: 10.5px; }
     .panel-desc {
       min-height: 120px;
@@ -651,7 +653,7 @@
       background: #fff;
       overflow: auto;
     }
-    .panel-desc:focus { border-color: #344364; background: #f8f6f3; }
+    .panel-desc:focus { border-color: #2C2C2C; background: #f8f6f3; }
     .panel-desc:empty::before { content: attr(placeholder); color: #ccc; }
     .panel-desc b, .panel-desc strong { font-weight: 700; }
     .panel-desc ul,
@@ -716,7 +718,7 @@
     }
     .btn-save {
       border: none;
-      background: #344364;
+      background: #2C2C2C;
       color: #fff;
     }
 
@@ -1054,7 +1056,7 @@
     .exec-chip {
       font-size: 10px;
       color: #6B7A8D;
-      background: rgba(52,67,100,0.06);
+      background: rgba(44,44,44,0.06);
       border-radius: 4px;
       padding: 3px 7px;
       max-width: 100%;
@@ -1421,10 +1423,10 @@
       color: #6B7A8D;
       cursor: pointer;
     }
-    .cal-nav-btn:hover { border-color: #344364; color: #2C2C2C; }
+    .cal-nav-btn:hover { border-color: #2C2C2C; color: #2C2C2C; }
     .cal-nav-btn.is-active {
-      background: #344364;
-      border-color: #344364;
+      background: #2C2C2C;
+      border-color: #2C2C2C;
       color: #fff;
     }
     .cal-range-toggle {
@@ -1478,18 +1480,18 @@
       border-radius: 6px;
       border: 1px solid #E2DDD5;
       background: #fff;
-      color: #344364;
+      color: #2C2C2C;
       cursor: pointer;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       text-align: left;
     }
-    .cal-event-chip:hover { border-color: #344364; }
+    .cal-event-chip:hover { border-color: #2C2C2C; }
     .cal-event-chip--cadence,
     .cal-event-chip--custom { background: rgba(86,74,94,0.08); }
     .cal-event-chip--event { background: rgba(194,154,59,0.12); }
-    .cal-event-chip--release { background: rgba(52,67,100,0.1); }
+    .cal-event-chip--release { background: rgba(44,44,44,0.1); }
     .cal-event-chip--empty {
       border-style: dashed;
       color: #8a8580;
@@ -1549,13 +1551,13 @@
     .cal-week-collapse-icon { font-size: 8px; opacity: 0.7; }
     .cal-week-earlier-body { display: flex; flex-direction: column; }
     .cal-day--leadup .cal-day-body {
-      background: rgba(52,67,100,0.08);
+      background: rgba(44,44,44,0.08);
       border-radius: 4px;
-      box-shadow: inset 0 0 0 1px rgba(52,67,100,0.22);
+      box-shadow: inset 0 0 0 1px rgba(44,44,44,0.22);
     }
     .cal-day-cue--leadup {
-      background: rgba(52,67,100,0.14);
-      color: #344364;
+      background: rgba(44,44,44,0.14);
+      color: #2C2C2C;
     }
     .cal-week-grid,
     .cal-month-grid {
@@ -1722,8 +1724,8 @@
       cursor: grabbing;
     }
     .cal-day-body.drag-over {
-      background: rgba(52,67,100,0.1);
-      box-shadow: inset 0 0 0 2px rgba(52,67,100,0.35);
+      background: rgba(44,44,44,0.1);
+      box-shadow: inset 0 0 0 2px rgba(44,44,44,0.35);
       border-radius: 4px;
     }
     .cal-slot-meta {
@@ -1859,7 +1861,7 @@
       line-height: 1.2;
     }
     .cal-anchor-pin--event { background: rgba(194,154,59,0.2); color: #8a6a1a; }
-    .cal-anchor-pin--release { background: rgba(52,67,100,0.12); color: #344364; }
+    .cal-anchor-pin--release { background: rgba(44,44,44,0.12); color: #2C2C2C; }
     .cal-anchor-pin--cadence,
     .cal-anchor-pin--custom { background: rgba(86,74,94,0.14); color: #564A5E; }
     .schedule-status-chip {
@@ -2038,8 +2040,8 @@
     }
     .cal-anchor-add-type button:hover { border-color: #6B7A8D; color: #2C2C2C; }
     .cal-anchor-add-type button.primary {
-      background: #344364;
-      border-color: #344364;
+      background: #2C2C2C;
+      border-color: #2C2C2C;
       color: #fff;
     }
     .cal-anchor-add-type button.primary:hover { background: #2a3650; color: #fff; }
@@ -2178,8 +2180,8 @@
     }
     .cal-weekday-pick:hover { border-color: #6B7A8D; color: #2C2C2C; }
     .cal-weekday-pick.is-on {
-      background: #344364;
-      border-color: #344364;
+      background: #2C2C2C;
+      border-color: #2C2C2C;
       color: #fff;
     }
     .cal-slot-title--event {
@@ -2188,7 +2190,7 @@
       text-decoration-color: rgba(86,74,94,0.35);
       text-underline-offset: 2px;
     }
-    .cal-slot-title--event:hover { color: #344364; }
+    .cal-slot-title--event:hover { color: #2C2C2C; }
     .cal-day-cue--leadup {
       cursor: grab;
     }
@@ -2243,13 +2245,13 @@
       letter-spacing: 0.04em;
       padding: 7px 12px;
       border-radius: 20px;
-      border: 1.5px solid #344364;
+      border: 1.5px solid #2C2C2C;
       background: transparent;
-      color: #344364;
+      color: #2C2C2C;
       cursor: pointer;
     }
-    .btn-secondary:hover { background: #344364; color: #fff; }
-    .btn-secondary.active { background: #344364; color: #fff; }
+    .btn-secondary:hover { background: #2C2C2C; color: #fff; }
+    .btn-secondary.active { background: #2C2C2C; color: #fff; }
     .prepare-dest {
       display: none;
       flex-direction: column;
@@ -2294,7 +2296,7 @@
       cursor: pointer;
       transition: background 0.1s;
     }
-    .ctx-item:hover { background: rgba(52,67,100,0.06); }
+    .ctx-item:hover { background: rgba(44,44,44,0.06); }
 
     @media (max-width: 700px) {
       .header, .nav-row { padding-left: 16px; padding-right: 16px; }
@@ -2610,7 +2612,7 @@
 <script>
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
-const APP_VERSION = '0.11.18';
+const APP_VERSION = '0.11.19';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 
 const VIEW_MODE_KEY = 'ppc-marketing-view-mode';
@@ -3016,7 +3018,7 @@ const CATS = [
   { id: 'organic', label: 'Organic', bg: '#564A5E', fg: '#fff' },
   { id: 'email',   label: 'Email',   bg: '#4E6E6C', fg: '#fff' },
   { id: 'ads',     label: 'Ads',     bg: '#C29A3B', fg: '#2C2C2C' },
-  { id: 'website', label: 'Website', bg: '#344364', fg: '#fff' }
+  { id: 'website', label: 'Website', bg: '#2C2C2C', fg: '#fff' }
 ];
 const PILL_BG = '#F0EDE8';
 
@@ -3088,7 +3090,7 @@ function defaultFormatForPillar(pillarId) {
 
 const SECTIONS = [
   // Calendar first — plan dates; production pipeline feeds it from below.
-  { id: 'schedule', name: 'Content Calendar', swatch: '#344364', built: true },
+  { id: 'schedule', name: 'Content Calendar', swatch: '#2C2C2C', built: true },
   { id: 'ideas', name: 'Content Ideas', swatch: '#564A5E', built: true },
   { id: 'preparation', name: 'Content Preparation', swatch: '#4E6E6C', built: true },
   { id: 'execution', name: 'Content Execution', swatch: '#C29A3B', built: true },

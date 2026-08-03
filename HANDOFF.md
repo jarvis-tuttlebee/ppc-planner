@@ -5,6 +5,30 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-03 — Twilight Indigo trial removal (Cursor)
+
+### What was built or decided
+- Section / board titles stay **Graphite** when open (no indigo flash).
+- Visited Home + nav links stay graphite/slate (no browser purple).
+- Trial: removed **Twilight Indigo** `#344364` from Homebase UI chrome and
+  palette. Accents → Graphite `#2C2C2C`; soft washes → graphite rgba;
+  week labels → Slate `#6B7A8D`. Navys row dropped from category colour
+  picker. Stockists + Website pillar + Calendar swatch temporarily Graphite
+  (Stockists shares with Personal — reassign if trial sticks).
+- Cloud cat migration: `#344364` → `#2C2C2C` (Planner).
+- Versions: Marketing `0.11.19` · Planner `2.10.9` · Task Board `1.10.5`.
+
+### Deployed
+- Yes — Version ID `0187ec1a-8b5d-4e79-ac12-c32c179774b9`
+  https://ppc-homebase.pressplaycollective.workers.dev
+
+### Open / next
+1. Hard-refresh — titles stay black; no indigo/purple on nav/section open.
+2. Decide: keep indigo out, and pick a distinct Stockists colour if needed.
+3. Commit/push when asked.
+
+---
+
 ## 2026-08-03 — Branch rename (Cursor)
 
 ### What was built or decided

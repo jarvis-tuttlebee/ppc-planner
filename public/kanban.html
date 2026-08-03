@@ -95,7 +95,9 @@
       display: inline-flex;
       align-items: center;
     }
+    .nav-link:visited { color: #6B7A8D; }
     .nav-link:hover { color: #2C2C2C; background: transparent; }
+    .nav-link.active:visited { color: #2C2C2C; }
     .nav-link.active { color: #2C2C2C; background: transparent; font-weight: 600; }
     .nav-settings-btn {
       position: absolute;
@@ -174,7 +176,7 @@
       cursor: pointer;
       transition: border-color 0.12s, color 0.12s, background 0.12s;
     }
-    .section-add-project:hover { border-color: #344364; color: #344364; background: rgba(52,67,100,0.03); }
+    .section-add-project:hover { border-color: #2C2C2C; color: #2C2C2C; background: rgba(44,44,44,0.03); }
     .complete-projects {
       margin-top: 8px;
       border: 1px solid #E2DDD5;
@@ -196,7 +198,7 @@
       cursor: pointer;
       user-select: none;
     }
-    .complete-projects-head:hover { background: rgba(52,67,100,0.03); }
+    .complete-projects-head:hover { background: rgba(44,44,44,0.03); }
     .complete-projects-title {
       font-family: 'Forma DJR Banner', 'Poppins', 'DM Sans', sans-serif;
       font-size: 14px;
@@ -232,7 +234,7 @@
       user-select: none;
       transition: background 0.12s, box-shadow 0.12s;
     }
-    .section-row:hover { background: rgba(52,67,100,0.035); }
+    .section-row:hover { background: rgba(44,44,44,0.035); }
     .section-leading {
       display: flex;
       align-items: center;
@@ -269,11 +271,11 @@
     }
     .section-title.has-accent { color: var(--section-accent, #2C2C2C); }
     .board-section.open .section-title.has-accent { color: var(--section-accent, #2C2C2C); }
-    .board-section.open .section-title:not(.has-accent) { color: #344364; }
+    .board-section.open .section-title:not(.has-accent) { color: #2C2C2C; }
     .section-title.editing {
       outline: none;
       background: #fff;
-      border-bottom: 1.5px solid #344364;
+      border-bottom: 1.5px solid #2C2C2C;
       padding: 1px 5px;
       margin: -1px -5px;
       border-radius: 3px 3px 0 0;
@@ -347,7 +349,7 @@
     }
     .board-col-head[draggable="true"] { cursor: grab; }
     .board-col.col-dragging { opacity: 0.4; }
-    .board-col.col-drop-target { outline: 2px dashed #344364; outline-offset: -4px; border-radius: 10px; }
+    .board-col.col-drop-target { outline: 2px dashed #2C2C2C; outline-offset: -4px; border-radius: 10px; }
     .board-col-drag-handle { opacity: 0.35; margin-right: 5px; font-size: 10px; letter-spacing: -1px; }
 
     .done-group-toggle {
@@ -447,7 +449,7 @@
       font-family: 'DM Sans', sans-serif; font-size: 10.5px; font-weight: 500;
       letter-spacing: 0.04em; color: #6B7A8D; cursor: pointer;
     }
-    .card-details-link:hover { color: #344364; text-decoration: underline; }
+    .card-details-link:hover { color: #2C2C2C; text-decoration: underline; }
     .card-meta {
       display: flex; gap: 10px; margin-top: 9px; padding-top: 8px;
       border-top: 1px solid #E2DDD5; flex-wrap: wrap;
@@ -478,7 +480,7 @@
       background: #fff; border: 1px solid #e8e5e0; border-radius: 12px; padding: 16px;
       cursor: pointer; transition: border-color 0.15s, transform 0.1s; position: relative;
     }
-    .project-card:hover { border-color: #344364; }
+    .project-card:hover { border-color: #2C2C2C; }
     .project-card:active { transform: scale(0.995); }
     .project-name { font-family: 'Forma DJR Banner','Poppins',sans-serif; font-size: 15px; font-weight: 700; color: #2C2C2C; margin-bottom: 4px; padding-right: 20px; }
     .project-desc {
@@ -499,7 +501,7 @@
       cursor: pointer; color: #6B7A8D; font-family: 'DM Sans', sans-serif; font-size: 13px;
       display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 92px;
     }
-    .project-add-card:hover { border-color: #344364; color: #344364; }
+    .project-add-card:hover { border-color: #2C2C2C; color: #2C2C2C; }
     .project-context {
       display: flex; align-items: center; gap: 8px; padding: 0 32px; margin-top: -4px; margin-bottom: 4px;
       font-family: 'DM Sans', sans-serif; font-size: 12px; color: #6B7A8D;
@@ -533,10 +535,10 @@
       display: inline-flex; align-items: center; justify-content: center;
       font-size: 10px; color: #fff; line-height: 1;
     }
-    .asg-opt.sel .asg-check { background: #344364; border-color: #344364; }
+    .asg-opt.sel .asg-check { background: #2C2C2C; border-color: #2C2C2C; }
     .asg-name { flex: 1; color: #2C2C2C; }
     .asg-name.editing {
-      outline: none; background: #F7F5F2; border-bottom: 1.5px solid #344364;
+      outline: none; background: #F7F5F2; border-bottom: 1.5px solid #2C2C2C;
       border-radius: 3px 3px 0 0; padding: 0 3px; cursor: text;
     }
     .asg-name.rename-error { border-bottom-color: #8A5A3B; background: rgba(138,90,59,0.1); }
@@ -546,9 +548,9 @@
       flex: 1; min-width: 0; border: 1px solid #EAE2D6; border-radius: 6px;
       padding: 6px 8px; font-family: 'DM Sans', sans-serif; font-size: 12.5px; color: #2C2C2C;
     }
-    .asg-newinput:focus { outline: none; border-color: #344364; }
+    .asg-newinput:focus { outline: none; border-color: #2C2C2C; }
     .asg-newsave {
-      border: none; background: #344364; color: #fff; border-radius: 6px;
+      border: none; background: #2C2C2C; color: #fff; border-radius: 6px;
       padding: 0 11px; font-family: 'DM Sans', sans-serif; font-size: 11.5px; cursor: pointer;
     }
     .asg-foot {
@@ -558,9 +560,9 @@
     .asg-add {
       font-family: 'DM Sans', sans-serif; font-size: 12px; color: #6B7A8D; cursor: pointer;
     }
-    .asg-add:hover { color: #344364; }
+    .asg-add:hover { color: #2C2C2C; }
     .asg-done {
-      border: none; background: #344364; color: #fff; border-radius: 6px;
+      border: none; background: #2C2C2C; color: #fff; border-radius: 6px;
       padding: 6px 14px; font-family: 'DM Sans', sans-serif; font-size: 11.5px;
       letter-spacing: 0.04em; cursor: pointer;
     }
@@ -598,7 +600,7 @@
       padding: 10px 11px; font-family: 'DM Sans', sans-serif; font-size: 14px;
       color: #2C2C2C; background: #fff; margin-bottom: 14px;
     }
-    .np-input:focus { outline: none; border-color: #344364; }
+    .np-input:focus { outline: none; border-color: #2C2C2C; }
     .np-textarea { resize: vertical; min-height: 66px; line-height: 1.5; }
     .np-types { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 6px; }
     .np-type {
@@ -621,7 +623,7 @@
       display: inline-flex; align-items: center; justify-content: center; padding: 0;
       font-family: 'DM Sans', sans-serif;
     }
-    .fmt-btn:hover { background: #F7F5F2; border-color: #344364; }
+    .fmt-btn:hover { background: #F7F5F2; border-color: #2C2C2C; }
     .fmt-btn.wide { width: auto; padding: 0 8px; font-size: 10.5px; letter-spacing: 0.04em; }
     .panel-desc b, .panel-desc strong { font-weight: 700; }
 
@@ -811,7 +813,7 @@
       font-size: 12px;
       font-weight: 500;
       padding: 7px 16px;
-      background: #344364;
+      background: #2C2C2C;
       color: #fff;
       border: none;
       border-radius: 4px;
@@ -819,7 +821,7 @@
       letter-spacing: 0.04em;
       transition: background 0.15s;
     }
-    .btn-save:hover { background: #2a3652; }
+    .btn-save:hover { background: #1a1a1a; }
     .btn-cancel {
       font-family: 'DM Sans', sans-serif;
       font-size: 12px;
@@ -1049,12 +1051,13 @@
 
 // Brand palette v4 (Colour & Identity Document 2026 v4): muted tertiary family,
 // Signal Yellow retired. Finance has no brand slot — dusty rust derived to fit the family.
+// Trial: Twilight Indigo (#344364) removed — UI chrome + Stockists use Graphite; conflicts with Slate.
 const CATS = [
   { id: 'col', label: 'Collections & Launches', bg: '#4E6E6C', fg: '#fff' },
   { id: 'evt', label: 'Events',                  bg: '#C29A3B', fg: '#2C2C2C' },
   { id: 'mkt', label: 'Marketing & Content',     bg: '#564A5E', fg: '#fff' },
   { id: 'mfg', label: 'Manufacturing & Fabric',  bg: '#6B7A8D', fg: '#fff' },
-  { id: 'stk', label: 'Stockists',               bg: '#344364', fg: '#fff' },
+  { id: 'stk', label: 'Stockists',               bg: '#2C2C2C', fg: '#fff' },
   { id: 'fin', label: 'Finance & Admin',         bg: '#8A5A3B', fg: '#fff' },
   { id: 'per', label: 'Personal Milestones',     bg: '#2C2C2C', fg: '#fff' },
 ];
@@ -1198,7 +1201,7 @@ let CARDS = SEED_CARDS.map(c => ({ ...c }));
 // ─── PERSISTENCE (localStorage + Cloudflare Worker sync) ─────────────────────
 const STORAGE_KEY = 'kanban-board-data';
 const SYNC_URL = '/api/kanban';
-const APP_VERSION = '1.10.4';
+const APP_VERSION = '1.10.5';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 
 let editMode = true;
@@ -1722,7 +1725,7 @@ function renderProjects() {
       if (!n) return;
       const seg = document.createElement('span');
       seg.style.flex = n;
-      seg.style.background = colId === 'done' ? '#4E6E6C' : colId === 'active' ? '#C29A3B' : colId === 'waiting' ? '#6B7A8D' : '#344364';
+      seg.style.background = colId === 'done' ? '#4E6E6C' : colId === 'active' ? '#C29A3B' : colId === 'waiting' ? '#6B7A8D' : '#2C2C2C';
       bar.appendChild(seg);
     });
 

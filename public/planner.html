@@ -603,7 +603,7 @@
       font-size: 12px;
       font-weight: 500;
       padding: 7px 16px;
-      background: #344364;
+      background: #2C2C2C;
       color: #fff;
       border: none;
       border-radius: 4px;
@@ -611,7 +611,7 @@
       letter-spacing: 0.04em;
       transition: background 0.15s;
     }
-    .btn-save:hover { background: #2a3652; }
+    .btn-save:hover { background: #1a1a1a; }
     .btn-cancel {
       font-family: 'DM Sans', sans-serif;
       font-size: 12px;
@@ -665,7 +665,9 @@
       display: inline-flex;
       align-items: center;
     }
+    .nav-link:visited { color: #6B7A8D; }
     .nav-link:hover { color: #2C2C2C; background: transparent; }
+    .nav-link.active:visited { color: #2C2C2C; }
     .nav-link.active { color: #2C2C2C; background: transparent; font-weight: 600; }
     .nav-settings-btn {
       position: absolute;
@@ -755,7 +757,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      color: #344364;
+      color: #6B7A8D;
       padding: 5px 12px 5px 16px;
       background: #f4f2ef;
       border-bottom: 1px solid #ece9e4;
@@ -1062,14 +1064,14 @@
       letter-spacing: 0.06em;
       padding: 6px 14px;
       border-radius: 20px;
-      border: 1.5px solid #344364;
+      border: 1.5px solid #2C2C2C;
       background: transparent;
-      color: #344364;
+      color: #2C2C2C;
       cursor: pointer;
       transition: all 0.15s;
       white-space: nowrap;
     }
-    .dark-mode-btn:hover { background: #344364; color: #fff; }
+    .dark-mode-btn:hover { background: #2C2C2C; color: #fff; }
 
     /* ── DARK MODE ──────────────────────────────────────────────────────── */
     body.dark { background: #141928; color: #f0ede8; }
@@ -1082,7 +1084,7 @@
     body.dark .nav-settings-btn { color: #8a8580; border: none; background: transparent; }
     body.dark .nav-settings-btn:hover { color: #f0ede8; background: transparent; }
     body.dark .dark-mode-btn { border-color: #4a5a7f; color: #c8c4be; }
-    body.dark .dark-mode-btn:hover { background: #344364; color: #f0ede8; border-color: #344364; }
+    body.dark .dark-mode-btn:hover { background: #2C2C2C; color: #f0ede8; border-color: #2C2C2C; }
     body.dark th { background: #1e2538; color: #c8c4be; }
     body.dark th:first-child { background: transparent; color: #8a8680; }
     body.dark th.now { background: #1a3540; }
@@ -1317,18 +1319,20 @@ const MONTHS = [
 
 // Brand palette v4 (Colour & Identity Document 2026 v4): muted tertiary family,
 // Signal Yellow retired. Finance has no brand slot — dusty rust derived to fit the family.
+// Trial: Twilight Indigo (#344364) removed — UI chrome + Stockists use Graphite; conflicts with Slate.
 let CATS = [
   { id: 'col', label: 'Collections & Launches', bg: '#4E6E6C', fg: '#fff' },
   { id: 'evt', label: 'Events',                  bg: '#C29A3B', fg: '#2C2C2C' },
   { id: 'mkt', label: 'Marketing & Content',     bg: '#564A5E', fg: '#fff' },
   { id: 'mfg', label: 'Manufacturing & Fabric',  bg: '#6B7A8D', fg: '#fff' },
-  { id: 'stk', label: 'Stockists',               bg: '#344364', fg: '#fff' },
+  { id: 'stk', label: 'Stockists',               bg: '#2C2C2C', fg: '#fff' },
   { id: 'fin', label: 'Finance & Admin',         bg: '#8A5A3B', fg: '#fff' },
   { id: 'per', label: 'Personal Milestones',     bg: '#2C2C2C', fg: '#fff' },
 ];
 
 // v3 → v4 colour migration for categories already saved in the cloud payload.
 const CAT_COLOR_MIGRATION = {
+  '#344364': '#2C2C2C',
   '#478589': '#4E6E6C',
   '#edd960': '#C29A3B',
   '#6b5a9c': '#564A5E',
@@ -1428,7 +1432,7 @@ const REVENUE = [1000,1800,1500,5000,3000,3500,2000,5500,6500,8000,8000,8000];
 // ─── PERSISTENCE (localStorage + Cloudflare Worker sync) ─────────────────────
 const STORAGE_KEY = 'ppc-planner-data';
 const SYNC_URL = '/api/data';
-const APP_VERSION = '2.10.8';
+const APP_VERSION = '2.10.9';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 
 let editMode = true;
@@ -2678,8 +2682,7 @@ function buildColorGrid(selectedColor, onSelect) {
     '#b2d8db','#89c0c4','#60a8ad','#478589','#3a6e72','#2d5658','#1f3e3f','#122526',
     // Sky blues
     '#c8e6f4','#9dcce9','#73b2de','#4898d3','#2f7fc9','#2365ae','#1a4c93','#103478',
-    // Navys
-    '#c2cde6','#94a6cf','#667fb8','#4965a1','#344364','#263252','#182141','#0c1030',
+
     // Purples
     '#d4cde8','#b5a9d5','#9585c2','#7a62af','#6B5A9C','#574888','#433674','#302460',
     // Reds/corals
@@ -2702,7 +2705,7 @@ function buildColorGrid(selectedColor, onSelect) {
   COLOR_LIB.forEach(color => {
     const sw = document.createElement('button');
     const isSel = color.toLowerCase() === (selectedColor||'').toLowerCase();
-    sw.style.cssText = `width:100%;aspect-ratio:1;border-radius:4px;background:${color};border:2.5px solid ${isSel ? '#fff' : 'transparent'};outline:${isSel ? '2px solid #344364' : 'none'};outline-offset:-1px;cursor:pointer;padding:0;transition:transform 0.1s;`;
+    sw.style.cssText = `width:100%;aspect-ratio:1;border-radius:4px;background:${color};border:2.5px solid ${isSel ? '#fff' : 'transparent'};outline:${isSel ? '2px solid #2C2C2C' : 'none'};outline-offset:-1px;cursor:pointer;padding:0;transition:transform 0.1s;`;
     sw.title = color;
     sw.onmouseenter = () => { sw.style.transform = 'scale(1.18)'; };
     sw.onmouseleave = () => { sw.style.transform = ''; };
@@ -2710,7 +2713,7 @@ function buildColorGrid(selectedColor, onSelect) {
       e.stopPropagation();
       grid.querySelectorAll('button').forEach(b => { b.style.borderColor = 'transparent'; b.style.outline = 'none'; });
       sw.style.borderColor = '#fff';
-      sw.style.outline = '2px solid #344364';
+      sw.style.outline = '2px solid #2C2C2C';
       sw.style.outlineOffset = '-1px';
       selectedColor = color;
       onSelect(color);
@@ -2816,7 +2819,7 @@ function showCustomCatForm(picker, mi, weekKey, dayKey = null) {
 
   const confirmBtn = document.createElement('button');
   confirmBtn.textContent = 'Add';
-  confirmBtn.style.cssText = "flex:1;padding:7px;border:none;border-radius:5px;background:#344364;color:#fff;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;font-weight:500;";
+  confirmBtn.style.cssText = "flex:1;padding:7px;border:none;border-radius:5px;background:#2C2C2C;color:#fff;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;font-weight:500;";
   confirmBtn.onclick = (e) => {
     e.stopPropagation();
     const name = input.value.trim();
@@ -2873,7 +2876,7 @@ function showEditCatForm(picker, cat, mi, weekKey) {
 
   const confirmBtn = document.createElement('button');
   confirmBtn.textContent = 'Save';
-  confirmBtn.style.cssText = "flex:1;padding:7px;border:none;border-radius:5px;background:#344364;color:#fff;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;font-weight:500;";
+  confirmBtn.style.cssText = "flex:1;padding:7px;border:none;border-radius:5px;background:#2C2C2C;color:#fff;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;font-weight:500;";
   confirmBtn.onclick = (e) => {
     e.stopPropagation();
     const name = input.value.trim();
@@ -3246,7 +3249,7 @@ function drawChart() {
     const barH = Math.round((rev / max) * (chartH - 10));
     const x = i * colW + (colW - barW) / 2;
     const y = chartH - barH;
-    const fill = rev >= 8000 ? '#4E6E6C' : rev >= 4000 ? '#344364' : '#6B7A8D';
+    const fill = rev >= 8000 ? '#4E6E6C' : rev >= 4000 ? '#2C2C2C' : '#6B7A8D';
 
     const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
     rect.setAttribute('x', x);

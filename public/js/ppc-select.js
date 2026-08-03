@@ -182,7 +182,7 @@ body.dark .ppc-select-option { color: #f0ede8; }
 .ppc-date-day.is-other { color: #b0aaa2; font-weight: 500; }
 .ppc-date-day.is-today { box-shadow: inset 0 0 0 1px #4E6E6C; }
 .ppc-date-day.is-selected {
-  background: #344364;
+  background: #2C2C2C;
   color: #fff;
 }
 .ppc-date-day.is-selected:hover { background: #2a3650; color: #fff; }
@@ -206,7 +206,7 @@ body.dark .ppc-select-option { color: #f0ede8; }
   cursor: pointer;
   padding: 4px 2px;
 }
-.ppc-date-footer button:hover { color: #344364; }
+.ppc-date-footer button:hover { color: #2C2C2C; }
 body.dark .ppc-date-menu {
   background: #1e2638;
   border-color: #3a4560;
