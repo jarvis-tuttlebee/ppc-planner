@@ -3,6 +3,7 @@
   const ARCHIVE_URL = '/api/archive';
   const ARCHIVE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
   const DARK_KEY = 'ppc-dark-mode';
+  const ARCHIVE_OPEN_KEY = 'ppc-archive-open';
 
   const COLUMN_LABELS = {
     backlog: 'Backlog',
@@ -199,9 +200,12 @@
   }
 
   function ensureStyles() {
-    if (document.getElementById('ppc-homebase-styles')) return;
-    const style = document.createElement('style');
-    style.id = 'ppc-homebase-styles';
+    let style = document.getElementById('ppc-homebase-styles');
+    if (!style) {
+      style = document.createElement('style');
+      style.id = 'ppc-homebase-styles';
+      document.head.appendChild(style);
+    }
     style.textContent = `
 .ppc-settings-overlay {
   position: fixed; inset: 0; background: rgba(20,18,16,0.28); z-index: 9000;
@@ -213,15 +217,20 @@
   background: #F7F5F2; border-left: 1px solid #E2DDD5; z-index: 9001;
   transform: translateX(100%); transition: transform 0.2s ease;
   display: flex; flex-direction: column; font-family: 'DM Sans', sans-serif;
+  overscroll-behavior: contain;
 }
 .ppc-settings-panel.open { transform: translateX(0); }
 .ppc-settings-head {
-  padding: 22px 20px 14px; font-size: 15px; font-weight: 700; color: #2C2C2C;
+  flex-shrink: 0; padding: 22px 20px 14px; font-size: 15px; font-weight: 700; color: #2C2C2C;
   border-bottom: 1px solid #E2DDD5; letter-spacing: 0.02em;
 }
 .ppc-settings-close {
   position: absolute; top: 14px; right: 14px; border: none; background: transparent;
-  font-size: 22px; line-height: 1; color: #6B7A8D; cursor: pointer;
+  font-size: 22px; line-height: 1; color: #6B7A8D; cursor: pointer; z-index: 2;
+}
+.ppc-settings-body {
+  flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 .ppc-settings-section {
   padding: 16px 20px; border-bottom: 1px solid #E2DDD5;
@@ -236,7 +245,74 @@
   font: inherit; font-size: 12.5px; cursor: pointer;
 }
 .ppc-settings-btn:hover { border-color: #6B7A8D; }
-.ppc-settings-list { flex: 1; overflow-y: auto; padding: 8px 12px 24px; }
+.ppc-settings-btn:last-child { margin-bottom: 0; }
+.ppc-settings-list { padding: 4px 0 8px; }
+#ppcSettingsExtra[hidden] { display: none !important; }
+.ppc-colour-toggle,
+.ppc-archive-toggle,
+.ppc-colour-section-toggle {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  width: 100%; margin: 0; padding: 0; border: none; background: transparent;
+  font: inherit; cursor: pointer; text-align: left;
+}
+.ppc-colour-toggle,
+.ppc-archive-toggle {
+  margin: 0 0 10px; font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: #6B7A8D;
+}
+.ppc-archive-toggle { margin-bottom: 0; }
+.ppc-colour-toggle .ppc-colour-chev,
+.ppc-archive-toggle .ppc-colour-chev,
+.ppc-colour-section-toggle .ppc-colour-chev {
+  flex-shrink: 0; font-size: 10px; color: #9a958d; width: 12px; text-align: center;
+}
+.ppc-colour-panel[hidden],
+.ppc-archive-panel[hidden],
+.ppc-colour-section-body[hidden] { display: none !important; }
+.ppc-archive-panel { margin-top: 6px; }
+.ppc-colour-block { margin-bottom: 8px; border: 1px solid #E2DDD5; border-radius: 8px; background: #fff; overflow: hidden; }
+.ppc-colour-section-toggle {
+  padding: 8px 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: #2C2C2C;
+}
+.ppc-colour-section-toggle:hover { background: #faf9f7; }
+.ppc-colour-section-body { padding: 2px 10px 8px; border-top: 1px solid #E2DDD5; }
+.ppc-colour-row {
+  display: flex; align-items: center; gap: 8px; padding: 4px 0; position: relative;
+}
+.ppc-colour-row span {
+  flex: 1; min-width: 0; font-size: 12px; font-weight: 600; color: #2C2C2C;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.ppc-colour-swatch {
+  width: 28px; height: 28px; flex-shrink: 0; border: 1px solid #E2DDD5; border-radius: 6px;
+  padding: 0; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.35);
+}
+.ppc-colour-swatch:hover { border-color: #6B7A8D; }
+.ppc-colour-swatch.is-open {
+  outline: 2px solid #2C2C2C; outline-offset: 1px; border-color: #fff;
+}
+.ppc-colour-popover {
+  position: fixed; z-index: 9500;
+  width: 248px; padding: 10px; border: 1px solid #E2DDD5; border-radius: 10px;
+  background: #F7F5F2; box-shadow: 0 10px 28px rgba(44,44,44,0.14);
+  max-height: min(420px, calc(100vh - 24px)); overflow-y: auto;
+}
+.ppc-colour-popover-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: #6B7A8D; margin: 0 0 8px;
+}
+.ppc-colour-grid {
+  display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;
+}
+.ppc-colour-grid button {
+  width: 100%; aspect-ratio: 1; border-radius: 5px; border: 1.5px solid transparent;
+  padding: 0; cursor: pointer; background-clip: padding-box;
+}
+.ppc-colour-grid button:hover { transform: scale(1.08); }
+.ppc-colour-grid button.is-selected {
+  border-color: #fff; outline: 2px solid #2C2C2C; outline-offset: -1px;
+}
 .ppc-archive-item {
   display: flex; gap: 10px; align-items: flex-start; padding: 12px 10px;
   border-bottom: 1px solid #E2DDD5;
@@ -250,12 +326,20 @@
 }
 .ppc-archive-recover:hover { border-color: #6B7A8D; }
 .ppc-archive-empty { padding: 22px 10px; font-size: 12px; color: #6B7A8D; }
+body.ppc-settings-open { overflow: hidden; }
 body.dark .ppc-settings-panel { background: #1e2538; border-left-color: #2e3a55; }
 body.dark .ppc-settings-head, body.dark .ppc-archive-title { color: #f0ede8; }
 body.dark .ppc-settings-head, body.dark .ppc-settings-section, body.dark .ppc-archive-item { border-color: #2e3a55; }
 body.dark .ppc-settings-btn, body.dark .ppc-archive-recover { background: #141d2e; border-color: #2e3a55; color: #f0ede8; }
-body.dark .ppc-archive-sub, body.dark .ppc-archive-empty, body.dark .ppc-settings-section h3 { color: #8a8580; }
-/* Lightweight dark surfaces for apps without a full theme */
+body.dark .ppc-archive-sub, body.dark .ppc-archive-empty, body.dark .ppc-settings-section h3,
+body.dark .ppc-colour-toggle, body.dark .ppc-archive-toggle, body.dark .ppc-colour-popover-label { color: #8a8580; }
+body.dark .ppc-colour-block, body.dark .ppc-colour-popover { background: #141d2e; border-color: #2e3a55; }
+body.dark .ppc-colour-section-toggle { color: #f0ede8; }
+body.dark .ppc-colour-section-toggle:hover { background: #1a2233; }
+body.dark .ppc-colour-section-body { border-top-color: #2e3a55; }
+body.dark .ppc-colour-row span { color: #f0ede8; }
+body.dark .ppc-colour-swatch.is-open { outline-color: #f0ede8; }
+body.dark .ppc-colour-grid button.is-selected { outline-color: #f0ede8; }
 body.dark { background: #0f141f; color: #f0ede8; }
 body.dark .header,
 body.dark .nav-row,
@@ -271,7 +355,6 @@ body.dark .board,
 body.dark .section-title,
 body.dark .section-row { color: #f0ede8; }
 `;
-    document.head.appendChild(style);
   }
 
   function sourceLabel(source) {
@@ -288,6 +371,36 @@ body.dark .section-row { color: #f0ede8; }
 
   let _opts = { onRefresh: null, onAfterRecover: null };
 
+  function isArchiveOpen() {
+    try { return localStorage.getItem(ARCHIVE_OPEN_KEY) === '1'; }
+    catch (e) { return false; }
+  }
+
+  function setArchiveOpen(open) {
+    try { localStorage.setItem(ARCHIVE_OPEN_KEY, open ? '1' : '0'); }
+    catch (e) { /* ignore */ }
+  }
+
+  function syncArchiveToggle(count) {
+    const toggle = document.getElementById('ppcArchiveToggle');
+    const panel = document.getElementById('ppcArchivePanel');
+    if (!toggle || !panel) return;
+    const open = isArchiveOpen();
+    panel.hidden = !open;
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    const label = toggle.querySelector('.ppc-archive-label');
+    const chev = toggle.querySelector('.ppc-colour-chev');
+    if (label) {
+      let n = count;
+      if (typeof n !== 'number') {
+        const m = (label.textContent || '').match(/·\s*(\d+)\s*$/);
+        n = m ? Number(m[1]) : 0;
+      }
+      label.textContent = n > 0 ? 'Archive · ' + n : 'Archive';
+    }
+    if (chev) chev.textContent = open ? '▾' : '▸';
+  }
+
   async function renderArchiveList() {
     const list = document.getElementById('ppcArchiveList');
     if (!list) return;
@@ -295,9 +408,11 @@ body.dark .section-row { color: #f0ede8; }
     let items = [];
     try { items = await loadArchive(); }
     catch (e) {
+      syncArchiveToggle(0);
       list.innerHTML = '<div class="ppc-archive-empty">Could not load archive.</div>';
       return;
     }
+    syncArchiveToggle(items.length);
     if (!items.length) {
       list.innerHTML = '<div class="ppc-archive-empty">Nothing in the archive. Deleted items stay here for 30 days.</div>';
       return;
@@ -343,14 +458,20 @@ body.dark .section-row { color: #f0ede8; }
     ensureStyles();
     ensureDom();
     applyStoredDark();
+    document.body.classList.add('ppc-settings-open');
     document.getElementById('ppcSettingsOverlay').classList.add('open');
     document.getElementById('ppcSettingsPanel').classList.add('open');
     const darkBtn = document.querySelector('[data-ppc-dark-toggle]');
     if (darkBtn) darkBtn.textContent = isDark() ? 'Dark mode · On' : 'Dark mode · Off';
     renderArchiveList();
+    if (typeof _opts.onSettingsOpen === 'function') {
+      try { _opts.onSettingsOpen(document.getElementById('ppcSettingsPanel')); }
+      catch (err) { console.warn('Settings extra failed:', err); }
+    }
   }
 
   function closeSettings() {
+    document.body.classList.remove('ppc-settings-open');
     const o = document.getElementById('ppcSettingsOverlay');
     const p = document.getElementById('ppcSettingsPanel');
     if (o) o.classList.remove('open');
@@ -358,7 +479,14 @@ body.dark .section-row { color: #f0ede8; }
   }
 
   function ensureDom() {
-    if (document.getElementById('ppcSettingsPanel')) return;
+    const existing = document.getElementById('ppcSettingsPanel');
+    if (existing && existing.querySelector('#ppcSettingsBody') && existing.querySelector('#ppcArchiveToggle')) {
+      ensureStyles();
+      return;
+    }
+    if (existing) existing.remove();
+    const oldOverlay = document.getElementById('ppcSettingsOverlay');
+    if (oldOverlay) oldOverlay.remove();
     ensureStyles();
     const overlay = document.createElement('div');
     overlay.className = 'ppc-settings-overlay';
@@ -367,18 +495,27 @@ body.dark .section-row { color: #f0ede8; }
     const panel = document.createElement('div');
     panel.className = 'ppc-settings-panel';
     panel.id = 'ppcSettingsPanel';
+    const archiveOpen = isArchiveOpen();
     panel.innerHTML = `
       <button type="button" class="ppc-settings-close" aria-label="Close">&times;</button>
       <div class="ppc-settings-head">Settings</div>
-      <div class="ppc-settings-section">
-        <h3>Preferences</h3>
-        <button type="button" class="ppc-settings-btn" data-ppc-dark-toggle>Dark mode · Off</button>
-        <button type="button" class="ppc-settings-btn" data-ppc-refresh>Refresh</button>
+      <div class="ppc-settings-body" id="ppcSettingsBody">
+        <div class="ppc-settings-section">
+          <h3>Preferences</h3>
+          <button type="button" class="ppc-settings-btn" data-ppc-dark-toggle>Dark mode · Off</button>
+          <button type="button" class="ppc-settings-btn" data-ppc-refresh>Refresh</button>
+        </div>
+        <div class="ppc-settings-section" id="ppcSettingsExtra" hidden></div>
+        <div class="ppc-settings-section" style="border-bottom:none;">
+          <button type="button" class="ppc-archive-toggle" id="ppcArchiveToggle" aria-expanded="${archiveOpen ? 'true' : 'false'}">
+            <span class="ppc-archive-label">Archive</span>
+            <span class="ppc-colour-chev">${archiveOpen ? '▾' : '▸'}</span>
+          </button>
+          <div class="ppc-archive-panel" id="ppcArchivePanel"${archiveOpen ? '' : ' hidden'}>
+            <div class="ppc-settings-list" id="ppcArchiveList"></div>
+          </div>
+        </div>
       </div>
-      <div class="ppc-settings-section" style="border-bottom:none;padding-bottom:4px;">
-        <h3>Archive</h3>
-      </div>
-      <div class="ppc-settings-list" id="ppcArchiveList"></div>
     `;
     panel.querySelector('.ppc-settings-close').onclick = closeSettings;
     panel.querySelector('[data-ppc-dark-toggle]').onclick = () => toggleDark();
@@ -387,6 +524,15 @@ body.dark .section-row { color: #f0ede8; }
       if (typeof _opts.onRefresh === 'function') await _opts.onRefresh();
       else location.reload();
     };
+    panel.querySelector('#ppcArchiveToggle').onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const next = !isArchiveOpen();
+      setArchiveOpen(next);
+      syncArchiveToggle();
+    };
+    panel.addEventListener('wheel', e => { e.stopPropagation(); }, { passive: true });
+    panel.addEventListener('touchmove', e => { e.stopPropagation(); }, { passive: true });
     document.body.appendChild(overlay);
     document.body.appendChild(panel);
   }

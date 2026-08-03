@@ -109,10 +109,8 @@ body.dark .ppc-select-option { color: #f0ede8; }
 .ppc-date { position: relative; width: 100%; }
 .ppc-date-menu {
   display: none;
-  position: absolute;
-  top: calc(100% + 5px);
-  left: 0;
-  z-index: 60;
+  position: fixed;
+  z-index: 9200;
   width: 268px;
   background: #fff;
   border: 1px solid #EAE2D6;
@@ -120,7 +118,8 @@ body.dark .ppc-select-option { color: #f0ede8; }
   box-shadow: 0 10px 28px rgba(44,44,44,0.12);
   padding: 10px;
 }
-.ppc-date.open .ppc-date-menu { display: block; }
+.ppc-date.open .ppc-date-menu,
+.ppc-date-menu.is-open { display: block; }
 .ppc-date-nav {
   display: flex;
   align-items: center;
@@ -243,7 +242,19 @@ body.dark .ppc-date-footer { border-top-color: #3a4560; }
 
   function closePpcSelects(except) {
     document.querySelectorAll('.ppc-select.open, .ppc-date.open').forEach(el => {
-      if (el !== except) el.classList.remove('open');
+      if (el !== except) {
+        el.classList.remove('open');
+        // Return portaled date menus to their wrap
+        if (el.classList.contains('ppc-date')) {
+          const menu = el._ppcDateMenu;
+          if (menu) {
+            menu.classList.remove('is-open');
+            if (menu.parentElement !== el) el.appendChild(menu);
+            menu.style.left = '';
+            menu.style.top = '';
+          }
+        }
+      }
     });
   }
 
@@ -323,6 +334,25 @@ body.dark .ppc-date-footer { border-top-color: #3a4560; }
       labelEl.style.fontWeight = text ? '' : '500';
     }
 
+    function positionMenu() {
+      if (!wrap.classList.contains('open')) return;
+      const rect = trigger.getBoundingClientRect();
+      const menuW = 268;
+      const pad = 8;
+      const mh = menu.offsetHeight || 320;
+      let left = rect.left;
+      let top = rect.bottom + 5;
+      if (left + menuW > window.innerWidth - pad) {
+        left = Math.max(pad, rect.right - menuW);
+      }
+      if (left < pad) left = pad;
+      if (top + mh > window.innerHeight - pad) {
+        top = Math.max(pad, rect.top - mh - 5);
+      }
+      menu.style.left = Math.round(left) + 'px';
+      menu.style.top = Math.round(top) + 'px';
+    }
+
     function setOpen(open) {
       wrap.classList.toggle('open', open);
       trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
@@ -333,7 +363,16 @@ body.dark .ppc-date-footer { border-top-color: #3a4560; }
           viewYear = cur.getFullYear();
           viewMonth = cur.getMonth();
         }
+        // Portal to body — panel uses transform, which breaks position:fixed + clips overflow.
+        if (menu.parentElement !== document.body) document.body.appendChild(menu);
+        menu.classList.add('is-open');
         rebuildCalendar();
+        positionMenu();
+      } else {
+        menu.classList.remove('is-open');
+        if (menu.parentElement !== wrap) wrap.appendChild(menu);
+        menu.style.left = '';
+        menu.style.top = '';
       }
     }
 
@@ -363,12 +402,14 @@ body.dark .ppc-date-footer { border-top-color: #3a4560; }
         viewMonth -= 1;
         if (viewMonth < 0) { viewMonth = 11; viewYear -= 1; }
         rebuildCalendar();
+        positionMenu();
       });
       next.addEventListener('click', e => {
         e.stopPropagation();
         viewMonth += 1;
         if (viewMonth > 11) { viewMonth = 0; viewYear += 1; }
         rebuildCalendar();
+        positionMenu();
       });
       nav.appendChild(prev);
       nav.appendChild(title);
@@ -448,6 +489,7 @@ body.dark .ppc-date-footer { border-top-color: #3a4560; }
     wrap.appendChild(hidden);
     wrap.appendChild(trigger);
     wrap.appendChild(menu);
+    wrap._ppcDateMenu = menu;
     syncLabel();
 
     wrap._ppcSetDate = function (iso) {
@@ -481,6 +523,8 @@ body.dark .ppc-date-footer { border-top-color: #3a4560; }
     includeNone,
     noneLabel,
     onChange,
+    onRename,
+    renamable,
     colored,
     bare
   }) {
@@ -513,9 +557,17 @@ body.dark .ppc-date-footer { border-top-color: #3a4560; }
     menu.setAttribute('role', 'listbox');
 
     let allOpts = normalizeOptions(options, includeNone, noneLabel);
+    let renameFn = typeof onRename === 'function' ? onRename : null;
+    let canRename = !!renamable || !!renameFn;
 
     function useColor(opt) {
       return !!(colored && opt && opt.color);
+    }
+
+    function optionRenamable(opt) {
+      if (!canRename || !opt) return false;
+      if (opt.id === '' || String(opt.id).indexOf('__') === 0) return false;
+      return true;
     }
 
     function syncUI() {
@@ -533,6 +585,58 @@ body.dark .ppc-date-footer { border-top-color: #3a4560; }
       if (open) closePpcSelects(wrap);
     }
 
+    function startOptionRename(btn, opt) {
+      if (!optionRenamable(opt) || !renameFn) return;
+      const prev = opt.label;
+      btn.contentEditable = 'true';
+      btn.focus();
+      try {
+        const range = document.createRange();
+        range.selectNodeContents(btn);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      } catch (_) {}
+
+      let done = false;
+      function finish(commit) {
+        if (done) return;
+        done = true;
+        btn.contentEditable = 'false';
+        btn.removeEventListener('blur', onBlur);
+        btn.removeEventListener('keydown', onKey);
+        const next = (btn.textContent || '').trim().slice(0, 40);
+        if (!commit || !next || next === prev) {
+          btn.textContent = prev;
+          syncUI();
+          return;
+        }
+        const result = renameFn(opt.id, next);
+        if (result === false) {
+          btn.textContent = prev;
+          syncUI();
+          return;
+        }
+        opt.label = next;
+        const hit = allOpts.find(o => o.id === opt.id);
+        if (hit) hit.label = next;
+        syncUI();
+      }
+      function onBlur() { finish(true); }
+      function onKey(e) {
+        e.stopPropagation();
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          finish(true);
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          finish(false);
+        }
+      }
+      btn.addEventListener('blur', onBlur);
+      btn.addEventListener('keydown', onKey);
+    }
+
     function rebuildMenu() {
       menu.innerHTML = '';
       allOpts.forEach(opt => {
@@ -546,12 +650,25 @@ body.dark .ppc-date-footer { border-top-color: #3a4560; }
           btn.style.setProperty('--opt-tint', hexToRgba(opt.color, 0.12));
         }
         btn.setAttribute('role', 'option');
+        if (optionRenamable(opt)) {
+          btn.title = (btn.title || '') + (btn.title ? ' · ' : '') + 'Double-click to rename';
+        }
         btn.addEventListener('click', e => {
+          if (btn.isContentEditable) {
+            e.stopPropagation();
+            return;
+          }
           e.stopPropagation();
           hidden.value = opt.id;
           syncUI();
           setOpen(false);
           if (typeof onChange === 'function') onChange(hidden.value);
+        });
+        btn.addEventListener('dblclick', e => {
+          if (!optionRenamable(opt)) return;
+          e.preventDefault();
+          e.stopPropagation();
+          startOptionRename(btn, opt);
         });
         menu.appendChild(btn);
       });
@@ -568,8 +685,11 @@ body.dark .ppc-date-footer { border-top-color: #3a4560; }
     wrap.appendChild(menu);
     rebuildMenu();
 
-    wrap._ppcUpdate = function ({ options: nextOpts, value: nextVal, includeNone: nextNone, noneLabel: nextNoneLabel, colored: nextColored }) {
+    wrap._ppcUpdate = function ({ options: nextOpts, value: nextVal, includeNone: nextNone, noneLabel: nextNoneLabel, colored: nextColored, onRename: nextRename, renamable: nextRenamable }) {
       if (nextColored != null) colored = nextColored;
+      if (nextRename !== undefined) renameFn = typeof nextRename === 'function' ? nextRename : null;
+      if (nextRenamable != null) canRename = !!nextRenamable || !!renameFn;
+      else canRename = !!renamable || !!renameFn;
       if (nextOpts) allOpts = normalizeOptions(nextOpts, nextNone != null ? nextNone : includeNone, nextNoneLabel || noneLabel);
       if (nextVal != null) hidden.value = String(nextVal);
       rebuildMenu();
@@ -614,13 +734,13 @@ body.dark .ppc-date-footer { border-top-color: #3a4560; }
   if (!global._ppcSelectClickBound) {
     global._ppcSelectClickBound = true;
     document.addEventListener('click', e => {
-      if (!e.target.closest('.ppc-select, .ppc-date')) closePpcSelects();
+      if (!e.target.closest('.ppc-select, .ppc-date, .ppc-date-menu')) closePpcSelects();
     });
     document.addEventListener('keydown', e => {
       if (e.key !== 'Escape') return;
       const open = document.querySelector('.ppc-select.open, .ppc-date.open');
       if (open) {
-        open.classList.remove('open');
+        closePpcSelects();
         e.preventDefault();
       }
     });

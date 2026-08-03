@@ -31,7 +31,7 @@
       align-items: center;
       justify-content: center;
       padding: 64px 24px 80px;
-      gap: 72px;
+      gap: 40px;
     }
 
     /* LOGO */
@@ -58,45 +58,56 @@
       color: #6B7A8D;
     }
 
-    /* MENU — typographic list */
+    /* MENU — tight tracking like Press Play wordmark */
     .menu {
       display: flex;
       flex-direction: column;
-      align-items: stretch;
-      width: min(280px, 82vw);
-      gap: 0;
+      align-items: center;
+      width: auto;
+      gap: 12px;
     }
 
     .menu-item {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      padding: 18px 8px;
+      display: block;
+      width: auto;
+      padding: 2px 4px;
       border: none;
-      border-bottom: 1px solid #E2DDD5;
       border-radius: 0;
       background: transparent;
       text-decoration: none;
+      text-align: center;
       font-family: 'DM Sans', sans-serif;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 500;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.02em;
       text-transform: uppercase;
       white-space: nowrap;
+      line-height: 1.2;
       color: #2C2C2C;
       box-shadow: none;
       transition: color 0.15s ease;
     }
-    .menu-item:first-child { border-top: 1px solid #E2DDD5; }
+    /* Slight tracking nudge so shorter labels don’t look much narrower */
+    .menu-planner { letter-spacing: 0.03em; }
+    .menu-taskboard { letter-spacing: 0.08em; }
+    .menu-marketing { letter-spacing: 0.01em; }
     .menu-item:visited { color: #2C2C2C; }
-    .menu-item:hover { color: #6B7A8D; }
-    .menu-item:active { color: #6B7A8D; }
+    .menu-planner:hover,
+    .menu-planner:active { color: #4E6E6C; }
+    .menu-taskboard:hover,
+    .menu-taskboard:active { color: #564A5E; }
+    .menu-marketing:hover,
+    .menu-marketing:active { color: #C29A3B; }
     .menu-item span { color: inherit; }
 
     @media (max-width: 480px) {
       .brand img { width: 240px; }
-      .menu-item { padding: 16px 6px; font-size: 11px; letter-spacing: 0.05em; }
+      .home { gap: 32px; }
+      .menu { gap: 10px; }
+      .menu-item { font-size: 12px; padding: 2px; }
+      .menu-planner { letter-spacing: 0.02em; }
+      .menu-taskboard { letter-spacing: 0.06em; }
+      .menu-marketing { letter-spacing: 0.01em; }
     }
   </style>
 </head>

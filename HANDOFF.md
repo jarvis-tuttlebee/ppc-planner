@@ -5,6 +5,697 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-03 — Deploy event day wash (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.59`** — Version ID `f520ce76-3729-4322-9551-b84b6a46c98c`
+- Event days: full column wash by event-type colour (no thin pin chips).
+
+### Deployed
+- `npx wrangler deploy` — asset: `marketing.html`
+
+---
+
+## 2026-08-03 — Event day date wash (Cursor)
+
+### What was built or decided
+- Marketing `0.11.59`: Event days wash the **whole date column** with the
+  event-type colour (replacing thin pin chip bars). Event name stays as
+  plain text under the date number (click to edit). Card format left-bars
+  unchanged.
+
+### Deployed
+- Included in live `0.11.59` deploy above.
+
+---
+
+## 2026-08-03 — Deploy website format labels (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.58`** — Version ID `79af0bed-39b4-4f06-8d47-a317c4f299e5`
+- Website formats: Landing page · Blog · Feature page.
+
+### Deployed
+- `npx wrangler deploy` — asset: `marketing.html`
+
+---
+
+## 2026-08-03 — Website format labels (Cursor)
+
+### What was built or decided
+- Marketing `0.11.58`: Website formats renamed for clarity — **Design →
+  Landing page**, **Features → Feature page** (ids unchanged so existing
+  cards keep working). Blog unchanged.
+
+### Deployed
+- Included in live `0.11.58` deploy above.
+
+---
+
+## 2026-08-03 — Deploy black dropdowns (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.57`** — Version ID `af0ae94d-84eb-4edc-8432-7ed55256ae64`
+- Status + Category selects: black text.
+
+### Deployed
+- `npx wrangler deploy` — asset: `marketing.html`
+
+---
+
+## 2026-08-03 — Black dropdown text (Cursor)
+
+### What was built or decided
+- Marketing `0.11.57`: Status + Category selects use black text (`colored:
+  false`) — Unscheduled/Scheduled no longer gold/teal in the panel.
+
+### Deployed
+- Included in live `0.11.57` deploy above.
+
+---
+
+## 2026-08-03 — Deploy black titles (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.56`** — Version ID `baed2f3d-fe9c-4ee6-abf7-40bffca3e2aa`
+- Need menu / Prep lanes / Pillar selects: black titles (no coloured labels).
+
+### Deployed
+- `npx wrangler deploy` — asset: `marketing.html`
+
+---
+
+## 2026-08-03 — Black pillar/format titles (Cursor)
+
+### What was built or decided
+- Marketing `0.11.56`: Need menu pillars + formats, Prep lane titles, and
+  Pillar selects render **black** (`#2C2C2C`) — no more per-pillar/format
+  text colour. Accents stay on card bars/washes + Colour settings only.
+
+### Deployed
+- Included in live `0.11.56` deploy above.
+
+---
+
+## 2026-08-03 — Deploy calendar outline polish (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.55`** — Version ID `a2344534-8b94-4592-ae4a-d25c3f9c38cc`
+- Calendar cards: planner-style `#E2DDD5` outline; sharper week dividers.
+
+### Deployed
+- `npx wrangler deploy` — asset: `marketing.html`
+
+---
+
+## 2026-08-03 — Calendar cards match planner (Cursor)
+
+### What was built or decided
+- Marketing `0.11.55`: Calendar Need/content cards use planner-style
+  **`#E2DDD5` outline** (empty Needs no longer transparent-border). Left
+  accent bar stays format colour. Week row separators sharpened to
+  `#E2DDD5` (was `#f0ede8`), including earlier-weeks nested rows.
+
+### Deployed
+- Included in live `0.11.55` deploy above.
+
+---
+
+## 2026-08-03 — Deploy archive accordion + 50 colours (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.54`** — Version ID `5608470d-c76d-4b5d-80c5-a96b9dbed6ab`
+- Settings Archive collapsible (`0.11.53`); colour picker **50** swatches
+  with clearer hue spread (steel/blue, wine/rose, terracotta, olive, teal).
+
+### Deployed
+- `npx wrangler deploy` — assets: `marketing.html`, `ppc-homebase.js`
+
+---
+
+## 2026-08-03 — Wider colour palette (Cursor)
+
+### What was built or decided
+- Marketing `0.11.54`: Brand colour picker expanded **30 → 50** swatches.
+  Added clearer hue families (steel/blue, wine/rose, terracotta/coral,
+  olive/moss, teal/indigo) so options aren’t mostly near-neighbours.
+
+### Deployed
+- Included in live `0.11.54` deploy above.
+
+---
+
+## 2026-08-03 — Settings Archive accordion (Cursor)
+
+### What was built or decided
+- Marketing `0.11.53` / shared `ppc-homebase.js`: Settings → **Archive** is
+  collapsible (▸/▾), like Colour settings. Open/closed remembered in
+  `localStorage` (`ppc-archive-open`). Header shows count when items exist
+  (`Archive · 3`). Defaults collapsed.
+
+### Deployed
+- Included in live `0.11.54` deploy above.
+
+---
+
+## 2026-08-03 — Deploy colour popover + settings (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.52`** — Version ID `774f0d2f-b7e8-4ccf-9abe-81a708c4525b`
+- Colour popover portals to `body` (not clipped by accordion). Muted sage
+  `#4a8a5c`. Brand 30-swatch picker + scrollable Settings from `0.11.51`.
+
+### Deployed
+- `npx wrangler deploy` — assets: `marketing.html`, `ppc-homebase.js`
+
+---
+
+## 2026-08-03 — Colour popover portal (Cursor)
+
+### What was built or decided
+- Marketing `0.11.52`: Brand colour picker portals to `body` (fixed) so it
+  isn’t clipped inside format accordion boxes. Bright green `#58c280`
+  swapped for muted sage `#4a8a5c`.
+
+### Deployed
+- Superseded by live `0.11.52` deploy above.
+
+---
+
+## 2026-08-03 — Brand colour picker + settings scroll (Cursor)
+
+### What was built or decided
+- Marketing `0.11.51`: Settings panel scrolls itself (body lock + scroll
+  body). **Colour settings** is a collapsible section with expandable
+  Event types / per-pillar format groups.
+- Native OS colour dialog replaced by a Homebase-branded popover with
+  **30 palette swatches** (graphite / purple / sage / gold / neutrals).
+
+### Deployed
+- Included in live `0.11.52` deploy.
+
+---
+
+## 2026-08-03 — Colour settings + no day wash (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.50`** — Version ID `c7f6922a-6c23-4bb4-86a1-9da1d913fc17`
+- Settings → **Colours**: edit format + event-type accents (persisted in
+  marketing KV `colourPrefs`). Reset colours button.
+- Removed grey lead-up / weekend day-body washes — cards carry the colour.
+- Event chips / day pins use live event-type colour washes.
+
+### Open / next
+1. Hard-refresh live `/marketing` — Settings → Colours; calendar days flat.
+2. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Per-format colours (Cursor)
+
+### What was built or decided
+- Marketing `0.11.49`: Prep pillar titles stay **black** (no longer pillar-
+  coloured). Each format gets its own Homebase-palette accent (~16 mid-tones
+  + hash fallback for customs). Calendar Need bar/wash + Prep cards/lane
+  titles use `formatColor`. Format title text on Needs stays black; event
+  names keep event-type colour.
+
+### Deployed
+- Local only — hard-refresh http://127.0.0.1:8787/marketing
+
+### Open / next
+1. Confirm calendar Pins/Posts/Stories/Reels/TikTok read as distinct washes.
+2. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Deploy 0.11.48 (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.48`** — Version ID `dd943ee1-3cb9-407d-b715-a61e1ce4e778`
+- Need cards: pillar-colour wash background.
+
+### Open / next
+1. Hard-refresh live `/marketing`.
+2. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Need chip pillar wash (Cursor)
+
+### What was built or decided
+- Marketing `0.11.48`: Need cards get a soft background wash of the left-bar
+  (pillar) colour — same weight as day pins / event chips (~12% alpha).
+
+### Deployed
+- Local only — hard-refresh http://127.0.0.1:8787/marketing
+
+---
+
+## 2026-08-03 — Deploy 0.11.47 (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.47`** — Version ID `49ef19ca-59e1-40b2-a923-dcac611dfac4`
+- Default publish time 5pm + earlier 0.11.46 calendar polish.
+
+### Open / next
+1. Hard-refresh live `/marketing`.
+2. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Default publish time 5pm (Cursor)
+
+### What was built or decided
+- Marketing `0.11.47`: New calendar publish stamps default to **5:00pm**
+  local (was 10am) — drag-to-day, + Need, lead-up slot create. Existing
+  times still preserved on move.
+
+### Deployed
+- Local only — deploy when asked.
+
+---
+
+## 2026-08-03 — Deploy 0.11.46 (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.46`** — Version ID `3bd6a1df-1e19-4cba-a6f8-2a2d621b1857`
+- Ships: format title black + pillar bar; event name type colour; no day
+  targets; date-range Event date hide fix; Events chips title-only; no
+  event-title click on Need cards.
+
+### Open / next
+1. Hard-refresh live `/marketing`.
+2. Commit/push when asked (local still dirty).
+
+---
+
+## 2026-08-03 — Event chips title-only (Cursor)
+
+### What was built or decided
+- Marketing `0.11.46`: Events bar chips show **title only** for all types
+  (not just cadence). Date stays in hover tooltip; click opens the panel.
+
+### Deployed
+- Local only — hard-refresh http://127.0.0.1:8787/marketing
+
+---
+
+## 2026-08-03 — Need chips: black format + pillar bar (Cursor)
+
+### What was built or decided
+- Marketing `0.11.45`: Reverted per-format chip colours (too busy). Need cards:
+  format title **black**, left bar = **pillar** colour, event name keeps
+  event-type colour (Event gold / Release graphite / Cadence purple).
+
+### Deployed
+- Local only — hard-refresh http://127.0.0.1:8787/marketing
+
+### Open / next
+1. Confirm black format titles + purple Organic bars; Ode event names gold.
+2. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Date range hides Event date (Cursor)
+
+### What was built or decided
+- Marketing `0.11.44`: Date range mode correctly hides the single **Event
+  date** field (`.cal-anchor-field { display:flex }` was overriding
+  `[hidden]`). Range = Start / End / optional Event night only.
+
+### Deployed
+- Local only — hard-refresh http://127.0.0.1:8787/marketing
+
+### Open / next
+1. New event → Date range — no orphan Event date field.
+2. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Format colours + drop day targets (Cursor)
+
+### What was built or decided
+- Marketing `0.11.43`: Calendar Need chips colour by **format** (not Organic
+  pillar) — IG Post graphite, Story green, Reel gold, Pinterest purple,
+  TikTok slate. Prep boards still use pillar colours.
+- Removed day targets (Grid / Story / Discover right-click + cues/tints/×).
+  Right-click a day = Need content menu only. Edit events via Events chips.
+- Event name on Need cards is display-only again (no click → event panel);
+  frees the chip for drag.
+
+### Deployed
+- Local only — hard-refresh http://127.0.0.1:8787/marketing
+- Deploy when asked.
+
+### Open / next
+1. Preview format colours + no day-target menu + no event-title click.
+2. Commit/push when asked.
+3. Parked: Fill from Ideas, project delete UI, dark theme, Unassigned
+   rollover, “+ Add more” extra dates.
+
+---
+
+## 2026-08-03 — End of day (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.41`** — Version ID `9d7c8a5d-b78e-4d9e-b7bc-bdf0e5b89e0c`
+- `ppc-select.js` **v6** (date menus)
+
+### Shipped today (high level)
+- Event panel: Single night | Date range; removed Post on weekdays
+- Quotas → Unscheduled Needs; drag to days; compact Unscheduled chips
+- Adjacent-month overflow days (faded + editable)
+- Two-step Need menu (pillar → format)
+- Home menu: no dividers, tighter tracking, hover green/purple/gold
+- Need cards: event-title colour by type; `format - slot label`; no Content layer
+- Schedule panel: caption/tags/music load+save per card (leak fixed)
+- Date pickers: portal + `.is-open` (work inside event panel)
+- Re-drag Needs on lead-up days; Pinterest/Cosmos full label; no drag opacity fade
+- Cadence Events chips: title only (no date)
+
+### Open / next
+1. Smoke hard-refresh home + `/marketing` (dates, drag twice, cadence chip).
+2. Commit/push when asked (local git still dirty: `HANDOFF.md`,
+   `public/index.html`, `public/js/ppc-select.js`, `public/marketing.html`).
+3. Parked earlier: Fill from Ideas, project delete UI, dark theme, Unassigned
+   rollover, “+ Add more” extra dates.
+
+### Prefer
+- Local `wrangler dev` on `:8787`; deploy only when asked.
+
+---
+
+## 2026-08-03 — Cadence chips without dates (Cursor)
+
+### What was built or decided
+- Marketing `0.11.41`: Events bar chips for **cadence** types show title only
+  (no `· MM-DD` date span). Event / release chips unchanged.
+
+### Deployed
+- Yes — Version ID `9d7c8a5d-b78e-4d9e-b7bc-bdf0e5b89e0c`
+  https://ppc-homebase.pressplaycollective.workers.dev
+
+### Open / next
+1. Hard-refresh `/marketing` — Discover Flow chip title-only.
+2. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Date pickers + re-drag Needs (Cursor)
+
+### What was built or decided
+- Marketing `0.11.40` / `ppc-select.js` v6: date menus portal to `body` **and**
+  use `.is-open` so they actually display (v5 left them `display:none` because
+  CSS required nesting under `.ppc-date.open`).
+- Day-body drag no longer cancels Need slot drags on tinted days.
+- Full **Pinterest/Cosmos** label; drag without opacity fade.
+
+### Deployed
+- Yes — Version ID `560e0f21-2346-4a7c-888e-6e49bc16f49a`
+  https://ppc-homebase.pressplaycollective.workers.dev
+
+### Open / next
+1. Hard-refresh `/marketing` — event date fields must open calendars.
+2. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Full Pinterest label + drag fade fix (Cursor)
+
+### What was built or decided
+- Marketing `0.11.38`: Need glance label uses full format name
+  (**Pinterest/Cosmos**, not “Pin”); prefers `formatLabel` for all formats.
+- Drag no longer fades slots with opacity (was sticking grey sometimes);
+  dashed outline while dragging + clearer drag-style cleanup on move/end.
+
+### Deployed
+- Local only — deploy when asked.
+
+### Open / next
+1. Hard-refresh `/marketing` — Pinterest/Cosmos full title; move a card —
+   should not stay grey.
+2. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Date picker not clipped by panel (Cursor)
+
+### What was built or decided
+- `ppc-select.js` v4: date menus use **fixed** positioning + viewport clamp
+  (flip left/up as needed) so End date etc. aren’t cut off by
+  `cal-anchor-panel` overflow. Marketing `0.11.37`.
+
+### Deployed
+- Yes — Version ID `9ef6b05e-8f06-4cab-9e7a-f17f6f3d8115`
+  https://ppc-homebase.pressplaycollective.workers.dev
+
+### Open / next
+1. Hard-refresh `/marketing` — open event Date range → End date calendar
+   fully visible.
+2. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Schedule panel per-card fields (Cursor)
+
+### What was built or decided
+- Marketing `0.11.36`: Schedule card panel now **loads and saves** Caption,
+  Tags, and Music per card (were DOM-only and leaked across opens).
+  Content outcome clear/reload hardened when switching cards. Switching to
+  another schedule card while the panel is open silently saves the previous.
+
+### Deployed
+- Yes — Version ID `45da494a-46d6-4cb4-8ba6-48793c5bb349`
+  https://ppc-homebase.pressplaycollective.workers.dev
+
+### Open / next
+1. Hard-refresh `/marketing` — edit tags on one Need, open another → fields
+   should match that card only; Save persists caption/tags/music.
+2. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Slot label keeps format type (Cursor)
+
+### What was built or decided
+- Marketing `0.11.35` (was 0.11.34): Need card type line shows
+  **format - slot label** when a custom slot label is set.
+- Removed **Content layer** from the schedule card panel (field kept in
+  data if present; no longer shown or edited).
+
+### Deployed
+- Yes — Version ID `580fdfd7-83f5-4e8d-b8ee-e6089c1a22c5`
+  https://ppc-homebase.pressplaycollective.workers.dev
+
+### Open / next
+1. Hard-refresh `/marketing` — labelled Need e.g. `IG Post - …`; no Content
+   layer in card panel.
+2. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Event title colour on Need cards (Cursor)
+
+### What was built or decided
+- Marketing `0.11.33`: Event name on Need cards uses event-type colour
+  directly (Event gold `#C29A3B`, Release graphite, Cadence purple) —
+  was forced to black via `accentTextColor` for gold.
+
+### Deployed
+- Yes — Version ID `da79c611-03fa-4f3d-a224-851f0fdc10ea`
+  https://ppc-homebase.pressplaycollective.workers.dev
+
+### Open / next
+1. Hard-refresh `/marketing` — “Ode to Sirens” on Needs should be gold.
+2. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Home menu tighter stack (Cursor)
+
+### What was built or decided
+- Home (`index.html`): no divider rules; tighter letter-spacing (brand-like);
+  more gap between titles; hover colours — Planner green `#4E6E6C`, Task
+  Board purple `#564A5E`, Marketing gold `#C29A3B`.
+
+### Deployed
+- Yes — Version ID `da79c611-03fa-4f3d-a224-851f0fdc10ea`
+  https://ppc-homebase.pressplaycollective.workers.dev
+
+### Open / next
+1. Hard-refresh home — per-title hover colours.
+2. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Two-step Need content menu (Cursor)
+
+### What was built or decided
+- Marketing `0.11.32`: Day `+` / right-click Need / Change format use a
+  two-step picker — **pillar**, then **format** (includes custom formats).
+  No more hardcoded 4 organic-only options. Menu clamps to viewport.
+
+### Deployed
+- Yes — Version ID `aa082a99-6615-4678-a816-ad1873456f19`
+  https://ppc-homebase.pressplaycollective.workers.dev
+
+### Open / next
+1. Hard-refresh `/marketing` — + on a day → Organic/Email/Ads/Website → format.
+2. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Adjacent-month overflow days (Cursor)
+
+### What was built or decided
+- Marketing `0.11.31`: Month grid overflow cells show previous/next month
+  dates (faded) and are fully editable — drag/drop, +, pins, targets —
+  so month edges work without switching view.
+
+### Deployed
+- Yes — Version ID `56e7264f-ef81-44b7-ba8a-e5f83dc1fb92`
+  https://ppc-homebase.pressplaycollective.workers.dev
+
+### Open / next
+1. Hard-refresh `/marketing` — Aug 31 row should show Sep 1–5 faded + usable.
+2. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Compact Unscheduled cards (Cursor)
+
+### What was built or decided
+- Marketing `0.11.30`: Unscheduled queue uses the same compact `cal-slot`
+  chips as calendar days (planner Any-column scale), wrapping in a row —
+  no more large thumbnail schedule-cards.
+
+### Deployed
+- Yes — Version ID `96bb65cd-6770-4b11-9c24-86f87b2493b4`
+  (redeploy; assets unchanged from `aef9f559…`)
+  https://ppc-homebase.pressplaycollective.workers.dev
+
+### Open / next
+1. Hard-refresh `/marketing` — Unscheduled Needs should look like small pills.
+2. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Single night / Date range + drop Post on (Cursor)
+
+### What was built or decided
+- Marketing `0.11.29`: Event panel **Dates** mode — **Single night** (one Event
+  date) or **Date range** (Start / End / optional Event night).
+- Removed **Post on** weekdays — Needs stay unscheduled; place by dragging.
+- Events chips show single date or start–end span. Defaults: Ode = single,
+  FDW = range. Migrate: same start/end (+ night) → single.
+
+### Deployed
+- Yes — Version ID `eb11983f-5afc-4739-ad1d-1405796421cc`
+  https://ppc-homebase.pressplaycollective.workers.dev
+
+### Open / next
+1. Hard-refresh `/marketing` to verify Single night / Date range + no Post on.
+2. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Content needed + Add opens list (Cursor)
+
+### What was built or decided
+- Marketing `0.11.27`: **+ Add** under Content needed opens the format list
+  immediately (no nested select click).
+
+### Deployed
+- Local only — deploy when asked.
+
+---
+
+## 2026-08-03 — Quotas → Unscheduled + no Edit event btn (Cursor)
+
+### What was built or decided
+- Marketing `0.11.26`: Content schedule quotas create **unscheduled** Need
+  cards (not auto-dated). Drag from Unscheduled onto calendar days.
+- Removed **Edit event** from schedule panel — edit via Events chips or
+  event title on Need cards.
+- Day tints follow placed cards only (no auto-spread highlights).
+
+### Deployed
+- Yes — Version ID `587baa7a-2e3a-4d23-89ab-ec9845bd64b5`
+  https://ppc-homebase.pressplaycollective.workers.dev
+
+### Open / next
+1. Hard-refresh `/marketing` — save event quotas → Needs appear in
+   Unscheduled; drag onto days; edit event via chip / event title only.
+2. Commit/push when asked.
+
+## 2026-08-03 — Calendar Need card colours (Cursor)
+
+### What was built or decided
+- Marketing `0.11.25`: Empty Need cards — **format** + left bar use pillar
+  colour (Organic purple / Email green / Ads gold / Website graphite);
+  **event title** uses event-type colour (Event gold / Release graphite /
+  Cadence purple). Filled cards: format meta + bar match pillar too.
+- Also ships `0.11.24` compact Content needed rows (+ Add).
+
+### Deployed
+- Yes — Version ID `4165dc01-981c-465a-bb9d-314cfc1931ec`
+  https://ppc-homebase.pressplaycollective.workers.dev
+
+### Open / next
+1. Hard-refresh `/marketing` — confirm colours + compact quotas.
+2. Commit/push when asked.
+
+---
+
+## 2026-08-03 — Content needed compact rows (Cursor)
+
+### What was built or decided
+- Marketing `0.11.24`: Content needed shows only active rows (new events:
+  4 organic starters). **+ Add** picks another format (or Create format…);
+  hover × removes a row.
+
+### Deployed
+- Local only — deploy when asked.
+
+---
+
+## 2026-08-03 — Event content quotas (Cursor)
+
+### What was built or decided
+- Marketing `0.11.23`: Event panel **Content schedule** (renamed from Place Need
+  slots). Dropped Density + single Slot format.
+- Per-event **content quotas** for all Prep formats (+ Add format… →
+  `customFormats`). Prep weeks (lead-up) or start→end window; Post on weekdays;
+  Save spreads Need slots by format totals (still draggable).
+- `+ Event` moved into Events bar chip row.
+- ppc-select **double-click rename** (Type custom / When to place labels).
+- Fix: schedule panel Save no longer clobbers Need body from stale `pDesc`;
+  format/pillar persist; format change clears `needLabel`.
+
+### Deployed
+- Yes — Version ID `69f02512-eccb-4f90-b11e-06653200132f`
+  https://ppc-homebase.pressplaycollective.workers.dev
+
+### Open / next
+1. Hard-refresh `/marketing` — confirm `v0.11.23`; open event → set quotas →
+  Save; confirm slots; Need format Save sticks.
+2. Commit/push when asked.
+
+---
+
 ## 2026-08-03 — Need cards: no event-open on title (Cursor)
 
 ### What was built or decided
