@@ -1,0 +1,15 @@
+---
+description: Start every session from HANDOFF.md product state
+alwaysApply: true
+---
+
+# PPC - HOMEBASE handoff
+
+- Read `HANDOFF.md` fully (newest entries first) before other work.
+- Treat it as source of truth for live versions, open follow-ups, deploy rules, and file layout.
+- Prefer local `wrangler dev` on `:8787`; deploy only when asked (`npx wrangler deploy`).
+- Do not commit or push unless asked.
+- Update `HANDOFF.md` at the end of meaningful work (short entry, newest on top).
+- After absorbing context, briefly confirm what's live / what's open and wait unless the user already gave a task.
+- Live site: https://ppc-homebase.pressplaycollective.workers.dev
+- Layout: `public/index.html` (Home), `public/planner.html`, `public/kanban.html`, `public/marketing.html`, `public/js/ppc-homebase.js`, `src/index.js`
