@@ -5,6 +5,53 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-04 — Deploy Marketing 0.12.5 (Cursor)
+
+### Live
+- Version ID: `a0cbead9-00e1-4082-99cd-249d715b2201` — Marketing **`0.12.5`**
+- Hard-refresh https://ppc-homebase.pressplaycollective.workers.dev/marketing
+
+### What shipped
+- Fill from Ideas on empty Needs (in-panel picker → Prep; idea archived).
+
+---
+
+## 2026-08-04 — Fill from Ideas (Cursor)
+
+### What
+- Marketing **`0.12.5`**: empty Need panel **Fill from Ideas** opens an in-panel
+  picker (no Pipeline jump). Picking an idea merges into the Need via
+  `fillEmptyNeedSlot` (keeps id/day/format), status **Prep**, archives + removes
+  the idea. Discover still hides the control. **Deployed.**
+
+### Open / next
+1. Soft-pedal Pipeline; R2 for images; Need/Today threshold soak.
+2. Leave local dumps / conflict HTML untracked.
+
+---
+
+## 2026-08-04 — End of day (Cursor)
+
+### Live
+- https://ppc-homebase.pressplaycollective.workers.dev — Marketing **`0.12.4`**
+  (Version ID `2b3f8ead-cc40-4b2c-8f1e-451e5d5561ea`)
+- Branch `cursor/cloud-agent-1785725967651-xf056` pushed (`7c5af8c`)
+
+### Shipped today
+- Busy-ease Need model: Need chip only ≤7 days out or unscheduled; far slots
+  stay full-strength (volume visible); no planned-collapse
+- Today strip (Make / Post / Needs due — Needs due jumps + flashes, no panel)
+- Hide posted (week); “Remind me 2 days before”; session digest toast
+- Earlier today (0.12.1): prep-by Make band + schedule panel trust UX
+
+### Open / next
+1. Team soak on Need window + Today strip; tweak 7-day threshold if needed
+2. Next pass: one-tap fill, Ideas→Need, soft-pedal Pipeline, R2 for images
+3. Leave local dumps / conflict HTML untracked (do not commit)
+4. Prefer Drive links over heavy dropped photos
+
+---
+
 ## 2026-08-04 — Deploy Marketing 0.12.4 (Cursor)
 
 ### Live

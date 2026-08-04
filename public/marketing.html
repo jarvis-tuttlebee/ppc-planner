@@ -1226,6 +1226,94 @@
     .review-inspo-meta .btn-secondary[hidden] {
       display: none !important;
     }
+    .idea-fill-picker {
+      margin-top: 10px;
+      border: 1px solid #E2DDD5;
+      border-radius: 8px;
+      background: #FAF8F5;
+      padding: 8px;
+    }
+    .idea-fill-picker[hidden] {
+      display: none !important;
+    }
+    .idea-fill-picker-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .idea-fill-picker-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #9a958d;
+    }
+    .idea-fill-picker-head .btn-cancel {
+      padding: 4px 8px;
+      font-size: 11px;
+      min-height: 0;
+    }
+    .idea-fill-picker-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    .idea-fill-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: #fff;
+      padding: 6px 8px;
+      text-align: left;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      color: #2C2C2C;
+    }
+    .idea-fill-item:hover {
+      border-color: #E2DDD5;
+      background: #F5F2EC;
+    }
+    .idea-fill-item-thumb {
+      width: 36px;
+      height: 36px;
+      border-radius: 4px;
+      background: #E8E4DC;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .idea-fill-item-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .idea-fill-item-meta {
+      flex: 1;
+      min-width: 0;
+    }
+    .idea-fill-item-cat {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #9a958d;
+      margin-bottom: 2px;
+    }
+    .idea-fill-item-body {
+      font-size: 12px;
+      line-height: 1.35;
+      color: #2C2C2C;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     #pScheduleNoteWrap {
       display: none;
       margin-top: 4px;
@@ -1246,6 +1334,7 @@
     }
     #panel.schedule-discover #pScheduleIdeaText,
     #panel.schedule-discover #pScheduleGoIdeas,
+    #panel.schedule-discover #pScheduleIdeaFillPicker,
     #panel.schedule-discover #scheduleContextToggle,
     #panel.schedule-discover #scheduleContext,
     #panel.schedule-discover #scheduleMusicBlock {
@@ -3323,7 +3412,14 @@
               <div id="pScheduleNoteWrap">
                 <textarea id="pScheduleNote" placeholder="Pin note or title…"></textarea>
               </div>
-              <button type="button" class="btn-secondary" id="pScheduleGoIdeas" onclick="goToIdeasFromSchedule()">Browse Ideas</button>
+              <button type="button" class="btn-secondary" id="pScheduleGoIdeas" onclick="openIdeaFillPicker()">Fill from Ideas</button>
+              <div id="pScheduleIdeaFillPicker" class="idea-fill-picker" hidden>
+                <div class="idea-fill-picker-head">
+                  <span class="idea-fill-picker-label">Pick an idea</span>
+                  <button type="button" class="btn-cancel" onclick="closeIdeaFillPicker()">Cancel</button>
+                </div>
+                <div id="pScheduleIdeaFillList" class="idea-fill-picker-list"></div>
+              </div>
             </div>
           </div>
           <div class="schedule-ops">
@@ -3501,7 +3597,7 @@
 <script>
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
-const APP_VERSION = '0.12.4';
+const APP_VERSION = '0.12.5';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 let marketingHydrated = false;
 let marketingRev = 0;
@@ -4641,6 +4737,8 @@ let activePrepId = null;
 let activeExecId = null;
 let activeReviewId = null;
 let activeScheduleId = null;
+/** True while the schedule-panel Ideas picker is open for an empty Need. */
+let ideaFillPickerOpen = false;
 let panelMode = null; // 'idea' | 'prep' | 'exec' | 'review' | 'schedule'
 let prepareExpanded = false;
 let executeArmed = false;
@@ -11381,13 +11479,22 @@ function applySchedulePanelLayout(card) {
   }
 
   const goIdeasBtn = document.getElementById('pScheduleGoIdeas');
+  const fillPicker = document.getElementById('pScheduleIdeaFillPicker');
   if (goIdeasBtn) {
     if (discover) {
       goIdeasBtn.hidden = true;
+      ideaFillPickerOpen = false;
+      if (fillPicker) fillPicker.hidden = true;
     } else {
       const emptyNeed = isNeedContentCard(card) && !stripHtml(card.body || '').trim();
-      goIdeasBtn.hidden = !emptyNeed;
-      goIdeasBtn.textContent = 'Browse Ideas to fill';
+      goIdeasBtn.hidden = !emptyNeed || ideaFillPickerOpen;
+      goIdeasBtn.textContent = 'Fill from Ideas';
+      if (!emptyNeed) {
+        ideaFillPickerOpen = false;
+        if (fillPicker) fillPicker.hidden = true;
+      } else if (fillPicker) {
+        fillPicker.hidden = !ideaFillPickerOpen;
+      }
     }
   }
 
@@ -11471,16 +11578,133 @@ function openSchedulePanel(scheduleId) {
   document.getElementById('overlay').classList.add('open');
 }
 
-/** Close schedule panel and jump to Content Ideas in the pipeline. */
-function goToIdeasFromSchedule() {
-  closePanel();
-  expandedSections.add('ideas');
-  setMarketingViewMode('pipeline');
-  renderBoard();
-  requestAnimationFrame(() => {
-    const section = document.querySelector('.board-section[data-section-id="ideas"]');
-    if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+/** Open in-panel Ideas picker for the active empty Need (stay on Calendar/Split). */
+function openIdeaFillPicker() {
+  if (panelMode !== 'schedule' || !activeScheduleId) return;
+  const card = scheduleCards().find(c => c.id === activeScheduleId);
+  if (!card || isDiscoverCard(card)) return;
+  const emptyNeed = isNeedContentCard(card) && !scheduleSlotHasContent(card);
+  if (!emptyNeed) return;
+  if (!DATA.ideas.length) {
+    if (typeof PPC !== 'undefined' && PPC.showToast) PPC.showToast('No ideas yet');
+    return;
+  }
+  ideaFillPickerOpen = true;
+  renderIdeaFillPicker(card);
+  const goIdeasBtn = document.getElementById('pScheduleGoIdeas');
+  if (goIdeasBtn) goIdeasBtn.hidden = true;
+  const fillPicker = document.getElementById('pScheduleIdeaFillPicker');
+  if (fillPicker) fillPicker.hidden = false;
+}
+
+function closeIdeaFillPicker() {
+  ideaFillPickerOpen = false;
+  const fillPicker = document.getElementById('pScheduleIdeaFillPicker');
+  if (fillPicker) fillPicker.hidden = true;
+  const list = document.getElementById('pScheduleIdeaFillList');
+  if (list) list.innerHTML = '';
+  if (panelMode === 'schedule' && activeScheduleId) {
+    const card = scheduleCards().find(c => c.id === activeScheduleId);
+    if (card) applySchedulePanelLayout(card);
+  }
+}
+
+function renderIdeaFillPicker(needCard) {
+  const list = document.getElementById('pScheduleIdeaFillList');
+  if (!list) return;
+  list.innerHTML = '';
+  const needPillar = needCard && needCard.pillar;
+  const ideas = DATA.ideas.slice().sort((a, b) => {
+    const aMatch = needPillar && a.cat === needPillar ? 0 : 1;
+    const bMatch = needPillar && b.cat === needPillar ? 0 : 1;
+    if (aMatch !== bMatch) return aMatch - bMatch;
+    return 0;
   });
+  ideas.forEach(idea => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'idea-fill-item';
+    btn.title = 'Fill this Need with this idea';
+
+    const thumb = document.createElement('div');
+    thumb.className = 'idea-fill-item-thumb';
+    if (idea.imageData) {
+      const img = document.createElement('img');
+      img.src = idea.imageData;
+      img.alt = '';
+      thumb.appendChild(img);
+    }
+    btn.appendChild(thumb);
+
+    const meta = document.createElement('div');
+    meta.className = 'idea-fill-item-meta';
+    const cat = document.createElement('div');
+    cat.className = 'idea-fill-item-cat';
+    const catInfo = idea.cat ? catById(idea.cat) : null;
+    cat.textContent = (catInfo && catInfo.label) || pillarDisplayLabel(idea.cat) || 'Idea';
+    meta.appendChild(cat);
+    const body = document.createElement('div');
+    body.className = 'idea-fill-item-body';
+    body.textContent = stripHtml(idea.body || '') || (idea.imageData ? 'Image idea' : 'Untitled idea');
+    meta.appendChild(body);
+    btn.appendChild(meta);
+
+    btn.addEventListener('click', () => {
+      fillNeedFromIdea(activeScheduleId, idea.id);
+    });
+    list.appendChild(btn);
+  });
+}
+
+/** Merge an Ideas board card into an empty Need — skips Pipeline; status Prep. */
+async function fillNeedFromIdea(needId, ideaId) {
+  const slot = scheduleCards().find(c => c.id === needId);
+  const idea = DATA.ideas.find(i => i.id === ideaId);
+  if (!slot || !idea) return;
+  if (isDiscoverCard(slot) || scheduleSlotHasContent(slot)) return;
+
+  const pillar = (idea.cat && pillarById(idea.cat)) ? idea.cat : (slot.pillar || 'organic');
+  const scheduledAt = slot.scheduledAt || slot.scheduleAt || '';
+  const payload = {
+    body: idea.body || '',
+    imageData: idea.imageData || null,
+    imageW: idea.imageW,
+    imageH: idea.imageH,
+    pillar,
+    format: slot.format,
+    scheduledAt,
+    scheduleAt: scheduledAt,
+    anchorId: slot.anchorId || '',
+    sourceIdeaId: idea.id,
+    publishStatus: 'prep',
+    caption: '',
+    tags: '',
+    music: '',
+    assignee: slot.assignee || ''
+  };
+
+  const filled = fillEmptyNeedSlot(slot, payload);
+  if (!filled) return;
+
+  try {
+    await PPC.archivePush({
+      source: 'marketing',
+      item: JSON.parse(JSON.stringify(idea)),
+      restoreMeta: { kind: 'idea' },
+      label: stripHtml(idea.body || '') || 'Idea'
+    });
+  } catch (_) {}
+
+  DATA.ideas = DATA.ideas.filter(i => i.id !== ideaId);
+  restackIdeas();
+  lastIdeaCardSize = ideaCardSize(DATA.ideas.length);
+  ideaFillPickerOpen = false;
+
+  clearTimeout(saveTimer);
+  saveData();
+  renderBoard();
+  openSchedulePanel(needId);
+  if (typeof PPC !== 'undefined' && PPC.showToast) PPC.showToast('Filled Need from Ideas');
 }
 
 function toDateTimeLocalValue(value) {
@@ -11790,6 +12014,9 @@ function closePanel() {
   activeExecId = null;
   activeReviewId = null;
   activeScheduleId = null;
+  ideaFillPickerOpen = false;
+  const fillPicker = document.getElementById('pScheduleIdeaFillPicker');
+  if (fillPicker) fillPicker.hidden = true;
   panelMode = null;
   prepareExpanded = false;
   executeArmed = false;
