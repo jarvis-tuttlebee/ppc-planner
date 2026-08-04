@@ -5,6 +5,59 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-04 — Add Ideas back to picker + single-use links (Cursor)
+
+### What
+- Marketing **`0.12.11`** (local preview — not deployed): calendar
+  **Choose from Pipeline** now includes **Content Ideas** as well as
+  Preparation / Execution / Review, and linked pipeline cards are now
+  **single-use** so once a pipeline card is assigned to a calendar date it is
+  hidden from other calendar pickers.
+
+### Open / next
+1. Deploy when asked.
+
+---
+
+## 2026-08-04 — Center pipeline calendar pill (Cursor)
+
+### What
+- Marketing **`0.12.10`** (local preview — not deployed): centered the Pipeline
+  footer **Go to Calendar** pill instead of right-aligning it.
+
+### Open / next
+1. Soak on `:8787`; deploy when asked.
+
+---
+
+## 2026-08-04 — Pipeline-linked calendar fill (Cursor)
+
+### What
+- Marketing **`0.12.9`** (local preview — not deployed): schedule Need cards now
+  **Choose from Pipeline** instead of Ideas-only. Choosing a Preparation /
+  Execution / Review card links that pipeline card to the calendar slot, mirrors
+  its current details into the slot, keeps the link through stage moves, and the
+  final Review → Schedule handoff fills that exact linked calendar card.
+
+### Open / next
+1. Soak on `:8787`; deploy when asked.
+
+---
+
+## 2026-08-04 — Pipeline backflow + calendar jump (Cursor)
+
+### What
+- Marketing **`0.12.8`** (local preview — not deployed): added rich-text toolbar
+  to Execution **Requirements** (bold / italic / underline / bullets / clear),
+  added a **Go to Calendar** button at the bottom of Pipeline, and added
+  backward moves **Execution → Preparation** and **Review → Execution** so
+  cards can step back without losing entered details.
+
+### Open / next
+1. Soak on `:8787`; deploy when asked.
+
+---
+
 ## 2026-08-04 — Deploy Marketing 0.12.7 + R2 live (Cursor)
 
 ### Live

@@ -3057,6 +3057,11 @@
     }
     .btn-secondary:hover { background: #2C2C2C; color: #fff; }
     .btn-secondary.active { background: #2C2C2C; color: #fff; }
+    .pipeline-footer {
+      display: flex;
+      justify-content: center;
+      padding: 16px 0 0;
+    }
     .prepare-dest {
       display: none;
       flex-direction: column;
@@ -3196,7 +3201,14 @@
           <div class="panel-desc short" id="pLocation" contenteditable="true" placeholder="Where this is shot or set…"></div>
           <hr class="panel-divider">
           <div class="panel-section-label">Requirements</div>
-          <div class="panel-desc short" id="pRequirements" contenteditable="true" placeholder="Talent, kit, access, approvals…"></div>
+          <div class="fmt-bar">
+            <button type="button" class="fmt-btn" title="Bold" onclick="fmtField('pRequirements','bold')"><b>B</b></button>
+            <button type="button" class="fmt-btn" title="Italic" onclick="fmtField('pRequirements','italic')"><i>I</i></button>
+            <button type="button" class="fmt-btn" title="Underline" onclick="fmtField('pRequirements','underline')"><u>U</u></button>
+            <button type="button" class="fmt-btn" title="Bulleted list" onclick="fmtField('pRequirements','insertUnorderedList')">&#8226;</button>
+            <button type="button" class="fmt-btn wide" title="Clear formatting" onclick="fmtField('pRequirements','removeFormat')">Clear</button>
+          </div>
+          <div class="panel-desc" id="pRequirements" contenteditable="true" placeholder="Talent, kit, access, approvals…"></div>
           <hr class="panel-divider">
           <div class="panel-section-label">Date / time</div>
           <input class="prop-select" id="pDateTime" type="datetime-local" style="margin-top:2px">
@@ -3269,10 +3281,10 @@
               <div id="pScheduleNoteWrap">
                 <textarea id="pScheduleNote" placeholder="Pin note or title…"></textarea>
               </div>
-              <button type="button" class="btn-secondary" id="pScheduleGoIdeas" onclick="openIdeaFillPicker()">Fill from Ideas</button>
+              <button type="button" class="btn-secondary" id="pScheduleGoIdeas" onclick="openIdeaFillPicker()">Choose from Pipeline</button>
               <div id="pScheduleIdeaFillPicker" class="idea-fill-picker" hidden>
                 <div class="idea-fill-picker-head">
-                  <span class="idea-fill-picker-label">Pick an idea</span>
+                  <span class="idea-fill-picker-label">Pick a pipeline card</span>
                   <button type="button" class="btn-cancel" onclick="closeIdeaFillPicker()">Cancel</button>
                 </div>
                 <div id="pScheduleIdeaFillList" class="idea-fill-picker-list"></div>
@@ -3455,7 +3467,7 @@
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
 const MEDIA_UPLOAD_URL = '/api/marketing/media';
-const APP_VERSION = '0.12.7';
+const APP_VERSION = '0.12.11';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 let marketingHydrated = false;
 let marketingRev = 0;
@@ -6345,6 +6357,7 @@ function sendPrepToExecution(id) {
   };
   delete execCard.executionNotes;
   execCards().push(execCard);
+  syncLinkedSchedulePreview(execCard, 'execution');
   expandedSections.add('execution');
   executeArmed = false;
   closePanel();
@@ -6373,6 +6386,7 @@ function sendExecToReview(id) {
     reviewedAt: new Date().toISOString()
   });
   reviewCards().push(reviewCard);
+  syncLinkedSchedulePreview(reviewCard, 'review');
   expandedSections.add('review');
   reviewArmed = false;
   closePanel();
@@ -6380,6 +6394,36 @@ function sendExecToReview(id) {
   saveData();
   renderBoard();
   openReviewPanel(reviewCard.id);
+}
+
+function moveExecToPreparation(id) {
+  const card = execCards().find(c => c.id === id);
+  if (!card) return;
+  DATA.sections.execution = execCards().filter(c => c.id !== id);
+  prepCards().push(card);
+  syncLinkedSchedulePreview(card, 'prep');
+  expandedSections.add('preparation');
+  reviewArmed = false;
+  closePanel();
+  clearTimeout(saveTimer);
+  saveData();
+  renderBoard();
+  openPrepPanel(card.id);
+}
+
+function moveReviewToExecution(id) {
+  const card = reviewCards().find(c => c.id === id);
+  if (!card) return;
+  DATA.sections.review = reviewCards().filter(c => c.id !== id);
+  execCards().push(card);
+  syncLinkedSchedulePreview(card, 'execution');
+  expandedSections.add('execution');
+  scheduleArmed = false;
+  closePanel();
+  clearTimeout(saveTimer);
+  saveData();
+  renderBoard();
+  openExecPanel(card.id);
 }
 
 function isEmptyNeedSlot(card) {
@@ -6462,7 +6506,10 @@ function fillEmptyNeedSlot(slot, content) {
   const idx = list.findIndex(c => c.id === slot.id);
   if (idx < 0) return null;
   const scheduledAt = content.scheduledAt || content.scheduleAt || slot.scheduledAt || slot.scheduleAt || '';
-  const hasBody = !!stripHtml(content.body || '').trim();
+  const previewCard = { ...slot, ...content, scheduledAt, scheduleAt: scheduledAt };
+  const hasContent = content.needContent === true
+    ? false
+    : (content.needContent === false ? true : scheduleSlotHasContent(previewCard));
   const filled = migrateSchedule({
     ...content,
     id: slot.id,
@@ -6472,7 +6519,7 @@ function fillEmptyNeedSlot(slot, content) {
     leadUp: !!slot.leadUp,
     slotMoved: slot.slotMoved != null ? slot.slotMoved : false,
     needLabel: '',
-    needContent: !hasBody,
+    needContent: !hasContent,
     publishStatus: content.publishStatus || 'scheduled',
     assignee: content.assignee || slot.assignee || '',
     movedToScheduleAt: content.movedToScheduleAt || new Date().toISOString()
@@ -6502,12 +6549,16 @@ function sendReviewToSchedule(id) {
     reviewMediaW: card.reviewMediaW || null,
     reviewMediaH: card.reviewMediaH || null,
     reviewVideoUrl: card.reviewVideoUrl || '',
+    linkedPipelineId: '',
+    linkedPipelineStage: '',
+    linkedScheduleId: '',
     needContent: !scheduleSlotHasContent(card),
     publishStatus: 'scheduled',
     assignee: card.assignee || '',
     movedToScheduleAt: new Date().toISOString()
   });
-  const emptyNeed = findEmptyNeedToFill(payload);
+  const linkedNeed = card.linkedScheduleId ? scheduleCards().find(c => c.id === card.linkedScheduleId) : null;
+  const emptyNeed = linkedNeed || findEmptyNeedToFill(payload);
   const scheduleCard = emptyNeed ? fillEmptyNeedSlot(emptyNeed, payload) : (scheduleCards().push(payload), payload);
   expandedSections.add('schedule');
   scheduleArmed = false;
@@ -6959,6 +7010,76 @@ function renderReviewBody() {
   cards.forEach(card => list.appendChild(renderReviewCard(card)));
   body.appendChild(list);
   return body;
+}
+
+function goToCalendarView() {
+  expandedSections.add('schedule');
+  setMarketingViewMode('calendar');
+  renderBoard();
+  requestAnimationFrame(() => {
+    const target = document.querySelector('.board-section[data-section-id="schedule"]');
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+}
+
+function allPipelineCards() {
+  return [
+    ...prepCards().map(card => ({ card, stage: 'prep', label: 'Preparation' })),
+    ...execCards().map(card => ({ card, stage: 'execution', label: 'Execution' })),
+    ...reviewCards().map(card => ({ card, stage: 'review', label: 'Review' }))
+  ];
+}
+
+function availablePipelineCards(scheduleId) {
+  return allPipelineCards().filter(entry => {
+    const linked = entry.card && entry.card.linkedScheduleId;
+    return !linked || linked === scheduleId;
+  });
+}
+
+function findPipelineCardById(id) {
+  return allPipelineCards().find(entry => entry.card && entry.card.id === id) || null;
+}
+
+function clearPipelineLinkForSchedule(scheduleId) {
+  if (!scheduleId) return;
+  allPipelineCards().forEach(entry => {
+    if (entry.card && entry.card.linkedScheduleId === scheduleId) entry.card.linkedScheduleId = '';
+  });
+}
+
+function syncLinkedSchedulePreview(card, stage) {
+  if (!card || !card.linkedScheduleId) return null;
+  const slot = scheduleCards().find(c => c.id === card.linkedScheduleId);
+  if (!slot || isDiscoverCard(slot)) return null;
+  const previewStatus = stage === 'prep' ? 'prep' : 'execute';
+  return fillEmptyNeedSlot(slot, {
+    ...slot,
+    body: card.body || '',
+    imageData: card.imageData || null,
+    imageW: card.imageW,
+    imageH: card.imageH,
+    pillar: card.pillar || slot.pillar || 'organic',
+    format: card.format || slot.format,
+    sourceIdeaId: card.sourceIdeaId || slot.sourceIdeaId || null,
+    productionPlan: card.productionPlan || '',
+    productsUsed: card.productsUsed || '',
+    location: card.location || '',
+    requirements: card.requirements || '',
+    reviewMedia: stage === 'review' ? (card.reviewMedia || null) : (slot.reviewMedia || null),
+    reviewMediaW: stage === 'review' ? (card.reviewMediaW || null) : (slot.reviewMediaW || null),
+    reviewMediaH: stage === 'review' ? (card.reviewMediaH || null) : (slot.reviewMediaH || null),
+    reviewVideoUrl: stage === 'review' ? (card.reviewVideoUrl || '') : (slot.reviewVideoUrl || ''),
+    contentOutcome: stage === 'review' ? (card.contentOutcome || '') : (slot.contentOutcome || ''),
+    tweaks: stage === 'review' ? (card.tweaks || '') : (slot.tweaks || ''),
+    caption: stage === 'review' ? (card.caption || '') : (slot.caption || ''),
+    tags: stage === 'review' ? (card.tags || '') : (slot.tags || ''),
+    music: stage === 'review' ? (card.music || '') : (slot.music || ''),
+    linkedPipelineId: card.id,
+    linkedPipelineStage: stage,
+    linkedScheduleId: card.linkedScheduleId,
+    publishStatus: previewStatus
+  });
 }
 
 function renderReviewCard(card) {
@@ -10315,6 +10436,16 @@ function renderBoard() {
     else pipePane.appendChild(wrap);
   });
 
+  const pipeFooter = document.createElement('div');
+  pipeFooter.className = 'pipeline-footer';
+  const goCalendarBtn = document.createElement('button');
+  goCalendarBtn.type = 'button';
+  goCalendarBtn.className = 'btn-secondary';
+  goCalendarBtn.textContent = 'Go to Calendar';
+  goCalendarBtn.addEventListener('click', goToCalendarView);
+  pipeFooter.appendChild(goCalendarBtn);
+  pipePane.appendChild(pipeFooter);
+
   board.appendChild(calPane);
   board.appendChild(pipePane);
   // Re-apply after remount so Calendar/Pipeline-only modes still hide the other pane.
@@ -10708,6 +10839,16 @@ function buildExecActions(card) {
   });
   actions.appendChild(reviewBtn);
 
+  const backBtn = document.createElement('button');
+  backBtn.type = 'button';
+  backBtn.className = 'btn-secondary';
+  backBtn.textContent = 'Back to Preparation';
+  backBtn.addEventListener('click', () => {
+    savePanelEdits(true);
+    moveExecToPreparation(card.id);
+  });
+  actions.appendChild(backBtn);
+
   const del = document.createElement('button');
   del.type = 'button';
   del.className = 'btn-danger';
@@ -10741,6 +10882,16 @@ function buildReviewActions(card) {
     updateIdeaSaveBtn();
   });
   actions.appendChild(scheduleBtn);
+
+  const backBtn = document.createElement('button');
+  backBtn.type = 'button';
+  backBtn.className = 'btn-secondary';
+  backBtn.textContent = 'Back to Execution';
+  backBtn.addEventListener('click', () => {
+    savePanelEdits(true);
+    moveReviewToExecution(card.id);
+  });
+  actions.appendChild(backBtn);
 
   const del = document.createElement('button');
   del.type = 'button';
@@ -11173,7 +11324,7 @@ function applySchedulePanelLayout(card) {
   } else {
     const emptyNeed = isNeedContentCard(card) && !stripHtml(card.body || '').trim();
     if (ideaText) {
-      ideaText.textContent = stripHtml(card.body || '') || (emptyNeed ? 'Need content — fill from Ideas / Prep' : 'Untitled content');
+      ideaText.textContent = stripHtml(card.body || '') || (emptyNeed ? 'Need content — choose from Pipeline' : 'Untitled content');
     }
     if (note) note.value = '';
   }
@@ -11188,7 +11339,7 @@ function applySchedulePanelLayout(card) {
     } else {
       const emptyNeed = isNeedContentCard(card) && !stripHtml(card.body || '').trim();
       goIdeasBtn.hidden = !emptyNeed || ideaFillPickerOpen;
-      goIdeasBtn.textContent = 'Fill from Ideas';
+      goIdeasBtn.textContent = 'Choose from Pipeline';
       if (!emptyNeed) {
         ideaFillPickerOpen = false;
         if (fillPicker) fillPicker.hidden = true;
@@ -11285,8 +11436,8 @@ function openIdeaFillPicker() {
   if (!card || isDiscoverCard(card)) return;
   const emptyNeed = isNeedContentCard(card) && !scheduleSlotHasContent(card);
   if (!emptyNeed) return;
-  if (!DATA.ideas.length) {
-    if (typeof PPC !== 'undefined' && PPC.showToast) PPC.showToast('No ideas yet');
+  if (!DATA.ideas.length && !availablePipelineCards(activeScheduleId).length) {
+    if (typeof PPC !== 'undefined' && PPC.showToast) PPC.showToast('No content cards yet');
     return;
   }
   ideaFillPickerOpen = true;
@@ -11314,23 +11465,35 @@ function renderIdeaFillPicker(needCard) {
   if (!list) return;
   list.innerHTML = '';
   const needPillar = needCard && needCard.pillar;
-  const ideas = DATA.ideas.slice().sort((a, b) => {
-    const aMatch = needPillar && a.cat === needPillar ? 0 : 1;
-    const bMatch = needPillar && b.cat === needPillar ? 0 : 1;
+  const sources = [
+    ...DATA.ideas.map(idea => ({ card: idea, stage: 'ideas', label: 'Content Ideas' })),
+    ...availablePipelineCards(needCard && needCard.id)
+  ].sort((a, b) => {
+    const stageOrder = { ideas: 0, prep: 1, execution: 2, review: 3 };
+    const aStage = stageOrder[a.stage] ?? 99;
+    const bStage = stageOrder[b.stage] ?? 99;
+    if (aStage !== bStage) return aStage - bStage;
+    const aPillar = a.stage === 'ideas' ? a.card.cat : a.card.pillar;
+    const bPillar = b.stage === 'ideas' ? b.card.cat : b.card.pillar;
+    const aMatch = needPillar && aPillar === needPillar ? 0 : 1;
+    const bMatch = needPillar && bPillar === needPillar ? 0 : 1;
     if (aMatch !== bMatch) return aMatch - bMatch;
     return 0;
   });
-  ideas.forEach(idea => {
+  sources.forEach(entry => {
+    const pipelineCard = entry.card;
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'idea-fill-item';
-    btn.title = 'Fill this Need with this idea';
+    btn.title = entry.stage === 'ideas'
+      ? 'Fill this calendar Need from this idea'
+      : 'Link this calendar Need to this pipeline card';
 
     const thumb = document.createElement('div');
     thumb.className = 'idea-fill-item-thumb';
-    if (idea.imageData) {
+    if (pipelineCard.imageData) {
       const img = document.createElement('img');
-      img.src = mediaSrc(idea.imageData);
+      img.src = mediaSrc(pipelineCard.imageData);
       img.alt = '';
       thumb.appendChild(img);
     }
@@ -11340,20 +11503,50 @@ function renderIdeaFillPicker(needCard) {
     meta.className = 'idea-fill-item-meta';
     const cat = document.createElement('div');
     cat.className = 'idea-fill-item-cat';
-    const catInfo = idea.cat ? catById(idea.cat) : null;
-    cat.textContent = (catInfo && catInfo.label) || pillarDisplayLabel(idea.cat) || 'Idea';
+    cat.textContent = entry.stage === 'ideas'
+      ? (entry.label + ' · ' + (((pipelineCard.cat && catById(pipelineCard.cat) && catById(pipelineCard.cat).label) || pillarDisplayLabel(pipelineCard.cat) || 'Idea')))
+      : (entry.label + ' · ' + formatLabel(pipelineCard.pillar, pipelineCard.format));
     meta.appendChild(cat);
     const body = document.createElement('div');
     body.className = 'idea-fill-item-body';
-    body.textContent = stripHtml(idea.body || '') || (idea.imageData ? 'Image idea' : 'Untitled idea');
+    body.textContent = stripHtml(pipelineCard.body || '') || (pipelineCard.imageData ? (entry.stage === 'ideas' ? 'Image idea' : 'Image card') : 'Untitled card');
     meta.appendChild(body);
     btn.appendChild(meta);
 
     btn.addEventListener('click', () => {
-      fillNeedFromIdea(activeScheduleId, idea.id);
+      if (entry.stage === 'ideas') fillNeedFromIdea(activeScheduleId, pipelineCard.id);
+      else linkNeedToPipelineCard(activeScheduleId, pipelineCard.id);
     });
     list.appendChild(btn);
   });
+}
+
+/** Link an existing pipeline card to an empty calendar Need and mirror its current details. */
+function linkNeedToPipelineCard(needId, pipelineId) {
+  const slot = scheduleCards().find(c => c.id === needId);
+  const entry = findPipelineCardById(pipelineId);
+  if (!slot || !entry || !entry.card) return;
+  if (isDiscoverCard(slot) || scheduleSlotHasContent(slot)) return;
+
+  const pipelineCard = entry.card;
+  if (pipelineCard.linkedScheduleId && pipelineCard.linkedScheduleId !== needId) {
+    if (typeof PPC !== 'undefined' && PPC.showToast) PPC.showToast('This card is already linked to another calendar date');
+    return;
+  }
+  clearPipelineLinkForSchedule(needId);
+  pipelineCard.linkedScheduleId = needId;
+  syncLinkedSchedulePreview(pipelineCard, entry.stage);
+  const liveSlot = scheduleCards().find(c => c.id === needId);
+  if (liveSlot) {
+    liveSlot.linkedPipelineId = pipelineCard.id;
+    liveSlot.linkedPipelineStage = entry.stage;
+  }
+  ideaFillPickerOpen = false;
+  clearTimeout(saveTimer);
+  saveData();
+  renderBoard();
+  openSchedulePanel(needId);
+  if (typeof PPC !== 'undefined' && PPC.showToast) PPC.showToast('Linked calendar card to pipeline');
 }
 
 /** Merge an Ideas board card into an empty Need — skips Pipeline; status Prep. */
@@ -11561,6 +11754,7 @@ function savePanel(silent) {
       return;
     }
 
+    syncLinkedSchedulePreview(card, 'prep');
     scheduleSave();
     renderBoard();
     return;
@@ -11590,6 +11784,7 @@ function savePanel(silent) {
       return;
     }
 
+    syncLinkedSchedulePreview(card, 'execution');
     scheduleSave();
     renderBoard();
     return;
@@ -11624,6 +11819,7 @@ function savePanel(silent) {
       return;
     }
 
+    syncLinkedSchedulePreview(card, 'review');
     scheduleSave();
     renderBoard();
     return;
@@ -11688,7 +11884,7 @@ function savePanel(silent) {
       const ideaText = document.getElementById('pScheduleIdeaText');
       if (ideaText) {
         const emptyNeed = isNeedContentCard(card) && !stripHtml(card.body || '').trim();
-        ideaText.textContent = stripHtml(card.body || '') || (emptyNeed ? 'Need content — fill from Ideas / Prep' : 'Untitled content');
+        ideaText.textContent = stripHtml(card.body || '') || (emptyNeed ? 'Need content — choose from Pipeline' : 'Untitled content');
       }
     }
     clearTimeout(saveTimer);
