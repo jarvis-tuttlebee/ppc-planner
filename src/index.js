@@ -65,11 +65,12 @@ function isCatastrophicMarketingOverwrite(prev, incoming) {
   const nextFilled = filledScheduleCount(incoming);
   if (prevSched >= 5 && nextSched === 0) return true;
   if (prevSched >= 10 && nextSched < Math.floor(prevSched * 0.4)) return true;
+  // All events gone while calendar still has cards — likely a stale gut, not a normal delete
   if (prevAnchors >= 2 && nextAnchors === 0 && nextSched <= prevSched) return true;
   // Never drop filled content cards via a thinner/stale save
   if (prevFilled >= 1 && nextFilled < prevFilled) return true;
-  // Never drop events/cadences via a thinner concurrent save
-  if (prevAnchors >= 1 && nextAnchors < prevAnchors) return true;
+  // Note: dropping one event/cadence (nextAnchors < prevAnchors) is intentional —
+  // stale tabs are blocked by revision_conflict instead.
   return false;
 }
 

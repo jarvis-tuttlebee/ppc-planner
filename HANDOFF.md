@@ -5,6 +5,206 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-04 — Deploy schedule panel UX (Cursor)
+
+### Live
+- Version ID: `2da01139-1e4e-4fc3-8bd1-47331493dc86` — Marketing **`0.12.1`**
+- Hard-refresh https://ppc-homebase.pressplaycollective.workers.dev/marketing
+
+### What shipped
+- Schedule panel reorder + sticky footer; collapsible Post details / Campaign /
+  Pipeline notes; editable Pipeline notes.
+
+---
+
+## 2026-08-04 — Editable Pipeline notes on schedule (Cursor)
+
+### What
+- Marketing **`0.12.1`**: **Pipeline notes** on the schedule panel are editable
+  (idea, plan, requirements, products, location, shoot date, outcome, tweaks)
+  and save with the card. **Deployed.**
+
+---
+
+## 2026-08-04 — Schedule panel trust UX (Cursor)
+
+### What
+- Marketing **`0.12.0`**: Schedule panel reordered for less scroll — Status +
+  Assignee + dates + Link first; Post details / Campaign / Pipeline notes
+  collapsed. Sticky Close/Save footer. Post details auto-opens when caption,
+  tags, or music exist. Preview only.
+
+---
+
+## 2026-08-04 — Collapsible post details (Cursor)
+
+### What
+- Marketing **`0.11.99`**: Schedule panel Caption / Tags / Music behind a
+  **Post details** toggle (collapsed by default). Preview only.
+
+---
+
+## 2026-08-04 — Deploy prep-by Make UX (Cursor)
+
+### Live
+- Version ID: `ad142e54-f083-43ba-b894-30efeea94777` — Marketing **`0.11.98`**
+- Hard-refresh https://ppc-homebase.pressplaycollective.workers.dev/marketing
+
+### What shipped
+- Prep-by manual only; Make band (sage dashed); prep above publish; release
+  date outlined in prep picker; Make = drag + clear (no panel).
+
+---
+
+## 2026-08-04 — Make band: drag + clear only (Cursor)
+
+### What
+- Marketing **`0.11.98`**: Make reminders no longer open the schedule panel.
+  Drag to move prep day; × clears prep-by. Pipeline → publish card unchanged.
+  **Deployed.**
+
+---
+
+## 2026-08-04 — Prep above publish + release outline (Cursor)
+
+### What
+- Marketing **`0.11.97`**: Schedule panel — **Prep by** above **Publish date**.
+- Prep date picker outlines the **publish/release** day (not today); opens on
+  that month when prep is blank. Shared `ppc-select.js` `getOutlineDate`.
+  Preview only.
+
+---
+
+## 2026-08-04 — Prep band softer sage, no hatch (Cursor)
+
+### What
+- Marketing **`0.11.96`**: Keep dashed **Make** band; drop diagonal stripes;
+  soft sage wash (`#E7EFEC`) instead of slate. Preview only.
+
+---
+
+## 2026-08-04 — Prep as hatched Make band (Cursor)
+
+### What
+- Marketing **`0.11.95`**: prep reminders use a dashed slate hatch band
+  (label **Make**) instead of sage mini-cards with format left bars.
+  Preview only.
+
+---
+
+## 2026-08-04 — Prep-by manual only (Cursor)
+
+### What
+- Marketing **`0.11.94`**: no auto prep dates (publish − 2 days gone). Prep
+  reminders only when you set **Prep by**. Auto-filled values cleared on load
+  unless `prepByManual`. Preview only.
+
+### Note
+- Status: **Need** stays the default for empty placeholders only — not a hard
+  lock on every card (user can set Prep / Execute / Scheduled / Posted).
+
+---
+
+## 2026-08-04 — Larger prep day reminders (Cursor)
+
+### What
+- Marketing **`0.11.93`**: prep is still a reminder (not a card), but a
+  full-width day strip — “Make today” + title + “Posts …”. Preview only.
+
+---
+
+## 2026-08-04 — Prep as day reminder, not a card (Cursor)
+
+### What
+- Marketing **`0.11.92`**: dropped prep ghost cards (conflicted with Pipeline).
+  Prep-by is a day **Make · …** cue + quiet “Make by …” on the publish card.
+  Panel Prep by field kept. Preview only.
+
+---
+
+## 2026-08-04 — Softer prep card (no banner block) (Cursor)
+
+### What
+- Marketing **`0.11.91`**: dropped solid Preparation banner; dashed sage outline
+  + larger muted “Preparation” kicker + format-coloured title. Preview only.
+
+---
+
+## 2026-08-04 — Prep card banner (Cursor)
+
+### What
+- Marketing **`0.11.90`**: prep cards get a solid sage **Preparation** banner
+  across the top so they read clearly vs publish cards. Preview only.
+
+---
+
+## 2026-08-04 — Prep ghosts as full calendar cards (Cursor)
+
+### What
+- Marketing **`0.11.89`**: prep days show full **Prep** cards (shared sage
+  background, dashed border, format-coloured title) instead of tiny cues.
+  Drag prep card to change make-by; click opens the post. Preview only.
+
+---
+
+## 2026-08-04 — Local preview for prep-by (Cursor)
+
+### Preview
+- http://127.0.0.1:8787/marketing — seeded from live KV rev **263**
+  (85 schedule, World Building + Ode + FDW + Exploration In Denim, 22 ideas)
+- Code: Marketing **0.11.88** prep-by (not deployed yet)
+
+---
+
+## 2026-08-04 — Prep-by date on calendar (Cursor)
+
+### What
+- Marketing **`0.11.88`**: optional **Prep by** on schedule cards (default
+  publish − 2 days for non-Discover; Discover blank until set).
+- Card shows “Prep 4 Aug”; prep day gets a green **Prep · …** cue. Pipeline unchanged.
+
+### Open / next
+1. Deploy / hard-refresh — open an IG card, confirm Prep by; check cue on prep day.
+
+---
+
+## 2026-08-04 — Allow deleting events/cadences (Cursor)
+
+### Live
+- Version ID: `f0f2f68a-6dab-43b7-b16e-611cd803235b` — Marketing **`0.11.87`**
+- Hard-refresh, delete Discover Flow again — should stay gone (Archive if needed).
+
+### What
+- “Cloud blocked a wipe” on Delete event: wipe-guard treated removing one
+  cadence (Discover Flow) as catastrophic. Stale tabs already blocked by rev.
+- Intentional event delete uses force overwrite; Worker no longer rejects
+  single-event removals.
+
+---
+
+## 2026-08-04 — Link label + hashtag chips (Cursor)
+
+### Live
+- Version ID: `0087d2ae-3e2f-4ae7-9bcc-54764f2e8180` — Marketing **`0.11.86`**: field label **Link**; Tags chip
+  editor (word + Enter, × remove, auto `#`).
+
+---
+
+## 2026-08-04 — Deployed 0.11.85 Drive placeholder (Cursor)
+
+### Live
+- Version ID: `ca03b2e0-b296-48c4-bdeb-0e6ef1cf25c9` — Marketing **`0.11.85`** (“Paste link…” placeholder)
+
+---
+
+## 2026-08-04 — Neutral Drive link placeholder (Cursor)
+
+### What
+- Marketing **`0.11.85`**: Drive/asset + review video URL placeholders are
+  “Paste link…” (no Google Drive sample). Local only until deploy.
+
+---
+
 ## 2026-08-04 — Deployed 0.11.84 (stale-tab + Discover card face) (Cursor)
 
 ### Live

@@ -184,13 +184,18 @@ body.dark .ppc-select-option { color: #f0ede8; }
 .ppc-date-day:hover { background: #f7f5f2; }
 .ppc-date-day.is-other { color: #c4bfb7; font-weight: 500; }
 .ppc-date-day.is-today { box-shadow: inset 0 0 0 1px #4E6E6C; }
+.ppc-date-day.is-outline {
+  box-shadow: inset 0 0 0 1.5px #4E6E6C;
+  background: rgba(78, 110, 108, 0.08);
+}
 .ppc-date-day.is-selected {
   background: #fff;
   color: #2C2C2C;
   box-shadow: inset 0 0 0 1.5px #4E6E6C;
 }
 .ppc-date-day.is-selected:hover { background: #f4f7f6; color: #2C2C2C; }
-.ppc-date-day.is-selected.is-today { box-shadow: inset 0 0 0 1.5px #4E6E6C; }
+.ppc-date-day.is-selected.is-today,
+.ppc-date-day.is-selected.is-outline { box-shadow: inset 0 0 0 1.5px #4E6E6C; }
 .ppc-date-footer {
   display: flex;
   justify-content: space-between;
@@ -246,6 +251,10 @@ body.dark .ppc-date-day { color: #f0ede8; }
 body.dark .ppc-date-day:hover { background: #252e45; }
 body.dark .ppc-date-day.is-other { color: #6B7A8D; }
 body.dark .ppc-date-day.is-today { box-shadow: inset 0 0 0 1px #4E6E6C; }
+body.dark .ppc-date-day.is-outline {
+  box-shadow: inset 0 0 0 1.5px #4E6E6C;
+  background: rgba(78, 110, 108, 0.18);
+}
 body.dark .ppc-date-day.is-selected {
   background: transparent;
   color: #f0ede8;
@@ -331,7 +340,7 @@ body.dark .ppc-datetime-time {
     return d.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
-  function createPpcDate({ id, value, placeholder, onChange }) {
+  function createPpcDate({ id, value, placeholder, onChange, getOutlineDate }) {
     ensureStyles();
     const wrap = document.createElement('div');
     wrap.className = 'ppc-date';
@@ -362,6 +371,12 @@ body.dark .ppc-datetime-time {
     const seed = parseIsoDate(hidden.value) || new Date();
     let viewYear = seed.getFullYear();
     let viewMonth = seed.getMonth();
+
+    function resolveOutlineKey() {
+      if (typeof getOutlineDate !== 'function') return '';
+      const raw = getOutlineDate();
+      return raw ? String(raw).slice(0, 10) : '';
+    }
 
     function syncLabel() {
       const text = formatDisplayDate(hidden.value);
@@ -395,9 +410,14 @@ body.dark .ppc-datetime-time {
       if (open) {
         closePpcSelects(wrap);
         const cur = parseIsoDate(hidden.value);
+        const outline = parseIsoDate(resolveOutlineKey());
         if (cur) {
           viewYear = cur.getFullYear();
           viewMonth = cur.getMonth();
+        } else if (outline) {
+          // Empty prep: open on the release month so the outline is visible.
+          viewYear = outline.getFullYear();
+          viewMonth = outline.getMonth();
         }
         // Portal to body — panel uses transform, which breaks position:fixed + clips overflow.
         if (menu.parentElement !== document.body) document.body.appendChild(menu);
@@ -468,6 +488,8 @@ body.dark .ppc-datetime-time {
       const today = new Date();
       const todayKey = isoFromParts(today.getFullYear(), today.getMonth(), today.getDate());
       const selected = hidden.value;
+      const outlineKey = resolveOutlineKey();
+      const useOutline = !!outlineKey;
 
       for (let i = 0; i < 42; i++) {
         const dayNum = i - startPad + 1;
@@ -481,7 +503,14 @@ body.dark .ppc-datetime-time {
         btn.className = 'ppc-date-day';
         btn.textContent = String(d);
         if (m !== viewMonth) btn.classList.add('is-other');
-        if (key === todayKey) btn.classList.add('is-today');
+        if (useOutline) {
+          if (key === outlineKey) {
+            btn.classList.add('is-outline');
+            btn.title = 'Publish / release date';
+          }
+        } else if (key === todayKey) {
+          btn.classList.add('is-today');
+        }
         if (selected && key === selected) btn.classList.add('is-selected');
         btn.addEventListener('click', e => {
           e.stopPropagation();
@@ -562,6 +591,7 @@ body.dark .ppc-datetime-time {
       id,
       value: inputEl.value || '',
       placeholder: options.placeholder || inputEl.getAttribute('placeholder') || 'Pick a date',
+      getOutlineDate: typeof options.getOutlineDate === 'function' ? options.getOutlineDate : null,
       onChange: val => {
         if (typeof options.onChange === 'function') options.onChange(val);
         inputEl.dispatchEvent(new Event('change', { bubbles: true }));

@@ -536,7 +536,7 @@
       transform: translateX(100%);
       transition: transform 0.22s ease, width 0.22s ease;
       z-index: 200;
-      overflow-y: auto;
+      overflow: hidden;
       box-shadow: -6px 0 28px rgba(0,0,0,0.08);
       display: flex;
       flex-direction: column;
@@ -545,7 +545,25 @@
     .panel.exec-mode { width: min(720px, 100vw); }
     .panel.review-mode { width: min(720px, 100vw); }
     .panel-strip { height: 5px; flex-shrink: 0; }
-    .panel-body-wrap { padding: 28px 28px 32px; flex: 1; }
+    .panel-body-wrap {
+      padding: 24px 28px 16px;
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+    }
+    .panel-footer {
+      flex-shrink: 0;
+      padding: 10px 28px 14px;
+      border-top: 1px solid #f0ede8;
+      background: #fff;
+    }
+    .panel-footer .panel-actions-row { margin-top: 0; margin-bottom: 8px; }
+    .panel-footer .panel-save-row {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+    .panel-footer .panel-apply-hint { margin-top: 8px; }
     .panel-exec-layout { display: flex; flex-direction: column; gap: 0; }
     .panel.exec-mode .panel-exec-layout {
       display: grid;
@@ -1076,6 +1094,63 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+    .tag-editor {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+      min-height: 36px;
+      padding: 6px 8px;
+      border: 1px solid #E2DDD5;
+      border-radius: 6px;
+      background: #fff;
+      cursor: text;
+    }
+    .tag-editor:focus-within { border-color: #2C2C2C; }
+    .tag-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      max-width: 100%;
+      padding: 3px 4px 3px 8px;
+      border-radius: 4px;
+      background: rgba(44,44,44,0.06);
+      color: #2C2C2C;
+      font-size: 12px;
+      line-height: 1.3;
+    }
+    .tag-chip-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .tag-chip-remove {
+      flex: 0 0 auto;
+      width: 18px;
+      height: 18px;
+      border: none;
+      border-radius: 3px;
+      background: transparent;
+      color: #6B7A8D;
+      font-size: 14px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0;
+    }
+    .tag-chip-remove:hover { color: #2C2C2C; background: rgba(0,0,0,0.06); }
+    .tag-editor-input {
+      flex: 1 1 100px;
+      min-width: 100px;
+      border: none;
+      outline: none;
+      background: transparent;
+      font: inherit;
+      font-size: 13px;
+      color: #2C2C2C;
+      padding: 2px 0;
+    }
+    .tag-editor-input::placeholder { color: #b5b0a8; }
     .exec-empty {
       padding: 28px 16px;
       text-align: center;
@@ -1186,6 +1261,26 @@
       outline: 2px dashed #564A5E;
       outline-offset: 2px;
     }
+    .schedule-ops .panel-section-label { margin-top: 10px; }
+    .schedule-ops .panel-section-label:first-child { margin-top: 0; }
+    .schedule-ops .panel-field-hint { margin-bottom: 2px; }
+    .schedule-collapse-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .schedule-collapse-stack .review-context-toggle { margin-bottom: 0; }
+    .schedule-post-details,
+    .schedule-campaign-body {
+      display: none;
+      margin-bottom: 2px;
+      padding: 4px 0 2px;
+    }
+    .schedule-post-details.open,
+    .schedule-campaign-body.open { display: block; }
+    .schedule-post-details .panel-section-label:first-child,
+    .schedule-campaign-body .panel-section-label:first-child { margin-top: 0; }
     .review-context-toggle {
       width: 100%;
       display: flex;
@@ -1219,6 +1314,25 @@
       color: #6B7A8D;
     }
     .review-context.open { display: flex; }
+    .review-context.schedule-notes-edit {
+      color: #2C2C2C;
+      gap: 10px;
+    }
+    .review-context.schedule-notes-edit .review-context-row.empty { font-style: normal; color: inherit; }
+    .schedule-note-input {
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 2px;
+      font-family: inherit;
+      font-size: 12px;
+      line-height: 1.4;
+      color: #2C2C2C;
+      resize: vertical;
+      min-height: 0;
+    }
+    textarea.schedule-note-input {
+      min-height: 52px;
+    }
     .review-context-row strong {
       display: block;
       font-size: 9.5px;
@@ -1703,6 +1817,95 @@
     .cal-day-cue--grid { background: rgba(86,74,94,0.14); color: #564A5E; }
     .cal-day-cue--story { background: rgba(78,110,108,0.14); color: #4E6E6C; }
     .cal-day-cue--pin { background: rgba(194,154,59,0.18); color: #8a6a1a; }
+    .cal-day-prep-strip {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      width: 100%;
+      margin-top: 3px;
+      box-sizing: border-box;
+      padding: 5px 5px 4px;
+      border-radius: 4px;
+      border: 1.5px dashed rgba(78, 110, 108, 0.45);
+      background: #E7EFEC;
+    }
+    .cal-day-prep-band-label {
+      display: block;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #4E6E6C;
+      margin: 0 1px 2px;
+    }
+    .cal-day-prep-item {
+      display: block;
+      position: relative;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: left;
+      border: none;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.55);
+      padding: 5px 22px 4px 6px;
+      cursor: grab;
+      font-family: inherit;
+      line-height: 1.25;
+      user-select: none;
+    }
+    .cal-day-prep-item:hover {
+      background: rgba(255, 255, 255, 0.85);
+    }
+    .cal-day-prep-item.dragging {
+      opacity: 0.55;
+      outline: 1px dashed #4E6E6C;
+      cursor: grabbing;
+    }
+    .cal-day-prep-clear {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 18px;
+      height: 18px;
+      border: none;
+      border-radius: 3px;
+      background: transparent;
+      color: #8a9590;
+      font-size: 14px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0;
+      font-family: inherit;
+    }
+    .cal-day-prep-clear:hover {
+      color: #2C2C2C;
+      background: rgba(0, 0, 0, 0.06);
+    }
+    .cal-day--prep-drop {
+      box-shadow: inset 0 0 0 2px rgba(78, 110, 108, 0.45);
+      border-radius: 4px;
+    }
+    .cal-day-prep-title {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #2C2C2C;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding-right: 2px;
+    }
+    .cal-day-prep-sub {
+      display: block;
+      font-size: 10px;
+      color: #5A7370;
+      margin-top: 2px;
+      font-style: italic;
+    }
+    .board.board--split .cal-day-prep-strip { padding: 4px; }
+    .board.board--split .cal-day-prep-band-label { font-size: 8px; }
+    .board.board--split .cal-day-prep-title { font-size: 10px; }
+    .board.board--split .cal-day-prep-sub { font-size: 8px; }
     .cal-day-cue--done { opacity: 0.45; }
     .cal-day-head {
       display: flex;
@@ -1948,6 +2151,14 @@
       white-space: nowrap;
     }
     .cal-slot-assignee-val.empty { color: #b5b0a8; }
+    .cal-slot-prep {
+      display: block;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: #4E6E6C;
+      margin: 0 0 1px;
+    }
     .cal-slot-flag {
       position: static;
       right: auto;
@@ -2993,9 +3204,9 @@
             <img id="pReviewMediaImg" alt="" style="display:none">
             <button type="button" class="review-media-clear" id="pReviewMediaClear" title="Remove media">×</button>
           </div>
-          <div class="panel-section-label">Video link</div>
+          <div class="panel-section-label">Link</div>
           <div class="review-video-link">
-            <input class="prop-select" id="pReviewVideoUrl" type="url" placeholder="https://drive.google.com/…">
+            <input class="prop-select" id="pReviewVideoUrl" type="url" placeholder="Paste link…">
             <a class="review-video-open is-disabled" id="pReviewVideoOpen" href="#" target="_blank" rel="noopener noreferrer">Open</a>
           </div>
           <hr class="panel-divider">
@@ -3020,7 +3231,10 @@
           <div class="panel-section-label">Caption</div>
           <textarea class="prop-select" id="pCaption" rows="4" style="resize:vertical;min-height:88px;font-family:inherit;margin-top:2px" placeholder="Post caption…"></textarea>
           <div class="panel-section-label" style="margin-top:14px">Tags</div>
-          <input class="prop-select" id="pTags" type="text" style="margin-top:2px" placeholder="#pressplay #ode …">
+          <div class="tag-editor" id="pTagsEditor" data-hidden="pTags">
+            <input type="hidden" id="pTags" value="">
+            <input class="tag-editor-input" id="pTagsInput" type="text" placeholder="Type a word, Enter" autocomplete="off">
+          </div>
           <div class="panel-section-label" style="margin-top:14px">Music</div>
           <input class="prop-select" id="pMusic" type="text" style="margin-top:2px" placeholder="Track name or link…">
           <hr class="panel-divider">
@@ -3040,53 +3254,71 @@
               <button type="button" class="btn-secondary" id="pScheduleGoIdeas" onclick="goToIdeasFromSchedule()">Browse Ideas</button>
             </div>
           </div>
-          <button type="button" class="review-context-toggle" id="scheduleContextToggle">
-            <span>Details</span>
-            <span id="scheduleContextChev">▸</span>
-          </button>
-          <div class="review-context" id="scheduleContext"></div>
-          <hr class="panel-divider">
-          <div class="panel-section-label">Campaign anchor</div>
-          <div id="pScheduleAnchorWrap" style="margin-top:2px"></div>
-          <hr class="panel-divider">
-          <div class="panel-section-label">Publish date</div>
-          <input class="prop-select" id="pScheduleEditAt" type="datetime-local" style="margin-top:2px">
-          <hr class="panel-divider">
-          <div class="panel-section-label">Caption</div>
-          <textarea class="prop-select" id="pScheduleCaption" rows="4" style="resize:vertical;min-height:88px;font-family:inherit;margin-top:2px" placeholder="Post caption…"></textarea>
-          <div class="panel-section-label" style="margin-top:14px">Tags</div>
-          <input class="prop-select" id="pScheduleTags" type="text" style="margin-top:2px" placeholder="#pressplay #ode …">
-          <div id="scheduleMusicBlock">
-            <div class="panel-section-label" style="margin-top:14px">Music</div>
-            <input class="prop-select" id="pScheduleMusic" type="text" style="margin-top:2px" placeholder="Track name or link…">
+          <div class="schedule-ops">
+            <div class="panel-section-label">Status</div>
+            <div id="pScheduleStatusWrap" style="margin-top:2px"></div>
+            <div class="panel-section-label">Assignee</div>
+            <div id="pScheduleAssigneeWrap" style="margin-top:2px"></div>
+            <div class="staff-add-row" id="pScheduleStaffAddRow">
+              <input class="prop-select" id="pScheduleStaffNew" type="text" maxlength="40" placeholder="Staff name…">
+              <button type="button" class="btn-secondary" id="pScheduleStaffAddBtn">Add</button>
+              <button type="button" class="btn-cancel" id="pScheduleStaffCancelBtn">Cancel</button>
+            </div>
+            <div class="panel-section-label">Prep by</div>
+            <div class="panel-field-hint">Optional make-by reminder.</div>
+            <input class="prop-select" id="pSchedulePrepBy" type="date" style="margin-top:2px">
+            <div class="panel-section-label">Publish date</div>
+            <input class="prop-select" id="pScheduleEditAt" type="datetime-local" style="margin-top:2px">
+            <div class="panel-section-label" id="pScheduleDriveLabel">Link</div>
+            <div class="panel-field-hint" id="pScheduleDriveHint" hidden>Paste the Drive folder or file link for this pin.</div>
+            <div class="review-video-link">
+              <input class="prop-select" id="pScheduleVideoUrl" type="url" placeholder="Paste link…">
+              <a class="review-video-open is-disabled" id="pScheduleVideoOpen" href="#" target="_blank" rel="noopener noreferrer">Open</a>
+            </div>
           </div>
-          <hr class="panel-divider">
-          <div class="panel-section-label" id="pScheduleDriveLabel">Video link</div>
-          <div class="panel-field-hint" id="pScheduleDriveHint" hidden>Paste the Drive folder or file link for this pin.</div>
-          <div class="review-video-link">
-            <input class="prop-select" id="pScheduleVideoUrl" type="url" placeholder="https://drive.google.com/…">
-            <a class="review-video-open is-disabled" id="pScheduleVideoOpen" href="#" target="_blank" rel="noopener noreferrer">Open</a>
+          <div class="schedule-collapse-stack">
+            <button type="button" class="review-context-toggle" id="schedulePostDetailsToggle">
+              <span>Post details</span>
+              <span id="schedulePostDetailsChev">▸</span>
+            </button>
+            <div class="schedule-post-details" id="schedulePostDetails">
+              <div class="panel-section-label">Caption</div>
+              <textarea class="prop-select" id="pScheduleCaption" rows="4" style="resize:vertical;min-height:88px;font-family:inherit;margin-top:2px" placeholder="Post caption…"></textarea>
+              <div class="panel-section-label" style="margin-top:14px">Tags</div>
+              <div class="tag-editor" id="pScheduleTagsEditor" data-hidden="pScheduleTags">
+                <input type="hidden" id="pScheduleTags" value="">
+                <input class="tag-editor-input" id="pScheduleTagsInput" type="text" placeholder="Type a word, Enter" autocomplete="off">
+              </div>
+              <div id="scheduleMusicBlock">
+                <div class="panel-section-label" style="margin-top:14px">Music</div>
+                <input class="prop-select" id="pScheduleMusic" type="text" style="margin-top:2px" placeholder="Track name or link…">
+              </div>
+            </div>
+            <button type="button" class="review-context-toggle" id="scheduleCampaignToggle">
+              <span>Campaign</span>
+              <span id="scheduleCampaignChev">▸</span>
+            </button>
+            <div class="schedule-campaign-body" id="scheduleCampaignBody">
+              <div class="panel-section-label">Campaign anchor</div>
+              <div id="pScheduleAnchorWrap" style="margin-top:2px"></div>
+            </div>
+            <button type="button" class="review-context-toggle" id="scheduleContextToggle">
+              <span>Pipeline notes</span>
+              <span id="scheduleContextChev">▸</span>
+            </button>
+            <div class="review-context" id="scheduleContext"></div>
           </div>
-          <hr class="panel-divider">
-          <div class="panel-section-label">Assignee</div>
-          <div id="pScheduleAssigneeWrap" style="margin-top:2px"></div>
-          <div class="staff-add-row" id="pScheduleStaffAddRow">
-            <input class="prop-select" id="pScheduleStaffNew" type="text" maxlength="40" placeholder="Staff name…">
-            <button type="button" class="btn-secondary" id="pScheduleStaffAddBtn">Add</button>
-            <button type="button" class="btn-cancel" id="pScheduleStaffCancelBtn">Cancel</button>
-          </div>
-          <hr class="panel-divider">
-          <div class="panel-section-label">Status</div>
-          <div id="pScheduleStatusWrap" style="margin-top:2px"></div>
         </div>
-        <div class="panel-actions-row" id="panelActions"></div>
-        <div class="panel-save-row">
-          <button type="button" class="btn-cancel" onclick="closePanel()">Close</button>
-          <button type="button" class="btn-save" id="panelSaveBtn" onclick="savePanel()">Save changes</button>
-        </div>
-        <div class="panel-apply-hint" id="panelApplyHint">Ctrl+Enter to apply · click outside to close</div>
       </div>
     </div>
+  </div>
+  <div class="panel-footer">
+    <div class="panel-actions-row" id="panelActions"></div>
+    <div class="panel-save-row">
+      <button type="button" class="btn-cancel" onclick="closePanel()">Close</button>
+      <button type="button" class="btn-save" id="panelSaveBtn" onclick="savePanel()">Save changes</button>
+    </div>
+    <div class="panel-apply-hint" id="panelApplyHint">Ctrl+Enter to apply · click outside to close</div>
   </div>
 </div>
 
@@ -3193,12 +3425,14 @@
 <script>
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
-const APP_VERSION = '0.11.84';
+const APP_VERSION = '0.12.1';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 let marketingHydrated = false;
 let marketingRev = 0;
 let marketingSaveInFlight = null;
 let marketingSaveWanted = false;
+/** One-shot: next save may use X-PPC-Force-Overwrite (intentional event delete). */
+let marketingSaveForceOnce = false;
 /** Bumped on local edits so a tab-return cloud refresh can't clobber unsaved work. */
 let marketingLocalDirty = false;
 /** Quiet “caught up” toast cooldown so tab focus doesn’t spam. */
@@ -4331,10 +4565,13 @@ let reviewArmed = false;
 let scheduleArmed = false;
 let reviewContextOpen = false;
 let scheduleContextOpen = false;
+let schedulePostDetailsOpen = false;
+let scheduleCampaignOpen = false;
 let pendingReviewMedia = null; // { imageData, imageW, imageH } while panel open
 let dragCalSlotId = null;
 let calSlotDragMoved = false;
 let dragLeadUp = null; // { anchorId, fromKey, scheduleId }
+let dragCalPrepId = null; // schedule card id — moving Make reminder day only
 let ideaTopZ = 10;
 let canvasZoom = 0.85;
 let canvasPanX = 20;
@@ -4439,7 +4676,33 @@ function migrateSchedule(card) {
   if (card.leadUp == null) card.leadUp = false;
   if (card.slotMoved == null) card.slotMoved = false;
   if (card.needLabel == null) card.needLabel = '';
+  if (card.prepBy == null) card.prepBy = '';
+  if (card.prepByManual == null) card.prepByManual = false;
+  if (typeof card.prepBy === 'string' && card.prepBy.length > 10) {
+    card.prepBy = card.prepBy.slice(0, 10);
+  }
+  // Drop auto-filled prep-by — only keep dates the user set.
+  if (!card.prepByManual) {
+    card.prepBy = '';
+  }
   return card;
+}
+
+/** Prep-by only when the user set it (no auto from publish date). */
+function prepByOf(card) {
+  if (!card || !card.prepByManual) return '';
+  return String(card.prepBy || '').slice(0, 10);
+}
+
+function applyPrepByFromUi(card, raw) {
+  const ui = String(raw || '').slice(0, 10);
+  if (!ui) {
+    card.prepBy = '';
+    card.prepByManual = false;
+    return;
+  }
+  card.prepBy = ui;
+  card.prepByManual = true;
 }
 
 function publishStatusOf(card) {
@@ -5124,8 +5387,9 @@ function buildMarketingPayload() {
   };
 }
 
-function saveData() {
+function saveData(opts) {
   if (!marketingHydrated) return;
+  if (opts && opts.force) marketingSaveForceOnce = true;
   marketingLocalDirty = true;
   marketingSaveWanted = true;
   if (marketingSaveInFlight) return;
@@ -5148,12 +5412,16 @@ async function runMarketingSaveLoop() {
 async function persistMarketingOnce() {
   const payload = buildMarketingPayload();
   payload._rev = marketingRev || 0;
+  const force = marketingSaveForceOnce;
+  marketingSaveForceOnce = false;
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); } catch (e) {}
   let res;
   try {
+    const headers = { 'Content-Type': 'application/json' };
+    if (force) headers['X-PPC-Force-Overwrite'] = '1';
     res = await fetch(SYNC_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify(payload)
     });
   } catch (err) {
@@ -6771,7 +7039,7 @@ function renderReviewCard(card) {
     stripHtml(card.contentOutcome || '') && ('Outcome: ' + stripHtml(card.contentOutcome)),
     stripHtml(card.tweaks || '') && ('Tweaks: ' + stripHtml(card.tweaks)),
     card.scheduleAt && ('Schedule: ' + formatDateTimeLabel(card.scheduleAt)),
-    card.reviewVideoUrl && 'Video linked'
+    card.reviewVideoUrl && 'Link added'
   ].filter(Boolean);
   chipBits.forEach(text => {
     const chip = document.createElement('span');
@@ -6854,13 +7122,14 @@ function renderScheduleBody() {
 
   const cardsByDay = groupScheduleByDay();
   const leadUpByDay = collectLeadUpByDay();
+  const prepByDay = collectPrepByDay();
   const today = new Date();
 
   if (scheduleCalRange === 'week') {
     const band = marketingWeekBandFromStart(scheduleViewWeekStart);
     const weekSec = document.createElement('div');
     weekSec.className = 'cal-week-section';
-    weekSec.appendChild(buildMarketingWeekRow(band, cardsByDay, leadUpByDay, today));
+    weekSec.appendChild(buildMarketingWeekRow(band, cardsByDay, leadUpByDay, prepByDay, today));
     body.appendChild(weekSec);
   } else {
     const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -6903,7 +7172,7 @@ function renderScheduleBody() {
       earlierBody.className = 'cal-week-earlier-body';
       if (!expanded) earlierBody.style.display = 'none';
       pastBands.forEach(band => {
-        earlierBody.appendChild(buildMarketingWeekRow(band, cardsByDay, leadUpByDay, today));
+        earlierBody.appendChild(buildMarketingWeekRow(band, cardsByDay, leadUpByDay, prepByDay, today));
       });
       weekSec.appendChild(earlierBody);
       wLabel.addEventListener('click', e => {
@@ -6918,7 +7187,7 @@ function renderScheduleBody() {
     liveBands.forEach(band => {
       const weekSec = document.createElement('div');
       weekSec.className = 'cal-week-section';
-      weekSec.appendChild(buildMarketingWeekRow(band, cardsByDay, leadUpByDay, today));
+      weekSec.appendChild(buildMarketingWeekRow(band, cardsByDay, leadUpByDay, prepByDay, today));
       body.appendChild(weekSec);
     });
   }
@@ -7088,11 +7357,11 @@ function weekBandEndsBefore(band, todayStart) {
   return end < todayStart;
 }
 
-function buildMarketingWeekRow(band, cardsByDay, leadUpByDay, today) {
+function buildMarketingWeekRow(band, cardsByDay, leadUpByDay, prepByDay, today) {
   const grid = document.createElement('div');
   grid.className = 'cal-week-grid';
   band.days.forEach(cell => {
-    grid.appendChild(buildMarketingDayCell(cell, cardsByDay, leadUpByDay, today));
+    grid.appendChild(buildMarketingDayCell(cell, cardsByDay, leadUpByDay, prepByDay, today));
   });
   return grid;
 }
@@ -7109,7 +7378,7 @@ function leadUpCueTitle(anchor) {
   return mode + ' · ' + name;
 }
 
-function buildMarketingDayCell(cell, cardsByDay, leadUpByDay, today) {
+function buildMarketingDayCell(cell, cardsByDay, leadUpByDay, prepByDay, today) {
   const cellDate = cell.date;
   const inMonth = cell.inMonth;
   const col = document.createElement('div');
@@ -7144,8 +7413,9 @@ function buildMarketingDayCell(cell, cardsByDay, leadUpByDay, today) {
 
   const dayCards = cardsByDay[key] || [];
   const dayAnchorIds = new Set(dayCards.map(c => c.anchorId).filter(Boolean));
+  const prepCardsToday = (prepByDay && prepByDay.get(key)) || [];
 
-  if (isLeadUp) {
+  if (isLeadUp || prepCardsToday.length) {
     const cues = document.createElement('div');
     cues.className = 'cal-day-cues';
     leadUpAnchors.forEach(anchor => {
@@ -7171,6 +7441,59 @@ function buildMarketingDayCell(cell, cardsByDay, leadUpByDay, today) {
       cues.appendChild(cue);
     });
     if (cues.childNodes.length) head.appendChild(cues);
+  }
+
+  // Prep reminders: visual + drag to move + clear — not an editor.
+  if (prepCardsToday.length) {
+    const strip = document.createElement('div');
+    strip.className = 'cal-day-prep-strip';
+    const bandLabel = document.createElement('span');
+    bandLabel.className = 'cal-day-prep-band-label';
+    bandLabel.textContent = 'Make';
+    strip.appendChild(bandLabel);
+    prepCardsToday.forEach(card => {
+      const row = document.createElement('div');
+      row.className = 'cal-day-prep-item';
+      row.draggable = true;
+      let title = stripHtml(card.body || '').trim();
+      if (!title) title = needTypeDisplayLabel(card) || 'Content';
+      const pub = card.scheduledAt ? formatShortDate(new Date(card.scheduledAt)) : '';
+      row.title = 'Drag to move prep day' + (pub ? ' · posts ' + pub : '') + ' · × clears reminder';
+      const clearBtn = document.createElement('button');
+      clearBtn.type = 'button';
+      clearBtn.className = 'cal-day-prep-clear';
+      clearBtn.setAttribute('aria-label', 'Clear prep reminder');
+      clearBtn.title = 'Clear prep reminder';
+      clearBtn.textContent = '\u00d7';
+      clearBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        clearPrepBy(card.id);
+      });
+      clearBtn.addEventListener('mousedown', e => e.stopPropagation());
+      const titleEl = document.createElement('span');
+      titleEl.className = 'cal-day-prep-title';
+      titleEl.textContent = title;
+      row.appendChild(clearBtn);
+      row.appendChild(titleEl);
+      if (pub) {
+        const sub = document.createElement('span');
+        sub.className = 'cal-day-prep-sub';
+        sub.textContent = 'Posts ' + pub;
+        row.appendChild(sub);
+      }
+      row.addEventListener('dragstart', e => {
+        if (e.target.closest('.cal-day-prep-clear')) {
+          e.preventDefault();
+          return;
+        }
+        e.stopPropagation();
+        beginCalPrepDrag(card.id, row, e);
+      });
+      row.addEventListener('drag', () => { calSlotDragMoved = true; });
+      row.addEventListener('dragend', () => endCalPrepDrag(row));
+      strip.appendChild(row);
+    });
+    head.appendChild(strip);
   }
 
   const dayEventAnchors = anchors().filter(anchor => anchorPinOnDate(anchor, cellDate));
@@ -7216,20 +7539,17 @@ function buildMarketingDayCell(cell, cardsByDay, leadUpByDay, today) {
     dayBody.addEventListener('drag', () => { calSlotDragMoved = true; });
     dayBody.addEventListener('dragend', () => endLeadUpDrag(dayBody));
   }
-  dayBody.addEventListener('dragover', e => {
-    if (!dragCalSlotId && !dragLeadUp) return;
-    e.preventDefault();
-    e.stopPropagation();
-    dayBody.classList.add('drag-over');
-    if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
-  });
-  dayBody.addEventListener('dragleave', e => {
-    if (!dayBody.contains(e.relatedTarget)) dayBody.classList.remove('drag-over');
-  });
-  dayBody.addEventListener('drop', e => {
+  function acceptDayDrop(e) {
     e.preventDefault();
     e.stopPropagation();
     dayBody.classList.remove('drag-over');
+    col.classList.remove('cal-day--prep-drop');
+    if (dragCalPrepId) {
+      const prepId = dragCalPrepId;
+      endCalPrepDrag(null);
+      movePrepByToDate(prepId, cellDate);
+      return;
+    }
     if (dragLeadUp) {
       const payload = dragLeadUp;
       endLeadUpDrag(null);
@@ -7237,8 +7557,33 @@ function buildMarketingDayCell(cell, cardsByDay, leadUpByDay, today) {
       return;
     }
     const id = (e.dataTransfer && e.dataTransfer.getData('text/plain')) || dragCalSlotId;
-    if (!id || String(id).startsWith('leadup:')) return;
+    if (!id || String(id).startsWith('leadup:') || String(id).startsWith('prep:')) return;
     moveCalSlotToDate(id, cellDate);
+  }
+  function acceptDayDragOver(e) {
+    if (!dragCalSlotId && !dragLeadUp && !dragCalPrepId) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (dragCalPrepId) col.classList.add('cal-day--prep-drop');
+    else dayBody.classList.add('drag-over');
+    if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+  }
+  dayBody.addEventListener('dragover', acceptDayDragOver);
+  dayBody.addEventListener('dragleave', e => {
+    if (!dayBody.contains(e.relatedTarget)) dayBody.classList.remove('drag-over');
+  });
+  dayBody.addEventListener('drop', acceptDayDrop);
+  // Prep can also drop on the day head / Make band (not only the body).
+  col.addEventListener('dragover', e => {
+    if (!dragCalPrepId) return;
+    acceptDayDragOver(e);
+  });
+  col.addEventListener('dragleave', e => {
+    if (!col.contains(e.relatedTarget)) col.classList.remove('cal-day--prep-drop');
+  });
+  col.addEventListener('drop', e => {
+    if (!dragCalPrepId) return;
+    acceptDayDrop(e);
   });
   dayCards.forEach(card => {
     dayBody.appendChild(renderCalSlot(card));
@@ -7282,6 +7627,63 @@ function collectLeadUpByDay() {
     });
   });
   return map;
+}
+
+/** Cards that should be made on a day (prep-by), excluding same-day publish. */
+function collectPrepByDay() {
+  const map = new Map();
+  scheduleCards().forEach(card => {
+    if (publishStatusOf(card) === 'posted') return;
+    const pb = prepByOf(card);
+    if (!pb) return;
+    const pub = card.scheduledAt ? dateKey(new Date(card.scheduledAt)) : '';
+    if (pub && pb === pub) return;
+    if (!map.has(pb)) map.set(pb, []);
+    map.get(pb).push(card);
+  });
+  return map;
+}
+
+function movePrepByToDate(scheduleId, dayDate) {
+  const card = scheduleCards().find(c => c.id === scheduleId);
+  if (!card || !dayDate) return false;
+  const next = dateKey(dayDate);
+  const cur = prepByOf(card);
+  if (cur === next) return false;
+  card.prepBy = next;
+  card.prepByManual = true;
+  scheduleSave();
+  renderBoard();
+  PPC.showToast('Prep moved to ' + formatShortDate(dayDate));
+  return true;
+}
+
+function clearPrepBy(scheduleId) {
+  const card = scheduleCards().find(c => c.id === scheduleId);
+  if (!card || !prepByOf(card)) return false;
+  card.prepBy = '';
+  card.prepByManual = false;
+  scheduleSave();
+  renderBoard();
+  PPC.showToast('Prep reminder cleared');
+  return true;
+}
+
+function beginCalPrepDrag(scheduleId, el, e) {
+  dragCalPrepId = scheduleId;
+  calSlotDragMoved = false;
+  if (el) el.classList.add('dragging');
+  if (e && e.dataTransfer) {
+    e.dataTransfer.setData('text/plain', 'prep:' + scheduleId);
+    e.dataTransfer.effectAllowed = 'move';
+  }
+}
+
+function endCalPrepDrag(el) {
+  dragCalPrepId = null;
+  if (el) el.classList.remove('dragging');
+  clearCalDragStyles();
+  setTimeout(() => { calSlotDragMoved = false; }, 0);
 }
 
 function preferredSlotDays(format) {
@@ -7453,9 +7855,9 @@ function placeLeadUpNeedSlots(anchor) {
 
 function clearCalDragStyles() {
   document.querySelectorAll(
-    '.cal-slot.dragging, .schedule-card.dragging, .cal-day-cue--leadup.dragging, .cal-day-body.dragging, .cal-day-body.drag-over'
+    '.cal-slot.dragging, .schedule-card.dragging, .cal-day-cue--leadup.dragging, .cal-day-body.dragging, .cal-day-body.drag-over, .cal-day-prep-item.dragging, .cal-day--prep-drop'
   ).forEach(n => {
-    n.classList.remove('dragging', 'drag-over');
+    n.classList.remove('dragging', 'drag-over', 'cal-day--prep-drop');
   });
 }
 
@@ -8451,7 +8853,8 @@ async function deleteAnchorPanel() {
   });
   DATA.anchors = anchors().filter(a => a.id !== id);
   clearTimeout(saveTimer);
-  saveData();
+  // Force: clearing empty Needs for this cadence can look like a thin overwrite.
+  saveData({ force: true });
   closeAnchorPanel();
   renderBoard();
   PPC.showToast('Event deleted · recoverable from Archive');
@@ -8776,6 +9179,129 @@ function isNeedContentCard(card) {
   if (scheduleSlotHasContent(card)) return false;
   if (card.needContent === true) return true;
   return !stripHtml(card.body || '').trim();
+}
+
+/** Parse stored tags string into bare words (no #). */
+function parseTagList(raw) {
+  const seen = new Set();
+  const out = [];
+  String(raw || '').split(/[\s,]+/).forEach(part => {
+    let t = String(part || '').trim().replace(/^#+/, '');
+    t = t.replace(/[^\w-]/g, '');
+    if (!t) return;
+    const key = t.toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    out.push(t);
+  });
+  return out;
+}
+
+function serializeTagList(tags) {
+  return (tags || []).map(t => '#' + t).join(' ');
+}
+
+function renderTagEditor(editorEl) {
+  if (!editorEl) return;
+  const hiddenId = editorEl.dataset.hidden;
+  const hidden = hiddenId ? document.getElementById(hiddenId) : null;
+  const input = editorEl.querySelector('.tag-editor-input');
+  if (!hidden || !input) return;
+  const tags = parseTagList(hidden.value);
+  editorEl.querySelectorAll('.tag-chip').forEach(n => n.remove());
+  tags.forEach((tag, idx) => {
+    const chip = document.createElement('span');
+    chip.className = 'tag-chip';
+    const text = document.createElement('span');
+    text.className = 'tag-chip-text';
+    text.textContent = '#' + tag;
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'tag-chip-remove';
+    remove.setAttribute('aria-label', 'Remove #' + tag);
+    remove.textContent = '\u00d7';
+    remove.addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      const next = parseTagList(hidden.value).filter((_, i) => i !== idx);
+      hidden.value = serializeTagList(next);
+      renderTagEditor(editorEl);
+      input.focus();
+    });
+    chip.appendChild(text);
+    chip.appendChild(remove);
+    editorEl.insertBefore(chip, input);
+  });
+}
+
+function commitTagFromInput(editorEl) {
+  if (!editorEl) return;
+  const hiddenId = editorEl.dataset.hidden;
+  const hidden = hiddenId ? document.getElementById(hiddenId) : null;
+  const input = editorEl.querySelector('.tag-editor-input');
+  if (!hidden || !input) return;
+  const pieces = String(input.value || '').split(/[\s,]+/).filter(Boolean);
+  if (!pieces.length) return;
+  const tags = parseTagList(hidden.value);
+  const seen = new Set(tags.map(t => t.toLowerCase()));
+  pieces.forEach(part => {
+    let t = String(part || '').trim().replace(/^#+/, '');
+    t = t.replace(/[^\w-]/g, '');
+    if (!t) return;
+    const key = t.toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    tags.push(t);
+  });
+  hidden.value = serializeTagList(tags);
+  input.value = '';
+  renderTagEditor(editorEl);
+}
+
+function setTagEditorValue(hiddenId, raw) {
+  const hidden = document.getElementById(hiddenId);
+  if (!hidden) return;
+  hidden.value = serializeTagList(parseTagList(raw));
+  const editor = document.querySelector('.tag-editor[data-hidden="' + hiddenId + '"]');
+  if (editor) renderTagEditor(editor);
+}
+
+function wireTagEditors() {
+  document.querySelectorAll('.tag-editor').forEach(editor => {
+    if (editor.dataset.wired === '1') return;
+    editor.dataset.wired = '1';
+    const input = editor.querySelector('.tag-editor-input');
+    if (!input) return;
+    editor.addEventListener('click', e => {
+      if (e.target.closest('.tag-chip-remove')) return;
+      input.focus();
+    });
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ',' || e.key === 'Tab') {
+        if (String(input.value || '').trim()) {
+          e.preventDefault();
+          commitTagFromInput(editor);
+        } else if (e.key === 'Enter' || e.key === ',') {
+          e.preventDefault();
+        }
+        return;
+      }
+      if (e.key === 'Backspace' && !String(input.value || '') && editor.querySelector('.tag-chip')) {
+        e.preventDefault();
+        const hiddenId = editor.dataset.hidden;
+        const hidden = hiddenId ? document.getElementById(hiddenId) : null;
+        if (!hidden) return;
+        const tags = parseTagList(hidden.value);
+        tags.pop();
+        hidden.value = serializeTagList(tags);
+        renderTagEditor(editor);
+      }
+    });
+    input.addEventListener('blur', () => {
+      if (String(input.value || '').trim()) commitTagFromInput(editor);
+    });
+    renderTagEditor(editor);
+  });
 }
 
 let calNeedMenuDate = null;
@@ -9335,6 +9861,22 @@ function renderCalSlot(card) {
       el.appendChild(eventEl);
     }
 
+    const prepNeed = prepByOf(card);
+    if (prepNeed && publishStatusOf(card) !== 'posted') {
+      const prepEl = document.createElement('span');
+      prepEl.className = 'cal-slot-prep';
+      const pd = parseDateOnly(prepNeed);
+      const pubKey = card.scheduledAt ? dateKey(new Date(card.scheduledAt)) : '';
+      // Same-day prep+publish: show make-by on the publish card; otherwise the prep ghost owns the day.
+      if (pubKey && prepNeed === pubKey) {
+        prepEl.textContent = 'Make today';
+      } else {
+        prepEl.textContent = 'Make by ' + (pd ? formatShortDate(pd) : prepNeed);
+      }
+      prepEl.title = 'Preparation day for this post';
+      el.appendChild(prepEl);
+    }
+
     const details = document.createElement('button');
     details.type = 'button';
     details.className = 'cal-slot-details';
@@ -9375,6 +9917,21 @@ function renderCalSlot(card) {
       eventEl.title = eventName;
       if (eventTone) eventEl.style.color = eventTone;
       el.appendChild(eventEl);
+    }
+
+    const prepFilled = prepByOf(card);
+    if (prepFilled && publishStatusOf(card) !== 'posted') {
+      const prepEl = document.createElement('span');
+      prepEl.className = 'cal-slot-prep';
+      const pd = parseDateOnly(prepFilled);
+      const pubKey = card.scheduledAt ? dateKey(new Date(card.scheduledAt)) : '';
+      if (pubKey && prepFilled === pubKey) {
+        prepEl.textContent = 'Make today';
+      } else {
+        prepEl.textContent = 'Make by ' + (pd ? formatShortDate(pd) : prepFilled);
+      }
+      prepEl.title = 'Preparation day for this post';
+      el.appendChild(prepEl);
     }
 
     const details = document.createElement('button');
@@ -9864,6 +10421,7 @@ function buildPrepPanelProps(card) {
       if (panelMode === 'schedule' && activeScheduleId) {
         const live = scheduleCards().find(c => c.id === activeScheduleId);
         if (live) {
+          readSchedulePipelineNotes(live);
           const fmtEl = document.getElementById('pFormat');
           live.pillar = pillar === ADD_PILLAR_ID ? live.pillar : pillar;
           if (fmtEl && fmtEl.value && fmtEl.value !== ADD_FORMAT_ID) live.format = fmtEl.value;
@@ -9897,6 +10455,7 @@ function buildPrepPanelProps(card) {
       if (panelMode === 'schedule' && activeScheduleId) {
         const live = scheduleCards().find(c => c.id === activeScheduleId);
         if (live) {
+          readSchedulePipelineNotes(live);
           const noteEl = document.getElementById('pScheduleNote');
           if (isDiscoverCard(live) && noteEl) live.body = (noteEl.value || '').trim();
           live.format = next;
@@ -10247,20 +10806,68 @@ function fillReviewContext(card) {
 }
 
 function fillScheduleContext(card) {
-  const execBits = [
-    stripHtml(card.productsUsed || '') && ('Products: ' + stripHtml(card.productsUsed || '')),
-    stripHtml(card.location || '') && ('Location: ' + stripHtml(card.location || '')),
-    card.dateTime && ('Shoot: ' + formatDateTimeLabel(card.dateTime))
-  ].filter(Boolean);
-  fillContextRows(document.getElementById('scheduleContext'), [
-    ['Idea', stripHtml(card.body || '')],
-    ['Format', formatLabel(card.pillar, card.format)],
-    ['Production plan', stripHtml(card.productionPlan || '')],
-    ['Requirements', stripHtml(card.requirements || '')],
-    ['Execution', execBits.join(' · ')],
-    ['Outcome', stripHtml(card.contentOutcome || '')],
-    ['Tweaks', stripHtml(card.tweaks || '')]
-  ], scheduleContextOpen, 'scheduleContextChev');
+  const wrap = document.getElementById('scheduleContext');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  wrap.classList.add('schedule-notes-edit');
+
+  const fields = [
+    { key: 'body', label: 'Idea', multiline: true, value: stripHtml(card.body || '') },
+    { key: 'productionPlan', label: 'Production plan', multiline: true, value: stripHtml(card.productionPlan || '') },
+    { key: 'requirements', label: 'Requirements', multiline: true, value: stripHtml(card.requirements || '') },
+    { key: 'productsUsed', label: 'Products', multiline: true, value: stripHtml(card.productsUsed || '') },
+    { key: 'location', label: 'Location', multiline: false, value: stripHtml(card.location || '') },
+    { key: 'dateTime', label: 'Shoot date', type: 'datetime-local', value: toDateTimeLocalValue(card.dateTime) },
+    { key: 'contentOutcome', label: 'Outcome', multiline: true, value: stripHtml(card.contentOutcome || '') },
+    { key: 'tweaks', label: 'Tweaks', multiline: true, value: stripHtml(card.tweaks || '') }
+  ];
+
+  fields.forEach(f => {
+    const row = document.createElement('div');
+    row.className = 'review-context-row';
+    const strong = document.createElement('strong');
+    strong.textContent = f.label;
+    row.appendChild(strong);
+    let input;
+    if (f.type === 'datetime-local') {
+      input = document.createElement('input');
+      input.type = 'datetime-local';
+      input.value = f.value || '';
+    } else if (f.multiline) {
+      input = document.createElement('textarea');
+      input.rows = 2;
+      input.value = f.value || '';
+    } else {
+      input = document.createElement('input');
+      input.type = 'text';
+      input.value = f.value || '';
+    }
+    input.className = 'prop-select schedule-note-input';
+    input.dataset.scheduleNote = f.key;
+    input.placeholder = f.label + '…';
+    row.appendChild(input);
+    wrap.appendChild(row);
+  });
+
+  wrap.classList.toggle('open', !!scheduleContextOpen);
+  const chev = document.getElementById('scheduleContextChev');
+  if (chev) chev.textContent = scheduleContextOpen ? '▾' : '▸';
+}
+
+/** Persist editable Pipeline notes from the schedule panel. */
+function readSchedulePipelineNotes(card) {
+  if (!card || isDiscoverCard(card)) return;
+  const wrap = document.getElementById('scheduleContext');
+  if (!wrap) return;
+  wrap.querySelectorAll('[data-schedule-note]').forEach(el => {
+    const key = el.dataset.scheduleNote;
+    const raw = (el.value || '').trim();
+    if (key === 'dateTime') {
+      card.dateTime = raw ? new Date(raw).toISOString() : '';
+      return;
+    }
+    card[key] = raw;
+  });
 }
 
 function setReviewMediaUI(imageData) {
@@ -10422,7 +11029,7 @@ function openReviewPanel(reviewId) {
   document.getElementById('pOutcome').innerHTML = sanitizeHtml(card.contentOutcome || '');
   document.getElementById('pTweaks').innerHTML = sanitizeHtml(card.tweaks || '');
   document.getElementById('pCaption').value = card.caption || '';
-  document.getElementById('pTags').value = card.tags || '';
+  setTagEditorValue('pTags', card.tags || '');
   document.getElementById('pMusic').value = card.music || '';
   setMarketingDateTime('pScheduleAt', card.scheduleAt);
   setPlanHintVisible(false);
@@ -10493,7 +11100,7 @@ function applySchedulePanelLayout(card) {
   if (title) title.textContent = discover ? 'Discover post' : 'Scheduled content';
 
   const driveLabel = document.getElementById('pScheduleDriveLabel');
-  if (driveLabel) driveLabel.textContent = discover ? 'Drive / asset link' : 'Video link';
+  if (driveLabel) driveLabel.textContent = 'Link';
   const driveHint = document.getElementById('pScheduleDriveHint');
   if (driveHint) driveHint.hidden = !discover;
 
@@ -10521,15 +11128,23 @@ function applySchedulePanelLayout(card) {
     }
   }
 
-  scheduleContextOpen = false;
   if (!discover) fillScheduleContext(card);
   else {
     const wrap = document.getElementById('scheduleContext');
     if (wrap) {
       wrap.innerHTML = '';
       wrap.classList.remove('open');
+      wrap.classList.remove('schedule-notes-edit');
     }
   }
+
+  setScheduleCampaignOpen(scheduleCampaignOpen);
+  const hasPostMeta = !!(
+    String(card.caption || '').trim() ||
+    String(card.tags || '').trim() ||
+    String(card.music || '').trim()
+  );
+  setSchedulePostDetailsOpen(hasPostMeta);
 
   refreshScheduleThumb(card);
 }
@@ -10552,6 +11167,8 @@ function openSchedulePanel(scheduleId) {
   scheduleArmed = false;
   pendingReviewMedia = null;
   focusedReviewMedia = false;
+  scheduleContextOpen = false;
+  scheduleCampaignOpen = false;
   setPanelModeClass('schedule');
   setDescSectionMode('schedule');
   buildPrepPanelProps(card);
@@ -10565,6 +11182,12 @@ function openSchedulePanel(scheduleId) {
 
   applySchedulePanelLayout(card);
   setMarketingDateTime('pScheduleEditAt', card.scheduledAt || card.scheduleAt);
+  const prepVal = prepByOf(card);
+  if (typeof setPpcDateValue === 'function') setPpcDateValue('pSchedulePrepBy', prepVal);
+  else {
+    const prepEl = document.getElementById('pSchedulePrepBy');
+    if (prepEl) prepEl.value = prepVal;
+  }
   renderScheduleAssigneeSelect(card);
   const statusWrap = document.getElementById('pScheduleStatusWrap');
   statusWrap.innerHTML = '';
@@ -10574,7 +11197,7 @@ function openSchedulePanel(scheduleId) {
   }));
   populateScheduleAnchorSelect(card.anchorId || '');
   document.getElementById('pScheduleCaption').value = card.caption || '';
-  document.getElementById('pScheduleTags').value = card.tags || '';
+  setTagEditorValue('pScheduleTags', card.tags || '');
   document.getElementById('pScheduleMusic').value = card.music || '';
   document.getElementById('pScheduleVideoUrl').value = card.reviewVideoUrl || '';
   setVideoOpenLink('pScheduleVideoOpen', card.reviewVideoUrl || '');
@@ -10627,6 +11250,19 @@ function initMarketingDateTimePickers() {
       defaultTime
     });
   });
+  if (typeof replaceNativeDate === 'function') {
+    const prep = document.getElementById('pSchedulePrepBy');
+    if (prep && prep.dataset.ppcDateReplaced !== '1') {
+      replaceNativeDate(prep, {
+        placeholder: 'Prep by',
+        getOutlineDate: () => {
+          const pub = document.getElementById('pScheduleEditAt');
+          const raw = pub ? String(pub.value || '') : '';
+          return raw ? raw.slice(0, 10) : '';
+        }
+      });
+    }
+  }
 }
 initMarketingDateTimePickers();
 
@@ -10775,6 +11411,8 @@ function savePanel(silent) {
     const st = document.getElementById('pScheduleEditAt').value;
     card.scheduledAt = st ? new Date(st).toISOString() : '';
     card.scheduleAt = card.scheduledAt;
+    const prepEl = document.getElementById('pSchedulePrepBy');
+    applyPrepByFromUi(card, prepEl ? prepEl.value : '');
     // Respect the Status control — never force back to Need/Scheduled on save.
     const statusEl = document.getElementById('pScheduleStatus');
     const allowed = isDiscoverFormat(format) ? DISCOVER_STATUS_IDS : [...PUBLISH_STATUS_IDS];
@@ -10796,6 +11434,14 @@ function savePanel(silent) {
     card.anchorId = (document.getElementById('pScheduleAnchor') || {}).value || '';
     card.caption = (document.getElementById('pScheduleCaption') || {}).value || '';
     card.tags = (document.getElementById('pScheduleTags') || {}).value || '';
+    readSchedulePipelineNotes(card);
+    if (!isDiscoverFormat(format)) {
+      const ideaText = document.getElementById('pScheduleIdeaText');
+      if (ideaText) {
+        const emptyNeed = isNeedContentCard(card) && !stripHtml(card.body || '').trim();
+        ideaText.textContent = stripHtml(card.body || '') || (emptyNeed ? 'Need content — fill from Ideas / Prep' : 'Untitled content');
+      }
+    }
     clearTimeout(saveTimer);
     saveData();
     renderBoard();
@@ -10826,6 +11472,8 @@ function closePanel() {
   scheduleArmed = false;
   reviewContextOpen = false;
   scheduleContextOpen = false;
+  schedulePostDetailsOpen = false;
+  scheduleCampaignOpen = false;
   pendingReviewMedia = null;
   focusedReviewMedia = false;
   setPlanHintVisible(false);
@@ -10865,6 +11513,30 @@ document.getElementById('scheduleContextToggle').addEventListener('click', () =>
   wrap.classList.toggle('open', scheduleContextOpen);
   const chev = document.getElementById('scheduleContextChev');
   if (chev) chev.textContent = scheduleContextOpen ? '▾' : '▸';
+});
+
+function setSchedulePostDetailsOpen(open) {
+  schedulePostDetailsOpen = !!open;
+  const wrap = document.getElementById('schedulePostDetails');
+  if (wrap) wrap.classList.toggle('open', schedulePostDetailsOpen);
+  const chev = document.getElementById('schedulePostDetailsChev');
+  if (chev) chev.textContent = schedulePostDetailsOpen ? '▾' : '▸';
+}
+
+function setScheduleCampaignOpen(open) {
+  scheduleCampaignOpen = !!open;
+  const wrap = document.getElementById('scheduleCampaignBody');
+  if (wrap) wrap.classList.toggle('open', scheduleCampaignOpen);
+  const chev = document.getElementById('scheduleCampaignChev');
+  if (chev) chev.textContent = scheduleCampaignOpen ? '▾' : '▸';
+}
+
+document.getElementById('schedulePostDetailsToggle').addEventListener('click', () => {
+  setSchedulePostDetailsOpen(!schedulePostDetailsOpen);
+});
+
+document.getElementById('scheduleCampaignToggle').addEventListener('click', () => {
+  setScheduleCampaignOpen(!scheduleCampaignOpen);
 });
 
 (function setupReviewMediaWell() {
@@ -11206,6 +11878,7 @@ PPC.applyStoredDark();
   });
 })();
 
+wireTagEditors();
 initApp();
 setMarketingViewMode(marketingViewMode);
 </script>
