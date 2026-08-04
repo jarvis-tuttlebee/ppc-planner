@@ -171,9 +171,7 @@
       border-top: 1px solid #E2DDD5;
     }
     .board.board--calendar-only .board-pipe-pane,
-    .board.board--pipeline-only .board-cal-pane,
-    .board.board--calendar-only .board-split-gutter,
-    .board.board--pipeline-only .board-split-gutter {
+    .board.board--pipeline-only .board-cal-pane {
       display: none;
     }
     .board.board--calendar-only .board-cal-pane,
@@ -183,92 +181,6 @@
       min-width: 0 !important;
       flex: 1 1 auto !important;
       flex-basis: auto !important;
-    }
-    .board-split-gutter {
-      display: none;
-    }
-    @media (min-width: 1100px) {
-      /* Split: resizable calendar | gutter | pipeline */
-      .board.board--split {
-        display: flex;
-        align-items: stretch;
-        gap: 0;
-      }
-      .board.board--split .board-cal-pane {
-        flex: 0 0 var(--split-cal-pct, 36%);
-        width: var(--split-cal-pct, 36%);
-        max-width: 72%;
-        min-width: 220px;
-        position: sticky;
-        top: 72px;
-        max-height: calc(100vh - 88px);
-        overflow: auto;
-        padding-right: 2px;
-      }
-      .board.board--split .board-split-gutter {
-        display: flex;
-        flex: 0 0 10px;
-        width: 10px;
-        margin: 0 4px;
-        align-items: stretch;
-        justify-content: center;
-        cursor: col-resize;
-        touch-action: none;
-        user-select: none;
-        position: relative;
-        align-self: stretch;
-        min-height: 120px;
-      }
-      .board.board--split .board-split-gutter::before {
-        content: '';
-        width: 2px;
-        border-radius: 2px;
-        background: #E2DDD5;
-        transition: background 0.12s, width 0.12s;
-      }
-      .board.board--split .board-split-gutter:hover::before,
-      .board.board--split .board-split-gutter.is-dragging::before {
-        width: 3px;
-        background: #6B7A8D;
-      }
-      body.dark .board.board--split .board-split-gutter::before { background: #2e3a55; }
-      body.dark .board.board--split .board-split-gutter:hover::before,
-      body.dark .board.board--split .board-split-gutter.is-dragging::before { background: #8a8580; }
-      .board.board--split .board-pipe-pane {
-        flex: 1 1 auto;
-        min-width: 280px;
-      }
-      body.is-split-resizing { cursor: col-resize; user-select: none; }
-      body.is-split-resizing iframe,
-      body.is-split-resizing .mood-viewport { pointer-events: none; }
-      .board.board--split .cal-month-grid,
-      .board.board--split .cal-week-grid,
-      .board.board--split .cal-dow-header {
-        grid-template-columns: repeat(7, minmax(44px, 1fr));
-        gap: 3px;
-        padding-left: 2px;
-        padding-right: 2px;
-      }
-      .board.board--split .cal-day { min-height: 52px; }
-      .board.board--split .cal-day-num { font-size: 11px; }
-      .board.board--split .cal-day-cue { font-size: 7px; padding: 1px 3px; }
-      .board.board--split .cal-slot {
-        font-size: 9px;
-        padding: 2px 4px;
-      }
-      .board.board--split .cal-slot-title {
-        font-size: 9px;
-        line-height: 1.25;
-      }
-      .board.board--split .cal-add-btn {
-        width: 18px;
-        height: 18px;
-        font-size: 12px;
-      }
-      .board.board--split .cal-phase-strip,
-      .board.board--split .cal-week-target {
-        font-size: 11px;
-      }
     }
     .board-section { border-bottom: 1px solid #E2DDD5; }
     .board-section:first-child { border-top: 1px solid #E2DDD5; }
@@ -1991,10 +1903,6 @@
       margin-top: 2px;
       font-style: italic;
     }
-    .board.board--split .cal-day-prep-strip { padding: 4px; }
-    .board.board--split .cal-day-prep-band-label { font-size: 8px; }
-    .board.board--split .cal-day-prep-title { font-size: 10px; }
-    .board.board--split .cal-day-prep-sub { font-size: 8px; }
     .cal-day-cue--done { opacity: 0.45; }
     .cal-day-head {
       display: flex;
@@ -2128,49 +2036,6 @@
       0%, 100% { outline-color: #8a6a1a; }
       50% { outline-color: transparent; }
     }
-    .cal-today-strip {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: center;
-      margin: 0 0 10px;
-      padding: 8px 10px;
-      background: #F3F1EC;
-      border: 1px solid #E2DDD5;
-      border-radius: 8px;
-    }
-    .cal-today-strip-label {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: #9a958d;
-      margin-right: 2px;
-    }
-    .cal-today-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      border: 1px solid #E2DDD5;
-      background: #fff;
-      border-radius: 999px;
-      padding: 3px 10px;
-      font-size: 11px;
-      color: #2C2C2C;
-      cursor: pointer;
-    }
-    .cal-today-chip:hover { border-color: #2C2C2C; }
-    .cal-today-chip.is-zero {
-      opacity: 0.55;
-      cursor: default;
-    }
-    .cal-today-chip-count {
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-    }
-    .cal-today-chip--make .cal-today-chip-count { color: #4E6E6C; }
-    .cal-today-chip--post .cal-today-chip-count { color: #5B6B8C; }
-    .cal-today-chip--need .cal-today-chip-count { color: #8a6a1a; }
     .cal-nav-btn.is-toggled {
       border-color: #2C2C2C;
       color: #2C2C2C;
@@ -2373,13 +2238,6 @@
     .cal-slot--need-empty .cal-slot-details {
       margin-top: 2px;
     }
-    .board.board--split .cal-slot:not(.cal-slot--need-empty) {
-      padding: 3px 5px 5px;
-    }
-    .board.board--split .cal-slot-details { font-size: 8px; }
-    .board.board--split .cal-slot-assignee-label { font-size: 7px; }
-    .board.board--split .cal-slot-assignee-val { font-size: 9px; }
-    .board.board--split .cal-slot-flag { font-size: 7px; padding: 1px 4px; }
     .staff-add-row {
       display: none;
       gap: 6px;
@@ -3280,8 +3138,7 @@
 </div>
 
 <div class="view-modes" id="viewModes" role="tablist" aria-label="Marketing layout">
-  <button type="button" class="view-mode-btn active" data-mode="split" role="tab" aria-selected="true">Split</button>
-  <button type="button" class="view-mode-btn" data-mode="calendar" role="tab" aria-selected="false">Calendar</button>
+  <button type="button" class="view-mode-btn active" data-mode="calendar" role="tab" aria-selected="true">Calendar</button>
   <button type="button" class="view-mode-btn" data-mode="pipeline" role="tab" aria-selected="false">Pipeline</button>
 </div>
 <div class="board" id="board"></div>
@@ -3597,7 +3454,8 @@
 <script>
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
-const APP_VERSION = '0.12.5';
+const MEDIA_UPLOAD_URL = '/api/marketing/media';
+const APP_VERSION = '0.12.7';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 let marketingHydrated = false;
 let marketingRev = 0;
@@ -3614,16 +3472,12 @@ let marketingCatchupToastAt = 0;
 const DEFAULT_PUBLISH_HOUR = 17;
 
 const VIEW_MODE_KEY = 'ppc-marketing-view-mode';
-const SPLIT_PCT_KEY = 'ppc-marketing-split-pct';
 const MOOD_H_KEY = 'ppc-marketing-mood-h';
 const EARLIER_WEEKS_KEY = 'ppc-marketing-earlier-weeks';
 const CAL_RANGE_KEY = 'ppc-marketing-cal-range';
 const HIDE_POSTED_KEY = 'ppc-marketing-hide-posted';
 /** Empty slots yell Need only within this many days of publish (or if unscheduled). */
 const NEED_ACTION_DAYS = 7;
-const SPLIT_PCT_DEFAULT = 36;
-const SPLIT_PCT_MIN = 22;
-const SPLIT_PCT_MAX = 68;
 const MOOD_H_DEFAULT = 380;
 const MOOD_H_MIN = 220;
 const MOOD_H_MAX = 900;
@@ -3631,23 +3485,12 @@ const MOOD_H_MAX = 900;
 function loadViewMode() {
   try {
     const v = localStorage.getItem(VIEW_MODE_KEY);
-    if (v === 'split' || v === 'calendar' || v === 'pipeline') return v;
+    if (v === 'calendar' || v === 'pipeline') return v;
   } catch (_) {}
-  return 'split';
-}
-function clampSplitPct(n) {
-  return Math.max(SPLIT_PCT_MIN, Math.min(SPLIT_PCT_MAX, n));
+  return 'calendar';
 }
 function clampMoodHeight(n) {
   return Math.max(MOOD_H_MIN, Math.min(MOOD_H_MAX, n));
-}
-/** Personal localStorage value, or null if unset/invalid */
-function readLocalSplitPct() {
-  try {
-    const n = parseFloat(localStorage.getItem(SPLIT_PCT_KEY));
-    if (!Number.isNaN(n) && n >= SPLIT_PCT_MIN && n <= SPLIT_PCT_MAX) return n;
-  } catch (_) {}
-  return null;
 }
 /** Personal localStorage value, or null if unset/invalid */
 function readLocalMoodHeight() {
@@ -3658,43 +3501,33 @@ function readLocalMoodHeight() {
   return null;
 }
 function parseLayoutPrefs(raw) {
-  if (!raw || typeof raw !== 'object') return { splitPct: null, moodH: null };
-  const splitN = parseFloat(raw.splitPct);
+  if (!raw || typeof raw !== 'object') return { moodH: null };
   const moodN = parseFloat(raw.moodH);
   return {
-    splitPct: (!Number.isNaN(splitN) && splitN >= SPLIT_PCT_MIN && splitN <= SPLIT_PCT_MAX)
-      ? clampSplitPct(splitN) : null,
     moodH: (!Number.isNaN(moodN) && moodN >= MOOD_H_MIN && moodN <= MOOD_H_MAX)
       ? clampMoodHeight(moodN) : null
   };
 }
-/** Personal local first; if missing, team defaults from DATA.layoutPrefs; else hardcoded defaults. */
+/** Personal local Ideas height first; if missing, use shared fallback or default. */
 function resolveLayoutPrefs(source) {
   const cloud = parseLayoutPrefs(source && source.layoutPrefs);
-  const localSplit = readLocalSplitPct();
   const localMood = readLocalMoodHeight();
-  marketingSplitPct = localSplit != null ? localSplit
-    : (cloud.splitPct != null ? cloud.splitPct : SPLIT_PCT_DEFAULT);
   marketingMoodH = localMood != null ? localMood
     : (cloud.moodH != null ? cloud.moodH : MOOD_H_DEFAULT);
-  // Keep DATA in sync so later saves don't clobber with stale cloud prefs.
   syncLayoutPrefsToData();
 }
 function syncLayoutPrefsToData() {
   if (!DATA) return;
   DATA.layoutPrefs = {
-    splitPct: Math.round(clampSplitPct(marketingSplitPct) * 10) / 10,
     moodH: Math.round(clampMoodHeight(marketingMoodH))
   };
 }
 let marketingViewMode = loadViewMode();
-let marketingSplitPct = readLocalSplitPct();
-if (marketingSplitPct == null) marketingSplitPct = SPLIT_PCT_DEFAULT;
 let marketingMoodH = readLocalMoodHeight();
 if (marketingMoodH == null) marketingMoodH = MOOD_H_DEFAULT;
 
 function setMarketingViewMode(mode) {
-  if (mode !== 'split' && mode !== 'calendar' && mode !== 'pipeline') mode = 'split';
+  if (mode !== 'calendar' && mode !== 'pipeline') mode = 'calendar';
   marketingViewMode = mode;
   try { localStorage.setItem(VIEW_MODE_KEY, mode); } catch (_) {}
   document.querySelectorAll('#viewModes .view-mode-btn').forEach(btn => {
@@ -3703,36 +3536,6 @@ function setMarketingViewMode(mode) {
     btn.setAttribute('aria-selected', on ? 'true' : 'false');
   });
   applyBoardViewMode();
-}
-
-function clearCalPaneSplitStyles(cal) {
-  if (!cal) return;
-  cal.style.flexBasis = '';
-  cal.style.width = '';
-  cal.style.maxWidth = '';
-  cal.style.minWidth = '';
-}
-
-function applySplitPct(pct) {
-  const board = document.getElementById('board');
-  if (!board) return;
-  const clamped = clampSplitPct(pct);
-  marketingSplitPct = clamped;
-  board.style.setProperty('--split-cal-pct', clamped + '%');
-  const cal = board.querySelector('.board-cal-pane');
-  // Only lock pane width in Split — Calendar / Pipeline must stay full width.
-  if (marketingViewMode === 'split' && cal) {
-    cal.style.flexBasis = clamped + '%';
-    cal.style.width = clamped + '%';
-  } else if (cal) {
-    clearCalPaneSplitStyles(cal);
-  }
-}
-
-function persistSplitPct() {
-  try { localStorage.setItem(SPLIT_PCT_KEY, String(Math.round(marketingSplitPct * 10) / 10)); } catch (_) {}
-  syncLayoutPrefsToData();
-  scheduleSave();
 }
 
 function applyMoodHeight(px) {
@@ -3832,97 +3635,12 @@ function bindMoodResizeGutter(gutter, viewport) {
 function applyBoardViewMode() {
   const board = document.getElementById('board');
   if (!board) return;
-  board.classList.remove('board--split', 'board--calendar-only', 'board--pipeline-only');
-  const cal = board.querySelector('.board-cal-pane');
+  board.classList.remove('board--calendar-only', 'board--pipeline-only');
   if (marketingViewMode === 'calendar') {
     board.classList.add('board--calendar-only');
-    clearCalPaneSplitStyles(cal);
   } else if (marketingViewMode === 'pipeline') {
     board.classList.add('board--pipeline-only');
-    clearCalPaneSplitStyles(cal);
-  } else {
-    board.classList.add('board--split');
-    applySplitPct(marketingSplitPct);
   }
-}
-
-function bindSplitGutter(gutter) {
-  if (!gutter || gutter._splitBound) return;
-  gutter._splitBound = true;
-  gutter.title = 'Drag to resize';
-  gutter.setAttribute('role', 'separator');
-  gutter.setAttribute('aria-orientation', 'vertical');
-  gutter.setAttribute('aria-label', 'Resize calendar and pipeline');
-  gutter.tabIndex = 0;
-
-  let dragging = false;
-
-  const onMove = (clientX) => {
-    const board = document.getElementById('board');
-    if (!board) return;
-    const rect = board.getBoundingClientRect();
-    if (rect.width < 1) return;
-    applySplitPct(((clientX - rect.left) / rect.width) * 100);
-  };
-
-  const stop = () => {
-    if (!dragging) return;
-    dragging = false;
-    gutter.classList.remove('is-dragging');
-    document.body.classList.remove('is-split-resizing');
-    window.removeEventListener('pointermove', onPointerMove);
-    window.removeEventListener('pointerup', onPointerUp);
-    window.removeEventListener('pointercancel', onPointerUp);
-    persistSplitPct();
-  };
-
-  const onPointerMove = (e) => {
-    if (!dragging) return;
-    e.preventDefault();
-    onMove(e.clientX);
-  };
-  const onPointerUp = () => stop();
-
-  gutter.addEventListener('pointerdown', e => {
-    if (marketingViewMode !== 'split') return;
-    if (e.button != null && e.button !== 0) return;
-    dragging = true;
-    gutter.classList.add('is-dragging');
-    document.body.classList.add('is-split-resizing');
-    try { gutter.setPointerCapture(e.pointerId); } catch (_) {}
-    onMove(e.clientX);
-    window.addEventListener('pointermove', onPointerMove);
-    window.addEventListener('pointerup', onPointerUp);
-    window.addEventListener('pointercancel', onPointerUp);
-    e.preventDefault();
-  });
-
-  gutter.addEventListener('keydown', e => {
-    if (marketingViewMode !== 'split') return;
-    const step = e.shiftKey ? 4 : 2;
-    if (e.key === 'ArrowLeft') {
-      applySplitPct(marketingSplitPct - step);
-      persistSplitPct();
-      e.preventDefault();
-    } else if (e.key === 'ArrowRight') {
-      applySplitPct(marketingSplitPct + step);
-      persistSplitPct();
-      e.preventDefault();
-    } else if (e.key === 'Home') {
-      applySplitPct(SPLIT_PCT_MIN);
-      persistSplitPct();
-      e.preventDefault();
-    } else if (e.key === 'End') {
-      applySplitPct(SPLIT_PCT_MAX);
-      persistSplitPct();
-      e.preventDefault();
-    }
-  });
-
-  gutter.addEventListener('dblclick', () => {
-    applySplitPct(SPLIT_PCT_DEFAULT);
-    persistSplitPct();
-  });
 }
 
 document.getElementById('viewModes').addEventListener('click', e => {
@@ -4764,9 +4482,34 @@ let moodCanvasEl = null;
 
 const CANVAS_W = 8000;
 const CANVAS_H = 5600;
-/** Max long-edge for embedded previews (Ideas / Prep / Discover). Keep small — images live in KV as base64. */
+/** Max long-edge for embedded previews (Ideas / Prep / Discover). Compressed JPEG before R2 upload. */
 const IMAGE_MAX_EDGE = 720;
 const IMAGE_JPEG_QUALITY = 0.72;
+
+function isStoredMediaRef(v) {
+  return typeof v === 'string' && v.length > 0 && (
+    v.startsWith('/api/marketing/media/') ||
+    v.startsWith('data:') ||
+    v.startsWith('http://') ||
+    v.startsWith('https://')
+  );
+}
+
+function mediaSrc(v) {
+  return isStoredMediaRef(v) ? v : '';
+}
+
+async function uploadMarketingMedia(dataUrl) {
+  const res = await fetch(MEDIA_UPLOAD_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ data: dataUrl })
+  });
+  if (!res.ok) throw new Error('Media upload failed: ' + res.status);
+  const json = await res.json();
+  if (!json || !json.url) throw new Error('Media upload missing url');
+  return json.url;
+}
 
 function migrateIdea(idea) {
   if (!idea.body && idea.description) idea.body = idea.description;
@@ -5533,11 +5276,9 @@ function boardContentWeight(data) {
 function buildMarketingPayload() {
   syncLayoutPrefsToData();
   const layoutPrefs = {
-    splitPct: Math.round(clampSplitPct(marketingSplitPct) * 10) / 10,
     moodH: Math.round(clampMoodHeight(marketingMoodH))
   };
   try {
-    localStorage.setItem(SPLIT_PCT_KEY, String(layoutPrefs.splitPct));
     localStorage.setItem(MOOD_H_KEY, String(layoutPrefs.moodH));
   } catch (_) {}
   return {
@@ -5749,9 +5490,8 @@ function normalizeLoaded(data) {
     })(),
     layoutPrefs: (() => {
       const p = parseLayoutPrefs(data.layoutPrefs);
-      if (p.splitPct == null && p.moodH == null) return null;
+      if (p.moodH == null) return null;
       return {
-        splitPct: p.splitPct != null ? p.splitPct : SPLIT_PCT_DEFAULT,
         moodH: p.moodH != null ? p.moodH : MOOD_H_DEFAULT
       };
     })(),
@@ -5944,7 +5684,7 @@ async function initApp() {
   const hadAnchors = anchors().length;
   seedAnchorsIfEmpty();
   if (!hadAnchors && anchors().length) scheduleSave();
-  // Local prefs win; cloud layoutPrefs only fill gaps (new browser / cleared storage).
+  // Local Ideas height wins; cloud layoutPrefs only fill gaps (new browser / cleared storage).
   resolveLayoutPrefs(DATA);
   renderBoard();
   applyMoodHeight(marketingMoodH);
@@ -5968,7 +5708,7 @@ async function refreshData(opts) {
         DATA = normalizeLoaded(remote);
         marketingLocalDirty = false;
         seedAnchorsIfEmpty();
-        // Keep personal split/Ideas height — don't let a cloud refresh reset layout.
+        // Keep personal Ideas height — don't let a cloud refresh reset layout.
         resolveLayoutPrefs(DATA);
         renderBoard();
         applyMoodHeight(marketingMoodH);
@@ -6082,11 +5822,8 @@ function readImageFile(file) {
         canvas.width = w;
         canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        const mime = (file && file.type && file.type.startsWith('image/')) ? file.type : 'image/jpeg';
-        // Prefer JPEG for size; PNG only when the source is PNG and stays small enough.
-        const imageData = (mime === 'image/png')
-          ? canvas.toDataURL('image/jpeg', IMAGE_JPEG_QUALITY)
-          : canvas.toDataURL('image/jpeg', IMAGE_JPEG_QUALITY);
+        // Compress to JPEG before R2 upload (or inline fallback if upload fails).
+        const imageData = canvas.toDataURL('image/jpeg', IMAGE_JPEG_QUALITY);
         resolve({
           imageData,
           imageW: w,
@@ -6101,10 +5838,20 @@ function readImageFile(file) {
   });
 }
 
+async function processImageFile(file) {
+  const result = await readImageFile(file);
+  try {
+    result.imageData = await uploadMarketingMedia(result.imageData);
+  } catch (err) {
+    console.warn('R2 upload failed, keeping inline preview:', err);
+  }
+  return result;
+}
+
 async function applyImageToIdea(ideaId, file) {
   if (!file || !file.type.startsWith('image/')) return;
   try {
-    const result = await readImageFile(file);
+    const result = await processImageFile(file);
     const idea = DATA.ideas.find(i => i.id === ideaId);
     if (idea) {
       idea.imageData = result.imageData;
@@ -6202,7 +5949,7 @@ function renderIdeaCard(idea, cardSize) {
       well.style.height = desiredH + 'px';
     }
     const img = document.createElement('img');
-    img.src = idea.imageData;
+    img.src = mediaSrc(idea.imageData);
     img.alt = '';
     img.draggable = false;
     img.addEventListener('dragstart', e => e.preventDefault());
@@ -6636,7 +6383,7 @@ function sendExecToReview(id) {
 }
 
 function isEmptyNeedSlot(card) {
-  // Drive link / preview / note count as filled — Discover pins often have no caption.
+  // Shared link / preview / note count as filled — Discover pins often have no caption.
   return !!(card && !scheduleSlotHasContent(card));
 }
 
@@ -6741,7 +6488,6 @@ function sendReviewToSchedule(id) {
     if (!confirm('No schedule date set — send to Calendar anyway?')) return;
   }
   DATA.sections.review = reviewCards().filter(c => c.id !== id);
-  const hasBody = !!stripHtml(card.body || '').trim();
   const payload = migrateSchedule({
     ...card,
     id: newScheduleId(),
@@ -6756,7 +6502,7 @@ function sendReviewToSchedule(id) {
     reviewMediaW: card.reviewMediaW || null,
     reviewMediaH: card.reviewMediaH || null,
     reviewVideoUrl: card.reviewVideoUrl || '',
-    needContent: !hasBody,
+    needContent: !scheduleSlotHasContent(card),
     publishStatus: 'scheduled',
     assignee: card.assignee || '',
     movedToScheduleAt: new Date().toISOString()
@@ -6830,7 +6576,7 @@ function renderPrepCard(card) {
   thumb.className = 'prep-card-thumb' + (card.imageData ? '' : ' empty');
   if (card.imageData) {
     const img = document.createElement('img');
-    img.src = card.imageData;
+    img.src = mediaSrc(card.imageData);
     img.alt = '';
     thumb.appendChild(img);
     el.appendChild(thumb);
@@ -7348,7 +7094,6 @@ function renderScheduleBody() {
   nav.appendChild(title);
   nav.appendChild(btns);
   body.appendChild(nav);
-  body.appendChild(buildTodayStrip());
   body.appendChild(buildEventsBar());
 
   const dow = document.createElement('div');
@@ -7900,46 +7645,6 @@ function marketingActionCounts() {
   });
   const needs = scheduleCards().filter(isActionableNeed);
   return { makes, posts, needs, todayKey, today };
-}
-
-function buildTodayStrip() {
-  const strip = document.createElement('div');
-  strip.className = 'cal-today-strip';
-  const label = document.createElement('span');
-  label.className = 'cal-today-strip-label';
-  label.textContent = 'Today';
-  strip.appendChild(label);
-
-  const { makes, posts, needs, today } = marketingActionCounts();
-
-  function chip(kind, count, text, onClick) {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'cal-today-chip cal-today-chip--' + kind + (count ? '' : ' is-zero');
-    const n = document.createElement('span');
-    n.className = 'cal-today-chip-count';
-    n.textContent = String(count);
-    btn.appendChild(n);
-    const lab = document.createElement('span');
-    lab.textContent = text;
-    btn.appendChild(lab);
-    if (count && onClick) btn.addEventListener('click', e => { e.stopPropagation(); onClick(); });
-    strip.appendChild(btn);
-  }
-
-  chip('make', makes.length, makes.length === 1 ? 'Make today' : 'Makes today', () => {
-    jumpScheduleToDate(today);
-    if (makes[0]) openSchedulePanel(makes[0].id);
-  });
-  chip('post', posts.length, posts.length === 1 ? 'Post today' : 'Posts today', () => {
-    jumpScheduleToDate(today);
-    if (posts[0]) openSchedulePanel(posts[0].id);
-  });
-  chip('need', needs.length, needs.length === 1 ? 'Need due' : 'Needs due', () => {
-    focusActionableNeeds(needs);
-  });
-
-  return strip;
 }
 
 /** Jump to the nearest actionable Need on the calendar — do not open a panel. */
@@ -10484,7 +10189,7 @@ function renderExecCard(card) {
   thumb.className = 'exec-card-thumb' + (card.imageData ? '' : ' empty');
   if (card.imageData) {
     const img = document.createElement('img');
-    img.src = card.imageData;
+    img.src = mediaSrc(card.imageData);
     img.alt = '';
     thumb.appendChild(img);
   } else {
@@ -10610,14 +10315,9 @@ function renderBoard() {
     else pipePane.appendChild(wrap);
   });
 
-  const gutter = document.createElement('div');
-  gutter.className = 'board-split-gutter';
-  bindSplitGutter(gutter);
-
   board.appendChild(calPane);
-  board.appendChild(gutter);
   board.appendChild(pipePane);
-  // Re-apply after remount — Split keeps saved width; Calendar/Pipeline stay full-bleed.
+  // Re-apply after remount so Calendar/Pipeline-only modes still hide the other pane.
   applyBoardViewMode();
   applyMoodHeight(marketingMoodH);
 }
@@ -10731,7 +10431,7 @@ function setPanelImage(imageData) {
   const imgWrap = document.getElementById('pImageWrap');
   const imgEl = document.getElementById('pImage');
   if (imageData) {
-    imgEl.src = imageData;
+    imgEl.src = mediaSrc(imageData);
     imgWrap.classList.remove('empty');
   } else {
     imgEl.removeAttribute('src');
@@ -11127,7 +10827,7 @@ function fillReviewInspo(card) {
   thumb.innerHTML = '';
   if (card.imageData) {
     const img = document.createElement('img');
-    img.src = card.imageData;
+    img.src = mediaSrc(card.imageData);
     img.alt = '';
     thumb.appendChild(img);
   } else {
@@ -11236,7 +10936,7 @@ function setReviewMediaUI(imageData) {
   const img = document.getElementById('pReviewMediaImg');
   const empty = document.getElementById('pReviewMediaEmpty');
   if (imageData) {
-    img.src = imageData;
+    img.src = mediaSrc(imageData);
     img.style.display = 'block';
     empty.style.display = 'none';
     well.classList.add('has-image');
@@ -11258,7 +10958,7 @@ function applyReviewMediaResult(result) {
 async function applyImageToReviewMedia(file) {
   if (!file || !file.type.startsWith('image/')) return;
   try {
-    const result = await readImageFile(file);
+    const result = await processImageFile(file);
     applyReviewMediaResult(result);
   } catch (err) {
     console.warn('Review media load failed:', err);
@@ -11630,7 +11330,7 @@ function renderIdeaFillPicker(needCard) {
     thumb.className = 'idea-fill-item-thumb';
     if (idea.imageData) {
       const img = document.createElement('img');
-      img.src = idea.imageData;
+      img.src = mediaSrc(idea.imageData);
       img.alt = '';
       thumb.appendChild(img);
     }
@@ -11940,7 +11640,7 @@ function savePanel(silent) {
     }
     card.pillar = pillar;
     card.format = format;
-    // Always read Drive/video URL before computing need/status.
+    // Always read the shared link field before computing need/status.
     card.reviewVideoUrl = (document.getElementById('pScheduleVideoUrl').value || '').trim();
     if (isDiscoverFormat(format)) {
       const noteEl = document.getElementById('pScheduleNote');
@@ -12111,7 +11811,7 @@ async function applyImageToScheduleDiscover(file) {
   if (panelMode !== 'schedule' || !activeScheduleId) return;
   const card = scheduleCards().find(c => c.id === activeScheduleId);
   if (!card || !isDiscoverCard(card)) return;
-  const result = await readImageFile(file);
+  const result = await processImageFile(file);
   if (!result) return;
   card.imageData = result.imageData;
   card.imageW = result.imageW;

@@ -5,6 +5,50 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-04 — Deploy Marketing 0.12.7 + R2 live (Cursor)
+
+### Live
+- Version ID: `be558d6d-2f8e-4b59-a6a2-168d3b62d30c` — Marketing **`0.12.7`**
+- Hard-refresh https://ppc-homebase.pressplaycollective.workers.dev/marketing
+
+### What shipped
+- **0.12.6 cleanup**: Split view removed; Today/Needs strip removed (7-day Need
+  logic + digest toast kept); Review→Schedule media Need fix; Home `Marketing`
+  label; Planner shared date picker.
+- **0.12.7 R2**: `POST/GET /api/marketing/media` now stores new Marketing image
+  uploads in R2 bucket `ppc-homebase-media` via `MEDIA_BUCKET`, and saves
+  `/api/marketing/media/...` URLs on the board instead of fresh base64 payloads.
+- Existing base64 images still render, so old cards do not need migration
+  before the board remains usable.
+
+---
+
+## 2026-08-04 — Marketing cleanup pass (Cursor)
+
+### What
+- Marketing **`0.12.6`** (local preview — not deployed): removed **Split** view
+  and the visible Today/Needs strip; kept the 7-day Need model and reminder
+  toast. Also fixed media/link Need detection, aligned Home’s Marketing label,
+  and moved Planner’s panel date onto the shared picker.
+
+### Note
+- R2 is still **not** implemented; Marketing images still live in KV/local
+  board payloads. Interim rule remains: prefer Drive links over heavy dropped
+  photos.
+
+---
+
+## 2026-08-04 — Local preview backup from live (Cursor)
+
+### Backup
+- Pulled live `/api/marketing` → `_backup-marketing-live.json` (rev **278**)
+- Seeded local `:8787` with `?force=1` (local rev **30** after write)
+- Board: **73** schedule, **22** ideas, anchors: Ode to Sirens, Fremantle Design
+  Week, Exploration In Denim, World Building
+- Summary: `_backup-summary.json` (untracked)
+
+---
+
 ## 2026-08-04 — Deploy Marketing 0.12.5 (Cursor)
 
 ### Live

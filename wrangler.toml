@@ -6,5 +6,9 @@ kv_namespaces = [
   { binding = "PLANNER_KV", id = "2f3dc18365c2477595cc76e4f3303746" }
 ]
 
+[[r2_buckets]]
+binding = "MEDIA_BUCKET"
+bucket_name = "ppc-homebase-media"
+
 [assets]
 directory = "./public"

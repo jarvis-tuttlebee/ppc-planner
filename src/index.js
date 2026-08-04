@@ -89,6 +89,27 @@ function stripHeavyMedia(value) {
   return out;
 }
 
+const MEDIA_PREFIX = '/api/marketing/media/';
+const MEDIA_R2_PREFIX = 'marketing/';
+
+function parseDataUrl(dataUrl) {
+  if (typeof dataUrl !== 'string') return null;
+  const m = dataUrl.match(/^data:([^;]+);base64,(.+)$/);
+  if (!m) return null;
+  const contentType = m[1] || 'image/jpeg';
+  const raw = m[2].replace(/\s/g, '');
+  const binary = atob(raw);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return { contentType, bytes };
+}
+
+function mediaObjectKey(name) {
+  const safe = String(name || '').replace(/[^a-zA-Z0-9._-]/g, '');
+  if (!safe || safe.includes('..')) return null;
+  return MEDIA_R2_PREFIX + safe;
+}
+
 /** One-shot: delete legacy fat snapshot bag without parsing it (can be 100MB+). */
 async function ensureSnapshotsMigrated(env) {
   const done = await env.PLANNER_KV.get(MARKETING_SNAP_MIGRATED_KEY);
@@ -154,6 +175,52 @@ export default {
     const url = new URL(request.url);
 
     if (request.method === 'OPTIONS') return new Response(null, { headers: cors });
+
+    /* Marketing image upload (R2). Body: { data: "data:image/jpeg;base64,..." } */
+    if (url.pathname === '/api/marketing/media' && request.method === 'POST') {
+      if (!env.MEDIA_BUCKET) {
+        return new Response(JSON.stringify({ error: 'media storage unavailable' }), {
+          status: 503, headers: { ...cors, 'Content-Type': 'application/json' }
+        });
+      }
+      let body = {};
+      try { body = await request.json(); } catch (e) {}
+      const parsed = parseDataUrl(body && body.data);
+      if (!parsed || parsed.bytes.length < 16 || parsed.bytes.length > 6 * 1024 * 1024) {
+        return new Response(JSON.stringify({ error: 'invalid or oversized image payload' }), {
+          status: 400, headers: { ...cors, 'Content-Type': 'application/json' }
+        });
+      }
+      const ext = parsed.contentType.includes('png') ? 'png'
+        : parsed.contentType.includes('webp') ? 'webp'
+        : 'jpg';
+      const key = MEDIA_R2_PREFIX + crypto.randomUUID() + '.' + ext;
+      await env.MEDIA_BUCKET.put(key, parsed.bytes, {
+        httpMetadata: { contentType: parsed.contentType }
+      });
+      const mediaUrl = MEDIA_PREFIX + key.slice(MEDIA_R2_PREFIX.length);
+      return new Response(JSON.stringify({ ok: true, url: mediaUrl, key }), {
+        headers: { ...cors, 'Content-Type': 'application/json' }
+      });
+    }
+
+    /* Serve marketing images from R2. */
+    if (url.pathname.startsWith(MEDIA_PREFIX) && request.method === 'GET') {
+      if (!env.MEDIA_BUCKET) return new Response('Not found', { status: 404, headers: cors });
+      const name = decodeURIComponent(url.pathname.slice(MEDIA_PREFIX.length));
+      const key = mediaObjectKey(name);
+      if (!key) return new Response('Bad request', { status: 400, headers: cors });
+      const obj = await env.MEDIA_BUCKET.get(key);
+      if (!obj) return new Response('Not found', { status: 404, headers: cors });
+      const headers = {
+        ...cors,
+        'Content-Type': obj.httpMetadata && obj.httpMetadata.contentType
+          ? obj.httpMetadata.contentType
+          : 'image/jpeg',
+        'Cache-Control': 'public, max-age=31536000, immutable'
+      };
+      return new Response(obj.body, { headers });
+    }
 
     /* List marketing board snapshots (metadata only). */
     if (url.pathname === '/api/marketing/snapshots') {

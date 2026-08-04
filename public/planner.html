@@ -2933,8 +2933,22 @@ function initPanelSelects() {
   });
   replaceNativeSelect(document.getElementById('pProject'), { bare: true, colored: false });
   replaceNativeSelect(document.getElementById('pWeek'), { bare: true, colored: false });
+  if (typeof replaceNativeDate === 'function') {
+    replaceNativeDate(document.getElementById('pExactDate'), { placeholder: 'Planner date' });
+  }
+  const exactDate = document.getElementById('pExactDate');
+  if (exactDate && exactDate.dataset.boundChange !== '1') {
+    exactDate.dataset.boundChange = '1';
+    exactDate.addEventListener('change', onExactDateChange);
+  }
 }
 initPanelSelects();
+
+function setPlannerExactDate(iso) {
+  if (typeof setPpcDateValue === 'function' && setPpcDateValue('pExactDate', iso || '')) return;
+  const el = document.getElementById('pExactDate');
+  if (el) el.value = iso || '';
+}
 
 function onPanelCatChange() {
   const id = (document.getElementById('pCat') || {}).value;
@@ -3055,7 +3069,7 @@ function openNewEventPanel(cat, monthIdx, weekNum, dayKey = null) {
   document.getElementById('pDate').value = MONTHS[monthIdx];
   fillWeekSelect(monthIdx, activeNewWeek);
   document.getElementById('pDay').value = dayKey || '';
-  document.getElementById('pExactDate').value = '';
+  setPlannerExactDate('');
   fillProjectSelect('');
   document.getElementById('pDesc').textContent = '';
   renderSubtasks([]);
@@ -3096,7 +3110,7 @@ function onExactDateChange() {
   const slot = dateToPlannerSlot(iso);
   if (!slot) {
     alert('That date sits outside the planner year (Jul 2026 – Jun 2027).');
-    document.getElementById('pExactDate').value = activeEvt && activeEvt.dueDate ? activeEvt.dueDate : '';
+    setPlannerExactDate(activeEvt && activeEvt.dueDate ? activeEvt.dueDate : '');
     return;
   }
   document.getElementById('pDate').value = MONTHS[slot.m];
@@ -3104,7 +3118,7 @@ function onExactDateChange() {
   document.getElementById('pDay').value = slot.day || '';
 }
 function clearExactDate() {
-  document.getElementById('pExactDate').value = '';
+  setPlannerExactDate('');
 }
 
 function openPanel(evt, cat) {
@@ -3120,7 +3134,7 @@ function openPanel(evt, cat) {
   document.getElementById('pDate').value = evt.date || '';
   fillWeekSelect(evt.m, evt.week);
   document.getElementById('pDay').value = evt.day || '';
-  document.getElementById('pExactDate').value = evt.dueDate || '';
+  setPlannerExactDate(evt.dueDate || '');
   fillProjectSelect(evt.project || '');
   document.getElementById('pDesc').textContent = evt.body || '';
   renderSubtasks(evt.tasks || []);
