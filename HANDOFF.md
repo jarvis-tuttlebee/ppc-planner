@@ -5,6 +5,90 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-04 — Deploy Marketing 0.12.4 (Cursor)
+
+### Live
+- Version ID: `2b3f8ead-cc40-4b2c-8f1e-451e5d5561ea` — Marketing **`0.12.4`**
+- Hard-refresh https://ppc-homebase.pressplaycollective.workers.dev/marketing
+
+### What shipped
+- Need model (chip ≤7d / unscheduled); Today strip; Hide posted (week);
+  prep “Remind me 2 days before”; digest toast; no planned-collapse;
+  Needs due jumps without opening a panel.
+
+---
+
+## 2026-08-04 — Drop planned collapse (Cursor)
+
+### What
+- Marketing **`0.12.4`** (local): removed “N planned · expand” — all planned
+  slots stay visible. Need chip still ≤7 days / unscheduled only.
+
+---
+
+## 2026-08-04 — Ease pack tweaks (Cursor)
+
+### What
+- Marketing **`0.12.3`** (local): Needs due jumps + flashes nearest Need (no
+  panel); planned slots full-strength again (no fade); collapse row styled like
+  Homebase card-pill. Need chip still only ≤7 days / unscheduled.
+
+### Open / next
+1. Soak on `:8787`; deploy when asked.
+
+---
+
+## 2026-08-04 — Need model + busy-ease pack (Cursor)
+
+### What
+- Marketing **`0.12.2`** (local preview — not deployed): quiet Need until ≤7 days
+  (or unscheduled); collapse far placeholders; Today strip; Hide posted (week);
+  “Remind me 2 days before”; once-per-session digest toast.
+- Pipeline smoke (local): Ideas→Prep→Exec→Review→Schedule functions OK;
+  consumes idea; fills empty Need; UI still uses armed Save per stage.
+  Local board idea count may be 21 after smoke (one idea consumed).
+
+### Open / next
+1. Soak on `:8787` — confirm quiet/collapse/Today/Hide posted/prep checkbox.
+2. Deploy when asked.
+3. Next pass: one-tap fill, Ideas→Need, soft-pedal Pipeline, R2.
+
+---
+
+## 2026-08-04 — Marketing system review (Cursor)
+
+### What
+- Live **0.12.1** walkthrough (Split / Calendar month / Pipeline / schedule
+  panel / Ideas). No code deploy.
+- Board reality: ~85 schedule (mostly empty Needs), 22 ideas, pipeline Prep/
+  Exec empty, Make prep-by on 2 cards. Full write-up in chat.
+
+### Open / next
+1. If pursuing ease-for-busy: Today/Make digest + collapse empty Needs first.
+
+---
+
+## 2026-08-04 — End of day (Cursor)
+
+### Live
+- https://ppc-homebase.pressplaycollective.workers.dev — Marketing **`0.12.1`**
+  (Version ID `2da01139-1e4e-4fc3-8bd1-47331493dc86`)
+- Branch `cursor/cloud-agent-1785725967651-xf056` pushed (`66da06e`)
+
+### Shipped today
+- Prep-by (manual only) + sage **Make** band (drag / clear, not a second card)
+- Prep date picker outlines publish day; Prep above Publish in panel
+- Schedule panel trust pass: Status/Assignee/dates/Link first; sticky Save;
+  Post details / Campaign / Pipeline notes collapsed; Pipeline notes editable
+- Earlier: Discover event delete (`0.11.87`), Link label, Tags chips
+
+### Open / next
+1. Team soak on Make band + panel layout; tweak if friction remains
+2. Optional: Settings UI for snapshot restore; R2 for images
+3. Leave local dumps / conflict HTML untracked (do not commit)
+
+---
+
 ## 2026-08-04 — Deploy schedule panel UX (Cursor)
 
 ### Live

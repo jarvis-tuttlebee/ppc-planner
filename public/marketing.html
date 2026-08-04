@@ -2029,6 +2029,78 @@
     .cal-slot--need .cal-slot-title {
       font-weight: 600;
     }
+    /* Far-future empties stay full-strength (volume visible); only skip Need chip. */
+    .cal-slot--flash {
+      outline: 2px solid #8a6a1a;
+      outline-offset: 1px;
+      animation: calSlotFlash 1.4s ease;
+    }
+    @keyframes calSlotFlash {
+      0%, 100% { outline-color: #8a6a1a; }
+      50% { outline-color: transparent; }
+    }
+    .cal-today-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      margin: 0 0 10px;
+      padding: 8px 10px;
+      background: #F3F1EC;
+      border: 1px solid #E2DDD5;
+      border-radius: 8px;
+    }
+    .cal-today-strip-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #9a958d;
+      margin-right: 2px;
+    }
+    .cal-today-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border: 1px solid #E2DDD5;
+      background: #fff;
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 11px;
+      color: #2C2C2C;
+      cursor: pointer;
+    }
+    .cal-today-chip:hover { border-color: #2C2C2C; }
+    .cal-today-chip.is-zero {
+      opacity: 0.55;
+      cursor: default;
+    }
+    .cal-today-chip-count {
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .cal-today-chip--make .cal-today-chip-count { color: #4E6E6C; }
+    .cal-today-chip--post .cal-today-chip-count { color: #5B6B8C; }
+    .cal-today-chip--need .cal-today-chip-count { color: #8a6a1a; }
+    .cal-nav-btn.is-toggled {
+      border-color: #2C2C2C;
+      color: #2C2C2C;
+      background: #EFECE6;
+    }
+    .prep-remind-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+      font-size: 12px;
+      color: #5c574f;
+      cursor: pointer;
+      user-select: none;
+    }
+    .prep-remind-row input {
+      margin: 0;
+      accent-color: #4E6E6C;
+    }
     .cal-slot--need-empty {
       padding: 4px 18px 4px 6px;
       border: 1px solid #E2DDD5;
@@ -3267,6 +3339,10 @@
             <div class="panel-section-label">Prep by</div>
             <div class="panel-field-hint">Optional make-by reminder.</div>
             <input class="prop-select" id="pSchedulePrepBy" type="date" style="margin-top:2px">
+            <label class="prep-remind-row" id="pSchedulePrepRemindRow" for="pSchedulePrepRemind">
+              <input type="checkbox" id="pSchedulePrepRemind">
+              <span>Remind me 2 days before</span>
+            </label>
             <div class="panel-section-label">Publish date</div>
             <input class="prop-select" id="pScheduleEditAt" type="datetime-local" style="margin-top:2px">
             <div class="panel-section-label" id="pScheduleDriveLabel">Link</div>
@@ -3425,7 +3501,7 @@
 <script>
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
-const APP_VERSION = '0.12.1';
+const APP_VERSION = '0.12.4';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 let marketingHydrated = false;
 let marketingRev = 0;
@@ -3446,6 +3522,9 @@ const SPLIT_PCT_KEY = 'ppc-marketing-split-pct';
 const MOOD_H_KEY = 'ppc-marketing-mood-h';
 const EARLIER_WEEKS_KEY = 'ppc-marketing-earlier-weeks';
 const CAL_RANGE_KEY = 'ppc-marketing-cal-range';
+const HIDE_POSTED_KEY = 'ppc-marketing-hide-posted';
+/** Empty slots yell Need only within this many days of publish (or if unscheduled). */
+const NEED_ACTION_DAYS = 7;
 const SPLIT_PCT_DEFAULT = 36;
 const SPLIT_PCT_MIN = 22;
 const SPLIT_PCT_MAX = 68;
@@ -4540,6 +4619,10 @@ let scheduleCalRange = (() => {
     const v = localStorage.getItem(CAL_RANGE_KEY);
     return v === 'month' ? 'month' : 'week';
   } catch (_) { return 'week'; }
+})();
+let hidePostedWeek = (() => {
+  try { return localStorage.getItem(HIDE_POSTED_KEY) === '1'; }
+  catch (_) { return false; }
 })();
 let unscheduledQueueOpen = true;
 let activeAnchorPanelId = null;
@@ -5767,6 +5850,7 @@ async function initApp() {
   resolveLayoutPrefs(DATA);
   renderBoard();
   applyMoodHeight(marketingMoodH);
+  maybeShowMarketingDigest();
 }
 
 async function refreshData(opts) {
@@ -6458,6 +6542,50 @@ function isEmptyNeedSlot(card) {
   return !!(card && !scheduleSlotHasContent(card));
 }
 
+function todayDateOnly() {
+  const n = new Date();
+  return new Date(n.getFullYear(), n.getMonth(), n.getDate());
+}
+
+function publishDateOnly(card) {
+  if (!card || !card.scheduledAt) return null;
+  const d = new Date(card.scheduledAt);
+  if (Number.isNaN(d.getTime())) return null;
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
+/** Days from today to publish date; null if unscheduled. */
+function daysUntilPublish(card) {
+  const pub = publishDateOnly(card);
+  if (!pub) return null;
+  return Math.round((pub.getTime() - todayDateOnly().getTime()) / 86400000);
+}
+
+/**
+ * Empty slot that should surface as an actionable Need:
+ * unscheduled, or publish date within NEED_ACTION_DAYS (incl. overdue).
+ * Far-future empties stay quiet placeholders (data still publishStatus need).
+ */
+function isActionableNeed(card) {
+  if (!isEmptyNeedSlot(card)) return false;
+  const days = daysUntilPublish(card);
+  if (days == null) return true;
+  return days <= NEED_ACTION_DAYS;
+}
+
+function isQuietPlaceholder(card) {
+  return isEmptyNeedSlot(card) && !isActionableNeed(card);
+}
+
+function prepDateTwoDaysBeforePublish(publishLocal) {
+  const raw = String(publishLocal || '').trim();
+  if (!raw) return '';
+  const d = new Date(raw);
+  if (Number.isNaN(d.getTime())) return '';
+  d.setDate(d.getDate() - 2);
+  return dateKey(d);
+}
+
 function scheduleDayKey(iso) {
   if (!iso) return '';
   const d = new Date(iso);
@@ -7102,12 +7230,27 @@ function renderScheduleBody() {
     jumpScheduleToDate(new Date());
   });
   btns.appendChild(rangeToggle);
+  if (scheduleCalRange === 'week') {
+    const hidePostedBtn = document.createElement('button');
+    hidePostedBtn.type = 'button';
+    hidePostedBtn.className = 'cal-nav-btn' + (hidePostedWeek ? ' is-toggled' : '');
+    hidePostedBtn.textContent = hidePostedWeek ? 'Show posted' : 'Hide posted';
+    hidePostedBtn.title = 'Hide Posted cards in week view';
+    hidePostedBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      hidePostedWeek = !hidePostedWeek;
+      try { localStorage.setItem(HIDE_POSTED_KEY, hidePostedWeek ? '1' : '0'); } catch (_) {}
+      renderBoard();
+    });
+    btns.appendChild(hidePostedBtn);
+  }
   btns.appendChild(prev);
   btns.appendChild(todayBtn);
   btns.appendChild(next);
   nav.appendChild(title);
   nav.appendChild(btns);
   body.appendChild(nav);
+  body.appendChild(buildTodayStrip());
   body.appendChild(buildEventsBar());
 
   const dow = document.createElement('div');
@@ -7585,9 +7728,10 @@ function buildMarketingDayCell(cell, cardsByDay, leadUpByDay, prepByDay, today) 
     if (!dragCalPrepId) return;
     acceptDayDrop(e);
   });
-  dayCards.forEach(card => {
-    dayBody.appendChild(renderCalSlot(card));
-  });
+  const visibleDayCards = (scheduleCalRange === 'week' && hidePostedWeek)
+    ? dayCards.filter(c => publishStatusOf(c) !== 'posted')
+    : dayCards;
+  visibleDayCards.forEach(card => dayBody.appendChild(renderCalSlot(card)));
   const addBtn = document.createElement('button');
   addBtn.type = 'button';
   addBtn.className = 'cal-add-btn';
@@ -7642,6 +7786,109 @@ function collectPrepByDay() {
     map.get(pb).push(card);
   });
   return map;
+}
+
+function marketingActionCounts() {
+  const today = todayDateOnly();
+  const todayKey = dateKey(today);
+  const makes = scheduleCards().filter(c => {
+    if (publishStatusOf(c) === 'posted') return false;
+    return prepByOf(c) === todayKey;
+  });
+  const posts = scheduleCards().filter(c => {
+    if (publishStatusOf(c) === 'posted') return false;
+    const pub = publishDateOnly(c);
+    return !!(pub && isSameCalendarDay(pub, today));
+  });
+  const needs = scheduleCards().filter(isActionableNeed);
+  return { makes, posts, needs, todayKey, today };
+}
+
+function buildTodayStrip() {
+  const strip = document.createElement('div');
+  strip.className = 'cal-today-strip';
+  const label = document.createElement('span');
+  label.className = 'cal-today-strip-label';
+  label.textContent = 'Today';
+  strip.appendChild(label);
+
+  const { makes, posts, needs, today } = marketingActionCounts();
+
+  function chip(kind, count, text, onClick) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'cal-today-chip cal-today-chip--' + kind + (count ? '' : ' is-zero');
+    const n = document.createElement('span');
+    n.className = 'cal-today-chip-count';
+    n.textContent = String(count);
+    btn.appendChild(n);
+    const lab = document.createElement('span');
+    lab.textContent = text;
+    btn.appendChild(lab);
+    if (count && onClick) btn.addEventListener('click', e => { e.stopPropagation(); onClick(); });
+    strip.appendChild(btn);
+  }
+
+  chip('make', makes.length, makes.length === 1 ? 'Make today' : 'Makes today', () => {
+    jumpScheduleToDate(today);
+    if (makes[0]) openSchedulePanel(makes[0].id);
+  });
+  chip('post', posts.length, posts.length === 1 ? 'Post today' : 'Posts today', () => {
+    jumpScheduleToDate(today);
+    if (posts[0]) openSchedulePanel(posts[0].id);
+  });
+  chip('need', needs.length, needs.length === 1 ? 'Need due' : 'Needs due', () => {
+    focusActionableNeeds(needs);
+  });
+
+  return strip;
+}
+
+/** Jump to the nearest actionable Need on the calendar — do not open a panel. */
+function focusActionableNeeds(needsList) {
+  const needs = Array.isArray(needsList) ? needsList : marketingActionCounts().needs;
+  if (!needs.length) return;
+  const dated = needs
+    .filter(c => c.scheduledAt)
+    .slice()
+    .sort((a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt));
+  const first = dated[0] || needs[0];
+  if (first && first.scheduledAt) {
+    jumpScheduleToDate(new Date(first.scheduledAt));
+  } else {
+    unscheduledQueueOpen = true;
+    renderBoard();
+  }
+  requestAnimationFrame(() => {
+    const target = first
+      ? document.querySelector('.cal-slot[data-schedule-id="' + first.id + '"]')
+      : document.querySelector('.cal-unscheduled');
+    if (target) {
+      if (target.classList.contains('cal-slot')) target.classList.add('cal-slot--flash');
+      target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      if (target.classList.contains('cal-slot')) {
+        setTimeout(() => target.classList.remove('cal-slot--flash'), 1600);
+      }
+    }
+  });
+  if (typeof PPC !== 'undefined' && PPC.showToast) {
+    PPC.showToast(needs.length + ' Need' + (needs.length === 1 ? '' : 's') + ' in the next ' + NEED_ACTION_DAYS + ' days');
+  }
+}
+
+function maybeShowMarketingDigest() {
+  try {
+    if (sessionStorage.getItem('ppc-marketing-digest-' + APP_VERSION)) return;
+  } catch (_) {}
+  const { makes, posts, needs } = marketingActionCounts();
+  if (!makes.length && !posts.length && !needs.length) return;
+  const parts = [];
+  if (makes.length) parts.push(makes.length + ' Make' + (makes.length === 1 ? '' : 's'));
+  if (posts.length) parts.push(posts.length + ' post' + (posts.length === 1 ? '' : 's') + ' today');
+  if (needs.length) parts.push(needs.length + ' Need' + (needs.length === 1 ? '' : 's') + ' in ' + NEED_ACTION_DAYS + ' days');
+  if (!parts.length) return;
+  try { sessionStorage.setItem('ppc-marketing-digest-' + APP_VERSION, '1'); } catch (_) {}
+  if (typeof PPC !== 'undefined' && PPC.showToast) PPC.showToast(parts.join(' · '));
 }
 
 function movePrepByToDate(scheduleId, dayDate) {
@@ -9810,11 +10057,15 @@ function needTypeDisplayLabel(card) {
 function renderCalSlot(card) {
   const el = document.createElement('div');
   const emptyNeed = isEmptyNeedSlot(card);
+  const quiet = emptyNeed && isQuietPlaceholder(card);
+  const actionable = emptyNeed && isActionableNeed(card);
   el.className = 'cal-slot' + (emptyNeed ? ' cal-slot--need cal-slot--need-empty' : '');
   el.dataset.scheduleId = card.id;
   el.draggable = true;
   el.title = emptyNeed
-    ? 'Click type to change · drag to move · × to remove'
+    ? (quiet
+      ? 'Planned for later · fill closer to the date · drag to move'
+      : 'Click type to change · drag to move · × to remove')
     : 'Drag to another day · click View details to open';
   const formatTone = formatColor(card.format, card.pillar);
   el.style.borderColor = '#E2DDD5';
@@ -9875,6 +10126,18 @@ function renderCalSlot(card) {
       }
       prepEl.title = 'Preparation day for this post';
       el.appendChild(prepEl);
+    }
+
+    if (actionable) {
+      const colour = PUBLISH_STATUS_COLORS.need || '#8a6a1a';
+      const flag = document.createElement('span');
+      flag.className = 'cal-slot-flag cal-slot-flag--need';
+      flag.style.color = colour;
+      flag.style.background = colour + '22';
+      flag.style.marginTop = '2px';
+      flag.innerHTML = '<span class="chip-dot" style="background:' + colour + '"></span>Need';
+      flag.title = 'Actionable within ' + NEED_ACTION_DAYS + ' days (or unscheduled)';
+      el.appendChild(flag);
     }
 
     const details = document.createElement('button');
@@ -11188,6 +11451,7 @@ function openSchedulePanel(scheduleId) {
     const prepEl = document.getElementById('pSchedulePrepBy');
     if (prepEl) prepEl.value = prepVal;
   }
+  syncSchedulePrepRemindUi();
   renderScheduleAssigneeSelect(card);
   const statusWrap = document.getElementById('pScheduleStatusWrap');
   statusWrap.innerHTML = '';
@@ -11265,6 +11529,67 @@ function initMarketingDateTimePickers() {
   }
 }
 initMarketingDateTimePickers();
+
+function syncSchedulePrepRemindUi() {
+  const cb = document.getElementById('pSchedulePrepRemind');
+  const row = document.getElementById('pSchedulePrepRemindRow');
+  if (!cb) return;
+  const pubEl = document.getElementById('pScheduleEditAt');
+  const prepEl = document.getElementById('pSchedulePrepBy');
+  const pub = pubEl ? String(pubEl.value || '') : '';
+  const expected = prepDateTwoDaysBeforePublish(pub);
+  const prep = prepEl ? String(prepEl.value || '').slice(0, 10) : '';
+  cb.checked = !!(expected && prep === expected);
+  if (row) row.style.opacity = pub ? '1' : '0.55';
+}
+
+function applySchedulePrepRemindFromCheckbox() {
+  const cb = document.getElementById('pSchedulePrepRemind');
+  if (!cb) return;
+  const pubEl = document.getElementById('pScheduleEditAt');
+  const pub = pubEl ? String(pubEl.value || '') : '';
+  if (cb.checked) {
+    const expected = prepDateTwoDaysBeforePublish(pub);
+    if (!expected) {
+      cb.checked = false;
+      if (typeof PPC !== 'undefined' && PPC.showToast) PPC.showToast('Set a publish date first');
+      return;
+    }
+    if (typeof setPpcDateValue === 'function') setPpcDateValue('pSchedulePrepBy', expected);
+    else {
+      const prepEl = document.getElementById('pSchedulePrepBy');
+      if (prepEl) prepEl.value = expected;
+    }
+  } else {
+    if (typeof setPpcDateValue === 'function') setPpcDateValue('pSchedulePrepBy', '');
+    else {
+      const prepEl = document.getElementById('pSchedulePrepBy');
+      if (prepEl) prepEl.value = '';
+    }
+  }
+  syncSchedulePrepRemindUi();
+}
+
+function wireSchedulePrepRemind() {
+  const cb = document.getElementById('pSchedulePrepRemind');
+  if (!cb || cb.dataset.wired === '1') return;
+  cb.dataset.wired = '1';
+  cb.addEventListener('change', () => applySchedulePrepRemindFromCheckbox());
+  ['pScheduleEditAt', 'pSchedulePrepBy'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el || el.dataset.prepRemindWired === '1') return;
+    el.dataset.prepRemindWired = '1';
+    el.addEventListener('change', () => {
+      if (id === 'pScheduleEditAt' && cb.checked) applySchedulePrepRemindFromCheckbox();
+      else syncSchedulePrepRemindUi();
+    });
+    el.addEventListener('input', () => {
+      if (id === 'pScheduleEditAt' && cb.checked) applySchedulePrepRemindFromCheckbox();
+      else syncSchedulePrepRemindUi();
+    });
+  });
+}
+wireSchedulePrepRemind();
 
 function savePanel(silent) {
   if (panelMode === 'idea' && activeIdeaId) {
