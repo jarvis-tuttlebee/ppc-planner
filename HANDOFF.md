@@ -5,6 +5,82 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-04 — EOD (Cursor)
+
+### Live now
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Marketing **`0.11.82`** — deployed from Mac (`/Users/jarvi/ppc-homebase`)
+- Board: ~65 schedule / 4 anchors / 22 ideas (rev **167**)
+- `customPillars`: empty (Photoshoot cleared again after an old tab re-saved it)
+
+### Shipped today
+- Calendar labels: 2-line clamp + slot label max 40 (less cutoff).
+- Multi-assignees on schedule cards (`assignees[]` + Task Board-style picker).
+- Photoshoot retired in code + stripped from live KV (close extra Marketing
+  tabs so it doesn’t get written back from stale local state).
+- Offline board dump + local-preview seed scripts (separate PR #2 /
+  `cursor/live-data-backup-95d6`): `npm run backup:pull` /
+  `backup:seed-local` / `dev:local`.
+
+### Branch / git
+- Working tip: `cursor/cal-labels-multi-assignee-95d6` (PR #3)
+- Backup tooling: `cursor/live-data-backup-95d6` (PR #2)
+- Mac clone now exists at `/Users/jarvi/ppc-homebase` (deploy works there via
+  wrangler). Windows PC still the original; pull both before more edits.
+
+### Open / next
+1. Hard-refresh `/marketing` (one tab only); confirm no Photoshoot in Need menu.
+2. Smoke multi-assignee on a filled calendar card.
+3. Optional: merge PRs #2/#3 when ready; re-run `npm run backup:pull` after
+   big board changes.
+4. Parked earlier: snapshot restore UI, Fill from Ideas, R2 for images,
+   Unassigned rollover.
+
+### Dev
+- Prefer `npx wrangler dev --port 8787 --local` for isolated preview (seeded
+  from `backups/`). `--remote` talks to live KV.
+- Deploy when asked: `npx wrangler deploy` (Mac or Windows clone).
+
+---
+
+## 2026-08-03 — Remove Photoshoot pillar (Cursor)
+
+### What was built or decided
+- Marketing **`0.11.82`**: `photoshoot` is a retired custom pillar — skipped on
+  parse/recover/create; leftover card refs migrate to Organic.
+- Live KV cleaned now: `customPillars` no longer includes Photoshoot (rev 159).
+  Hard-refresh Need content menu — Organic / Email / Ads / Website only.
+
+### Deployed
+- Live **data** updated (pillar list). Code deploy still needed for the
+  permanent retire guard: `npx wrangler deploy` when ready.
+
+### Branch
+- `cursor/cal-labels-multi-assignee-95d6`
+
+---
+
+## 2026-08-03 — Cal labels wrap + multi assignees (Cursor)
+
+### What was built or decided
+- Marketing **`0.11.81`**: Calendar card titles / meta / event labels use
+  2-line clamp (less cutoff on longer text). Slot label max 40 chars.
+- Schedule cards support **multiple assignees** (`assignees[]`, migrates
+  legacy `assignee` string). Panel uses Task Board-style multi-tick picker;
+  card footer shows `Name, Name` or `A, B +N`.
+
+### Deployed
+- No — ask before `wrangler deploy`.
+
+### Branch
+- `cursor/cal-labels-multi-assignee-95d6`
+
+### Open / next
+1. Hard-refresh `/marketing` after deploy; assign 2 people on a filled card.
+2. Confirm long Need type labels wrap to 2 lines instead of hard ellipsis.
+
+---
+
 ## 2026-08-03 — EOD (Cursor)
 
 ### Live
