@@ -5,6 +5,54 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-04 — Deployed 0.11.82 + Worker snapshot fix (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Version ID: `0ad46798-b138-41e7-8c99-a8537d72a564`
+- Marketing **`0.11.82`** + Worker light snapshots / legacy bag delete
+
+### Open / next
+1. Hard-refresh `/marketing` — confirm **v0.11.82**; create/save an event; leave tab and return.
+2. Delete Obsidian conflict asset `marketing (# Edit conflict…)`.html from `public/` when tidy.
+
+---
+
+## 2026-08-04 — Local preview backup before deploy (Cursor)
+
+### Backup
+- Pulled live KV `marketing` (bypassed Worker 503) → `_backup-marketing-live.json`
+- Seeded **local** PLANNER_KV; `wrangler dev` on `http://127.0.0.1:8787`
+- Board: rev **191**, **67** schedule, **22** ideas, anchors: Discover Flow,
+  Ode to Sirens, Fremantle Design Week, Exploration In Denim
+- Note: no “World Building” title in cloud KV (may be browser-local only)
+
+### Open / next
+1. Confirm local `/marketing` looks right, then deploy Worker + 0.11.82 when asked.
+
+---
+
+## 2026-08-04 — World Building “deleted” = sync race + Worker OOM (Cursor)
+
+### What actually happened
+- Ode/FDW stayed; new **World Building** vanished in-tab, then came back on
+  reopen. Not deleted — tab pulled older/failed cloud while localStorage kept it.
+- Live `/api/marketing` **503 / error 1102**: snapshot bag stored up to 48 full
+  boards with base64 images → Worker OOM.
+
+### Fix (local — **deploy needed**)
+- Worker: delete legacy fat `marketing-snapshots` without parsing; light
+  snapshots (media stripped, max 5, separate keys); reject saves that drop anchors.
+- Marketing **`0.11.82`**: dirty-guard + retry save on tab focus; sync-fail toast;
+  prefer local when cloud down / fewer anchors. (Also keeps 0.11.81 no-jump.)
+
+### Open / next
+1. **Deploy** then hard-refresh — API 200 + **v0.11.82**.
+2. Prefer Drive links over dropped photos (board still heavy).
+
+---
+
+
 ## 2026-08-03 — EOD (Cursor)
 
 ### Live

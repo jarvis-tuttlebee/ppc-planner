@@ -3193,12 +3193,14 @@
 <script>
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
-const APP_VERSION = '0.11.80';
+const APP_VERSION = '0.11.82';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 let marketingHydrated = false;
 let marketingRev = 0;
 let marketingSaveInFlight = null;
 let marketingSaveWanted = false;
+/** Bumped on local edits so a tab-return cloud refresh can't clobber unsaved work. */
+let marketingLocalDirty = false;
 
 /** Default local hour for new calendar publish stamps (5pm). */
 const DEFAULT_PUBLISH_HOUR = 17;
@@ -5064,6 +5066,7 @@ function typeLabel(id) {
 }
 
 function scheduleSave() {
+  marketingLocalDirty = true;
   clearTimeout(saveTimer);
   saveTimer = setTimeout(saveData, 400);
 }
@@ -5121,6 +5124,7 @@ function buildMarketingPayload() {
 
 function saveData() {
   if (!marketingHydrated) return;
+  marketingLocalDirty = true;
   marketingSaveWanted = true;
   if (marketingSaveInFlight) return;
   marketingSaveInFlight = runMarketingSaveLoop()
@@ -5157,6 +5161,7 @@ async function persistMarketingOnce() {
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); } catch (_) {}
       }
     } catch (_) {}
+    if (!marketingSaveWanted) marketingLocalDirty = false;
     return;
   }
   if (res.status !== 409) return;
@@ -5167,7 +5172,7 @@ async function persistMarketingOnce() {
   if (typeof PPC !== 'undefined' && PPC.showToast) {
     PPC.showToast('Cloud blocked a wipe — refreshing');
   }
-  if (typeof refreshData === 'function') await refreshData();
+  if (typeof refreshData === 'function') await refreshData({ force: true });
 }
 
 function normalizeLoaded(data) {
@@ -5473,13 +5478,19 @@ async function initApp() {
   applyMoodHeight(marketingMoodH);
 }
 
-async function refreshData() {
+async function refreshData(opts) {
+  const force = !!(opts && opts.force);
+  // Tab-return / background refresh must not replace cards still saving locally.
+  if (!force && (marketingLocalDirty || marketingSaveWanted || marketingSaveInFlight)) return;
   try {
     const res = await fetch(SYNC_URL);
     if (res.ok) {
       const remote = await res.json();
       if (remote && Array.isArray(remote.ideas)) {
+        const remoteRev = Number(remote._rev) || 0;
+        if (!force && remoteRev > 0 && remoteRev <= marketingRev) return;
         DATA = normalizeLoaded(remote);
+        marketingLocalDirty = false;
         seedAnchorsIfEmpty();
         // Keep personal split/Ideas height — don't let a cloud refresh reset layout.
         resolveLayoutPrefs(DATA);
@@ -8325,14 +8336,15 @@ async function saveAnchorPanel() {
     cleared = await clearLeadUpNeedSlots(anchor);
   }
 
+  marketingLocalDirty = true;
   clearTimeout(saveTimer);
   saveData();
   closeAnchorPanel();
   expandedSections.add('schedule');
   unscheduledQueueOpen = true;
-  const start = parseDateOnly(anchor.startDate);
-  if (start) jumpScheduleToDate(start);
-  else renderBoard();
+  // Stay on the week you were editing — jumping to the event date made it look
+  // like calendar cards vanished (they were just on another week).
+  renderBoard();
   if (created > 0 && cleared > 0) {
     PPC.showToast('Saved · ' + created + ' Need' + (created === 1 ? '' : 's') + ' in Unscheduled · ' + cleared + ' removed');
   } else if (created > 0) {
@@ -10949,13 +10961,14 @@ document.addEventListener('paste', async e => {
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState !== 'visible') return;
   if (document.getElementById('panel').classList.contains('open')) return;
+  // Soft pull only — never overwrite newer local edits (see refreshData guards).
   refreshData();
 });
 
 PPC.mountSettings({
-  onRefresh: async () => { await refreshData(); },
+  onRefresh: async () => { await refreshData({ force: true }); },
   onAfterRecover: async (entry) => {
-    if (entry && entry.source === 'marketing') await refreshData();
+    if (entry && entry.source === 'marketing') await refreshData({ force: true });
   },
   onSettingsOpen: (panel) => {
     const host = panel && panel.querySelector('#ppcSettingsExtra');

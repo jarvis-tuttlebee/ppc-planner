@@ -6,8 +6,12 @@ const KV_KEYS = {
 };
 
 const ARCHIVE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
-const MARKETING_SNAPSHOT_KEY = 'marketing-snapshots';
-const MARKETING_SNAPSHOT_MAX = 48;
+/** Legacy monolithic bag (full boards × N) — never JSON.parse; delete only. */
+const MARKETING_SNAPSHOT_LEGACY_KEY = 'marketing-snapshots';
+const MARKETING_SNAP_INDEX_KEY = 'marketing-snap-index';
+const MARKETING_SNAP_PREFIX = 'marketing-snap:';
+const MARKETING_SNAP_MIGRATED_KEY = 'marketing-snap-migrated-v2';
+const MARKETING_SNAPSHOT_MAX = 5;
 const MARKETING_SNAPSHOT_MIN_INTERVAL_MS = 15 * 60 * 1000;
 
 function purgeArchiveItems(items) {
@@ -64,14 +68,45 @@ function isCatastrophicMarketingOverwrite(prev, incoming) {
   if (prevAnchors >= 2 && nextAnchors === 0 && nextSched <= prevSched) return true;
   // Never drop filled content cards via a thinner/stale save
   if (prevFilled >= 1 && nextFilled < prevFilled) return true;
+  // Never drop events/cadences via a thinner concurrent save
+  if (prevAnchors >= 1 && nextAnchors < prevAnchors) return true;
   return false;
 }
 
-/** Keep recoverable copies of the previous marketing board before overwrite. */
+/** Drop base64 embeds so snapshots stay small enough for Worker memory. */
+function stripHeavyMedia(value) {
+  if (Array.isArray(value)) return value.map(stripHeavyMedia);
+  if (!value || typeof value !== 'object') return value;
+  const out = {};
+  for (const [k, v] of Object.entries(value)) {
+    if ((k === 'imageData' || k === 'reviewMedia') && typeof v === 'string' && v.startsWith('data:')) {
+      out[k] = null;
+      continue;
+    }
+    out[k] = stripHeavyMedia(v);
+  }
+  return out;
+}
+
+/** One-shot: delete legacy fat snapshot bag without parsing it (can be 100MB+). */
+async function ensureSnapshotsMigrated(env) {
+  const done = await env.PLANNER_KV.get(MARKETING_SNAP_MIGRATED_KEY);
+  if (done) return;
+  try { await env.PLANNER_KV.delete(MARKETING_SNAPSHOT_LEGACY_KEY); } catch (_) {}
+  await env.PLANNER_KV.put(MARKETING_SNAP_MIGRATED_KEY, '1');
+}
+
+async function readSnapIndex(env) {
+  const bag = (await env.PLANNER_KV.get(MARKETING_SNAP_INDEX_KEY, 'json')) || { items: [] };
+  if (!Array.isArray(bag.items)) bag.items = [];
+  return bag;
+}
+
+/** Keep recoverable lightweight copies of the previous marketing board. */
 async function maybeSnapshotMarketing(env, prev, incoming) {
   if (!prev || typeof prev !== 'object') return;
-  let bag = (await env.PLANNER_KV.get(MARKETING_SNAPSHOT_KEY, 'json')) || { items: [] };
-  if (!Array.isArray(bag.items)) bag.items = [];
+  await ensureSnapshotsMigrated(env);
+  const bag = await readSnapIndex(env);
   const last = bag.items[0];
   const age = last ? Date.now() - new Date(last.at).getTime() : Infinity;
   const prevSched = scheduleCount(prev);
@@ -80,16 +115,32 @@ async function maybeSnapshotMarketing(env, prev, incoming) {
   const nextAnchors = anchorCount(incoming);
   const bigDrop = nextSched < prevSched - 2 || nextAnchors < prevAnchors;
   if (!bigDrop && Number.isFinite(age) && age < MARKETING_SNAPSHOT_MIN_INTERVAL_MS) return;
+
+  const id = 'snap-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const light = stripHeavyMedia(prev);
+  await env.PLANNER_KV.put(MARKETING_SNAP_PREFIX + id, JSON.stringify(light));
+
   bag.items.unshift({
-    id: 'snap-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    id,
     at: new Date().toISOString(),
     scheduleCount: prevSched,
     anchorCount: prevAnchors,
-    ideaCount: ideaCount(prev),
-    data: prev
+    ideaCount: ideaCount(prev)
   });
+  const dropped = bag.items.slice(MARKETING_SNAPSHOT_MAX);
   bag.items = bag.items.slice(0, MARKETING_SNAPSHOT_MAX);
-  await env.PLANNER_KV.put(MARKETING_SNAPSHOT_KEY, JSON.stringify(bag));
+  await env.PLANNER_KV.put(MARKETING_SNAP_INDEX_KEY, JSON.stringify(bag));
+  for (const old of dropped) {
+    if (!old || !old.id) continue;
+    try { await env.PLANNER_KV.delete(MARKETING_SNAP_PREFIX + old.id); } catch (_) {}
+  }
+}
+
+async function loadSnapshotData(env, snapId) {
+  if (!snapId) return null;
+  const fromKey = await env.PLANNER_KV.get(MARKETING_SNAP_PREFIX + snapId, 'json');
+  if (fromKey) return fromKey;
+  return null;
 }
 
 export default {
@@ -106,8 +157,9 @@ export default {
     /* List marketing board snapshots (metadata only). */
     if (url.pathname === '/api/marketing/snapshots') {
       if (request.method !== 'GET') return new Response('Method not allowed', { status: 405, headers: cors });
-      const bag = (await env.PLANNER_KV.get(MARKETING_SNAPSHOT_KEY, 'json')) || { items: [] };
-      const items = (Array.isArray(bag.items) ? bag.items : []).map(s => ({
+      try { await ensureSnapshotsMigrated(env); } catch (_) {}
+      const bag = await readSnapIndex(env);
+      const items = bag.items.map(s => ({
         id: s.id,
         at: s.at,
         scheduleCount: s.scheduleCount,
@@ -119,28 +171,39 @@ export default {
       });
     }
 
+    /* Emergency: drop legacy fat snapshot bag without parsing. */
+    if (url.pathname === '/api/marketing/snapshots/purge') {
+      if (request.method !== 'POST') return new Response('Method not allowed', { status: 405, headers: cors });
+      try { await env.PLANNER_KV.delete(MARKETING_SNAPSHOT_LEGACY_KEY); } catch (_) {}
+      await env.PLANNER_KV.put(MARKETING_SNAP_MIGRATED_KEY, '1');
+      return new Response(JSON.stringify({ ok: true, purged: MARKETING_SNAPSHOT_LEGACY_KEY }), {
+        headers: { ...cors, 'Content-Type': 'application/json' }
+      });
+    }
+
     /* Restore a marketing snapshot over the live board (snapshots current first). */
     if (url.pathname === '/api/marketing/restore') {
       if (request.method !== 'POST') return new Response('Method not allowed', { status: 405, headers: cors });
+      try { await ensureSnapshotsMigrated(env); } catch (_) {}
       let body = {};
       try { body = await request.json(); } catch (e) {}
       const snapId = body && body.snapshotId;
       if (!snapId) return new Response(JSON.stringify({ error: 'snapshotId required' }), {
         status: 400, headers: { ...cors, 'Content-Type': 'application/json' }
       });
-      const bag = (await env.PLANNER_KV.get(MARKETING_SNAPSHOT_KEY, 'json')) || { items: [] };
-      const items = Array.isArray(bag.items) ? bag.items : [];
-      const snap = items.find(s => s && s.id === snapId);
-      if (!snap || !snap.data) return new Response(JSON.stringify({ error: 'snapshot not found' }), {
+      const snapData = await loadSnapshotData(env, snapId);
+      if (!snapData) return new Response(JSON.stringify({ error: 'snapshot not found' }), {
         status: 404, headers: { ...cors, 'Content-Type': 'application/json' }
       });
       const current = await env.PLANNER_KV.get('marketing', 'json');
-      await maybeSnapshotMarketing(env, current, snap.data);
-      const restored = { ...snap.data, _rev: boardRev(current) + 1, _savedAt: new Date().toISOString() };
+      await maybeSnapshotMarketing(env, current, snapData);
+      const restored = { ...snapData, _rev: boardRev(current) + 1, _savedAt: new Date().toISOString() };
       await env.PLANNER_KV.put('marketing', JSON.stringify(restored));
+      const bag = await readSnapIndex(env);
+      const meta = bag.items.find(s => s && s.id === snapId);
       return new Response(JSON.stringify({
         ok: true,
-        restoredAt: snap.at,
+        restoredAt: meta && meta.at,
         rev: restored._rev,
         scheduleCount: scheduleCount(restored),
         anchorCount: anchorCount(restored)
@@ -183,6 +246,9 @@ export default {
       return new Response('Not found', { status: 404 });
     }
     if (request.method === 'GET') {
+      if (kvKey === 'marketing') {
+        try { await ensureSnapshotsMigrated(env); } catch (_) {}
+      }
       const data = await env.PLANNER_KV.get(kvKey, 'json');
       if (kvKey === 'archive') {
         const items = purgeArchiveItems(data && data.items);
@@ -203,6 +269,7 @@ export default {
         });
       }
       if (kvKey === 'marketing') {
+        try { await ensureSnapshotsMigrated(env); } catch (_) {}
         const prev = await env.PLANNER_KV.get('marketing', 'json');
         const force = request.headers.get('X-PPC-Force-Overwrite') === '1'
           || url.searchParams.get('force') === '1';
