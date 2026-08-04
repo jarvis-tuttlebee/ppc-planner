@@ -3193,7 +3193,7 @@
 <script>
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
-const APP_VERSION = '0.11.82';
+const APP_VERSION = '0.11.84';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 let marketingHydrated = false;
 let marketingRev = 0;
@@ -3201,6 +3201,8 @@ let marketingSaveInFlight = null;
 let marketingSaveWanted = false;
 /** Bumped on local edits so a tab-return cloud refresh can't clobber unsaved work. */
 let marketingLocalDirty = false;
+/** Quiet “caught up” toast cooldown so tab focus doesn’t spam. */
+let marketingCatchupToastAt = 0;
 
 /** Default local hour for new calendar publish stamps (5pm). */
 const DEFAULT_PUBLISH_HOUR = 17;
@@ -5147,11 +5149,20 @@ async function persistMarketingOnce() {
   const payload = buildMarketingPayload();
   payload._rev = marketingRev || 0;
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); } catch (e) {}
-  const res = await fetch(SYNC_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
+  let res;
+  try {
+    res = await fetch(SYNC_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch (err) {
+    console.warn('Marketing sync network error:', err);
+    if (typeof PPC !== 'undefined' && PPC.showToast) {
+      PPC.showToast('Cloud sync failed — kept on this device');
+    }
+    return;
+  }
   if (res.ok) {
     try {
       const info = await res.json();
@@ -5164,15 +5175,27 @@ async function persistMarketingOnce() {
     if (!marketingSaveWanted) marketingLocalDirty = false;
     return;
   }
-  if (res.status !== 409) return;
+  if (res.status !== 409) {
+    console.warn('Marketing sync failed', res.status);
+    if (typeof PPC !== 'undefined' && PPC.showToast) {
+      PPC.showToast('Cloud sync failed — kept on this device');
+    }
+    return;
+  }
   let info = null;
   try { info = await res.json(); } catch (_) {}
-  // Only wipe-guards 409 now — never toast “updated elsewhere” on card moves.
   console.warn('Marketing sync rejected', info);
+  // Stale tab / lost race — drop local draft and load cloud. Do not overwrite.
+  marketingSaveWanted = false;
+  marketingLocalDirty = false;
+  if (info && info.error === 'revision_conflict') {
+    await refreshData({ force: true, quiet: true });
+    return;
+  }
   if (typeof PPC !== 'undefined' && PPC.showToast) {
     PPC.showToast('Cloud blocked a wipe — refreshing');
   }
-  if (typeof refreshData === 'function') await refreshData({ force: true });
+  await refreshData({ force: true });
 }
 
 function normalizeLoaded(data) {
@@ -5480,15 +5503,18 @@ async function initApp() {
 
 async function refreshData(opts) {
   const force = !!(opts && opts.force);
-  // Tab-return / background refresh must not replace cards still saving locally.
-  if (!force && (marketingLocalDirty || marketingSaveWanted || marketingSaveInFlight)) return;
+  const quiet = !!(opts && opts.quiet);
+  // Tab-return must not replace cards still saving — unless cloud is strictly newer
+  // (handled in syncMarketingOnFocus). force always applies.
+  if (!force && (marketingLocalDirty || marketingSaveWanted || marketingSaveInFlight)) return false;
   try {
     const res = await fetch(SYNC_URL);
     if (res.ok) {
       const remote = await res.json();
       if (remote && Array.isArray(remote.ideas)) {
         const remoteRev = Number(remote._rev) || 0;
-        if (!force && remoteRev > 0 && remoteRev <= marketingRev) return;
+        if (!force && remoteRev > 0 && remoteRev <= marketingRev) return false;
+        const wasBehind = remoteRev > marketingRev;
         DATA = normalizeLoaded(remote);
         marketingLocalDirty = false;
         seedAnchorsIfEmpty();
@@ -5496,9 +5522,52 @@ async function refreshData(opts) {
         resolveLayoutPrefs(DATA);
         renderBoard();
         applyMoodHeight(marketingMoodH);
+        if (wasBehind && !quiet && typeof PPC !== 'undefined' && PPC.showToast) {
+          const now = Date.now();
+          if (now - marketingCatchupToastAt > 8000) {
+            marketingCatchupToastAt = now;
+            PPC.showToast('Caught up with latest calendar');
+          }
+        }
+        return true;
       }
     }
   } catch (err) { console.warn('Refresh failed:', err); }
+  return false;
+}
+
+/** Focus / tab-return: pull if cloud is newer; otherwise push local dirty saves. */
+async function syncMarketingOnFocus() {
+  if (!marketingHydrated) return;
+  if (document.getElementById('panel') && document.getElementById('panel').classList.contains('open')) return;
+  try {
+    const res = await fetch(SYNC_URL);
+    if (!res.ok) {
+      if (marketingLocalDirty || marketingSaveWanted) saveData();
+      return;
+    }
+    const remote = await res.json();
+    const remoteRev = Number(remote && remote._rev) || 0;
+    if (remote && Array.isArray(remote.ideas) && remoteRev > marketingRev) {
+      // Cloud is ahead — this tab is old. Load latest (even if we had local dirty).
+      marketingSaveWanted = false;
+      marketingLocalDirty = false;
+      DATA = normalizeLoaded(remote);
+      seedAnchorsIfEmpty();
+      resolveLayoutPrefs(DATA);
+      renderBoard();
+      applyMoodHeight(marketingMoodH);
+      const now = Date.now();
+      if (now - marketingCatchupToastAt > 8000 && typeof PPC !== 'undefined' && PPC.showToast) {
+        marketingCatchupToastAt = now;
+        PPC.showToast('Caught up with latest calendar');
+      }
+      return;
+    }
+  } catch (err) {
+    console.warn('Focus sync failed:', err);
+  }
+  if (marketingLocalDirty || marketingSaveWanted || marketingSaveInFlight) saveData();
 }
 
 function toggleSection(id) {
@@ -6117,7 +6186,8 @@ function sendExecToReview(id) {
 }
 
 function isEmptyNeedSlot(card) {
-  return !!(card && isNeedContentCard(card) && !stripHtml(card.body || '').trim());
+  // Drive link / preview / note count as filled — Discover pins often have no caption.
+  return !!(card && !scheduleSlotHasContent(card));
 }
 
 function scheduleDayKey(iso) {
@@ -8702,6 +8772,8 @@ function newScheduleId() {
 
 function isNeedContentCard(card) {
   if (!card) return false;
+  if (card.needContent === false) return false;
+  if (scheduleSlotHasContent(card)) return false;
   if (card.needContent === true) return true;
   return !stripHtml(card.body || '').trim();
 }
@@ -9211,7 +9283,7 @@ function needTypeDisplayLabel(card) {
 
 function renderCalSlot(card) {
   const el = document.createElement('div');
-  const emptyNeed = isNeedContentCard(card) && !stripHtml(card.body || '').trim();
+  const emptyNeed = isEmptyNeedSlot(card);
   el.className = 'cal-slot' + (emptyNeed ? ' cal-slot--need cal-slot--need-empty' : '');
   el.dataset.scheduleId = card.id;
   el.draggable = true;
@@ -9227,10 +9299,10 @@ function renderCalSlot(card) {
   let eventName = '';
   if (anchor) eventName = anchor.title || 'Event';
   else if (card.leadUp) eventName = 'Lead-up';
-  let title = stripHtml(card.body || '');
+  let title = stripHtml(card.body || '').trim();
   if (!title) {
-    if (eventName) title = eventName;
-    else title = 'Need content';
+    // Discover/Need slots often use needLabel + format instead of caption body.
+    title = needTypeDisplayLabel(card) || eventName || 'Need content';
   }
 
   const openDetails = e => {
@@ -9295,6 +9367,15 @@ function renderCalSlot(card) {
     titleEl.textContent = title;
     titleEl.title = title;
     el.appendChild(titleEl);
+
+    if (eventName && title !== eventName) {
+      const eventEl = document.createElement('span');
+      eventEl.className = 'cal-slot-event';
+      eventEl.textContent = eventName;
+      eventEl.title = eventName;
+      if (eventTone) eventEl.style.color = eventTone;
+      el.appendChild(eventEl);
+    }
 
     const details = document.createElement('button');
     details.type = 'button';
@@ -10960,9 +11041,10 @@ document.addEventListener('paste', async e => {
 
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState !== 'visible') return;
-  if (document.getElementById('panel').classList.contains('open')) return;
-  // Soft pull only — never overwrite newer local edits (see refreshData guards).
-  refreshData();
+  syncMarketingOnFocus();
+});
+window.addEventListener('focus', () => {
+  syncMarketingOnFocus();
 });
 
 PPC.mountSettings({

@@ -275,9 +275,24 @@ export default {
           || url.searchParams.get('force') === '1';
         const prevRev = boardRev(prev);
         const incomingRev = boardRev(body);
-        // Only hard-reject when a stale/concurrent save would gut the board.
-        // Matching-rev saves and non-destructive concurrent edits (card moves)
-        // last-write-wins after a snapshot — rapid drags must not 409.
+        // Stale tab (older _rev) must not last-write-wins over a newer board.
+        // Client should refresh to latest. Matching rev = normal save / serialized drags.
+        if (!force && prevRev > 0 && incomingRev < prevRev) {
+          return new Response(JSON.stringify({
+            ok: false,
+            error: 'revision_conflict',
+            message: 'Board was updated elsewhere — refresh to latest.',
+            prevRev,
+            incomingRev,
+            prevSchedule: scheduleCount(prev),
+            nextSchedule: scheduleCount(body),
+            prevAnchors: anchorCount(prev),
+            nextAnchors: anchorCount(body)
+          }), {
+            status: 409,
+            headers: { ...cors, 'Content-Type': 'application/json' }
+          });
+        }
         if (!force && isCatastrophicMarketingOverwrite(prev, body)) {
           try { await maybeSnapshotMarketing(env, prev, body); } catch (_) {}
           return new Response(JSON.stringify({

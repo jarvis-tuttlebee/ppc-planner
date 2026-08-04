@@ -5,6 +5,47 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-04 — Deployed 0.11.84 (stale-tab + Discover card face) (Cursor)
+
+### Live
+- Site: https://ppc-homebase.pressplaycollective.workers.dev
+- Version ID: `cca0fdce-e440-4e5b-a4c5-0f4c5b97f83b` — Marketing **`0.11.84`**
+- Stale-tab rev reject + focus catch-up; Discover Drive pins show assignee/status
+
+### Open / next
+1. Hard-refresh `/marketing` — confirm **v0.11.84**; check a Posted Discover card face.
+
+---
+
+## 2026-08-04 — Discover cards show assignee/status (Cursor)
+
+### What
+- Pins with Drive/preview but empty caption still rendered as empty Needs
+  (“View details” only) — assignee/Posted hidden. Not a Need-status removal.
+- Marketing **`0.11.84`**: empty slot = no Drive/note/media; filled Discover
+  cards show title, campaign, assignee, status.
+
+### Open / next
+1. Deploy with stale-tab fix (0.11.83 Worker+client) when asked.
+
+---
+
+## 2026-08-04 — Stale tabs refresh instead of overwriting (Cursor)
+
+### What
+- Remaining soft-LWW risk was **not** a Need-status issue. Stale tabs could
+  save an older board over a newer one.
+- Worker: reject `incomingRev < prevRev` with `revision_conflict`.
+- Marketing **`0.11.83`**: on focus/visibility, if cloud rev is ahead → load
+  latest (“Caught up with latest calendar”); stale save → refresh, don’t overwrite.
+- Need status unchanged.
+
+### Open / next
+1. Deploy when asked — hard-refresh **v0.11.83**.
+2. Smoke: two tabs — edit in A, focus B → B catches up; B cannot wipe A’s cards.
+
+---
+
 ## 2026-08-04 — Deployed 0.11.82 + Worker snapshot fix (Cursor)
 
 ### Live
