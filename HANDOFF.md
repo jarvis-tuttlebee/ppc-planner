@@ -11,9 +11,18 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 - Marketing **`0.12.12`**: moved **Pipeline notes** on calendar schedule cards
   to sit directly under **Scheduled content** (above Status / Assignee / Prep by
   and the Post details / Campaign collapses).
+- Branch: `cursor/pipeline-notes-under-scheduled-9030` (PR #4). Built on tip of
+  `cursor/cloud-agent-1785725967651-xf056` (`2aa0030` / 0.12.11).
+
+### Deploy
+- **Blocked here:** this cloud VM has no `CLOUDFLARE_API_TOKEN` / wrangler login.
+- Deploy from Mac clone: pull the branch, then `npx wrangler deploy`.
+- Hard-refresh https://ppc-homebase.pressplaycollective.workers.dev/marketing
+  after deploy — expect **v0.12.12**.
 
 ### Open / next
-1. Deploy + hard-refresh `/marketing`.
+1. Deploy from Mac (or provide CF API token for cloud agents).
+2. Confirm Pipeline notes sits under Scheduled content on a filled calendar card.
 
 ---
 
