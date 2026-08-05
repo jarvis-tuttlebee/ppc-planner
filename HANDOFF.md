@@ -5,6 +5,18 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-05 — Pipeline notes under Scheduled content (Cursor)
+
+### What
+- Marketing **`0.12.12`**: moved **Pipeline notes** on calendar schedule cards
+  to sit directly under **Scheduled content** (above Status / Assignee / Prep by
+  and the Post details / Campaign collapses).
+
+### Open / next
+1. Deploy + hard-refresh `/marketing`.
+
+---
+
 ## 2026-08-04 — Add Ideas back to picker + single-use links (Cursor)
 
 ### What

@@ -1265,6 +1265,12 @@
     .schedule-ops .panel-section-label { margin-top: 10px; }
     .schedule-ops .panel-section-label:first-child { margin-top: 0; }
     .schedule-ops .panel-field-hint { margin-bottom: 2px; }
+    .schedule-pipeline-notes {
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .schedule-pipeline-notes .review-context-toggle { margin-bottom: 0; }
+    .schedule-pipeline-notes .review-context { margin-top: 6px; margin-bottom: 8px; }
     .schedule-collapse-stack {
       display: flex;
       flex-direction: column;
@@ -3291,6 +3297,13 @@
               </div>
             </div>
           </div>
+          <div class="schedule-pipeline-notes">
+            <button type="button" class="review-context-toggle" id="scheduleContextToggle">
+              <span>Pipeline notes</span>
+              <span id="scheduleContextChev">▸</span>
+            </button>
+            <div class="review-context" id="scheduleContext"></div>
+          </div>
           <div class="schedule-ops">
             <div class="panel-section-label">Status</div>
             <div id="pScheduleStatusWrap" style="margin-top:2px"></div>
@@ -3343,11 +3356,6 @@
               <div class="panel-section-label">Campaign anchor</div>
               <div id="pScheduleAnchorWrap" style="margin-top:2px"></div>
             </div>
-            <button type="button" class="review-context-toggle" id="scheduleContextToggle">
-              <span>Pipeline notes</span>
-              <span id="scheduleContextChev">▸</span>
-            </button>
-            <div class="review-context" id="scheduleContext"></div>
           </div>
         </div>
       </div>
@@ -3467,7 +3475,7 @@
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
 const MEDIA_UPLOAD_URL = '/api/marketing/media';
-const APP_VERSION = '0.12.11';
+const APP_VERSION = '0.12.12';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 let marketingHydrated = false;
 let marketingRev = 0;
