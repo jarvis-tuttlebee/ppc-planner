@@ -2539,6 +2539,69 @@
     .cal-slot--need-empty .cal-slot-details {
       margin-top: 2px;
     }
+    /* Multi-assignee picker (same pattern as Task Board) */
+    .asg { position: relative; display: block; width: 100%; }
+    .asg-toggle {
+      display: flex; align-items: center; justify-content: space-between; gap: 6px;
+      width: 100%; border: 1px solid #EAE2D6; background: #fff; border-radius: 7px;
+      padding: 6px 9px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+      font-size: 12.5px; color: #2C2C2C; text-align: left;
+    }
+    .asg-toggle:hover { border-color: #b9b2a6; }
+    .asg-summary { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+    .asg-summary.empty { color: #b5b0a8; }
+    .asg-menu {
+      display: none; position: absolute; left: 0; top: calc(100% + 4px); right: 0;
+      min-width: 230px; background: #fff; border: 1px solid #EAE2D6; border-radius: 10px;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.16); z-index: 240; padding: 5px;
+    }
+    .asg-menu.open { display: block; }
+    .asg-opt {
+      display: flex; align-items: center; gap: 8px; padding: 7px 8px;
+      border-radius: 6px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px;
+    }
+    .asg-opt:hover { background: #F7F5F2; }
+    .asg-check {
+      width: 15px; height: 15px; border: 1.5px solid #d5d0c8; border-radius: 4px; flex-shrink: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 10px; color: #fff; line-height: 1;
+    }
+    .asg-opt.sel .asg-check { background: #2C2C2C; border-color: #2C2C2C; }
+    .asg-name { flex: 1; color: #2C2C2C; min-width: 0; }
+    .asg-name.editing {
+      outline: none; background: #F7F5F2; border-bottom: 1.5px solid #2C2C2C;
+      border-radius: 3px 3px 0 0; padding: 0 3px; cursor: text;
+    }
+    .asg-name.rename-error { border-bottom-color: #8A5A3B; background: rgba(138,90,59,0.1); }
+    .asg-newrow { display: none; gap: 6px; padding: 6px 8px 4px; }
+    .asg-newrow.open { display: flex; }
+    .asg-newinput {
+      flex: 1; min-width: 0; border: 1px solid #EAE2D6; border-radius: 6px;
+      padding: 6px 8px; font-family: 'DM Sans', sans-serif; font-size: 12.5px; color: #2C2C2C;
+    }
+    .asg-newinput:focus { outline: none; border-color: #2C2C2C; }
+    .asg-newsave {
+      border: none; background: #2C2C2C; color: #fff; border-radius: 6px;
+      padding: 0 11px; font-family: 'DM Sans', sans-serif; font-size: 11.5px; cursor: pointer;
+    }
+    .asg-foot {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      border-top: 1px solid #F0EDE8; margin-top: 4px; padding: 7px 8px 3px;
+    }
+    .asg-add {
+      font-family: 'DM Sans', sans-serif; font-size: 12px; color: #6B7A8D; cursor: pointer;
+      background: none; border: none; padding: 0;
+    }
+    .asg-add:hover { color: #2C2C2C; }
+    .asg-done {
+      border: none; background: #2C2C2C; color: #fff; border-radius: 6px;
+      padding: 6px 14px; font-family: 'DM Sans', sans-serif; font-size: 11.5px;
+      letter-spacing: 0.04em; cursor: pointer;
+    }
+    .asg-hint {
+      font-family: 'DM Sans', sans-serif; font-size: 10px; color: #b5b0a8;
+      padding: 2px 8px 5px; letter-spacing: 0.02em;
+    }
     .staff-add-row {
       display: none;
       gap: 6px;
@@ -3606,12 +3669,25 @@
           <div class="schedule-ops">
             <div class="panel-section-label">Status</div>
             <div id="pScheduleStatusWrap" style="margin-top:2px"></div>
-            <div class="panel-section-label">Assignee</div>
-            <div id="pScheduleAssigneeWrap" style="margin-top:2px"></div>
-            <div class="staff-add-row" id="pScheduleStaffAddRow">
-              <input class="prop-select" id="pScheduleStaffNew" type="text" maxlength="40" placeholder="Staff name…">
-              <button type="button" class="btn-secondary" id="pScheduleStaffAddBtn">Add</button>
-              <button type="button" class="btn-cancel" id="pScheduleStaffCancelBtn">Cancel</button>
+            <div class="panel-section-label">Assignees</div>
+            <div id="pScheduleAssigneeWrap" style="margin-top:2px">
+              <div class="asg" id="asgWrap">
+                <button type="button" class="asg-toggle" id="asgToggle" aria-haspopup="listbox" aria-expanded="false">
+                  <span class="asg-summary empty" id="asgSummary">Unassigned</span>
+                  <span aria-hidden="true">▾</span>
+                </button>
+                <div class="asg-menu" id="asgMenu" role="listbox">
+                  <div id="asgList"></div>
+                  <div class="asg-newrow" id="asgNewRow">
+                    <input class="asg-newinput" id="asgNewInput" type="text" maxlength="40" placeholder="Staff name…" autocomplete="off">
+                    <button type="button" class="asg-newsave" id="asgNewSave">Add</button>
+                  </div>
+                  <div class="asg-foot">
+                    <button type="button" class="asg-add" id="asgAddBtn">+ Add person</button>
+                    <button type="button" class="asg-done" id="asgDoneBtn">Done</button>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="panel-section-label">Prep by</div>
             <div class="panel-field-hint">Optional make-by reminder.</div>
@@ -3774,7 +3850,7 @@
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
 const MEDIA_UPLOAD_URL = '/api/marketing/media';
-const APP_VERSION = '0.12.26';
+const APP_VERSION = '0.12.27';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 let marketingHydrated = false;
 let marketingRev = 0;
@@ -5253,8 +5329,26 @@ function migrateSchedule(card) {
   } else if (card.needContent == null) {
     card.needContent = !scheduleSlotHasContent(card);
   }
-  if (card.assignee === 'Loui') card.assignee = 'Louis';
-  if (card.assignee == null) card.assignee = '';
+  // Multi-assignee: migrate legacy single `assignee` string → `assignees` array.
+  if (!Array.isArray(card.assignees)) {
+    const legacy = String(card.assignee || '').trim();
+    card.assignees = legacy ? [legacy === 'Loui' ? 'Louis' : legacy] : [];
+  } else {
+    card.assignees = card.assignees
+      .map(n => {
+        let s = String(n || '').trim();
+        if (s === 'Loui') s = 'Louis';
+        return s;
+      })
+      .filter(Boolean);
+  }
+  const seenAsg = new Set();
+  card.assignees = card.assignees.filter(n => {
+    if (seenAsg.has(n)) return false;
+    seenAsg.add(n);
+    return true;
+  });
+  delete card.assignee;
   if (card.leadUp == null) card.leadUp = false;
   if (card.slotMoved == null) card.slotMoved = false;
   if (card.needLabel == null) card.needLabel = '';
@@ -5312,15 +5406,26 @@ function marketingStaff() {
   return DATA.staff;
 }
 
-function assigneeOf(card) {
-  const name = String(card && card.assignee || '').trim();
-  return name === 'Loui' ? 'Louis' : name;
+function assigneesOf(card) {
+  if (Array.isArray(card && card.assignees)) {
+    return card.assignees
+      .map(n => {
+        let s = String(n || '').trim();
+        return s === 'Loui' ? 'Louis' : s;
+      })
+      .filter(Boolean);
+  }
+  const legacy = String(card && card.assignee || '').trim();
+  if (!legacy) return [];
+  return [legacy === 'Loui' ? 'Louis' : legacy];
 }
 
-function assigneeSelectOptions() {
-  const opts = marketingStaff().map(n => ({ id: n, label: n }));
-  opts.push({ id: ADD_STAFF_ID, label: '+ Add person…' });
-  return opts;
+/** Compact calendar/panel label for one or more assignees. */
+function assigneeDisplay(card) {
+  const list = assigneesOf(card);
+  if (!list.length) return { text: 'Empty', empty: true };
+  if (list.length <= 2) return { text: list.join(', '), empty: false };
+  return { text: list[0] + ', ' + list[1] + ' +' + (list.length - 2), empty: false };
 }
 
 const BUILTIN_ANCHOR_TYPES = [
@@ -6521,7 +6626,7 @@ function parseMarketingStaff(data) {
   // Recover assignees already on schedule cards
   const sections = (data && data.sections) || {};
   (Array.isArray(sections.schedule) ? sections.schedule : []).forEach(c => {
-    if (c && c.assignee) push(c.assignee);
+    assigneesOf(c).forEach(push);
   });
   return out.length ? out : DEFAULT_STAFF.slice();
 }
@@ -7127,7 +7232,7 @@ function clearScheduledContent(scheduleId) {
     anchorId: slot.anchorId || '',
     leadUp: !!slot.leadUp,
     slotMoved: slot.slotMoved != null ? slot.slotMoved : false,
-    assignee: slot.assignee || '',
+    assignees: assigneesOf(slot),
     prepBy: slot.prepBy || '',
     body: '',
     imageData: null,
@@ -7754,7 +7859,11 @@ function fillEmptyNeedSlot(slot, content) {
     needLabel: '',
     needContent: !hasContent,
     publishStatus: content.publishStatus || 'scheduled',
-    assignee: content.assignee || slot.assignee || '',
+    assignees: (() => {
+      const fromContent = assigneesOf(content);
+      if (fromContent.length) return fromContent;
+      return assigneesOf(slot);
+    })(),
     movedToScheduleAt: content.movedToScheduleAt || new Date().toISOString()
   });
   list[idx] = filled;
@@ -7787,7 +7896,7 @@ function sendReviewToSchedule(id) {
     linkedScheduleId: '',
     needContent: !scheduleSlotHasContent(card),
     publishStatus: 'scheduled',
-    assignee: card.assignee || '',
+    assignees: assigneesOf(card),
     movedToScheduleAt: new Date().toISOString()
   });
   const linkedNeed = card.linkedScheduleId ? scheduleCards().find(c => c.id === card.linkedScheduleId) : null;
@@ -9263,7 +9372,7 @@ function placeLeadUpNeedSlots(anchor) {
         leadUp: true,
         slotMoved: false,
         publishStatus: 'need',
-        assignee: '',
+        assignees: [],
         scheduledAt: '',
         scheduleAt: '',
         contentLayer: '',
@@ -9346,7 +9455,7 @@ function ensureLeadUpSlotOnDay(anchor, dayDate) {
     leadUp: true,
     slotMoved: false,
     publishStatus: 'need',
-    assignee: '',
+    assignees: [],
     scheduledAt: when.toISOString(),
     scheduleAt: when.toISOString(),
     contentLayer: '',
@@ -11047,7 +11156,7 @@ function addNeedContentSlot(format, dayDate, pillar) {
     needContent: true,
     needLabel: '',
     publishStatus: 'need',
-    assignee: '',
+    assignees: [],
     scheduledAt: iso,
     scheduleAt: iso,
     contentLayer: '',
@@ -11088,13 +11197,21 @@ function setPublishStatus(cardId, status, opts) {
   renderBoard();
 }
 
-function setScheduleAssignee(cardId, name, opts) {
+function setScheduleAssignees(cardId, names, opts) {
   const card = scheduleCards().find(c => c.id === cardId);
   if (!card) return;
-  let next = String(name || '').trim();
-  if (next === 'Loui') next = 'Louis';
-  card.assignee = next;
-  if (next && !marketingStaff().includes(next)) marketingStaff().push(next);
+  const seen = new Set();
+  const next = [];
+  (Array.isArray(names) ? names : []).forEach(raw => {
+    let n = String(raw || '').trim();
+    if (n === 'Loui') n = 'Louis';
+    if (!n || seen.has(n)) return;
+    seen.add(n);
+    next.push(n);
+    if (!marketingStaff().includes(n)) marketingStaff().push(n);
+  });
+  card.assignees = next;
+  delete card.assignee;
   scheduleSave();
   if (!(opts && opts.silent)) renderBoard();
 }
@@ -11135,65 +11252,197 @@ function renderPublishStatusSelect(card, opts) {
   });
 }
 
-function hideScheduleStaffAddRow() {
-  const row = document.getElementById('pScheduleStaffAddRow');
-  if (row) row.classList.remove('open');
-  const input = document.getElementById('pScheduleStaffNew');
-  if (input) input.value = '';
+// ── Multi-assignee panel (Task Board pattern) ───────────────────────────────
+let panelAssignees = [];
+let _asgClickTimer = null;
+let renamingStaffIndex = null;
+
+function updateAssigneeSummary() {
+  const el = document.getElementById('asgSummary');
+  if (!el) return;
+  if (!panelAssignees.length) {
+    el.textContent = 'Unassigned';
+    el.classList.add('empty');
+    return;
+  }
+  el.classList.remove('empty');
+  el.textContent = panelAssignees.length <= 2
+    ? panelAssignees.join(', ')
+    : panelAssignees[0] + ', ' + panelAssignees[1] + ' +' + (panelAssignees.length - 2);
 }
 
-function showScheduleStaffAddRow() {
-  const row = document.getElementById('pScheduleStaffAddRow');
+function renderAssigneeList() {
+  const list = document.getElementById('asgList');
+  if (!list) return;
+  list.innerHTML = '';
+
+  const hint = document.createElement('div');
+  hint.className = 'asg-hint';
+  hint.textContent = 'Tick to assign · double-click a name to rename';
+  list.appendChild(hint);
+
+  marketingStaff().forEach((name, i) => {
+    const sel = panelAssignees.includes(name);
+    const opt = document.createElement('div');
+    opt.className = 'asg-opt' + (sel ? ' sel' : '');
+
+    const check = document.createElement('span');
+    check.className = 'asg-check';
+    check.textContent = sel ? '\u2713' : '';
+
+    const label = document.createElement('span');
+    label.className = 'asg-name';
+    label.textContent = name;
+    label.addEventListener('dblclick', e => {
+      e.stopPropagation();
+      startRenameStaff(label, i);
+    });
+
+    opt.appendChild(check);
+    opt.appendChild(label);
+    opt.addEventListener('click', e => {
+      if (renamingStaffIndex !== null) return;
+      e.stopPropagation();
+      clearTimeout(_asgClickTimer);
+      _asgClickTimer = setTimeout(() => togglePanelAssignee(name), 200);
+    });
+    list.appendChild(opt);
+  });
+}
+
+function togglePanelAssignee(name) {
+  const i = panelAssignees.indexOf(name);
+  if (i >= 0) panelAssignees.splice(i, 1);
+  else panelAssignees.push(name);
+  renderAssigneeList();
+  updateAssigneeSummary();
+  if (activeScheduleId) setScheduleAssignees(activeScheduleId, panelAssignees, { silent: true });
+}
+
+function closeAssigneeMenu() {
+  const menu = document.getElementById('asgMenu');
+  const toggle = document.getElementById('asgToggle');
+  if (menu) menu.classList.remove('open');
+  if (toggle) toggle.setAttribute('aria-expanded', 'false');
+  hideNewStaffInput();
+}
+
+function toggleAssigneeMenu(e) {
+  if (e) e.stopPropagation();
+  const menu = document.getElementById('asgMenu');
+  const toggle = document.getElementById('asgToggle');
+  if (!menu) return;
+  const open = menu.classList.contains('open');
+  if (open) {
+    closeAssigneeMenu();
+    return;
+  }
+  renderAssigneeList();
+  menu.classList.add('open');
+  if (toggle) toggle.setAttribute('aria-expanded', 'true');
+}
+
+function showNewStaffInput(e) {
+  if (e) e.stopPropagation();
+  const row = document.getElementById('asgNewRow');
   if (row) row.classList.add('open');
-  const input = document.getElementById('pScheduleStaffNew');
+  const input = document.getElementById('asgNewInput');
   if (input) {
     input.value = '';
-    input.focus();
+    setTimeout(() => input.focus(), 30);
   }
 }
 
-function renderScheduleAssigneeSelect(card) {
-  const wrap = document.getElementById('pScheduleAssigneeWrap');
-  if (!wrap) return;
-  wrap.innerHTML = '';
-  hideScheduleStaffAddRow();
-  wrap.appendChild(createPpcSelect({
-    id: 'pScheduleAssignee',
-    options: assigneeSelectOptions(),
-    value: assigneeOf(card) || '',
-    includeNone: true,
-    noneLabel: 'Unassigned',
-    colored: false,
-    onChange: val => {
-      if (val === ADD_STAFF_ID) {
-        updatePpcSelect('pScheduleAssignee', {
-          options: assigneeSelectOptions(),
-          value: assigneeOf(card) || ''
-        });
-        showScheduleStaffAddRow();
-        return;
-      }
-      hideScheduleStaffAddRow();
-      setScheduleAssignee(card.id, val, { silent: true });
-    }
-  }));
+function hideNewStaffInput() {
+  const row = document.getElementById('asgNewRow');
+  if (row) row.classList.remove('open');
 }
 
-function confirmScheduleStaffAdd() {
-  const input = document.getElementById('pScheduleStaffNew');
+function commitNewStaff() {
+  const input = document.getElementById('asgNewInput');
   const name = addMarketingStaff(input && input.value);
   if (!name) {
     if (input) input.focus();
     return;
   }
-  hideScheduleStaffAddRow();
-  if (activeScheduleId) setScheduleAssignee(activeScheduleId, name, { silent: true });
-  const card = scheduleCards().find(c => c.id === activeScheduleId) || { assignee: name };
-  renderScheduleAssigneeSelect(card);
-  updatePpcSelect('pScheduleAssignee', {
-    options: assigneeSelectOptions(),
-    value: name
+  if (!panelAssignees.includes(name)) panelAssignees.push(name);
+  if (activeScheduleId) setScheduleAssignees(activeScheduleId, panelAssignees, { silent: true });
+  hideNewStaffInput();
+  renderAssigneeList();
+  updateAssigneeSummary();
+}
+
+function startRenameStaff(labelEl, index) {
+  if (renamingStaffIndex !== null) return;
+  clearTimeout(_asgClickTimer);
+  renamingStaffIndex = index;
+  const staff = marketingStaff();
+  const original = staff[index];
+
+  labelEl.contentEditable = 'true';
+  labelEl.classList.add('editing');
+  labelEl.focus();
+  try {
+    const range = document.createRange();
+    range.selectNodeContents(labelEl);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  } catch (_) {}
+
+  let settled = false;
+  const finish = (commit) => {
+    if (settled) return;
+    settled = true;
+    renamingStaffIndex = null;
+    labelEl.contentEditable = 'false';
+    labelEl.classList.remove('editing');
+
+    const next = (labelEl.textContent || '').trim().slice(0, 40);
+    const revert = (flash) => {
+      labelEl.textContent = original;
+      if (flash) {
+        labelEl.classList.add('rename-error');
+        setTimeout(() => {
+          labelEl.classList.remove('rename-error');
+          renderAssigneeList();
+        }, 900);
+      } else renderAssigneeList();
+    };
+
+    if (!commit || !next || next === original) return revert(false);
+    if (staff.some((s, i) => i !== index && s.toLowerCase() === next.toLowerCase())) return revert(true);
+
+    staff[index] = next;
+    scheduleCards().forEach(c => {
+      if (!Array.isArray(c.assignees)) return;
+      c.assignees = c.assignees.map(n => (n === original ? next : n));
+    });
+    panelAssignees = panelAssignees.map(n => (n === original ? next : n));
+    scheduleSave();
+    renderAssigneeList();
+    updateAssigneeSummary();
+    renderBoard();
+  };
+
+  labelEl.addEventListener('keydown', e => {
+    e.stopPropagation();
+    if (e.key === 'Enter') { e.preventDefault(); finish(true); }
+    else if (e.key === 'Escape') { e.preventDefault(); finish(false); }
   });
+  labelEl.addEventListener('blur', () => finish(true));
+  labelEl.addEventListener('click', e => e.stopPropagation());
+}
+
+function renderScheduleAssigneeSelect(card) {
+  panelAssignees = assigneesOf(card).slice();
+  panelAssignees.forEach(n => {
+    if (!marketingStaff().includes(n)) marketingStaff().push(n);
+  });
+  updateAssigneeSummary();
+  hideNewStaffInput();
+  closeAssigneeMenu();
+  renderAssigneeList();
 }
 
 function formatShortLabel(formatId) {
@@ -11389,11 +11638,12 @@ function renderCalSlot(card) {
     asg.className = 'cal-slot-assignee';
     const asgLabel = document.createElement('span');
     asgLabel.className = 'cal-slot-assignee-label';
-    asgLabel.textContent = 'Assignee';
+    asgLabel.textContent = 'Assignees';
     const asgVal = document.createElement('span');
-    const who = assigneeOf(card);
-    asgVal.className = 'cal-slot-assignee-val' + (who ? '' : ' empty');
-    asgVal.textContent = who || 'Empty';
+    const who = assigneeDisplay(card);
+    asgVal.className = 'cal-slot-assignee-val' + (who.empty ? ' empty' : '');
+    asgVal.textContent = who.text;
+    asgVal.title = assigneesOf(card).join(', ') || 'Unassigned';
     asg.appendChild(asgLabel);
     asg.appendChild(asgVal);
     footer.appendChild(asg);
@@ -13214,13 +13464,13 @@ function savePanel(silent) {
     } else if (!PUBLISH_STATUS_IDS.has(card.publishStatus) || card.publishStatus === 'ready') {
       card.publishStatus = card.needContent ? 'need' : (isDiscoverFormat(format) ? 'scheduled' : 'prep');
     }
-    const asgEl = document.getElementById('pScheduleAssignee');
-    if (asgEl) {
-      let who = asgEl.value === ADD_STAFF_ID ? '' : (asgEl.value || '');
-      if (who === 'Loui') who = 'Louis';
-      card.assignee = who;
-    } else if (card.assignee == null) {
-      card.assignee = '';
+    const asgEl = document.getElementById('asgSummary');
+    if (asgEl && panelMode === 'schedule') {
+      card.assignees = panelAssignees.slice();
+      delete card.assignee;
+    } else if (!Array.isArray(card.assignees)) {
+      card.assignees = assigneesOf(card);
+      delete card.assignee;
     }
     card.anchorId = (document.getElementById('pScheduleAnchor') || {}).value || '';
     card.caption = (document.getElementById('pScheduleCaption') || {}).value || '';
@@ -13624,30 +13874,38 @@ PPC.mountSettings({
 document.addEventListener('click', () => closeColourPopovers());
 PPC.applyStoredDark();
 
-(function wireScheduleStaffAdd() {
-  const addBtn = document.getElementById('pScheduleStaffAddBtn');
-  const cancelBtn = document.getElementById('pScheduleStaffCancelBtn');
-  const input = document.getElementById('pScheduleStaffNew');
-  if (addBtn) addBtn.addEventListener('click', e => {
-    e.preventDefault();
-    confirmScheduleStaffAdd();
+(function wireScheduleAssignees() {
+  const toggle = document.getElementById('asgToggle');
+  const menu = document.getElementById('asgMenu');
+  const addBtn = document.getElementById('asgAddBtn');
+  const doneBtn = document.getElementById('asgDoneBtn');
+  const newSave = document.getElementById('asgNewSave');
+  const input = document.getElementById('asgNewInput');
+  if (toggle) toggle.addEventListener('click', toggleAssigneeMenu);
+  if (addBtn) addBtn.addEventListener('click', showNewStaffInput);
+  if (doneBtn) doneBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    closeAssigneeMenu();
+    renderBoard();
   });
-  if (cancelBtn) cancelBtn.addEventListener('click', e => {
-    e.preventDefault();
-    hideScheduleStaffAddRow();
-    if (activeScheduleId) {
-      const card = scheduleCards().find(c => c.id === activeScheduleId);
-      if (card) renderScheduleAssigneeSelect(card);
-    }
+  if (newSave) newSave.addEventListener('click', e => {
+    e.stopPropagation();
+    commitNewStaff();
   });
   if (input) input.addEventListener('keydown', e => {
+    e.stopPropagation();
     if (e.key === 'Enter') {
       e.preventDefault();
-      confirmScheduleStaffAdd();
+      commitNewStaff();
     } else if (e.key === 'Escape') {
       e.preventDefault();
-      hideScheduleStaffAddRow();
+      hideNewStaffInput();
     }
+  });
+  if (menu) menu.addEventListener('click', e => e.stopPropagation());
+  document.addEventListener('click', e => {
+    if (e.target.closest('#asgWrap')) return;
+    closeAssigneeMenu();
   });
 })();
 

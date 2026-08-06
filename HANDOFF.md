@@ -5,6 +5,24 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Multi-assignee on Marketing calendar 0.12.27 (Cursor)
+
+### Branch
+- `cursor/calendar-clear-miro-nav-8504` — Marketing **`0.12.27`**
+- PR: https://github.com/jarvis-tuttlebee/ppc-homebase/pull/11
+
+### What
+- Schedule cards: **`assignees[]`** (migrates legacy single `assignee`)
+- Panel **Assignees** uses Task Board-style multi-tick picker (+ add/rename)
+- Calendar footer shows `Name, Name` or `A, B +N`
+- Task Board already had multi-assignee; Annual Planner has no assignee field
+
+### Open / next
+1. Mac deploy `0.12.27`
+2. Smoke: assign 2+ people on a filled calendar Need
+
+---
+
 ## 2026-08-06 — Ideas reshuffle + shorter board 0.12.26 (Cursor)
 
 ### Branch
