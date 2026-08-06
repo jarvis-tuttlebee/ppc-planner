@@ -5,6 +5,31 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Ideas ↔ calendar pipeline UX 0.12.23 (Cursor)
+
+### Branch
+- `cursor/ideas-pipeline-ux-af1c` — Marketing **`0.12.23`** (not live yet).
+
+### What
+1. Ideas cards show a **Scheduled / Prep / Exec / Review · date** badge when
+   linked to a calendar Need; click jumps to that calendar card.
+2. Linked ideas **stay on Ideas** when Prepared (badge tracks pipeline stage).
+   Older boards: missing idea refs restored from `sourceIdeaId`.
+3. Calendar filled cards: **× / Clear content** unlinks Ideas/pipeline and
+   leaves an empty Need (slot/date/format kept). Panel has Clear content too.
+4. Ideas canvas Mac trackpad: two-finger scroll pans; pinch/Ctrl zooms.
+   **Reshuffle** + **Fit** tools on the mood board.
+
+### Soak
+- Local: `npm run dev` → http://127.0.0.1:8787/marketing
+- Deploy only when asked (Mac/PC; no cloud CF token).
+
+### Open / next
+1. Deploy + hard-refresh when ready.
+2. Confirm badge + clear + reshuffle with live board data.
+
+---
+
 ## 2026-08-06 — Live deploy confirmed 0.12.21 (Cursor)
 
 ### Live
