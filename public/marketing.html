@@ -1988,7 +1988,7 @@
       padding: 5px 8px;
       border-radius: 2px;
       border: 1px solid #E2DDD5;
-      border-left: 3px solid #564A5E;
+      border-left: 4px solid #564A5E;
       background: #F0EDE8;
       cursor: grab;
       overflow: hidden;
@@ -2064,7 +2064,7 @@
     .cal-slot--need-empty {
       padding: 4px 18px 4px 6px;
       border: 1px solid #E2DDD5;
-      border-left: 3px solid #564A5E;
+      border-left: 4px solid #564A5E;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -3475,7 +3475,7 @@
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
 const MEDIA_UPLOAD_URL = '/api/marketing/media';
-const APP_VERSION = '0.12.13';
+const APP_VERSION = '0.12.14';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 let marketingHydrated = false;
 let marketingRev = 0;
@@ -10002,7 +10002,8 @@ function renderCalSlot(card) {
   const formatTone = formatColor(card.format, card.pillar);
   el.style.borderColor = '#E2DDD5';
   el.style.borderLeftColor = formatTone;
-  el.style.background = hexWash(formatTone, 0.12);
+  // Stronger wash so format colours read at a glance (was 0.12 — too pale / blendy).
+  el.style.background = hexWash(formatTone, 0.24);
   const anchor = card.anchorId ? anchors().find(a => a.id === card.anchorId) : null;
   const eventTone = anchor ? anchorTypeColor(anchor.type) : null;
   let eventName = '';

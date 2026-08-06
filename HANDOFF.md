@@ -5,6 +5,26 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Calendar card colour wash (Cursor)
+
+### What
+- Marketing **`0.12.14`**: calendar slots use a stronger format wash
+  (`hexWash` **0.24**, was **0.12**) and a **4px** left accent bar (was 3px)
+  so format colours read more distinctly when you step back — richer than
+  before, still short of Google Calendar solid fills.
+- Branch: `cursor/calendar-card-distinct-wash-af1c`.
+
+### Deploy
+- Local soak on `:8787` first. Deploy only when asked
+  (`npx wrangler deploy` from Mac — VM still has no CF token).
+- Hard-refresh `/marketing` — expect **v0.12.14** and clearer card fills.
+
+### Open / next
+1. Soak on a busy month view; tune alpha if still blendy or too loud.
+2. Deploy when happy.
+
+---
+
 ## 2026-08-05 — Pipeline notes under Scheduled content (Cursor)
 
 ### What
