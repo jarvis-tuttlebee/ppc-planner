@@ -10,6 +10,7 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 ### Branch
 - `cursor/calendar-clear-miro-nav-8504` (from `cursor/ideas-pipeline-ux-af1c`)
 - Marketing **`0.12.25`**
+- PR: https://github.com/jarvis-tuttlebee/ppc-homebase/pull/11
 
 ### What
 1. Calendar filled Needs: **Change content** + **Clear content** in Scheduled
@@ -19,9 +20,13 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
    trackpad two-finger pan / pinch zoom, mouse wheel zoom + right-drag pan,
    bottom-right − / % / + / Fit, Trackpad|Mouse toggle, session persist.
 
+### Soak
+- Local `npx wrangler dev` → http://127.0.0.1:8787/marketing serves **0.12.25**
+  with Change/Clear controls + mood nav chrome present in HTML.
+
 ### Open / next
-1. Local soak then Mac deploy (cloud still has no CF token).
-2. Confirm Clear/Change + Ideas nav on live after deploy.
+1. Mac deploy after review (cloud still has no CF token).
+2. Confirm Clear/Change + Ideas nav on live board with real data.
 
 ---
 
