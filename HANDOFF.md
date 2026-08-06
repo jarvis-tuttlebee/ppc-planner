@@ -5,6 +5,26 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Calendar type filter dropdown (Cursor)
+
+### What
+- Marketing **`0.12.16`**: Types filter is a **dropdown** next to Week/Month
+  (was a full chip bar — too tall). Button shows `Types` or
+  `Types · N hidden`; menu has checkboxes + Show all. Same filter behaviour
+  and `localStorage` key as 0.12.15.
+- Branch: `cursor/calendar-type-filter-af1c`.
+
+### Deploy
+- Soak on `:8787`. Deploy only when asked.
+- Hard-refresh `/marketing` — expect **v0.12.16** and a Types button in the
+  calendar nav (not a chip row).
+
+### Open / next
+1. Soak dropdown open/close + filter toggles on a busy month.
+2. Deploy when happy.
+
+---
+
 ## 2026-08-06 — Calendar type filter (Cursor)
 
 ### What

@@ -1640,63 +1640,116 @@
       color: #2C2C2C;
       box-shadow: 0 1px 2px rgba(44,44,44,0.08);
     }
-    .cal-types-bar {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 0 10px 10px;
-      flex-wrap: wrap;
-    }
-    .cal-types-label {
-      flex: 0 0 auto;
-      margin-top: 6px;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #8a8580;
-    }
-    .cal-types-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      flex: 1 1 200px;
-      min-width: 0;
+    .cal-types-wrap {
+      position: relative;
+      display: inline-flex;
       align-items: center;
     }
-    .cal-type-chip {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 11px;
-      font-weight: 500;
-      padding: 5px 10px;
-      border-radius: 14px;
-      border: 1px solid #E2DDD5;
+    .cal-types-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      z-index: 40;
+      min-width: 220px;
+      max-width: min(280px, 80vw);
+      max-height: min(360px, 60vh);
+      overflow: auto;
       background: #fff;
+      border: 1px solid #E2DDD5;
+      border-radius: 8px;
+      box-shadow: 0 10px 28px rgba(44,44,44,0.12);
+      padding: 6px;
+      display: none;
+    }
+    .cal-types-menu.open { display: block; }
+    .cal-types-menu-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #9a958d;
+      padding: 6px 10px 4px;
+    }
+    .cal-types-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      border: none;
+      background: transparent;
+      text-align: left;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12.5px;
+      font-weight: 500;
       color: #2C2C2C;
+      padding: 7px 10px;
+      border-radius: 6px;
       cursor: pointer;
-      line-height: 1.2;
-      max-width: 100%;
-      white-space: nowrap;
+      box-sizing: border-box;
+    }
+    .cal-types-menu-item:hover {
+      background: rgba(44,44,44,0.04);
+    }
+    .cal-types-menu-item.is-off {
+      color: #8a8580;
+    }
+    .cal-types-menu-item.is-off .cal-types-menu-text {
+      text-decoration: line-through;
+      text-decoration-color: rgba(107,122,141,0.5);
+    }
+    .cal-types-menu-check {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border: 1.5px solid #C9C3BA;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      line-height: 1;
+      color: #fff;
+      background: #fff;
+      box-sizing: border-box;
+    }
+    .cal-types-menu-item:not(.is-off) .cal-types-menu-check {
+      border-color: #2C2C2C;
+      background: #2C2C2C;
+    }
+    .cal-types-menu-swatch {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .cal-types-menu-text {
+      flex: 1 1 auto;
+      min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
+      white-space: nowrap;
     }
-    .cal-type-chip:hover {
-      border-color: #2C2C2C;
-    }
-    .cal-type-chip.is-off {
-      opacity: 0.42;
-      color: #6B7A8D;
-      background: #f7f5f1;
-      text-decoration: line-through;
-      text-decoration-color: rgba(107,122,141,0.55);
-    }
-    .cal-type-chip--reset {
-      border-style: dashed;
-      color: #6B7A8D;
+    .cal-types-menu-reset {
+      display: block;
+      width: 100%;
+      border: none;
+      border-top: 1px solid #E2DDD5;
+      background: transparent;
+      text-align: left;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11.5px;
       font-weight: 600;
-      letter-spacing: 0.02em;
+      color: #6B7A8D;
+      padding: 8px 10px 6px;
+      margin-top: 2px;
+      border-radius: 0;
+      cursor: pointer;
     }
-    .cal-type-chip--reset[hidden] {
+    .cal-types-menu-reset:hover {
+      color: #2C2C2C;
+      background: rgba(44,44,44,0.03);
+    }
+    .cal-types-menu-reset[hidden] {
       display: none;
     }
     .cal-events-bar {
@@ -3534,7 +3587,7 @@
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
 const MEDIA_UPLOAD_URL = '/api/marketing/media';
-const APP_VERSION = '0.12.15';
+const APP_VERSION = '0.12.16';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 let marketingHydrated = false;
 let marketingRev = 0;
@@ -4400,56 +4453,87 @@ function calendarFormatFilterOptions() {
   return list.sort((a, b) => a.label.localeCompare(b.label));
 }
 
-function buildTypesFilterBar() {
-  const bar = document.createElement('div');
-  bar.className = 'cal-types-bar';
-  const label = document.createElement('div');
-  label.className = 'cal-types-label';
-  label.textContent = 'Types';
-  bar.appendChild(label);
-  const chips = document.createElement('div');
-  chips.className = 'cal-types-chips';
-  chips.setAttribute('role', 'group');
-  chips.setAttribute('aria-label', 'Filter calendar card types');
+function buildTypesFilterControl() {
+  const wrap = document.createElement('div');
+  wrap.className = 'cal-types-wrap';
 
-  const reset = document.createElement('button');
-  reset.type = 'button';
-  reset.className = 'cal-type-chip cal-type-chip--reset';
-  reset.textContent = 'Show all';
-  reset.title = 'Turn every card type back on';
-  reset.hidden = hiddenCalFormats.size === 0;
-  reset.addEventListener('click', e => {
+  const hiddenCount = hiddenCalFormats.size;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'cal-nav-btn' + (hiddenCount || typesFilterOpen ? ' is-toggled' : '');
+  btn.setAttribute('aria-haspopup', 'true');
+  btn.setAttribute('aria-expanded', typesFilterOpen ? 'true' : 'false');
+  btn.textContent = hiddenCount ? ('Types · ' + hiddenCount + ' hidden') : 'Types';
+  btn.title = 'Show or hide calendar card types';
+  btn.addEventListener('click', e => {
     e.stopPropagation();
-    hiddenCalFormats.clear();
-    persistHiddenCalFormats();
+    typesFilterOpen = !typesFilterOpen;
     renderBoard();
   });
-  chips.appendChild(reset);
+  wrap.appendChild(btn);
+
+  const menu = document.createElement('div');
+  menu.className = 'cal-types-menu' + (typesFilterOpen ? ' open' : '');
+  menu.setAttribute('role', 'menu');
+  menu.setAttribute('aria-label', 'Filter calendar card types');
+  menu.addEventListener('click', e => e.stopPropagation());
+
+  const label = document.createElement('div');
+  label.className = 'cal-types-menu-label';
+  label.textContent = 'Card types';
+  menu.appendChild(label);
 
   calendarFormatFilterOptions().forEach(opt => {
     const on = !hiddenCalFormats.has(opt.key);
-    const chip = document.createElement('button');
-    chip.type = 'button';
-    chip.className = 'cal-type-chip' + (on ? '' : ' is-off');
-    chip.textContent = opt.label;
-    chip.title = on
+    const item = document.createElement('button');
+    item.type = 'button';
+    item.className = 'cal-types-menu-item' + (on ? '' : ' is-off');
+    item.setAttribute('role', 'menuitemcheckbox');
+    item.setAttribute('aria-checked', on ? 'true' : 'false');
+    item.title = on
       ? ('Hide ' + opt.label + ' cards')
       : ('Show ' + opt.label + ' cards');
-    chip.setAttribute('aria-pressed', on ? 'true' : 'false');
-    chip.style.borderLeft = '3px solid ' + opt.tone;
-    if (on) chip.style.background = hexWash(opt.tone, 0.18);
-    chip.addEventListener('click', e => {
+
+    const check = document.createElement('span');
+    check.className = 'cal-types-menu-check';
+    check.textContent = on ? '✓' : '';
+    const swatch = document.createElement('span');
+    swatch.className = 'cal-types-menu-swatch';
+    swatch.style.background = opt.tone;
+    const text = document.createElement('span');
+    text.className = 'cal-types-menu-text';
+    text.textContent = opt.label;
+    item.appendChild(check);
+    item.appendChild(swatch);
+    item.appendChild(text);
+    item.addEventListener('click', e => {
       e.stopPropagation();
       if (hiddenCalFormats.has(opt.key)) hiddenCalFormats.delete(opt.key);
       else hiddenCalFormats.add(opt.key);
       persistHiddenCalFormats();
+      typesFilterOpen = true;
       renderBoard();
     });
-    chips.appendChild(chip);
+    menu.appendChild(item);
   });
 
-  bar.appendChild(chips);
-  return bar;
+  const reset = document.createElement('button');
+  reset.type = 'button';
+  reset.className = 'cal-types-menu-reset';
+  reset.textContent = 'Show all';
+  reset.title = 'Turn every card type back on';
+  reset.hidden = hiddenCount === 0;
+  reset.addEventListener('click', e => {
+    e.stopPropagation();
+    hiddenCalFormats.clear();
+    persistHiddenCalFormats();
+    typesFilterOpen = true;
+    renderBoard();
+  });
+  menu.appendChild(reset);
+
+  wrap.appendChild(menu);
+  return wrap;
 }
 
 function defaultFormatForPillar(pillarId) {
@@ -4638,6 +4722,7 @@ let hiddenCalFormats = (() => {
     return new Set(Array.isArray(raw) ? raw.filter(k => typeof k === 'string' && k) : []);
   } catch (_) { return new Set(); }
 })();
+let typesFilterOpen = false;
 let unscheduledQueueOpen = true;
 let activeAnchorPanelId = null;
 let anchorPanelIsNew = false;
@@ -7383,6 +7468,7 @@ function renderScheduleBody() {
     jumpScheduleToDate(new Date());
   });
   btns.appendChild(rangeToggle);
+  btns.appendChild(buildTypesFilterControl());
   if (scheduleCalRange === 'week') {
     const hidePostedBtn = document.createElement('button');
     hidePostedBtn.type = 'button';
@@ -7403,7 +7489,6 @@ function renderScheduleBody() {
   nav.appendChild(title);
   nav.appendChild(btns);
   body.appendChild(nav);
-  body.appendChild(buildTypesFilterBar());
   body.appendChild(buildEventsBar());
 
   const dow = document.createElement('div');
@@ -12319,6 +12404,20 @@ document.addEventListener('keydown', e => {
 document.addEventListener('click', e => {
   hideCtxMenu();
   if (!e.target.closest('#calNeedMenu')) closeCalNeedMenu();
+  if (typesFilterOpen && !e.target.closest('.cal-types-wrap')) {
+    typesFilterOpen = false;
+    const openMenu = document.querySelector('.cal-types-menu.open');
+    if (openMenu) {
+      openMenu.classList.remove('open');
+      const btn = openMenu.parentElement && openMenu.parentElement.querySelector('.cal-nav-btn');
+      if (btn) {
+        btn.setAttribute('aria-expanded', 'false');
+        if (!hiddenCalFormats.size) btn.classList.remove('is-toggled');
+      }
+    } else {
+      renderBoard();
+    }
+  }
   if (!e.target.closest('.image-well')) clearWellFocus();
   if (!e.target.closest('#pReviewMediaWell')) {
     focusedReviewMedia = false;
