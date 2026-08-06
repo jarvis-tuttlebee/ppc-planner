@@ -5,6 +5,25 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Live deploy confirmed 0.12.21 (Cursor)
+
+### Live
+- https://ppc-homebase.pressplaycollective.workers.dev/marketing
+- Marketing **`0.12.21`** confirmed via curl (browser may still show old
+  **0.11.82** until hard-refresh).
+- Deployed from Mac clone of `cursor/deploy-all-af1c`.
+
+### Shipped
+1. Calendar card colour wash
+2. Types dropdown + categories + colour chips
+3. Keep Ideas when linking to calendar
+
+### Open / next
+1. Hard-refresh live if the tab still shows v0.11.82.
+2. Soak Types filter + idea-link on live with real board data.
+
+---
+
 ## 2026-08-06 — Deploy pack 0.12.21 (Cursor)
 
 ### Live
