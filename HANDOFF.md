@@ -5,6 +5,33 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Deploy pack 0.12.21 (Cursor)
+
+### Live
+- First Mac deploy of the clone uploaded Worker but **assets unchanged** —
+  live still served Marketing **0.11.82** (old). Likely wrong branch / stale
+  tree on first `npx wrangler deploy`.
+- Version ID from that deploy: `f1b2e987-ec47-422b-a90c-a57a77421dad`
+- **Redeploy needed** from `cursor/deploy-all-af1c` at **`0.12.21`** so
+  `marketing.html` actually uploads. Confirm live shows **v0.12.21**.
+
+### What (same pack as 0.12.20)
+1. Calendar card colour wash
+2. Types dropdown + categories + colour chips
+3. Keep Ideas when linking to calendar
+
+### Deploy (Mac clone)
+```bash
+cd ~/ppc-homebase
+git fetch origin
+git checkout cursor/deploy-all-af1c
+git pull origin cursor/deploy-all-af1c
+grep APP_VERSION public/marketing.html   # expect 0.12.21
+npx wrangler deploy
+```
+
+---
+
 ## 2026-08-06 — Deploy pack 0.12.20 (Cursor)
 
 ### What

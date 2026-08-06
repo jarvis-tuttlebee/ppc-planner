@@ -3618,7 +3618,7 @@
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
 const MEDIA_UPLOAD_URL = '/api/marketing/media';
-const APP_VERSION = '0.12.20';
+const APP_VERSION = '0.12.21';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 let marketingHydrated = false;
 let marketingRev = 0;
@@ -6658,6 +6658,9 @@ async function archiveAndRemoveScheduleCards(cards) {
     } catch (_) {}
   }
   DATA.sections.schedule = scheduleCards().filter(c => !ids.has(c.id));
+  list.forEach(card => {
+    if (card && card.id) clearPipelineLinkForSchedule(card.id);
+  });
   return list.length;
 }
 
