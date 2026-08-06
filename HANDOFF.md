@@ -5,6 +5,26 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Calendar Clear/Change + Miro Ideas nav 0.12.25 (Cursor)
+
+### Branch
+- `cursor/calendar-clear-miro-nav-8504` (from `cursor/ideas-pipeline-ux-af1c`)
+- Marketing **`0.12.25`**
+
+### What
+1. Calendar filled Needs: **Change content** + **Clear content** in Scheduled
+   content block (not footer-only). Card × always visible.
+2. Change opens pipeline picker on filled cards; picking replaces the link.
+3. Ideas canvas Miro-standard nav: Select/Hand (V/H), Space-drag pan,
+   trackpad two-finger pan / pinch zoom, mouse wheel zoom + right-drag pan,
+   bottom-right − / % / + / Fit, Trackpad|Mouse toggle, session persist.
+
+### Open / next
+1. Local soak then Mac deploy (cloud still has no CF token).
+2. Confirm Clear/Change + Ideas nav on live after deploy.
+
+---
+
 ## 2026-08-06 — Live 0.12.24 + EOD (Cursor)
 
 ### Live
