@@ -18,6 +18,11 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 2. Types dropdown + categories + colour chips
 3. Keep Ideas when linking to calendar
 
+### Env note
+- Cloud VM still has **no** `CLOUDFLARE_API_TOKEN` (user skipped). Local
+  `wrangler dev` is enough for soak; deploys stay Mac/PC.
+- `AGENTS.md` + `package.json` (wrangler) added on this branch for cloud setup.
+
 ### Open / next
 1. Hard-refresh live if the tab still shows v0.11.82.
 2. Soak Types filter + idea-link on live with real board data.
