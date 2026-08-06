@@ -1,0 +1,14 @@
+{
+  "name": "ppc-homebase",
+  "version": "0.0.0",
+  "private": true,
+  "description": "PPC Homebase - Cloudflare Worker (planner/kanban/marketing tool)",
+  "scripts": {
+    "dev": "wrangler dev --port 8787",
+    "dev:remote": "wrangler dev --port 8787 --remote",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.119.0"
+  }
+}
