@@ -5,6 +5,25 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Ideas reshuffle + shorter board 0.12.26 (Cursor)
+
+### Branch
+- `cursor/calendar-clear-miro-nav-8504` — Marketing **`0.12.26`**
+- PR: https://github.com/jarvis-tuttlebee/ppc-homebase/pull/11
+
+### What
+1. **Reshuffle** fills the visible Ideas viewport (adaptive columns + tighter
+   gaps when crowded) instead of a small corner cluster; view resets to 1:1.
+2. Ideas canvas plane is **viewport-sized** (not 8000px wide).
+3. Default/max Ideas board height lowered (~34% / 48% viewport) so Preparation
+   is reachable below without the Ideas section dominating the screen.
+
+### Open / next
+1. Mac deploy `0.12.26` from fresh clone on this branch.
+2. Soak reshuffle with ~27 cards; drag resize gutter if height still tight.
+
+---
+
 ## 2026-08-06 — Live 0.12.25 deploy confirmed (Cursor)
 
 ### Live

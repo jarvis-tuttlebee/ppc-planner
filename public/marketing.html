@@ -427,8 +427,8 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 8000px;
-      height: 5600px;
+      width: var(--ideas-canvas-w, 1200px);
+      height: var(--ideas-canvas-h, 900px);
       transform-origin: 0 0;
       background: transparent;
     }
@@ -3774,7 +3774,7 @@
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
 const MEDIA_UPLOAD_URL = '/api/marketing/media';
-const APP_VERSION = '0.12.25';
+const APP_VERSION = '0.12.26';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 let marketingHydrated = false;
 let marketingRev = 0;
@@ -3798,8 +3798,11 @@ const HIDE_POSTED_KEY = 'ppc-marketing-hide-posted';
 const HIDDEN_FORMATS_KEY = 'ppc-marketing-hidden-formats';
 /** Empty slots yell Need only within this many days of publish (or if unscheduled). */
 const NEED_ACTION_DAYS = 7;
-const MOOD_H_DEFAULT = 380;
-const MOOD_H_MIN = 220;
+const MOOD_H_DEFAULT = (function () {
+  const vh = typeof window !== 'undefined' ? (window.innerHeight || 800) : 800;
+  return Math.round(Math.max(200, Math.min(320, vh * 0.34)));
+})();
+const MOOD_H_MIN = 200;
 const MOOD_H_MAX = 900;
 
 function loadViewMode() {
@@ -3809,14 +3812,18 @@ function loadViewMode() {
   } catch (_) {}
   return 'calendar';
 }
+function moodHeightMax() {
+  const vh = typeof window !== 'undefined' ? (window.innerHeight || 800) : 800;
+  return Math.min(MOOD_H_MAX, Math.round(vh * 0.48));
+}
 function clampMoodHeight(n) {
-  return Math.max(MOOD_H_MIN, Math.min(MOOD_H_MAX, n));
+  return Math.max(MOOD_H_MIN, Math.min(moodHeightMax(), n));
 }
 /** Personal localStorage value, or null if unset/invalid */
 function readLocalMoodHeight() {
   try {
     const n = parseFloat(localStorage.getItem(MOOD_H_KEY));
-    if (!Number.isNaN(n) && n >= MOOD_H_MIN && n <= MOOD_H_MAX) return n;
+    if (!Number.isNaN(n) && n >= MOOD_H_MIN && n <= moodHeightMax()) return clampMoodHeight(n);
   } catch (_) {}
   return null;
 }
@@ -3824,7 +3831,7 @@ function parseLayoutPrefs(raw) {
   if (!raw || typeof raw !== 'object') return { moodH: null };
   const moodN = parseFloat(raw.moodH);
   return {
-    moodH: (!Number.isNaN(moodN) && moodN >= MOOD_H_MIN && moodN <= MOOD_H_MAX)
+    moodH: (!Number.isNaN(moodN) && moodN >= MOOD_H_MIN && moodN <= moodHeightMax())
       ? clampMoodHeight(moodN) : null
   };
 }
@@ -3832,8 +3839,8 @@ function parseLayoutPrefs(raw) {
 function resolveLayoutPrefs(source) {
   const cloud = parseLayoutPrefs(source && source.layoutPrefs);
   const localMood = readLocalMoodHeight();
-  marketingMoodH = localMood != null ? localMood
-    : (cloud.moodH != null ? cloud.moodH : MOOD_H_DEFAULT);
+  marketingMoodH = clampMoodHeight(localMood != null ? localMood
+    : (cloud.moodH != null ? cloud.moodH : MOOD_H_DEFAULT));
   syncLayoutPrefsToData();
 }
 function syncLayoutPrefsToData() {
@@ -3845,6 +3852,7 @@ function syncLayoutPrefsToData() {
 let marketingViewMode = loadViewMode();
 let marketingMoodH = readLocalMoodHeight();
 if (marketingMoodH == null) marketingMoodH = MOOD_H_DEFAULT;
+else marketingMoodH = clampMoodHeight(marketingMoodH);
 
 function setMarketingViewMode(mode) {
   if (mode !== 'calendar' && mode !== 'pipeline') mode = 'calendar';
@@ -3938,7 +3946,7 @@ function bindMoodResizeGutter(gutter, viewport) {
       persistMoodHeight();
       e.preventDefault();
     } else if (e.key === 'End') {
-      applyMoodHeight(MOOD_H_MAX);
+      applyMoodHeight(moodHeightMax());
       persistMoodHeight();
       e.preventDefault();
     }
@@ -5067,8 +5075,71 @@ let moodNavMenuEl = null;
 let moodViewRestored = false;
 const MOOD_VIEW_KEY = 'ppc-mood-view-v1';
 
-const CANVAS_W = 8000;
-const CANVAS_H = 5600;
+/** Ideas canvas size — viewport-sized, not an 8000px infinite plane. */
+let ideasCanvasW = 1200;
+let ideasCanvasH = 900;
+
+function ideasCanvasWidth() { return ideasCanvasW; }
+function ideasCanvasHeight() { return ideasCanvasH; }
+
+function setIdeasCanvasSize(w, h) {
+  ideasCanvasW = Math.max(400, Math.round(w));
+  ideasCanvasH = Math.max(300, Math.round(h));
+  const cssW = ideasCanvasW + 'px';
+  const cssH = ideasCanvasH + 'px';
+  if (moodCanvasEl) {
+    moodCanvasEl.style.width = cssW;
+    moodCanvasEl.style.height = cssH;
+  }
+  const board = document.getElementById('board');
+  if (board) {
+    board.style.setProperty('--ideas-canvas-w', cssW);
+    board.style.setProperty('--ideas-canvas-h', cssH);
+  }
+}
+
+/** Size the ideas plane to existing card positions or the viewport minimum. */
+function syncIdeasCanvasFromCards() {
+  const metrics = ideasBuildMetrics();
+  const ideas = DATA.ideas || [];
+  if (!ideas.length) {
+    setIdeasCanvasSize(metrics.vw, metrics.vh);
+    return;
+  }
+  const size = ideaCardSize(ideas.length);
+  let maxX = metrics.pad;
+  let maxY = metrics.pad;
+  ideas.forEach(idea => {
+    const h = ideaCardHeight(idea, size);
+    maxX = Math.max(maxX, (Number(idea.x) || 0) + size + metrics.pad);
+    maxY = Math.max(maxY, (Number(idea.y) || 0) + h + metrics.pad);
+  });
+  setIdeasCanvasSize(Math.max(metrics.vw, maxX), Math.max(metrics.vh, maxY));
+}
+
+/** Visible build area inside the mood viewport (1:1 zoom). */
+function ideasBuildMetrics() {
+  const vw = moodViewportEl ? Math.max(320, moodViewportEl.clientWidth || 900) : 900;
+  const vh = moodViewportEl
+    ? Math.max(220, moodViewportEl.clientHeight || marketingMoodH || MOOD_H_DEFAULT)
+    : MOOD_H_DEFAULT;
+  const pad = 20;
+  return { vw, vh, pad, innerW: vw - pad * 2, innerH: vh - pad * 2 };
+}
+
+/** Adaptive gap — tighter when the board is crowded. */
+function ideasPackGap(count) {
+  return Math.max(4, Math.min(10, Math.round(11 - count * 0.06)));
+}
+
+/** After reshuffle, show the grid at 1:1 filling the viewport (not zoomed-out cluster). */
+function resetIdeasViewAfterReshuffle() {
+  canvasZoom = 1;
+  canvasPanX = 0;
+  canvasPanY = 0;
+  applyCanvasTransform();
+}
+
 /** Max long-edge for embedded previews (Ideas / Prep / Discover). Compressed JPEG before R2 upload. */
 const IMAGE_MAX_EDGE = 720;
 const IMAGE_JPEG_QUALITY = 0.72;
@@ -5583,9 +5654,11 @@ function ideasOverlap(ax, ay, aw, ah, bx, by, bw, bh) {
 function scatterPosition(cardSize) {
   const placed = DATA.ideas.filter(i => i.x != null && i.y != null);
   const selfH = ideaCardHeight(null, cardSize);
+  const cw = ideasCanvasWidth();
+  const ch = ideasCanvasHeight();
   for (let n = 0; n < 50; n++) {
-    const x = 32 + Math.random() * (CANVAS_W - cardSize - 64);
-    const y = 32 + Math.random() * (CANVAS_H - cardSize - 100);
+    const x = 32 + Math.random() * (cw - cardSize - 64);
+    const y = 32 + Math.random() * (ch - cardSize - 100);
     const clash = placed.some(p => {
       const ph = ideaCardHeight(p, ideaCardSize(DATA.ideas.length));
       return ideasOverlap(x, y, cardSize, selfH, p.x, p.y, cardSize, ph);
@@ -5617,8 +5690,8 @@ function placeNearMostRecent(cardSize) {
     const angle = i * golden;
     const x = Math.round(anchorX + r * Math.cos(angle));
     const y = Math.round(anchorY + r * Math.sin(angle));
-    const cx = Math.max(0, Math.min(CANVAS_W - cardSize, x));
-    const cy = Math.max(0, Math.min(CANVAS_H - cardSize, y));
+    const cx = Math.max(0, Math.min(ideasCanvasWidth() - cardSize, x));
+    const cy = Math.max(0, Math.min(ideasCanvasHeight() - cardSize, y));
 
     const clash = placed.some(p => {
       const ph = ideaCardHeight(p, cardSize);
@@ -5628,8 +5701,8 @@ function placeNearMostRecent(cardSize) {
   }
 
   return {
-    x: Math.max(0, Math.min(CANVAS_W - cardSize, Math.round(anchorX + cardSize * 0.35))),
-    y: Math.max(0, Math.min(CANVAS_H - cardSize, Math.round(anchorY + ideaCardHeight(last, cardSize) + 8)))
+    x: Math.max(0, Math.min(ideasCanvasWidth() - cardSize, Math.round(anchorX + cardSize * 0.35))),
+    y: Math.max(0, Math.min(ideasCanvasHeight() - cardSize, Math.round(anchorY + ideaCardHeight(last, cardSize) + 8)))
   };
 }
 
@@ -5686,17 +5759,28 @@ function restoreIdeaRefsFromSchedule() {
   return changed;
 }
 
-/** Pack ideas into columns using real card heights so portrait thumbs don't overlap. */
+/** Pack ideas into a viewport-filling grid with adaptive gaps and column count. */
 function restackIdeas() {
   const n = DATA.ideas.length;
   if (!n) return false;
   const size = ideaCardSize(n);
-  const gap = 8;
-  const packWidth = Math.min(CANVAS_W - 80, 1100);
-  const cols = Math.max(1, Math.floor((packWidth + gap) / (size + gap)));
-  const colHeights = Array.from({ length: cols }, () => 36);
-  const startX = 36;
+  const metrics = ideasBuildMetrics();
+  const gap = ideasPackGap(n);
 
+  // Fill the visible build width at 1:1 zoom.
+  let cols = Math.max(1, Math.floor((metrics.innerW + gap) / (size + gap)));
+  // When crowded, add columns so cards spread across the board instead of one tall stack.
+  if (n > cols) {
+    const aspect = metrics.innerW / Math.max(metrics.innerH, size * 1.5);
+    const spreadCols = Math.ceil(Math.sqrt(n * Math.max(1, aspect)));
+    cols = Math.max(cols, Math.min(n, spreadCols));
+  }
+  cols = Math.min(cols, n);
+
+  const packWidth = cols * size + (cols - 1) * gap;
+  const startX = metrics.pad + Math.max(0, Math.floor((metrics.innerW - packWidth) / 2));
+
+  const colHeights = Array.from({ length: cols }, () => metrics.pad);
   DATA.ideas.forEach(idea => {
     let col = 0;
     for (let c = 1; c < cols; c++) {
@@ -5707,6 +5791,12 @@ function restackIdeas() {
     idea.y = Math.round(colHeights[col]);
     colHeights[col] += h + gap;
   });
+
+  const packHeight = Math.max(...colHeights, metrics.pad) + metrics.pad;
+  setIdeasCanvasSize(
+    Math.max(metrics.vw, packWidth + metrics.pad * 2),
+    Math.max(metrics.vh, packHeight)
+  );
   return true;
 }
 
@@ -5751,6 +5841,7 @@ function ideasAreSparse() {
   const n = DATA.ideas.length;
   if (n < 3) return false;
   const size = ideaCardSize(n);
+  const metrics = ideasBuildMetrics();
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   let packedH = 0;
   DATA.ideas.forEach(idea => {
@@ -5763,11 +5854,11 @@ function ideasAreSparse() {
     packedH += h;
   });
   const spanArea = Math.max(1, (maxX - minX) * (maxY - minY));
-  const gap = 8;
-  const cols = Math.max(1, Math.ceil(Math.sqrt(n)));
+  const gap = ideasPackGap(n);
+  const cols = Math.max(1, Math.floor((metrics.innerW + gap) / (size + gap)));
   const avgH = packedH / n;
   const packedArea = cols * (size + gap) * (avgH + gap) * Math.ceil(n / cols);
-  return spanArea > packedArea * 2.6;
+  return spanArea > packedArea * 2.2;
 }
 
 let lastIdeaCardSize = null;
@@ -6929,8 +7020,8 @@ function renderIdeaCard(idea, cardSize) {
       didDrag = true;
       const dx = screenDx / canvasZoom;
       const dy = screenDy / canvasZoom;
-      idea.x = Math.round(Math.max(0, Math.min(CANVAS_W - cardSize, cardStartX + dx)));
-      idea.y = Math.round(Math.max(0, Math.min(CANVAS_H - cardSize, cardStartY + dy)));
+      idea.x = Math.round(Math.max(0, Math.min(ideasCanvasWidth() - cardSize, cardStartX + dx)));
+      idea.y = Math.round(Math.max(0, Math.min(ideasCanvasHeight() - cardSize, cardStartY + dy)));
       card.style.left = idea.x + 'px';
       card.style.top = idea.y + 'px';
     };
@@ -7133,7 +7224,7 @@ function renderIdeasBody() {
   reshuffleBtn.type = 'button';
   reshuffleBtn.className = 'mood-tool-btn';
   reshuffleBtn.textContent = 'Reshuffle';
-  reshuffleBtn.title = 'Pack overlapping cards into a tidy grid and fit the view';
+  reshuffleBtn.title = 'Pack cards into the visible board area and reset view';
   reshuffleBtn.addEventListener('click', e => {
     e.stopPropagation();
     reshuffleIdeasBoard();
@@ -7251,6 +7342,7 @@ function renderIdeasBody() {
   DATA.ideas.forEach(idea => canvas.appendChild(renderIdeaCard(idea, cardSize)));
   viewport.appendChild(canvas);
   applyMoodHeight(marketingMoodH);
+  syncIdeasCanvasFromCards();
   body.appendChild(viewport);
 
   const moodGutter = document.createElement('div');
@@ -7262,7 +7354,7 @@ function renderIdeasBody() {
   syncMoodViewportChrome();
   if (pendingFitIdeas) {
     pendingFitIdeas = false;
-    requestAnimationFrame(() => fitIdeasInView());
+    requestAnimationFrame(() => resetIdeasViewAfterReshuffle());
   }
   return body;
 }
