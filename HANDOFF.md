@@ -5,6 +5,26 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Keep Ideas when linking to calendar (Cursor)
+
+### What
+- Marketing **`0.12.19`**: Choosing a Content Idea for a calendar Need no
+  longer removes it from the Ideas board. It **links** (like Prep/Exec/Review),
+  mirrors preview + Pipeline notes, stays single-use for other dates, and the
+  link carries through Ideas → Prep → Exec → Review so notes keep updating.
+- Branch: `cursor/idea-calendar-link-keep-af1c`.
+
+### Deploy
+- Soak on `:8787`. Deploy only when asked.
+- Hard-refresh `/marketing` — expect **v0.12.19**.
+
+### Open / next
+1. Soak: pick idea for Need → idea still on board → Move to Prep → calendar
+   notes/status update.
+2. Deploy when happy (live still has the remove-on-fill bug).
+
+---
+
 ## 2026-08-05 — Pipeline notes under Scheduled content (Cursor)
 
 ### What

@@ -3475,7 +3475,7 @@
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
 const MEDIA_UPLOAD_URL = '/api/marketing/media';
-const APP_VERSION = '0.12.13';
+const APP_VERSION = '0.12.19';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 let marketingHydrated = false;
 let marketingRev = 0;
@@ -5817,6 +5817,13 @@ async function removeIdea(id) {
         label: stripHtml(idea.body || '') || 'Idea'
       });
     } catch (_) {}
+    if (idea.linkedScheduleId) {
+      const slot = scheduleCards().find(c => c.id === idea.linkedScheduleId);
+      if (slot && slot.linkedPipelineStage === 'ideas') {
+        slot.linkedPipelineStage = '';
+        // Keep mirrored content + sourceIdeaId on the calendar card.
+      }
+    }
   }
   DATA.ideas = DATA.ideas.filter(i => i.id !== id);
   restackIdeas();
@@ -6227,6 +6234,7 @@ async function removeScheduleCard(id) {
       });
     } catch (_) {}
   }
+  clearPipelineLinkForSchedule(id);
   DATA.sections.schedule = scheduleCards().filter(c => c.id !== id);
   clearTimeout(saveTimer);
   saveData();
@@ -6249,6 +6257,9 @@ async function archiveAndRemoveScheduleCards(cards) {
     } catch (_) {}
   }
   DATA.sections.schedule = scheduleCards().filter(c => !ids.has(c.id));
+  list.forEach(card => {
+    if (card && card.id) clearPipelineLinkForSchedule(card.id);
+  });
   return list.length;
 }
 
@@ -7045,6 +7056,15 @@ function availablePipelineCards(scheduleId) {
   });
 }
 
+/** Ideas still on the board that can be linked to this Need (single-use link). */
+function availableIdeaCards(scheduleId) {
+  return (DATA.ideas || []).filter(idea => {
+    if (!idea) return false;
+    const linked = idea.linkedScheduleId;
+    return !linked || linked === scheduleId;
+  });
+}
+
 function findPipelineCardById(id) {
   return allPipelineCards().find(entry => entry.card && entry.card.id === id) || null;
 }
@@ -7054,22 +7074,28 @@ function clearPipelineLinkForSchedule(scheduleId) {
   allPipelineCards().forEach(entry => {
     if (entry.card && entry.card.linkedScheduleId === scheduleId) entry.card.linkedScheduleId = '';
   });
+  (DATA.ideas || []).forEach(idea => {
+    if (idea && idea.linkedScheduleId === scheduleId) idea.linkedScheduleId = '';
+  });
 }
 
 function syncLinkedSchedulePreview(card, stage) {
   if (!card || !card.linkedScheduleId) return null;
   const slot = scheduleCards().find(c => c.id === card.linkedScheduleId);
   if (!slot || isDiscoverCard(slot)) return null;
-  const previewStatus = stage === 'prep' ? 'prep' : 'execute';
+  const previewStatus = stage === 'ideas' ? 'need'
+    : (stage === 'prep' ? 'prep' : 'execute');
   return fillEmptyNeedSlot(slot, {
     ...slot,
     body: card.body || '',
     imageData: card.imageData || null,
     imageW: card.imageW,
     imageH: card.imageH,
-    pillar: card.pillar || slot.pillar || 'organic',
+    pillar: (stage === 'ideas'
+      ? ((card.cat && pillarById(card.cat)) ? card.cat : (slot.pillar || 'organic'))
+      : (card.pillar || slot.pillar || 'organic')),
     format: card.format || slot.format,
-    sourceIdeaId: card.sourceIdeaId || slot.sourceIdeaId || null,
+    sourceIdeaId: (stage === 'ideas' ? card.id : null) || card.sourceIdeaId || slot.sourceIdeaId || null,
     productionPlan: card.productionPlan || '',
     productsUsed: card.productsUsed || '',
     location: card.location || '',
@@ -7083,8 +7109,8 @@ function syncLinkedSchedulePreview(card, stage) {
     caption: stage === 'review' ? (card.caption || '') : (slot.caption || ''),
     tags: stage === 'review' ? (card.tags || '') : (slot.tags || ''),
     music: stage === 'review' ? (card.music || '') : (slot.music || ''),
-    linkedPipelineId: card.id,
-    linkedPipelineStage: stage,
+    linkedPipelineId: stage === 'ideas' ? '' : card.id,
+    linkedPipelineStage: stage === 'ideas' ? 'ideas' : stage,
     linkedScheduleId: card.linkedScheduleId,
     publishStatus: previewStatus
   });
@@ -11444,7 +11470,7 @@ function openIdeaFillPicker() {
   if (!card || isDiscoverCard(card)) return;
   const emptyNeed = isNeedContentCard(card) && !scheduleSlotHasContent(card);
   if (!emptyNeed) return;
-  if (!DATA.ideas.length && !availablePipelineCards(activeScheduleId).length) {
+  if (!availableIdeaCards(activeScheduleId).length && !availablePipelineCards(activeScheduleId).length) {
     if (typeof PPC !== 'undefined' && PPC.showToast) PPC.showToast('No content cards yet');
     return;
   }
@@ -11474,7 +11500,7 @@ function renderIdeaFillPicker(needCard) {
   list.innerHTML = '';
   const needPillar = needCard && needCard.pillar;
   const sources = [
-    ...DATA.ideas.map(idea => ({ card: idea, stage: 'ideas', label: 'Content Ideas' })),
+    ...availableIdeaCards(needCard && needCard.id).map(idea => ({ card: idea, stage: 'ideas', label: 'Content Ideas' })),
     ...availablePipelineCards(needCard && needCard.id)
   ].sort((a, b) => {
     const stageOrder = { ideas: 0, prep: 1, execution: 2, review: 3 };
@@ -11494,7 +11520,7 @@ function renderIdeaFillPicker(needCard) {
     btn.type = 'button';
     btn.className = 'idea-fill-item';
     btn.title = entry.stage === 'ideas'
-      ? 'Fill this calendar Need from this idea'
+      ? 'Link this calendar Need to this idea (keeps it on the Ideas board)'
       : 'Link this calendar Need to this pipeline card';
 
     const thumb = document.createElement('div');
@@ -11522,7 +11548,7 @@ function renderIdeaFillPicker(needCard) {
     btn.appendChild(meta);
 
     btn.addEventListener('click', () => {
-      if (entry.stage === 'ideas') fillNeedFromIdea(activeScheduleId, pipelineCard.id);
+      if (entry.stage === 'ideas') linkNeedToIdea(activeScheduleId, pipelineCard.id);
       else linkNeedToPipelineCard(activeScheduleId, pipelineCard.id);
     });
     list.appendChild(btn);
@@ -11557,55 +11583,42 @@ function linkNeedToPipelineCard(needId, pipelineId) {
   if (typeof PPC !== 'undefined' && PPC.showToast) PPC.showToast('Linked calendar card to pipeline');
 }
 
-/** Merge an Ideas board card into an empty Need — skips Pipeline; status Prep. */
-async function fillNeedFromIdea(needId, ideaId) {
+/**
+ * Link an Ideas board card to an empty Need — keeps the idea on the board.
+ * Progressing Ideas → Prep → Exec → Review carries the link and refreshes
+ * Pipeline notes on the calendar card via syncLinkedSchedulePreview.
+ */
+function linkNeedToIdea(needId, ideaId) {
   const slot = scheduleCards().find(c => c.id === needId);
   const idea = DATA.ideas.find(i => i.id === ideaId);
   if (!slot || !idea) return;
   if (isDiscoverCard(slot) || scheduleSlotHasContent(slot)) return;
+  if (idea.linkedScheduleId && idea.linkedScheduleId !== needId) {
+    if (typeof PPC !== 'undefined' && PPC.showToast) PPC.showToast('This idea is already linked to another calendar date');
+    return;
+  }
 
-  const pillar = (idea.cat && pillarById(idea.cat)) ? idea.cat : (slot.pillar || 'organic');
-  const scheduledAt = slot.scheduledAt || slot.scheduleAt || '';
-  const payload = {
-    body: idea.body || '',
-    imageData: idea.imageData || null,
-    imageW: idea.imageW,
-    imageH: idea.imageH,
-    pillar,
-    format: slot.format,
-    scheduledAt,
-    scheduleAt: scheduledAt,
-    anchorId: slot.anchorId || '',
-    sourceIdeaId: idea.id,
-    publishStatus: 'prep',
-    caption: '',
-    tags: '',
-    music: '',
-    assignee: slot.assignee || ''
-  };
+  clearPipelineLinkForSchedule(needId);
+  idea.linkedScheduleId = needId;
+  syncLinkedSchedulePreview(idea, 'ideas');
+  const liveSlot = scheduleCards().find(c => c.id === needId);
+  if (liveSlot) {
+    liveSlot.sourceIdeaId = idea.id;
+    liveSlot.linkedPipelineId = '';
+    liveSlot.linkedPipelineStage = 'ideas';
+  }
 
-  const filled = fillEmptyNeedSlot(slot, payload);
-  if (!filled) return;
-
-  try {
-    await PPC.archivePush({
-      source: 'marketing',
-      item: JSON.parse(JSON.stringify(idea)),
-      restoreMeta: { kind: 'idea' },
-      label: stripHtml(idea.body || '') || 'Idea'
-    });
-  } catch (_) {}
-
-  DATA.ideas = DATA.ideas.filter(i => i.id !== ideaId);
-  restackIdeas();
-  lastIdeaCardSize = ideaCardSize(DATA.ideas.length);
   ideaFillPickerOpen = false;
-
   clearTimeout(saveTimer);
   saveData();
   renderBoard();
   openSchedulePanel(needId);
-  if (typeof PPC !== 'undefined' && PPC.showToast) PPC.showToast('Filled Need from Ideas');
+  if (typeof PPC !== 'undefined' && PPC.showToast) PPC.showToast('Linked idea — still on Ideas board');
+}
+
+/** @deprecated Use linkNeedToIdea — kept as alias for any leftover callers. */
+function fillNeedFromIdea(needId, ideaId) {
+  return linkNeedToIdea(needId, ideaId);
 }
 
 function toDateTimeLocalValue(value) {
@@ -12065,6 +12078,7 @@ function moveIdeaToPrep(idea, pillar, format) {
   pillar = pillar || 'organic';
   if (!format) format = defaultFormatForPillar(pillar);
 
+  const linkedScheduleId = idea.linkedScheduleId || '';
   const prepCard = {
     id: newPrepId(),
     sourceIdeaId: idea.id,
@@ -12076,12 +12090,34 @@ function moveIdeaToPrep(idea, pillar, format) {
     format,
     productionPlan: '',
     placementNote: '',
+    linkedScheduleId,
     createdAt: idea.createdAt || new Date().toISOString(),
     movedAt: new Date().toISOString()
   };
 
+  // Carry any Pipeline notes already typed on the linked calendar card.
+  if (linkedScheduleId) {
+    const slot = scheduleCards().find(c => c.id === linkedScheduleId);
+    if (slot) {
+      if (slot.productionPlan) prepCard.productionPlan = slot.productionPlan;
+      if (slot.productsUsed) prepCard.productsUsed = slot.productsUsed;
+      if (slot.location) prepCard.location = slot.location;
+      if (slot.requirements) prepCard.requirements = slot.requirements;
+      if (slot.dateTime) prepCard.dateTime = slot.dateTime;
+    }
+  }
+
   DATA.ideas = DATA.ideas.filter(i => i.id !== idea.id);
   prepCards().push(prepCard);
+  if (linkedScheduleId) {
+    syncLinkedSchedulePreview(prepCard, 'prep');
+    const liveSlot = scheduleCards().find(c => c.id === linkedScheduleId);
+    if (liveSlot) {
+      liveSlot.linkedPipelineId = prepCard.id;
+      liveSlot.linkedPipelineStage = 'prep';
+      liveSlot.sourceIdeaId = idea.id;
+    }
+  }
   restackIdeas();
   lastIdeaCardSize = ideaCardSize(DATA.ideas.length);
   expandedSections.add('preparation');
