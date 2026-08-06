@@ -5,6 +5,28 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Live 0.12.25 deploy confirmed (Cursor)
+
+### Live
+- https://ppc-homebase.pressplaycollective.workers.dev/marketing → **`v0.12.25`**
+  (curl confirmed).
+- Mac fresh clone `~/ppc-homebase-deploy` on `cursor/calendar-clear-miro-nav-8504`
+  uploaded `marketing.html` (1 new asset).
+- Version ID `c051a0d7-5358-467f-8f63-75980e0c4253`
+- PR: https://github.com/jarvis-tuttlebee/ppc-homebase/pull/11
+
+### Shipped on live
+1. Calendar **Change content** + **Clear content** in Scheduled content block;
+   always-visible card ×
+2. Ideas Miro-standard nav: Select/Hand, Space-drag, trackpad/mouse modes,
+   bottom −/%/+/Fit
+
+### Open / next
+1. Soak Clear/Change + Ideas nav on live board with real data.
+2. Optional: add CF token to cloud env so agents can deploy.
+
+---
+
 ## 2026-08-06 — Calendar Clear/Change + Miro Ideas nav 0.12.25 (Cursor)
 
 ### Branch
