@@ -5,6 +5,27 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Live 0.12.27 deploy confirmed (Cursor)
+
+### Live
+- https://ppc-homebase.pressplaycollective.workers.dev/marketing → **`v0.12.27`**
+  (curl confirmed).
+- Mac fresh clone `~/ppc-homebase-deploy` on `cursor/calendar-clear-miro-nav-8504`
+  uploaded `marketing.html` (1 new asset).
+- Version ID `54aae7a6-9200-4ede-8c3d-b8d54110f04e`
+- PR: https://github.com/jarvis-tuttlebee/ppc-homebase/pull/11
+
+### Shipped on live (this branch stack)
+1. Calendar **Change content** + **Clear content** + always-visible ×
+2. Ideas Miro nav (Select/Hand, Space-drag, −/%/+/Fit)
+3. Reshuffle fills viewport; shorter Ideas board height
+4. **Multi-assignee** on calendar (`assignees[]` + tick picker)
+
+### Open / next
+1. Soak multi-assignee + reshuffle on live board with real data.
+
+---
+
 ## 2026-08-06 — Multi-assignee on Marketing calendar 0.12.27 (Cursor)
 
 ### Branch
