@@ -5,6 +5,24 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Types colour chips (Cursor)
+
+### What
+- Marketing **`0.12.18`**: Types filter drops the tickboxes — each type (and
+  pillar category) is a colour-wash chip matching the calendar. Click the chip
+  to toggle; off = muted / struck. Categories still expand for individuals.
+- Branch: `cursor/calendar-type-filter-af1c`.
+
+### Deploy
+- Soak on `:8787`. Deploy only when asked.
+- Hard-refresh `/marketing` — expect **v0.12.18**.
+
+### Open / next
+1. Soak: too loud? dial wash down; too quiet? bump.
+2. Deploy when happy.
+
+---
+
 ## 2026-08-06 — Types filter categories (Cursor)
 
 ### What

@@ -1650,15 +1650,15 @@
       top: calc(100% + 6px);
       right: 0;
       z-index: 40;
-      min-width: 220px;
-      max-width: min(280px, 80vw);
-      max-height: min(360px, 60vh);
+      min-width: 240px;
+      max-width: min(300px, 84vw);
+      max-height: min(400px, 65vh);
       overflow: auto;
       background: #fff;
       border: 1px solid #E2DDD5;
       border-radius: 8px;
       box-shadow: 0 10px 28px rgba(44,44,44,0.12);
-      padding: 6px;
+      padding: 6px 8px 8px;
       display: none;
     }
     .cal-types-menu.open { display: block; }
@@ -1668,42 +1668,37 @@
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: #9a958d;
-      padding: 6px 10px 4px;
+      padding: 6px 4px 6px;
     }
     .cal-types-cat {
       border-radius: 6px;
-      margin-bottom: 2px;
+      margin-bottom: 4px;
     }
     .cal-types-cat-head {
       display: flex;
       align-items: center;
       gap: 6px;
       width: 100%;
-      border: none;
-      background: transparent;
-      text-align: left;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 12.5px;
-      font-weight: 600;
-      color: #2C2C2C;
-      padding: 7px 6px 7px 4px;
-      border-radius: 6px;
-      cursor: pointer;
+      padding: 2px 0;
       box-sizing: border-box;
     }
-    .cal-types-cat-head:hover {
-      background: rgba(44,44,44,0.04);
-    }
-    .cal-types-cat-head.is-off {
-      color: #8a8580;
-    }
     .cal-types-cat-chev {
-      width: 14px;
+      width: 16px;
+      height: 28px;
       flex-shrink: 0;
+      padding: 0;
+      border: none;
+      background: transparent;
       font-size: 9px;
       color: #9a958d;
       text-align: center;
-      line-height: 1;
+      line-height: 28px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .cal-types-cat-chev:hover {
+      color: #2C2C2C;
+      background: rgba(44,44,44,0.04);
     }
     .cal-types-cat-meta {
       flex: 0 0 auto;
@@ -1711,75 +1706,59 @@
       font-weight: 600;
       color: #9a958d;
       letter-spacing: 0.02em;
+      min-width: 28px;
+      text-align: right;
     }
     .cal-types-cat-body {
-      padding: 0 0 4px 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      padding: 2px 0 8px 22px;
     }
     .cal-types-cat-body[hidden] {
       display: none;
     }
-    .cal-types-menu-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      width: 100%;
-      border: none;
-      background: transparent;
-      text-align: left;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 12.5px;
-      font-weight: 500;
-      color: #2C2C2C;
-      padding: 6px 10px 6px 8px;
-      border-radius: 6px;
-      cursor: pointer;
-      box-sizing: border-box;
-    }
-    .cal-types-menu-item:hover {
-      background: rgba(44,44,44,0.04);
-    }
-    .cal-types-menu-item.is-off {
-      color: #8a8580;
-    }
-    .cal-types-menu-item.is-off .cal-types-menu-text {
-      text-decoration: line-through;
-      text-decoration-color: rgba(107,122,141,0.5);
-    }
-    .cal-types-menu-check {
-      width: 14px;
-      height: 14px;
-      border-radius: 3px;
-      border: 1.5px solid #C9C3BA;
-      flex-shrink: 0;
-      display: flex;
+    .cal-types-chip {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 10px;
-      line-height: 1;
-      color: #fff;
-      background: #fff;
+      max-width: 100%;
+      border: 1px solid transparent;
+      border-left-width: 3px;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.2;
+      color: #2C2C2C;
+      padding: 6px 10px;
+      cursor: pointer;
       box-sizing: border-box;
-    }
-    .cal-types-menu-check.is-on {
-      border-color: #2C2C2C;
-      background: #2C2C2C;
-    }
-    .cal-types-menu-check.is-mixed {
-      border-color: #2C2C2C;
-      background: #2C2C2C;
-    }
-    .cal-types-menu-swatch {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .cal-types-menu-text {
-      flex: 1 1 auto;
-      min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      transition: filter 0.1s ease, opacity 0.1s ease;
+    }
+    .cal-types-chip:hover {
+      filter: brightness(0.97);
+    }
+    .cal-types-chip.is-off {
+      opacity: 0.42;
+      color: #6B7A8D;
+      font-weight: 500;
+      border-style: dashed;
+      text-decoration: line-through;
+      text-decoration-color: rgba(107,122,141,0.45);
+    }
+    .cal-types-chip.is-mixed {
+      /* category partially on — keep colour, softer weight */
+      font-weight: 600;
+    }
+    .cal-types-chip--cat {
+      flex: 1 1 auto;
+      min-width: 0;
+      justify-content: flex-start;
+      font-size: 12.5px;
     }
     .cal-types-menu-reset {
       display: block;
@@ -1792,7 +1771,7 @@
       font-size: 11.5px;
       font-weight: 600;
       color: #6B7A8D;
-      padding: 8px 10px 6px;
+      padding: 8px 4px 4px;
       margin-top: 2px;
       border-radius: 0;
       cursor: pointer;
@@ -3639,7 +3618,7 @@
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
 const MEDIA_UPLOAD_URL = '/api/marketing/media';
-const APP_VERSION = '0.12.17';
+const APP_VERSION = '0.12.18';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 let marketingHydrated = false;
 let marketingRev = 0;
@@ -4537,14 +4516,23 @@ function setCalFormatsVisible(keys, visible) {
   persistHiddenCalFormats();
 }
 
-function makeTypesCheckEl(state) {
+/** Colour chip for Types filter — on = format wash, off = muted. */
+function styleTypesChip(el, tone, state) {
   // state: 'on' | 'off' | 'mixed'
-  const check = document.createElement('span');
-  check.className = 'cal-types-menu-check'
-    + (state === 'on' ? ' is-on' : '')
-    + (state === 'mixed' ? ' is-mixed' : '');
-  check.textContent = state === 'on' ? '✓' : (state === 'mixed' ? '−' : '');
-  return check;
+  const t = tone || '#564A5E';
+  el.style.borderColor = state === 'off' ? hexWash(t, 0.22) : hexWash(t, 0.35);
+  el.style.borderLeftColor = t;
+  if (state === 'off') {
+    el.style.background = '#f3f1ee';
+    el.style.color = '#6B7A8D';
+  } else if (state === 'mixed') {
+    // Softer wash so mixed categories don't shout.
+    el.style.background = hexWash(t, 0.14);
+    el.style.color = '#2C2C2C';
+  } else {
+    el.style.background = hexWash(t, 0.26);
+    el.style.color = '#2C2C2C';
+  }
 }
 
 function buildTypesFilterControl() {
@@ -4589,7 +4577,7 @@ function buildTypesFilterControl() {
     cat.className = 'cal-types-cat';
 
     const head = document.createElement('div');
-    head.className = 'cal-types-cat-head' + (allOff ? ' is-off' : '');
+    head.className = 'cal-types-cat-head';
 
     const chev = document.createElement('button');
     chev.type = 'button';
@@ -4604,44 +4592,23 @@ function buildTypesFilterControl() {
       renderBoard();
     });
 
-    const catCheckBtn = document.createElement('button');
-    catCheckBtn.type = 'button';
-    catCheckBtn.className = 'cal-types-menu-item';
-    catCheckBtn.style.cssText = 'width:auto;padding:0;flex:0 0 auto;';
-    catCheckBtn.setAttribute('role', 'menuitemcheckbox');
-    catCheckBtn.setAttribute('aria-checked', allOn ? 'true' : (allOff ? 'false' : 'mixed'));
-    catCheckBtn.title = allOn
-      ? ('Hide all ' + group.label + ' types')
-      : ('Show all ' + group.label + ' types');
-    catCheckBtn.appendChild(makeTypesCheckEl(state));
-    catCheckBtn.addEventListener('click', e => {
+    const catChip = document.createElement('button');
+    catChip.type = 'button';
+    catChip.className = 'cal-types-chip cal-types-chip--cat'
+      + (allOff ? ' is-off' : '')
+      + (state === 'mixed' ? ' is-mixed' : '');
+    catChip.setAttribute('role', 'menuitemcheckbox');
+    catChip.setAttribute('aria-checked', allOn ? 'true' : (allOff ? 'false' : 'mixed'));
+    catChip.textContent = group.label;
+    catChip.title = allOn
+      ? ('Hide all ' + group.label + ' · click chevron to expand')
+      : ('Show all ' + group.label + ' · click chevron to expand');
+    styleTypesChip(catChip, group.tone, state);
+    catChip.addEventListener('click', e => {
       e.stopPropagation();
-      // Any hidden → show all; otherwise hide all.
       setCalFormatsVisible(keys, !allOn);
       typesFilterOpen = true;
-      // Expand so the change is obvious.
       typesFilterExpanded.add(group.id);
-      renderBoard();
-    });
-
-    const nameBtn = document.createElement('button');
-    nameBtn.type = 'button';
-    nameBtn.className = 'cal-types-menu-item';
-    nameBtn.style.cssText = 'flex:1 1 auto;min-width:0;padding:0;font-weight:600;';
-    nameBtn.title = (expanded ? 'Collapse ' : 'Expand ') + group.label;
-    const swatch = document.createElement('span');
-    swatch.className = 'cal-types-menu-swatch';
-    swatch.style.background = group.tone;
-    const text = document.createElement('span');
-    text.className = 'cal-types-menu-text';
-    text.textContent = group.label;
-    nameBtn.appendChild(swatch);
-    nameBtn.appendChild(text);
-    nameBtn.addEventListener('click', e => {
-      e.stopPropagation();
-      if (typesFilterExpanded.has(group.id)) typesFilterExpanded.delete(group.id);
-      else typesFilterExpanded.add(group.id);
-      typesFilterOpen = true;
       renderBoard();
     });
 
@@ -4650,8 +4617,7 @@ function buildTypesFilterControl() {
     meta.textContent = onCount + '/' + keys.length;
 
     head.appendChild(chev);
-    head.appendChild(catCheckBtn);
-    head.appendChild(nameBtn);
+    head.appendChild(catChip);
     head.appendChild(meta);
     cat.appendChild(head);
 
@@ -4662,21 +4628,14 @@ function buildTypesFilterControl() {
       const on = !hiddenCalFormats.has(opt.key);
       const item = document.createElement('button');
       item.type = 'button';
-      item.className = 'cal-types-menu-item' + (on ? '' : ' is-off');
+      item.className = 'cal-types-chip' + (on ? '' : ' is-off');
       item.setAttribute('role', 'menuitemcheckbox');
       item.setAttribute('aria-checked', on ? 'true' : 'false');
+      item.textContent = opt.label;
       item.title = on
-        ? ('Hide ' + opt.label + ' cards')
-        : ('Show ' + opt.label + ' cards');
-      item.appendChild(makeTypesCheckEl(on ? 'on' : 'off'));
-      const itemSwatch = document.createElement('span');
-      itemSwatch.className = 'cal-types-menu-swatch';
-      itemSwatch.style.background = opt.tone;
-      const itemText = document.createElement('span');
-      itemText.className = 'cal-types-menu-text';
-      itemText.textContent = opt.label;
-      item.appendChild(itemSwatch);
-      item.appendChild(itemText);
+        ? ('Hide ' + opt.label)
+        : ('Show ' + opt.label);
+      styleTypesChip(item, opt.tone, on ? 'on' : 'off');
       item.addEventListener('click', e => {
         e.stopPropagation();
         if (hiddenCalFormats.has(opt.key)) hiddenCalFormats.delete(opt.key);
