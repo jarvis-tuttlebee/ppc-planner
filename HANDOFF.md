@@ -5,6 +5,31 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Deploy force bump 0.12.24 (Cursor)
+
+### Live
+- Still **`0.12.21`**. Mac deploys reported “No updated asset files” —
+  local tree was still old HTML. Bumped to **`0.12.24`** so asset hash
+  must change once the right branch is used.
+
+### Deploy (Mac — fresh clone, foolproof)
+```bash
+cd ~
+rm -rf ~/ppc-homebase-deploy
+git clone https://github.com/jarvis-tuttlebee/ppc-homebase.git ppc-homebase-deploy
+cd ~/ppc-homebase-deploy
+git checkout cursor/ideas-pipeline-ux-af1c
+grep APP_VERSION public/marketing.html   # MUST show 0.12.24
+npx wrangler deploy
+```
+Hard-refresh live → expect **v0.12.24**. Wrangler must upload assets
+(not “No updated asset files”).
+
+### PR
+- https://github.com/jarvis-tuttlebee/ppc-homebase/pull/10
+
+---
+
 ## 2026-08-06 — EOD (Cursor) — deploy blocked, ready on Mac
 
 ### Live
@@ -13,30 +38,13 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ### Ready to ship
 - Branch: **`cursor/ideas-pipeline-ux-af1c`**
-- Marketing **`0.12.23`**
+- Marketing **`0.12.24`** (was 0.12.23; bump to force asset upload)
 - PR: https://github.com/jarvis-tuttlebee/ppc-homebase/pull/10
 - Local soak OK: schedule badge on Ideas, Clear content, Reshuffle/Fit,
   trackpad pan/zoom.
 
-### Deploy now (Mac — same path as 0.12.21)
-```bash
-cd ~/ppc-homebase
-git fetch origin
-git checkout cursor/ideas-pipeline-ux-af1c
-git pull origin cursor/ideas-pipeline-ux-af1c
-grep APP_VERSION public/marketing.html   # expect 0.12.23
-npx wrangler deploy
-```
-Then hard-refresh live `/marketing` — expect **v0.12.23**.
-
-### Shipped this session (not live until deploy)
-1. Ideas schedule badge + jump to calendar
-2. Keep linked ideas through Prep; restore missing refs from `sourceIdeaId`
-3. Clear content on calendar (× + panel) → empty Need
-4. Ideas canvas: trackpad pan/pinch-zoom; Reshuffle + Fit
-
 ### Open / next
-1. Mac deploy of `0.12.23` (commands above).
+1. Mac fresh-clone deploy of `0.12.24` (see entry above).
 2. Optional: add `CLOUDFLARE_API_TOKEN` to cloud env so agents can deploy.
 3. After deploy: confirm badge / clear / reshuffle on live board.
 
