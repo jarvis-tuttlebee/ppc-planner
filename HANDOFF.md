@@ -5,6 +5,26 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Calendar type filter (Cursor)
+
+### What
+- Marketing **`0.12.15`**: **Types** filter bar under Week/Month — toggle chips
+  for each card format (IG Post, Story, Reel, Pinterest, TikTok, Email, Ads,
+  Website, …). Off types are hidden on the calendar, prep strip, and
+  Unscheduled queue. Preference persists in `localStorage`
+  (`ppc-marketing-hidden-formats`). **Show all** resets.
+- Branch: `cursor/calendar-type-filter-af1c` (stacks on colour-wash `0.12.14`).
+
+### Deploy
+- Soak on `:8787`. Deploy only when asked.
+- Hard-refresh `/marketing` — expect **v0.12.15** and Types chips under the nav.
+
+### Open / next
+1. Soak: toggle a few types on a busy month; confirm Show all.
+2. Deploy when happy (with or after the 0.12.14 wash PR).
+
+---
+
 ## 2026-08-06 — Calendar card colour wash (Cursor)
 
 ### What
