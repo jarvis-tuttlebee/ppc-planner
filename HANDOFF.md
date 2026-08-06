@@ -5,6 +5,103 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Types colour chips (Cursor)
+
+### What
+- Marketing **`0.12.18`**: Types filter drops the tickboxes — each type (and
+  pillar category) is a colour-wash chip matching the calendar. Click the chip
+  to toggle; off = muted / struck. Categories still expand for individuals.
+- Branch: `cursor/calendar-type-filter-af1c`.
+
+### Deploy
+- Soak on `:8787`. Deploy only when asked.
+- Hard-refresh `/marketing` — expect **v0.12.18**.
+
+### Open / next
+1. Soak: too loud? dial wash down; too quiet? bump.
+2. Deploy when happy.
+
+---
+
+## 2026-08-06 — Types filter categories (Cursor)
+
+### What
+- Marketing **`0.12.17`**: Types dropdown groups formats into expandable
+  pillars (Organic / Email / Ads / Website…). Category checkbox turns a whole
+  chunk on/off (mixed = −); expand to toggle individual types. Organic expands
+  by default.
+- Branch: `cursor/calendar-type-filter-af1c`.
+
+### Deploy
+- Soak on `:8787`. Deploy only when asked.
+- Hard-refresh `/marketing` — expect **v0.12.17**.
+
+### Open / next
+1. Soak category collapse + bulk toggle vs individual.
+2. Deploy when happy.
+
+---
+
+## 2026-08-06 — Calendar type filter dropdown (Cursor)
+
+### What
+- Marketing **`0.12.16`**: Types filter is a **dropdown** next to Week/Month
+  (was a full chip bar — too tall). Button shows `Types` or
+  `Types · N hidden`; menu has checkboxes + Show all. Same filter behaviour
+  and `localStorage` key as 0.12.15.
+- Branch: `cursor/calendar-type-filter-af1c`.
+
+### Deploy
+- Soak on `:8787`. Deploy only when asked.
+- Hard-refresh `/marketing` — expect **v0.12.16** and a Types button in the
+  calendar nav (not a chip row).
+
+### Open / next
+1. Soak dropdown open/close + filter toggles on a busy month.
+2. Deploy when happy.
+
+---
+
+## 2026-08-06 — Calendar type filter (Cursor)
+
+### What
+- Marketing **`0.12.15`**: **Types** filter bar under Week/Month — toggle chips
+  for each card format (IG Post, Story, Reel, Pinterest, TikTok, Email, Ads,
+  Website, …). Off types are hidden on the calendar, prep strip, and
+  Unscheduled queue. Preference persists in `localStorage`
+  (`ppc-marketing-hidden-formats`). **Show all** resets.
+- Branch: `cursor/calendar-type-filter-af1c` (stacks on colour-wash `0.12.14`).
+
+### Deploy
+- Soak on `:8787`. Deploy only when asked.
+- Hard-refresh `/marketing` — expect **v0.12.15** and Types chips under the nav.
+
+### Open / next
+1. Soak: toggle a few types on a busy month; confirm Show all.
+2. Deploy when happy (with or after the 0.12.14 wash PR).
+
+---
+
+## 2026-08-06 — Calendar card colour wash (Cursor)
+
+### What
+- Marketing **`0.12.14`**: calendar slots use a stronger format wash
+  (`hexWash` **0.24**, was **0.12**) and a **4px** left accent bar (was 3px)
+  so format colours read more distinctly when you step back — richer than
+  before, still short of Google Calendar solid fills.
+- Branch: `cursor/calendar-card-distinct-wash-af1c`.
+
+### Deploy
+- Local soak on `:8787` first. Deploy only when asked
+  (`npx wrangler deploy` from Mac — VM still has no CF token).
+- Hard-refresh `/marketing` — expect **v0.12.14** and clearer card fills.
+
+### Open / next
+1. Soak on a busy month view; tune alpha if still blendy or too loud.
+2. Deploy when happy.
+
+---
+
 ## 2026-08-05 — Pipeline notes under Scheduled content (Cursor)
 
 ### What

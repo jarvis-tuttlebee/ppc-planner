@@ -1640,6 +1640,149 @@
       color: #2C2C2C;
       box-shadow: 0 1px 2px rgba(44,44,44,0.08);
     }
+    .cal-types-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+    .cal-types-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      z-index: 40;
+      min-width: 240px;
+      max-width: min(300px, 84vw);
+      max-height: min(400px, 65vh);
+      overflow: auto;
+      background: #fff;
+      border: 1px solid #E2DDD5;
+      border-radius: 8px;
+      box-shadow: 0 10px 28px rgba(44,44,44,0.12);
+      padding: 6px 8px 8px;
+      display: none;
+    }
+    .cal-types-menu.open { display: block; }
+    .cal-types-menu-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #9a958d;
+      padding: 6px 4px 6px;
+    }
+    .cal-types-cat {
+      border-radius: 6px;
+      margin-bottom: 4px;
+    }
+    .cal-types-cat-head {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+      padding: 2px 0;
+      box-sizing: border-box;
+    }
+    .cal-types-cat-chev {
+      width: 16px;
+      height: 28px;
+      flex-shrink: 0;
+      padding: 0;
+      border: none;
+      background: transparent;
+      font-size: 9px;
+      color: #9a958d;
+      text-align: center;
+      line-height: 28px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .cal-types-cat-chev:hover {
+      color: #2C2C2C;
+      background: rgba(44,44,44,0.04);
+    }
+    .cal-types-cat-meta {
+      flex: 0 0 auto;
+      font-size: 10px;
+      font-weight: 600;
+      color: #9a958d;
+      letter-spacing: 0.02em;
+      min-width: 28px;
+      text-align: right;
+    }
+    .cal-types-cat-body {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      padding: 2px 0 8px 22px;
+    }
+    .cal-types-cat-body[hidden] {
+      display: none;
+    }
+    .cal-types-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 100%;
+      border: 1px solid transparent;
+      border-left-width: 3px;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.2;
+      color: #2C2C2C;
+      padding: 6px 10px;
+      cursor: pointer;
+      box-sizing: border-box;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      transition: filter 0.1s ease, opacity 0.1s ease;
+    }
+    .cal-types-chip:hover {
+      filter: brightness(0.97);
+    }
+    .cal-types-chip.is-off {
+      opacity: 0.42;
+      color: #6B7A8D;
+      font-weight: 500;
+      border-style: dashed;
+      text-decoration: line-through;
+      text-decoration-color: rgba(107,122,141,0.45);
+    }
+    .cal-types-chip.is-mixed {
+      /* category partially on — keep colour, softer weight */
+      font-weight: 600;
+    }
+    .cal-types-chip--cat {
+      flex: 1 1 auto;
+      min-width: 0;
+      justify-content: flex-start;
+      font-size: 12.5px;
+    }
+    .cal-types-menu-reset {
+      display: block;
+      width: 100%;
+      border: none;
+      border-top: 1px solid #E2DDD5;
+      background: transparent;
+      text-align: left;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #6B7A8D;
+      padding: 8px 4px 4px;
+      margin-top: 2px;
+      border-radius: 0;
+      cursor: pointer;
+    }
+    .cal-types-menu-reset:hover {
+      color: #2C2C2C;
+      background: rgba(44,44,44,0.03);
+    }
+    .cal-types-menu-reset[hidden] {
+      display: none;
+    }
     .cal-events-bar {
       display: flex;
       align-items: flex-start;
@@ -1988,7 +2131,7 @@
       padding: 5px 8px;
       border-radius: 2px;
       border: 1px solid #E2DDD5;
-      border-left: 3px solid #564A5E;
+      border-left: 4px solid #564A5E;
       background: #F0EDE8;
       cursor: grab;
       overflow: hidden;
@@ -2064,7 +2207,7 @@
     .cal-slot--need-empty {
       padding: 4px 18px 4px 6px;
       border: 1px solid #E2DDD5;
-      border-left: 3px solid #564A5E;
+      border-left: 4px solid #564A5E;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -3475,7 +3618,7 @@
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
 const MEDIA_UPLOAD_URL = '/api/marketing/media';
-const APP_VERSION = '0.12.13';
+const APP_VERSION = '0.12.18';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 let marketingHydrated = false;
 let marketingRev = 0;
@@ -3496,6 +3639,7 @@ const MOOD_H_KEY = 'ppc-marketing-mood-h';
 const EARLIER_WEEKS_KEY = 'ppc-marketing-earlier-weeks';
 const CAL_RANGE_KEY = 'ppc-marketing-cal-range';
 const HIDE_POSTED_KEY = 'ppc-marketing-hide-posted';
+const HIDDEN_FORMATS_KEY = 'ppc-marketing-hidden-formats';
 /** Empty slots yell Need only within this many days of publish (or if unscheduled). */
 const NEED_ACTION_DAYS = 7;
 const MOOD_H_DEFAULT = 380;
@@ -4278,6 +4422,254 @@ function formatLabel(pillarId, formatId) {
   return f ? f.label : (formatId || '');
 }
 
+function persistHiddenCalFormats() {
+  try {
+    localStorage.setItem(HIDDEN_FORMATS_KEY, JSON.stringify(Array.from(hiddenCalFormats)));
+  } catch (_) {}
+}
+
+/** pillar::format key used by the calendar type filter. */
+function calFormatKey(pillarId, formatId) {
+  return formatColorKey(pillarId || 'organic', formatId || '');
+}
+
+function calFormatKeyOfCard(card) {
+  if (!card) return calFormatKey('organic', '');
+  return calFormatKey(card.pillar, card.format);
+}
+
+function isCalFormatVisible(card) {
+  if (!hiddenCalFormats.size) return true;
+  const key = calFormatKeyOfCard(card);
+  // Cards with no format stay visible so nothing disappears oddly.
+  if (!card || !card.format) return true;
+  return !hiddenCalFormats.has(key);
+}
+
+/** Formats available to toggle — all known types, plus any orphan keys still on the board. */
+function calendarFormatFilterOptions() {
+  const seen = new Map();
+  allFormatOptions().forEach(o => {
+    const key = calFormatKey(o.pillar, o.format);
+    if (seen.has(key)) return;
+    seen.set(key, {
+      key,
+      pillar: o.pillar,
+      format: o.format,
+      label: o.label || o.format,
+      tone: formatColor(o.format, o.pillar)
+    });
+  });
+  scheduleCards().forEach(c => {
+    if (!c || !c.format) return;
+    const key = calFormatKeyOfCard(c);
+    if (seen.has(key)) return;
+    seen.set(key, {
+      key,
+      pillar: c.pillar || 'organic',
+      format: c.format,
+      label: formatLabel(c.pillar, c.format) || c.format,
+      tone: formatColor(c.format, c.pillar)
+    });
+  });
+  return Array.from(seen.values()).sort((a, b) => a.label.localeCompare(b.label));
+}
+
+/** Pillar groups for the Types dropdown (expandable categories). */
+function calendarFormatFilterGroups() {
+  const byPillar = new Map();
+  calendarFormatFilterOptions().forEach(opt => {
+    const pid = opt.pillar || 'organic';
+    if (!byPillar.has(pid)) byPillar.set(pid, []);
+    byPillar.get(pid).push(opt);
+  });
+  const pillars = allPillars();
+  const groups = [];
+  pillars.forEach(p => {
+    const items = byPillar.get(p.id);
+    if (!items || !items.length) return;
+    byPillar.delete(p.id);
+    groups.push({
+      id: p.id,
+      label: pillarDisplayLabel(p.id) || p.label || p.id,
+      tone: pillarColor(p.id),
+      items: items.slice().sort((a, b) => a.label.localeCompare(b.label))
+    });
+  });
+  // Orphan pillars (deleted custom etc.)
+  byPillar.forEach((items, pid) => {
+    groups.push({
+      id: pid,
+      label: pillarDisplayLabel(pid) || pid,
+      tone: pillarColor(pid),
+      items: items.slice().sort((a, b) => a.label.localeCompare(b.label))
+    });
+  });
+  return groups;
+}
+
+function setCalFormatsVisible(keys, visible) {
+  keys.forEach(key => {
+    if (visible) hiddenCalFormats.delete(key);
+    else hiddenCalFormats.add(key);
+  });
+  persistHiddenCalFormats();
+}
+
+/** Colour chip for Types filter — on = format wash, off = muted. */
+function styleTypesChip(el, tone, state) {
+  // state: 'on' | 'off' | 'mixed'
+  const t = tone || '#564A5E';
+  el.style.borderColor = state === 'off' ? hexWash(t, 0.22) : hexWash(t, 0.35);
+  el.style.borderLeftColor = t;
+  if (state === 'off') {
+    el.style.background = '#f3f1ee';
+    el.style.color = '#6B7A8D';
+  } else if (state === 'mixed') {
+    // Softer wash so mixed categories don't shout.
+    el.style.background = hexWash(t, 0.14);
+    el.style.color = '#2C2C2C';
+  } else {
+    el.style.background = hexWash(t, 0.26);
+    el.style.color = '#2C2C2C';
+  }
+}
+
+function buildTypesFilterControl() {
+  const wrap = document.createElement('div');
+  wrap.className = 'cal-types-wrap';
+
+  const hiddenCount = hiddenCalFormats.size;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'cal-nav-btn' + (hiddenCount || typesFilterOpen ? ' is-toggled' : '');
+  btn.setAttribute('aria-haspopup', 'true');
+  btn.setAttribute('aria-expanded', typesFilterOpen ? 'true' : 'false');
+  btn.textContent = hiddenCount ? ('Types · ' + hiddenCount + ' hidden') : 'Types';
+  btn.title = 'Show or hide calendar card types';
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    typesFilterOpen = !typesFilterOpen;
+    renderBoard();
+  });
+  wrap.appendChild(btn);
+
+  const menu = document.createElement('div');
+  menu.className = 'cal-types-menu' + (typesFilterOpen ? ' open' : '');
+  menu.setAttribute('role', 'menu');
+  menu.setAttribute('aria-label', 'Filter calendar card types');
+  menu.addEventListener('click', e => e.stopPropagation());
+
+  const label = document.createElement('div');
+  label.className = 'cal-types-menu-label';
+  label.textContent = 'Card types';
+  menu.appendChild(label);
+
+  calendarFormatFilterGroups().forEach(group => {
+    const keys = group.items.map(o => o.key);
+    const onCount = keys.filter(k => !hiddenCalFormats.has(k)).length;
+    const allOn = onCount === keys.length;
+    const allOff = onCount === 0;
+    const state = allOn ? 'on' : (allOff ? 'off' : 'mixed');
+    const expanded = typesFilterExpanded.has(group.id);
+
+    const cat = document.createElement('div');
+    cat.className = 'cal-types-cat';
+
+    const head = document.createElement('div');
+    head.className = 'cal-types-cat-head';
+
+    const chev = document.createElement('button');
+    chev.type = 'button';
+    chev.className = 'cal-types-cat-chev';
+    chev.setAttribute('aria-label', expanded ? 'Collapse ' + group.label : 'Expand ' + group.label);
+    chev.textContent = expanded ? '▼' : '▶';
+    chev.addEventListener('click', e => {
+      e.stopPropagation();
+      if (typesFilterExpanded.has(group.id)) typesFilterExpanded.delete(group.id);
+      else typesFilterExpanded.add(group.id);
+      typesFilterOpen = true;
+      renderBoard();
+    });
+
+    const catChip = document.createElement('button');
+    catChip.type = 'button';
+    catChip.className = 'cal-types-chip cal-types-chip--cat'
+      + (allOff ? ' is-off' : '')
+      + (state === 'mixed' ? ' is-mixed' : '');
+    catChip.setAttribute('role', 'menuitemcheckbox');
+    catChip.setAttribute('aria-checked', allOn ? 'true' : (allOff ? 'false' : 'mixed'));
+    catChip.textContent = group.label;
+    catChip.title = allOn
+      ? ('Hide all ' + group.label + ' · click chevron to expand')
+      : ('Show all ' + group.label + ' · click chevron to expand');
+    styleTypesChip(catChip, group.tone, state);
+    catChip.addEventListener('click', e => {
+      e.stopPropagation();
+      setCalFormatsVisible(keys, !allOn);
+      typesFilterOpen = true;
+      typesFilterExpanded.add(group.id);
+      renderBoard();
+    });
+
+    const meta = document.createElement('span');
+    meta.className = 'cal-types-cat-meta';
+    meta.textContent = onCount + '/' + keys.length;
+
+    head.appendChild(chev);
+    head.appendChild(catChip);
+    head.appendChild(meta);
+    cat.appendChild(head);
+
+    const body = document.createElement('div');
+    body.className = 'cal-types-cat-body';
+    if (!expanded) body.hidden = true;
+    group.items.forEach(opt => {
+      const on = !hiddenCalFormats.has(opt.key);
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'cal-types-chip' + (on ? '' : ' is-off');
+      item.setAttribute('role', 'menuitemcheckbox');
+      item.setAttribute('aria-checked', on ? 'true' : 'false');
+      item.textContent = opt.label;
+      item.title = on
+        ? ('Hide ' + opt.label)
+        : ('Show ' + opt.label);
+      styleTypesChip(item, opt.tone, on ? 'on' : 'off');
+      item.addEventListener('click', e => {
+        e.stopPropagation();
+        if (hiddenCalFormats.has(opt.key)) hiddenCalFormats.delete(opt.key);
+        else hiddenCalFormats.add(opt.key);
+        persistHiddenCalFormats();
+        typesFilterOpen = true;
+        typesFilterExpanded.add(group.id);
+        renderBoard();
+      });
+      body.appendChild(item);
+    });
+    cat.appendChild(body);
+    menu.appendChild(cat);
+  });
+
+  const reset = document.createElement('button');
+  reset.type = 'button';
+  reset.className = 'cal-types-menu-reset';
+  reset.textContent = 'Show all';
+  reset.title = 'Turn every card type back on';
+  reset.hidden = hiddenCount === 0;
+  reset.addEventListener('click', e => {
+    e.stopPropagation();
+    hiddenCalFormats.clear();
+    persistHiddenCalFormats();
+    typesFilterOpen = true;
+    renderBoard();
+  });
+  menu.appendChild(reset);
+
+  wrap.appendChild(menu);
+  return wrap;
+}
+
 function defaultFormatForPillar(pillarId) {
   const list = formatsForPillar(pillarId);
   return list.length ? list[0].id : null;
@@ -4458,6 +4850,15 @@ let hidePostedWeek = (() => {
   try { return localStorage.getItem(HIDE_POSTED_KEY) === '1'; }
   catch (_) { return false; }
 })();
+let hiddenCalFormats = (() => {
+  try {
+    const raw = JSON.parse(localStorage.getItem(HIDDEN_FORMATS_KEY) || '[]');
+    return new Set(Array.isArray(raw) ? raw.filter(k => typeof k === 'string' && k) : []);
+  } catch (_) { return new Set(); }
+})();
+let typesFilterOpen = false;
+/** Expanded pillar ids in the Types dropdown (Organic open by default). */
+let typesFilterExpanded = new Set(['organic']);
 let unscheduledQueueOpen = true;
 let activeAnchorPanelId = null;
 let anchorPanelIsNew = false;
@@ -7203,6 +7604,7 @@ function renderScheduleBody() {
     jumpScheduleToDate(new Date());
   });
   btns.appendChild(rangeToggle);
+  btns.appendChild(buildTypesFilterControl());
   if (scheduleCalRange === 'week') {
     const hidePostedBtn = document.createElement('button');
     hidePostedBtn.type = 'button';
@@ -7307,7 +7709,10 @@ function renderScheduleBody() {
     });
   }
 
-  const unscheduled = scheduleCards().filter(c => !c.scheduledAt || !String(c.scheduledAt).trim());
+  const unscheduled = scheduleCards().filter(c => {
+    if (c.scheduledAt && String(c.scheduledAt).trim()) return false;
+    return isCalFormatVisible(c);
+  });
   const unschedWrap = document.createElement('div');
   unschedWrap.className = 'cal-unscheduled';
   const toggle = document.createElement('button');
@@ -7528,7 +7933,7 @@ function buildMarketingDayCell(cell, cardsByDay, leadUpByDay, prepByDay, today) 
 
   const dayCards = cardsByDay[key] || [];
   const dayAnchorIds = new Set(dayCards.map(c => c.anchorId).filter(Boolean));
-  const prepCardsToday = (prepByDay && prepByDay.get(key)) || [];
+  const prepCardsToday = ((prepByDay && prepByDay.get(key)) || []).filter(isCalFormatVisible);
 
   if (isLeadUp || prepCardsToday.length) {
     const cues = document.createElement('div');
@@ -7700,9 +8105,10 @@ function buildMarketingDayCell(cell, cardsByDay, leadUpByDay, prepByDay, today) 
     if (!dragCalPrepId) return;
     acceptDayDrop(e);
   });
-  const visibleDayCards = (scheduleCalRange === 'week' && hidePostedWeek)
-    ? dayCards.filter(c => publishStatusOf(c) !== 'posted')
-    : dayCards;
+  const visibleDayCards = dayCards.filter(c => {
+    if (scheduleCalRange === 'week' && hidePostedWeek && publishStatusOf(c) === 'posted') return false;
+    return isCalFormatVisible(c);
+  });
   visibleDayCards.forEach(card => dayBody.appendChild(renderCalSlot(card)));
   const addBtn = document.createElement('button');
   addBtn.type = 'button';
@@ -10002,7 +10408,8 @@ function renderCalSlot(card) {
   const formatTone = formatColor(card.format, card.pillar);
   el.style.borderColor = '#E2DDD5';
   el.style.borderLeftColor = formatTone;
-  el.style.background = hexWash(formatTone, 0.12);
+  // Stronger wash so format colours read at a glance (was 0.12 — too pale / blendy).
+  el.style.background = hexWash(formatTone, 0.24);
   const anchor = card.anchorId ? anchors().find(a => a.id === card.anchorId) : null;
   const eventTone = anchor ? anchorTypeColor(anchor.type) : null;
   let eventName = '';
@@ -12133,6 +12540,20 @@ document.addEventListener('keydown', e => {
 document.addEventListener('click', e => {
   hideCtxMenu();
   if (!e.target.closest('#calNeedMenu')) closeCalNeedMenu();
+  if (typesFilterOpen && !e.target.closest('.cal-types-wrap')) {
+    typesFilterOpen = false;
+    const openMenu = document.querySelector('.cal-types-menu.open');
+    if (openMenu) {
+      openMenu.classList.remove('open');
+      const btn = openMenu.parentElement && openMenu.parentElement.querySelector('.cal-nav-btn');
+      if (btn) {
+        btn.setAttribute('aria-expanded', 'false');
+        if (!hiddenCalFormats.size) btn.classList.remove('is-toggled');
+      }
+    } else {
+      renderBoard();
+    }
+  }
   if (!e.target.closest('.image-well')) clearWellFocus();
   if (!e.target.closest('#pReviewMediaWell')) {
     focusedReviewMedia = false;
