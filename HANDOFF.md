@@ -5,6 +5,27 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Live deploy confirmed 0.12.24 (Cursor)
+
+### Live
+- https://ppc-homebase.pressplaycollective.workers.dev/marketing
+- Marketing **`0.12.24`** — Mac fresh-clone (`~/ppc-homebase-deploy`) uploaded
+  `marketing.html` (`Found 1 new or modified static asset`).
+- Edge may briefly flip old/new during propagation; hard-refresh until
+  header shows **v0.12.24**.
+
+### Shipped
+1. Ideas schedule badge + jump to calendar
+2. Keep linked ideas through Prep; restore refs from `sourceIdeaId`
+3. Clear content on calendar (× + panel)
+4. Trackpad pan/pinch-zoom; Reshuffle + Fit
+
+### Lesson
+- Stale `~/ppc-homebase` kept redeploying 0.12.21 (“No updated asset files”).
+- Fresh clone of `cursor/ideas-pipeline-ux-af1c` fixed it.
+
+---
+
 ## 2026-08-06 — Deploy force bump 0.12.24 (Cursor)
 
 ### Live
