@@ -5,6 +5,25 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Types filter categories (Cursor)
+
+### What
+- Marketing **`0.12.17`**: Types dropdown groups formats into expandable
+  pillars (Organic / Email / Ads / Website…). Category checkbox turns a whole
+  chunk on/off (mixed = −); expand to toggle individual types. Organic expands
+  by default.
+- Branch: `cursor/calendar-type-filter-af1c`.
+
+### Deploy
+- Soak on `:8787`. Deploy only when asked.
+- Hard-refresh `/marketing` — expect **v0.12.17**.
+
+### Open / next
+1. Soak category collapse + bulk toggle vs individual.
+2. Deploy when happy.
+
+---
+
 ## 2026-08-06 — Calendar type filter dropdown (Cursor)
 
 ### What
