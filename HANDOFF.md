@@ -5,6 +5,27 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Deploy pack 0.12.20 (Cursor)
+
+### What
+- Marketing **`0.12.20`** consolidates for deploy:
+  1. Calendar card colour wash (was 0.12.14)
+  2. Types dropdown + pillar categories + colour chips (was 0.12.16–0.12.18)
+  3. Keep Ideas when linking to calendar (was 0.12.19)
+- Branch: `cursor/deploy-all-af1c`.
+
+### Deploy
+- **Blocked in cloud VM** — no `CLOUDFLARE_API_TOKEN` / wrangler login.
+- Once token is set: `npx wrangler deploy` from this branch.
+- Or from Mac: pull `cursor/deploy-all-af1c`, then `npx wrangler deploy`.
+- Hard-refresh live `/marketing` — expect **v0.12.20**.
+
+### Open / next
+1. Add Cloudflare API token (Workers edit) to the cloud env, or deploy from Mac.
+2. Confirm live v0.12.20.
+
+---
+
 ## 2026-08-06 — Types colour chips (Cursor)
 
 ### What
