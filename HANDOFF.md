@@ -5,6 +5,33 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Live 0.12.24 + EOD (Cursor)
+
+### Live
+- https://ppc-homebase.pressplaycollective.workers.dev/marketing → **`v0.12.24`**
+  (curl confirmed).
+- Deployed from Mac fresh clone `~/ppc-homebase-deploy` on branch
+  `cursor/ideas-pipeline-ux-af1c` (wrangler uploaded `marketing.html`).
+- PR: https://github.com/jarvis-tuttlebee/ppc-homebase/pull/10
+
+### Shipped on live
+1. Ideas schedule badge (Scheduled/Prep/Exec/Review · date) + jump to calendar
+2. Linked ideas stay on Ideas through Prep; restore refs from `sourceIdeaId`
+3. Clear content on calendar (× + panel) → empty Need
+4. Ideas canvas: two-finger pan, pinch/Ctrl zoom; **Reshuffle** + **Fit**
+
+### Deploy lesson (keep)
+- Stale `~/ppc-homebase` redeployed old assets (“No updated asset files”).
+- Prefer `~/ppc-homebase-deploy` (or re-clone) for Marketing deploys until that
+  clone is reset to track this branch.
+- Cloud VM still has **no** `CLOUDFLARE_API_TOKEN` — deploys stay Mac/PC.
+
+### Open / next
+1. Soak badge / clear / reshuffle on live board with real data.
+2. Optional: add CF token to cloud env; reset or retire stale `~/ppc-homebase`.
+
+---
+
 ## 2026-08-06 — Live deploy confirmed 0.12.24 (Cursor)
 
 ### Live
