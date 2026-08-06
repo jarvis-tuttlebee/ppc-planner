@@ -5,10 +5,47 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — EOD (Cursor) — deploy blocked, ready on Mac
+
+### Live
+- Still **`0.12.21`** — cloud VM has **no** `CLOUDFLARE_API_TOKEN` / wrangler
+  login, so deploy could not run from this agent.
+
+### Ready to ship
+- Branch: **`cursor/ideas-pipeline-ux-af1c`**
+- Marketing **`0.12.23`**
+- PR: https://github.com/jarvis-tuttlebee/ppc-homebase/pull/10
+- Local soak OK: schedule badge on Ideas, Clear content, Reshuffle/Fit,
+  trackpad pan/zoom.
+
+### Deploy now (Mac — same path as 0.12.21)
+```bash
+cd ~/ppc-homebase
+git fetch origin
+git checkout cursor/ideas-pipeline-ux-af1c
+git pull origin cursor/ideas-pipeline-ux-af1c
+grep APP_VERSION public/marketing.html   # expect 0.12.23
+npx wrangler deploy
+```
+Then hard-refresh live `/marketing` — expect **v0.12.23**.
+
+### Shipped this session (not live until deploy)
+1. Ideas schedule badge + jump to calendar
+2. Keep linked ideas through Prep; restore missing refs from `sourceIdeaId`
+3. Clear content on calendar (× + panel) → empty Need
+4. Ideas canvas: trackpad pan/pinch-zoom; Reshuffle + Fit
+
+### Open / next
+1. Mac deploy of `0.12.23` (commands above).
+2. Optional: add `CLOUDFLARE_API_TOKEN` to cloud env so agents can deploy.
+3. After deploy: confirm badge / clear / reshuffle on live board.
+
+---
+
 ## 2026-08-06 — Ideas ↔ calendar pipeline UX 0.12.23 (Cursor)
 
 ### Branch
-- `cursor/ideas-pipeline-ux-af1c` — Marketing **`0.12.23`** (not live yet).
+- `cursor/ideas-pipeline-ux-af1c` — Marketing **`0.12.23`** (soaked locally).
 
 ### What
 1. Ideas cards show a **Scheduled / Prep / Exec / Review · date** badge when
@@ -21,12 +58,8 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
    **Reshuffle** + **Fit** tools on the mood board.
 
 ### Soak
-- Local: `npm run dev` → http://127.0.0.1:8787/marketing
-- Deploy only when asked (Mac/PC; no cloud CF token).
-
-### Open / next
-1. Deploy + hard-refresh when ready.
-2. Confirm badge + clear + reshuffle with live board data.
+- Local: `npm run dev` → http://127.0.0.1:8787/marketing — verified.
+- Deploy blocked in cloud (no CF token); Mac deploy pending.
 
 ---
 
