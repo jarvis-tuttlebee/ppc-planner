@@ -5,6 +5,25 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Ideas board width gutters 0.12.28 (Cursor)
+
+### Branch
+- `cursor/calendar-clear-miro-nav-8504` — Marketing **`0.12.28`**
+- PR: https://github.com/jarvis-tuttlebee/ppc-homebase/pull/11
+
+### What
+1. **Reverted** 0.12.26 height shrink — default Ideas height back to **380px**
+   (MOOD_H_MIN 220, MOOD_H_MAX 900).
+2. **Narrower Ideas board width** — `.mood-board-wrap` centers the viewport +
+   resize gutter at `min(920px, calc(100% - 72px))` so **side gutters** let
+   trackpad scroll reach the pipeline below without panning the canvas.
+
+### Open / next
+1. Mac deploy `0.12.28`
+2. Soak: scroll down pipeline from left/right margins beside Ideas board
+
+---
+
 ## 2026-08-06 — Live 0.12.27 deploy confirmed (Cursor)
 
 ### Live
