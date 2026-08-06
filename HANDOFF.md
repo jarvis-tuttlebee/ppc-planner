@@ -5,6 +5,37 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — EOD handoff (Cursor)
+
+### Live
+- Marketing: https://ppc-homebase.pressplaycollective.workers.dev/marketing → **`v0.12.28`**
+- Version ID `7141ef8e-606c-48f2-b5b7-b06f9eb1211f`
+- Branch: `cursor/calendar-clear-miro-nav-8504` (base: `cursor/ideas-pipeline-ux-af1c`)
+- PR: https://github.com/jarvis-tuttlebee/ppc-homebase/pull/11
+
+### Shipped today (live)
+1. Calendar **Change content** + **Clear content** + always-visible ×
+2. Ideas Miro nav — Select/Hand (V/H), Space-drag, −/%/+/Fit, trackpad modes
+3. Reshuffle fills viewport at 1:1; viewport-sized canvas (not 8000px)
+4. **Multi-assignee** on calendar cards (`assignees[]`, tick picker, footer `A, B +N`)
+5. **0.12.28** — Ideas height restored (380px default); board **narrowed width**
+   with side gutters (`.mood-board-wrap` ~920px max, 72px total margin) so
+   trackpad scroll reaches pipeline below
+
+### Deploy (Mac only — no CF token on cloud VM)
+```bash
+cd ~/ppc-homebase-deploy
+git checkout cursor/calendar-clear-miro-nav-8504 && git pull
+npx wrangler deploy
+```
+
+### Open / next session
+1. Soak **0.12.28** on real board: pipeline scroll from side margins; Ideas height OK?
+2. Tune gutter width if still too tight (`calc(100% - 120px)` or smaller max-width)
+3. PR #11 ready for review/merge when soak passes
+
+---
+
 ## 2026-08-06 — Live 0.12.28 deploy confirmed (Cursor)
 
 ### Live
