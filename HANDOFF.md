@@ -5,6 +5,25 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Live 0.12.28 deploy confirmed (Cursor)
+
+### Live
+- https://ppc-homebase.pressplaycollective.workers.dev/marketing → **`v0.12.28`**
+  (curl confirmed).
+- Mac fresh clone `~/ppc-homebase-deploy` on `cursor/calendar-clear-miro-nav-8504`
+  uploaded `marketing.html` (1 new asset).
+- Version ID `7141ef8e-606c-48f2-b5b7-b06f9eb1211f`
+- PR: https://github.com/jarvis-tuttlebee/ppc-homebase/pull/11
+
+### Shipped on live
+1. Ideas height restored to **380px** default (reverts 0.12.26 shrink)
+2. Ideas board **narrower width** with side gutters for pipeline scroll
+
+### Open / next
+1. Soak: scroll pipeline from margins beside Ideas board; confirm height feels right
+
+---
+
 ## 2026-08-06 — Ideas board width gutters 0.12.28 (Cursor)
 
 ### Branch
@@ -19,7 +38,7 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
    trackpad scroll reach the pipeline below without panning the canvas.
 
 ### Open / next
-1. Mac deploy `0.12.28`
+1. ~~Mac deploy `0.12.28`~~ — live confirmed
 2. Soak: scroll down pipeline from left/right margins beside Ideas board
 
 ---
