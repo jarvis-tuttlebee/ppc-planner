@@ -5,6 +5,289 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-06 — Live 0.12.24 + EOD (Cursor)
+
+### Live
+- https://ppc-homebase.pressplaycollective.workers.dev/marketing → **`v0.12.24`**
+  (curl confirmed).
+- Deployed from Mac fresh clone `~/ppc-homebase-deploy` on branch
+  `cursor/ideas-pipeline-ux-af1c` (wrangler uploaded `marketing.html`).
+- PR: https://github.com/jarvis-tuttlebee/ppc-homebase/pull/10
+
+### Shipped on live
+1. Ideas schedule badge (Scheduled/Prep/Exec/Review · date) + jump to calendar
+2. Linked ideas stay on Ideas through Prep; restore refs from `sourceIdeaId`
+3. Clear content on calendar (× + panel) → empty Need
+4. Ideas canvas: two-finger pan, pinch/Ctrl zoom; **Reshuffle** + **Fit**
+
+### Deploy lesson (keep)
+- Stale `~/ppc-homebase` redeployed old assets (“No updated asset files”).
+- Prefer `~/ppc-homebase-deploy` (or re-clone) for Marketing deploys until that
+  clone is reset to track this branch.
+- Cloud VM still has **no** `CLOUDFLARE_API_TOKEN` — deploys stay Mac/PC.
+
+### Open / next
+1. Soak badge / clear / reshuffle on live board with real data.
+2. Optional: add CF token to cloud env; reset or retire stale `~/ppc-homebase`.
+
+---
+
+## 2026-08-06 — Live deploy confirmed 0.12.24 (Cursor)
+
+### Live
+- https://ppc-homebase.pressplaycollective.workers.dev/marketing
+- Marketing **`0.12.24`** — Mac fresh-clone (`~/ppc-homebase-deploy`) uploaded
+  `marketing.html` (`Found 1 new or modified static asset`).
+- Edge may briefly flip old/new during propagation; hard-refresh until
+  header shows **v0.12.24**.
+
+### Shipped
+1. Ideas schedule badge + jump to calendar
+2. Keep linked ideas through Prep; restore refs from `sourceIdeaId`
+3. Clear content on calendar (× + panel)
+4. Trackpad pan/pinch-zoom; Reshuffle + Fit
+
+### Lesson
+- Stale `~/ppc-homebase` kept redeploying 0.12.21 (“No updated asset files”).
+- Fresh clone of `cursor/ideas-pipeline-ux-af1c` fixed it.
+
+---
+
+## 2026-08-06 — Deploy force bump 0.12.24 (Cursor)
+
+### Live
+- Still **`0.12.21`**. Mac deploys reported “No updated asset files” —
+  local tree was still old HTML. Bumped to **`0.12.24`** so asset hash
+  must change once the right branch is used.
+
+### Deploy (Mac — fresh clone, foolproof)
+```bash
+cd ~
+rm -rf ~/ppc-homebase-deploy
+git clone https://github.com/jarvis-tuttlebee/ppc-homebase.git ppc-homebase-deploy
+cd ~/ppc-homebase-deploy
+git checkout cursor/ideas-pipeline-ux-af1c
+grep APP_VERSION public/marketing.html   # MUST show 0.12.24
+npx wrangler deploy
+```
+Hard-refresh live → expect **v0.12.24**. Wrangler must upload assets
+(not “No updated asset files”).
+
+### PR
+- https://github.com/jarvis-tuttlebee/ppc-homebase/pull/10
+
+---
+
+## 2026-08-06 — EOD (Cursor) — deploy blocked, ready on Mac
+
+### Live
+- Still **`0.12.21`** — cloud VM has **no** `CLOUDFLARE_API_TOKEN` / wrangler
+  login, so deploy could not run from this agent.
+
+### Ready to ship
+- Branch: **`cursor/ideas-pipeline-ux-af1c`**
+- Marketing **`0.12.24`** (was 0.12.23; bump to force asset upload)
+- PR: https://github.com/jarvis-tuttlebee/ppc-homebase/pull/10
+- Local soak OK: schedule badge on Ideas, Clear content, Reshuffle/Fit,
+  trackpad pan/zoom.
+
+### Open / next
+1. Mac fresh-clone deploy of `0.12.24` (see entry above).
+2. Optional: add `CLOUDFLARE_API_TOKEN` to cloud env so agents can deploy.
+3. After deploy: confirm badge / clear / reshuffle on live board.
+
+---
+
+## 2026-08-06 — Ideas ↔ calendar pipeline UX 0.12.23 (Cursor)
+
+### Branch
+- `cursor/ideas-pipeline-ux-af1c` — Marketing **`0.12.23`** (soaked locally).
+
+### What
+1. Ideas cards show a **Scheduled / Prep / Exec / Review · date** badge when
+   linked to a calendar Need; click jumps to that calendar card.
+2. Linked ideas **stay on Ideas** when Prepared (badge tracks pipeline stage).
+   Older boards: missing idea refs restored from `sourceIdeaId`.
+3. Calendar filled cards: **× / Clear content** unlinks Ideas/pipeline and
+   leaves an empty Need (slot/date/format kept). Panel has Clear content too.
+4. Ideas canvas Mac trackpad: two-finger scroll pans; pinch/Ctrl zooms.
+   **Reshuffle** + **Fit** tools on the mood board.
+
+### Soak
+- Local: `npm run dev` → http://127.0.0.1:8787/marketing — verified.
+- Deploy blocked in cloud (no CF token); Mac deploy pending.
+
+---
+
+## 2026-08-06 — Live deploy confirmed 0.12.21 (Cursor)
+
+### Live
+- https://ppc-homebase.pressplaycollective.workers.dev/marketing
+- Marketing **`0.12.21`** confirmed via curl (browser may still show old
+  **0.11.82** until hard-refresh).
+- Deployed from Mac clone of `cursor/deploy-all-af1c`.
+
+### Shipped
+1. Calendar card colour wash
+2. Types dropdown + categories + colour chips
+3. Keep Ideas when linking to calendar
+
+### Env note
+- Cloud VM still has **no** `CLOUDFLARE_API_TOKEN` (user skipped). Local
+  `wrangler dev` is enough for soak; deploys stay Mac/PC.
+- `AGENTS.md` + `package.json` (wrangler) added on this branch for cloud setup.
+
+### Open / next
+1. Hard-refresh live if the tab still shows v0.11.82.
+2. Soak Types filter + idea-link on live with real board data.
+
+---
+
+## 2026-08-06 — Deploy pack 0.12.21 (Cursor)
+
+### Live
+- First Mac deploy of the clone uploaded Worker but **assets unchanged** —
+  live still served Marketing **0.11.82** (old). Likely wrong branch / stale
+  tree on first `npx wrangler deploy`.
+- Version ID from that deploy: `f1b2e987-ec47-422b-a90c-a57a77421dad`
+- **Redeploy needed** from `cursor/deploy-all-af1c` at **`0.12.21`** so
+  `marketing.html` actually uploads. Confirm live shows **v0.12.21**.
+
+### What (same pack as 0.12.20)
+1. Calendar card colour wash
+2. Types dropdown + categories + colour chips
+3. Keep Ideas when linking to calendar
+
+### Deploy (Mac clone)
+```bash
+cd ~/ppc-homebase
+git fetch origin
+git checkout cursor/deploy-all-af1c
+git pull origin cursor/deploy-all-af1c
+grep APP_VERSION public/marketing.html   # expect 0.12.21
+npx wrangler deploy
+```
+
+---
+
+## 2026-08-06 — Deploy pack 0.12.20 (Cursor)
+
+### What
+- Marketing **`0.12.20`** consolidates for deploy:
+  1. Calendar card colour wash (was 0.12.14)
+  2. Types dropdown + pillar categories + colour chips (was 0.12.16–0.12.18)
+  3. Keep Ideas when linking to calendar (was 0.12.19)
+- Branch: `cursor/deploy-all-af1c`.
+
+### Deploy
+- **Blocked in cloud VM** — no `CLOUDFLARE_API_TOKEN` / wrangler login.
+- Once token is set: `npx wrangler deploy` from this branch.
+- Or from Mac: pull `cursor/deploy-all-af1c`, then `npx wrangler deploy`.
+- Hard-refresh live `/marketing` — expect **v0.12.20**.
+
+### Open / next
+1. Add Cloudflare API token (Workers edit) to the cloud env, or deploy from Mac.
+2. Confirm live v0.12.20.
+
+---
+
+## 2026-08-06 — Types colour chips (Cursor)
+
+### What
+- Marketing **`0.12.18`**: Types filter drops the tickboxes — each type (and
+  pillar category) is a colour-wash chip matching the calendar. Click the chip
+  to toggle; off = muted / struck. Categories still expand for individuals.
+- Branch: `cursor/calendar-type-filter-af1c`.
+
+### Deploy
+- Soak on `:8787`. Deploy only when asked.
+- Hard-refresh `/marketing` — expect **v0.12.18**.
+
+### Open / next
+1. Soak: too loud? dial wash down; too quiet? bump.
+2. Deploy when happy.
+
+---
+
+## 2026-08-06 — Types filter categories (Cursor)
+
+### What
+- Marketing **`0.12.17`**: Types dropdown groups formats into expandable
+  pillars (Organic / Email / Ads / Website…). Category checkbox turns a whole
+  chunk on/off (mixed = −); expand to toggle individual types. Organic expands
+  by default.
+- Branch: `cursor/calendar-type-filter-af1c`.
+
+### Deploy
+- Soak on `:8787`. Deploy only when asked.
+- Hard-refresh `/marketing` — expect **v0.12.17**.
+
+### Open / next
+1. Soak category collapse + bulk toggle vs individual.
+2. Deploy when happy.
+
+---
+
+## 2026-08-06 — Calendar type filter dropdown (Cursor)
+
+### What
+- Marketing **`0.12.16`**: Types filter is a **dropdown** next to Week/Month
+  (was a full chip bar — too tall). Button shows `Types` or
+  `Types · N hidden`; menu has checkboxes + Show all. Same filter behaviour
+  and `localStorage` key as 0.12.15.
+- Branch: `cursor/calendar-type-filter-af1c`.
+
+### Deploy
+- Soak on `:8787`. Deploy only when asked.
+- Hard-refresh `/marketing` — expect **v0.12.16** and a Types button in the
+  calendar nav (not a chip row).
+
+### Open / next
+1. Soak dropdown open/close + filter toggles on a busy month.
+2. Deploy when happy.
+
+---
+
+## 2026-08-06 — Calendar type filter (Cursor)
+
+### What
+- Marketing **`0.12.15`**: **Types** filter bar under Week/Month — toggle chips
+  for each card format (IG Post, Story, Reel, Pinterest, TikTok, Email, Ads,
+  Website, …). Off types are hidden on the calendar, prep strip, and
+  Unscheduled queue. Preference persists in `localStorage`
+  (`ppc-marketing-hidden-formats`). **Show all** resets.
+- Branch: `cursor/calendar-type-filter-af1c` (stacks on colour-wash `0.12.14`).
+
+### Deploy
+- Soak on `:8787`. Deploy only when asked.
+- Hard-refresh `/marketing` — expect **v0.12.15** and Types chips under the nav.
+
+### Open / next
+1. Soak: toggle a few types on a busy month; confirm Show all.
+2. Deploy when happy (with or after the 0.12.14 wash PR).
+
+---
+
+## 2026-08-06 — Calendar card colour wash (Cursor)
+
+### What
+- Marketing **`0.12.14`**: calendar slots use a stronger format wash
+  (`hexWash` **0.24**, was **0.12**) and a **4px** left accent bar (was 3px)
+  so format colours read more distinctly when you step back — richer than
+  before, still short of Google Calendar solid fills.
+- Branch: `cursor/calendar-card-distinct-wash-af1c`.
+
+### Deploy
+- Local soak on `:8787` first. Deploy only when asked
+  (`npx wrangler deploy` from Mac — VM still has no CF token).
+- Hard-refresh `/marketing` — expect **v0.12.14** and clearer card fills.
+
+### Open / next
+1. Soak on a busy month view; tune alpha if still blendy or too loud.
+2. Deploy when happy.
+
+---
+
 ## 2026-08-05 — Pipeline notes under Scheduled content (Cursor)
 
 ### What
