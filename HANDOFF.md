@@ -5,6 +5,278 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-07 — Deploy Marketing 0.12.31 (Cursor)
+
+### Live
+- Version ID: `915b1c4e-c3e3-41bf-81b4-29d5fd2bc254` — Marketing **`0.12.31`**
+- Branch: `cursor/calendar-clear-miro-nav-8504`
+- Uploaded `/marketing.html` + `/js/ppc-homebase.js`
+- Hard-refresh https://ppc-homebase.pressplaycollective.workers.dev/marketing
+- Curl confirmed `APP_VERSION = '0.12.31'` (js `?v=9`)
+
+### What shipped
+- Settings → **Card types** (add / rename / remove)
+- Make band → open calendar card; mobile image scroll fix; photo lightbox;
+  subtler calendar × (from 0.12.30)
+
+---
+
+## 2026-08-07 — Settings: manage card types (Cursor)
+
+### What
+- Marketing **`0.12.31`** (local — not deployed) on `cursor/calendar-clear-miro-nav-8504`:
+  - Settings → **Card types**: add / rename / remove formats per pillar
+    (IG Post, Reel, Campaign, …).
+  - Built-in renames via `formatLabels`; removals soft-delete via
+    `removedFormats` (cards reassigned). Customs update/delete in
+    `customFormats`.
+  - Also includes pending **0.12.30**: Make click, mobile image scroll,
+    photo lightbox, subtler calendar ×.
+
+### Open / next
+1. Soak on `:8787`; deploy when asked.
+
+---
+
+## 2026-08-07 — Make click + mobile image + photo lightbox + subtle × (Cursor)
+
+### What
+- Marketing **`0.12.30`** (local — not deployed) on `cursor/calendar-clear-miro-nav-8504`:
+  1. **Make** band items open the linked calendar card (jump to publish day when set).
+  2. Mobile exec panel: image no longer sticky while scrolling (desktop side-by-side still sticky).
+  3. Scheduled-content thumb opens a photo lightbox (Esc / backdrop / ×).
+  4. Calendar card × is quieter — transparent, format-tone colour, low opacity.
+
+### Open / next
+1. Soak on `:8787`; deploy when asked.
+
+---
+
+## 2026-08-07 — Deploy Marketing 0.12.29 (Cursor)
+
+### Live
+- Version ID: `8ee45c91-ea6a-4400-9806-3217d0df8932` — Marketing **`0.12.29`**
+- Branch: `cursor/calendar-clear-miro-nav-8504`
+- Hard-refresh https://ppc-homebase.pressplaycollective.workers.dev/marketing
+- Curl confirmed `APP_VERSION = '0.12.29'` on live.
+
+### What shipped
+- Restored full tip after accidental live rollback to 0.12.13: Types filter,
+  card wash, Miro nav, Change/Clear, multi-assignee, Ideas width gutters
+  (same as 0.12.28 + version bump).
+
+### Open / next
+1. Optional: add `CLOUDFLARE_API_TOKEN` to Cursor cloud secrets so agents can deploy
+
+---
+
+## 2026-08-07 — Live rollback found; redeploy 0.12.29 (Cursor)
+
+### Problem
+- Live was serving **`v0.12.13`** (pipeline-notes era), not **0.12.28**.
+  Types filter, darker card wash, and Ideas Miro/nav features looked “missing”
+  because an older Worker asset was back on production.
+- Cloud agent still has **no** `CLOUDFLARE_API_TOKEN` — cannot deploy from VM
+  even when the user is on PC. Deploy must run on a machine with wrangler auth
+  (PC/Mac terminal) or after adding the token to the Cursor cloud env secrets.
+
+### Fix ready
+- Branch `cursor/calendar-clear-miro-nav-8504` bumped to Marketing **`0.12.29`**
+  (same code as 0.12.28 + version bump so wrangler uploads a new asset).
+- That tip already includes Types filter, card wash, Miro nav, Change/Clear,
+  multi-assignee, Ideas width gutters.
+
+### Deploy on PC (has wrangler login)
+```bash
+cd /path/to/ppc-homebase   # or fresh clone
+git fetch origin
+git checkout cursor/calendar-clear-miro-nav-8504
+git pull origin cursor/calendar-clear-miro-nav-8504
+grep APP_VERSION public/marketing.html   # expect 0.12.29
+npx wrangler deploy
+```
+Then hard-refresh live and confirm footer **v0.12.29**.
+
+### Open / next
+1. PC deploy 0.12.29; curl/confirm live
+2. Optional: add `CLOUDFLARE_API_TOKEN` to Cursor cloud secrets so agents can deploy
+
+---
+
+## 2026-08-06 — EOD handoff (Cursor)
+
+### Live
+- Marketing: https://ppc-homebase.pressplaycollective.workers.dev/marketing → **`v0.12.28`**
+- Version ID `7141ef8e-606c-48f2-b5b7-b06f9eb1211f`
+- Branch: `cursor/calendar-clear-miro-nav-8504` (base: `cursor/ideas-pipeline-ux-af1c`)
+- PR: https://github.com/jarvis-tuttlebee/ppc-homebase/pull/11
+
+### Shipped today (live)
+1. Calendar **Change content** + **Clear content** + always-visible ×
+2. Ideas Miro nav — Select/Hand (V/H), Space-drag, −/%/+/Fit, trackpad modes
+3. Reshuffle fills viewport at 1:1; viewport-sized canvas (not 8000px)
+4. **Multi-assignee** on calendar cards (`assignees[]`, tick picker, footer `A, B +N`)
+5. **0.12.28** — Ideas height restored (380px default); board **narrowed width**
+   with side gutters (`.mood-board-wrap` ~920px max, 72px total margin) so
+   trackpad scroll reaches pipeline below
+
+### Deploy (Mac only — no CF token on cloud VM)
+```bash
+cd ~/ppc-homebase-deploy
+git checkout cursor/calendar-clear-miro-nav-8504 && git pull
+npx wrangler deploy
+```
+
+### Open / next session
+1. Soak **0.12.28** on real board: pipeline scroll from side margins; Ideas height OK?
+2. Tune gutter width if still too tight (`calc(100% - 120px)` or smaller max-width)
+3. PR #11 ready for review/merge when soak passes
+
+---
+
+## 2026-08-06 — Live 0.12.28 deploy confirmed (Cursor)
+
+### Live
+- https://ppc-homebase.pressplaycollective.workers.dev/marketing → **`v0.12.28`**
+  (curl confirmed).
+- Mac fresh clone `~/ppc-homebase-deploy` on `cursor/calendar-clear-miro-nav-8504`
+  uploaded `marketing.html` (1 new asset).
+- Version ID `7141ef8e-606c-48f2-b5b7-b06f9eb1211f`
+- PR: https://github.com/jarvis-tuttlebee/ppc-homebase/pull/11
+
+### Shipped on live
+1. Ideas height restored to **380px** default (reverts 0.12.26 shrink)
+2. Ideas board **narrower width** with side gutters for pipeline scroll
+
+### Open / next
+1. Soak: scroll pipeline from margins beside Ideas board; confirm height feels right
+
+---
+
+## 2026-08-06 — Ideas board width gutters 0.12.28 (Cursor)
+
+### Branch
+- `cursor/calendar-clear-miro-nav-8504` — Marketing **`0.12.28`**
+- PR: https://github.com/jarvis-tuttlebee/ppc-homebase/pull/11
+
+### What
+1. **Reverted** 0.12.26 height shrink — default Ideas height back to **380px**
+   (MOOD_H_MIN 220, MOOD_H_MAX 900).
+2. **Narrower Ideas board width** — `.mood-board-wrap` centers the viewport +
+   resize gutter at `min(920px, calc(100% - 72px))` so **side gutters** let
+   trackpad scroll reach the pipeline below without panning the canvas.
+
+### Open / next
+1. ~~Mac deploy `0.12.28`~~ — live confirmed
+2. Soak: scroll down pipeline from left/right margins beside Ideas board
+
+---
+
+## 2026-08-06 — Live 0.12.27 deploy confirmed (Cursor)
+
+### Live
+- https://ppc-homebase.pressplaycollective.workers.dev/marketing → **`v0.12.27`**
+  (curl confirmed).
+- Mac fresh clone `~/ppc-homebase-deploy` on `cursor/calendar-clear-miro-nav-8504`
+  uploaded `marketing.html` (1 new asset).
+- Version ID `54aae7a6-9200-4ede-8c3d-b8d54110f04e`
+- PR: https://github.com/jarvis-tuttlebee/ppc-homebase/pull/11
+
+### Shipped on live (this branch stack)
+1. Calendar **Change content** + **Clear content** + always-visible ×
+2. Ideas Miro nav (Select/Hand, Space-drag, −/%/+/Fit)
+3. Reshuffle fills viewport; shorter Ideas board height
+4. **Multi-assignee** on calendar (`assignees[]` + tick picker)
+
+### Open / next
+1. Soak multi-assignee + reshuffle on live board with real data.
+
+---
+
+## 2026-08-06 — Multi-assignee on Marketing calendar 0.12.27 (Cursor)
+
+### Branch
+- `cursor/calendar-clear-miro-nav-8504` — Marketing **`0.12.27`**
+- PR: https://github.com/jarvis-tuttlebee/ppc-homebase/pull/11
+
+### What
+- Schedule cards: **`assignees[]`** (migrates legacy single `assignee`)
+- Panel **Assignees** uses Task Board-style multi-tick picker (+ add/rename)
+- Calendar footer shows `Name, Name` or `A, B +N`
+- Task Board already had multi-assignee; Annual Planner has no assignee field
+
+### Open / next
+1. Mac deploy `0.12.27`
+2. Smoke: assign 2+ people on a filled calendar Need
+
+---
+
+## 2026-08-06 — Ideas reshuffle + shorter board 0.12.26 (Cursor)
+
+### Branch
+- `cursor/calendar-clear-miro-nav-8504` — Marketing **`0.12.26`**
+- PR: https://github.com/jarvis-tuttlebee/ppc-homebase/pull/11
+
+### What
+1. **Reshuffle** fills the visible Ideas viewport (adaptive columns + tighter
+   gaps when crowded) instead of a small corner cluster; view resets to 1:1.
+2. Ideas canvas plane is **viewport-sized** (not 8000px wide).
+3. Default/max Ideas board height lowered (~34% / 48% viewport) so Preparation
+   is reachable below without the Ideas section dominating the screen.
+
+### Open / next
+1. Mac deploy `0.12.26` from fresh clone on this branch.
+2. Soak reshuffle with ~27 cards; drag resize gutter if height still tight.
+
+---
+
+## 2026-08-06 — Live 0.12.25 deploy confirmed (Cursor)
+
+### Live
+- https://ppc-homebase.pressplaycollective.workers.dev/marketing → **`v0.12.25`**
+  (curl confirmed).
+- Mac fresh clone `~/ppc-homebase-deploy` on `cursor/calendar-clear-miro-nav-8504`
+  uploaded `marketing.html` (1 new asset).
+- Version ID `c051a0d7-5358-467f-8f63-75980e0c4253`
+- PR: https://github.com/jarvis-tuttlebee/ppc-homebase/pull/11
+
+### Shipped on live
+1. Calendar **Change content** + **Clear content** in Scheduled content block;
+   always-visible card ×
+2. Ideas Miro-standard nav: Select/Hand, Space-drag, trackpad/mouse modes,
+   bottom −/%/+/Fit
+
+### Open / next
+1. Soak Clear/Change + Ideas nav on live board with real data.
+2. Optional: add CF token to cloud env so agents can deploy.
+
+---
+
+## 2026-08-06 — Calendar Clear/Change + Miro Ideas nav 0.12.25 (Cursor)
+
+### Branch
+- `cursor/calendar-clear-miro-nav-8504` (from `cursor/ideas-pipeline-ux-af1c`)
+- Marketing **`0.12.25`**
+- PR: https://github.com/jarvis-tuttlebee/ppc-homebase/pull/11
+
+### What
+1. Calendar filled Needs: **Change content** + **Clear content** in Scheduled
+   content block (not footer-only). Card × always visible.
+2. Change opens pipeline picker on filled cards; picking replaces the link.
+3. Ideas canvas Miro-standard nav: Select/Hand (V/H), Space-drag pan,
+   trackpad two-finger pan / pinch zoom, mouse wheel zoom + right-drag pan,
+   bottom-right − / % / + / Fit, Trackpad|Mouse toggle, session persist.
+
+### Soak
+- Local `npx wrangler dev` → http://127.0.0.1:8787/marketing serves **0.12.25**
+  with Change/Clear controls + mood nav chrome present in HTML.
+
+### Open / next
+1. Mac deploy after review (cloud still has no CF token).
+2. Confirm Clear/Change + Ideas nav on live board with real data.
+
+---
+
 ## 2026-08-06 — Live 0.12.24 + EOD (Cursor)
 
 ### Live
