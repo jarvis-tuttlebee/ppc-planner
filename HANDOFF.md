@@ -5,6 +5,39 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-07 — Live rollback found; redeploy 0.12.29 (Cursor)
+
+### Problem
+- Live was serving **`v0.12.13`** (pipeline-notes era), not **0.12.28**.
+  Types filter, darker card wash, and Ideas Miro/nav features looked “missing”
+  because an older Worker asset was back on production.
+- Cloud agent still has **no** `CLOUDFLARE_API_TOKEN` — cannot deploy from VM
+  even when the user is on PC. Deploy must run on a machine with wrangler auth
+  (PC/Mac terminal) or after adding the token to the Cursor cloud env secrets.
+
+### Fix ready
+- Branch `cursor/calendar-clear-miro-nav-8504` bumped to Marketing **`0.12.29`**
+  (same code as 0.12.28 + version bump so wrangler uploads a new asset).
+- That tip already includes Types filter, card wash, Miro nav, Change/Clear,
+  multi-assignee, Ideas width gutters.
+
+### Deploy on PC (has wrangler login)
+```bash
+cd /path/to/ppc-homebase   # or fresh clone
+git fetch origin
+git checkout cursor/calendar-clear-miro-nav-8504
+git pull origin cursor/calendar-clear-miro-nav-8504
+grep APP_VERSION public/marketing.html   # expect 0.12.29
+npx wrangler deploy
+```
+Then hard-refresh live and confirm footer **v0.12.29**.
+
+### Open / next
+1. PC deploy 0.12.29; curl/confirm live
+2. Optional: add `CLOUDFLARE_API_TOKEN` to Cursor cloud secrets so agents can deploy
+
+---
+
 ## 2026-08-06 — EOD handoff (Cursor)
 
 ### Live
