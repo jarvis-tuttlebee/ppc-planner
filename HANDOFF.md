@@ -5,6 +5,71 @@ Claude Code, Cowork, or Cursor. Keep entries short. Newest session at the top.
 
 ---
 
+## 2026-08-07 — Deploy Marketing 0.12.31 (Cursor)
+
+### Live
+- Version ID: `915b1c4e-c3e3-41bf-81b4-29d5fd2bc254` — Marketing **`0.12.31`**
+- Branch: `cursor/calendar-clear-miro-nav-8504`
+- Uploaded `/marketing.html` + `/js/ppc-homebase.js`
+- Hard-refresh https://ppc-homebase.pressplaycollective.workers.dev/marketing
+- Curl confirmed `APP_VERSION = '0.12.31'` (js `?v=9`)
+
+### What shipped
+- Settings → **Card types** (add / rename / remove)
+- Make band → open calendar card; mobile image scroll fix; photo lightbox;
+  subtler calendar × (from 0.12.30)
+
+---
+
+## 2026-08-07 — Settings: manage card types (Cursor)
+
+### What
+- Marketing **`0.12.31`** (local — not deployed) on `cursor/calendar-clear-miro-nav-8504`:
+  - Settings → **Card types**: add / rename / remove formats per pillar
+    (IG Post, Reel, Campaign, …).
+  - Built-in renames via `formatLabels`; removals soft-delete via
+    `removedFormats` (cards reassigned). Customs update/delete in
+    `customFormats`.
+  - Also includes pending **0.12.30**: Make click, mobile image scroll,
+    photo lightbox, subtler calendar ×.
+
+### Open / next
+1. Soak on `:8787`; deploy when asked.
+
+---
+
+## 2026-08-07 — Make click + mobile image + photo lightbox + subtle × (Cursor)
+
+### What
+- Marketing **`0.12.30`** (local — not deployed) on `cursor/calendar-clear-miro-nav-8504`:
+  1. **Make** band items open the linked calendar card (jump to publish day when set).
+  2. Mobile exec panel: image no longer sticky while scrolling (desktop side-by-side still sticky).
+  3. Scheduled-content thumb opens a photo lightbox (Esc / backdrop / ×).
+  4. Calendar card × is quieter — transparent, format-tone colour, low opacity.
+
+### Open / next
+1. Soak on `:8787`; deploy when asked.
+
+---
+
+## 2026-08-07 — Deploy Marketing 0.12.29 (Cursor)
+
+### Live
+- Version ID: `8ee45c91-ea6a-4400-9806-3217d0df8932` — Marketing **`0.12.29`**
+- Branch: `cursor/calendar-clear-miro-nav-8504`
+- Hard-refresh https://ppc-homebase.pressplaycollective.workers.dev/marketing
+- Curl confirmed `APP_VERSION = '0.12.29'` on live.
+
+### What shipped
+- Restored full tip after accidental live rollback to 0.12.13: Types filter,
+  card wash, Miro nav, Change/Clear, multi-assignee, Ideas width gutters
+  (same as 0.12.28 + version bump).
+
+### Open / next
+1. Optional: add `CLOUDFLARE_API_TOKEN` to Cursor cloud secrets so agents can deploy
+
+---
+
 ## 2026-08-07 — Live rollback found; redeploy 0.12.29 (Cursor)
 
 ### Problem

@@ -633,13 +633,18 @@
     }
     .panel.exec-mode .panel-image-wrap {
       margin: 0;
-      position: sticky;
-      top: 0;
     }
     .panel.exec-mode .panel-image-wrap img {
       max-height: none;
       width: 100%;
       border-radius: 8px;
+    }
+    /* Sticky reference image only in side-by-side exec layout — not when stacked. */
+    @media (min-width: 701px) {
+      .panel.exec-mode .panel-image-wrap {
+        position: sticky;
+        top: 0;
+      }
     }
     .panel.exec-mode #imageDivider { display: none; }
     .panel.review-mode #pImageWrap,
@@ -1258,12 +1263,55 @@
       align-items: center;
       justify-content: center;
     }
+    .review-inspo-thumb.has-image {
+      cursor: zoom-in;
+    }
     .review-inspo-thumb img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
     }
+    .media-lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      background: rgba(28, 26, 24, 0.82);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      box-sizing: border-box;
+      cursor: zoom-out;
+    }
+    .media-lightbox.open { display: flex; }
+    .media-lightbox img {
+      max-width: min(960px, 100%);
+      max-height: calc(100vh - 48px);
+      object-fit: contain;
+      border-radius: 6px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+      background: #1c1a18;
+      cursor: default;
+    }
+    .media-lightbox-close {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .media-lightbox-close:hover { background: rgba(255, 255, 255, 0.22); }
     .review-inspo-meta {
       flex: 1;
       min-width: 0;
@@ -2408,22 +2456,20 @@
       padding: 0;
       border: none;
       border-radius: 3px;
-      background: rgba(255,255,255,0.82);
-      color: #9a958d;
-      font-size: 13px;
+      background: transparent;
+      font-size: 12px;
       line-height: 1;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      opacity: 0.9;
+      opacity: 0.28;
       z-index: 2;
     }
     .cal-slot .cal-slot-del:hover,
     .cal-slot .cal-slot-del:focus {
-      opacity: 1;
-      color: #a33d3d;
-      background: rgba(255,255,255,0.95);
+      opacity: 0.55;
+      background: rgba(0, 0, 0, 0.06);
     }
     .cal-slot--need-empty .cal-slot-fmt {
       display: none;
@@ -3485,6 +3531,13 @@
       .board { padding: 20px 16px 40px; }
       .mood-viewport { height: var(--mood-h, 300px); }
       .panel.exec-mode .panel-exec-layout { grid-template-columns: 1fr; }
+      .panel.exec-mode .panel-image-wrap {
+        position: static;
+        margin: 0 0 14px;
+      }
+      .panel.exec-mode .panel-image-wrap img {
+        max-height: 240px;
+      }
       .exec-card { grid-template-columns: 96px 1fr; min-height: 0; }
       .exec-card-thumb { width: 96px; height: 96px; }
       .schedule-card { grid-template-columns: 72px 1fr; }
@@ -3521,6 +3574,10 @@
 <div class="board" id="board"></div>
 
 <div class="overlay" id="overlay" onclick="closePanel()"></div>
+<div class="media-lightbox" id="mediaLightbox" role="dialog" aria-modal="true" aria-label="Photo">
+  <button type="button" class="media-lightbox-close" id="mediaLightboxClose" aria-label="Close photo">&#x2715;</button>
+  <img id="mediaLightboxImg" alt="">
+</div>
 <div class="panel" id="panel">
   <div class="panel-strip" id="panelStrip"></div>
   <button class="panel-close" type="button" onclick="closePanel()">&#x2715;</button>
@@ -3853,12 +3910,12 @@
 </div>
 
 <script src="/js/ppc-select.js?v=7"></script>
-<script src="/js/ppc-homebase.js?v=8"></script>
+<script src="/js/ppc-homebase.js?v=9"></script>
 <script>
 const STORAGE_KEY = 'ppc-marketing-data';
 const SYNC_URL = '/api/marketing';
 const MEDIA_UPLOAD_URL = '/api/marketing/media';
-const APP_VERSION = '0.12.29';
+const APP_VERSION = '0.12.31';
 document.getElementById('versionTag').textContent = 'v' + APP_VERSION;
 let marketingHydrated = false;
 let marketingRev = 0;
@@ -4264,6 +4321,7 @@ const BRAND_COLOUR_PALETTE = [
 ];
 
 let colourSettingsOpen = false;
+let cardTypesSettingsOpen = false;
 const colourSectionOpen = {
   eventTypes: true,
   organic: false,
@@ -4603,9 +4661,20 @@ function deleteCustomPillar(id) {
 }
 
 function formatsForPillar(pillarId) {
-  const base = FORMATS[pillarId] || [];
-  const custom = customFormats().filter(f => f.pillar === pillarId);
-  return base.concat(custom.map(f => ({ id: f.id, label: f.label || f.id })));
+  const removed = removedFormatSet();
+  const base = (FORMATS[pillarId] || [])
+    .filter(f => !removed.has(formatColorKey(pillarId, f.id)))
+    .map(f => ({
+      id: f.id,
+      label: formatLabelOverride(pillarId, f.id) || f.label
+    }));
+  const custom = customFormats()
+    .filter(f => f.pillar === pillarId)
+    .map(f => ({
+      id: f.id,
+      label: formatLabelOverride(pillarId, f.id) || f.label || f.id
+    }));
+  return base.concat(custom);
 }
 
 function allFormatOptions() {
@@ -4621,6 +4690,122 @@ function allFormatOptions() {
 function customFormats() {
   if (!Array.isArray(DATA.customFormats)) DATA.customFormats = [];
   return DATA.customFormats;
+}
+
+function formatLabels() {
+  if (!DATA.formatLabels || typeof DATA.formatLabels !== 'object') DATA.formatLabels = {};
+  return DATA.formatLabels;
+}
+
+function formatLabelOverride(pillarId, formatId) {
+  const lab = formatLabels()[formatColorKey(pillarId, formatId)];
+  return lab && String(lab).trim() ? String(lab).trim().slice(0, 40) : '';
+}
+
+function removedFormatSet() {
+  if (!Array.isArray(DATA.removedFormats)) DATA.removedFormats = [];
+  return new Set(DATA.removedFormats.filter(k => typeof k === 'string' && k));
+}
+
+function isBuiltinFormat(pillarId, formatId) {
+  return (FORMATS[pillarId] || []).some(f => f.id === formatId);
+}
+
+function countCardsUsingFormat(pillarId, formatId) {
+  let n = 0;
+  const hit = c => { if (c && c.pillar === pillarId && c.format === formatId) n++; };
+  prepCards().forEach(hit);
+  execCards().forEach(hit);
+  reviewCards().forEach(hit);
+  scheduleCards().forEach(hit);
+  return n;
+}
+
+function fallbackFormatId(pillarId, excludeId) {
+  const list = formatsForPillar(pillarId).filter(f => f.id !== excludeId);
+  return list.length ? list[0].id : null;
+}
+
+function reassignFormatRefs(pillarId, fromId, toId) {
+  if (!toId || fromId === toId) return;
+  const bump = card => {
+    if (!card || card.pillar !== pillarId || card.format !== fromId) return;
+    card.format = toId;
+  };
+  prepCards().forEach(bump);
+  execCards().forEach(bump);
+  reviewCards().forEach(bump);
+  scheduleCards().forEach(bump);
+}
+
+/** Rename a card type (format). Built-ins use formatLabels; customs update label. */
+function renameFormat(pillarId, formatId, newLabel) {
+  const label = String(newLabel || '').trim().slice(0, 40);
+  if (!label || !pillarId || !formatId) return false;
+  const existing = formatsForPillar(pillarId).find(f => f.id === formatId);
+  if (!existing) return false;
+  const clash = formatsForPillar(pillarId).find(
+    f => f.id !== formatId && String(f.label || '').toLowerCase() === label.toLowerCase()
+  );
+  if (clash) {
+    PPC.showToast('Name already used');
+    return false;
+  }
+  if (isBuiltinFormat(pillarId, formatId)) {
+    formatLabels()[formatColorKey(pillarId, formatId)] = label;
+  } else {
+    const entry = customFormats().find(f => f.pillar === pillarId && f.id === formatId);
+    if (!entry) return false;
+    entry.label = label;
+    const key = formatColorKey(pillarId, formatId);
+    if (formatLabels()[key]) delete formatLabels()[key];
+  }
+  scheduleSave();
+  return true;
+}
+
+/** Remove a card type. Built-ins soft-remove; customs delete. Cards move to another type. */
+function deleteFormat(pillarId, formatId) {
+  if (!pillarId || !formatId) return false;
+  const list = formatsForPillar(pillarId);
+  const existing = list.find(f => f.id === formatId);
+  if (!existing) return false;
+  if (list.length <= 1) {
+    PPC.showToast('Keep at least one type in this pillar');
+    return false;
+  }
+  const fallback = fallbackFormatId(pillarId, formatId);
+  if (!fallback) {
+    PPC.showToast('Keep at least one type in this pillar');
+    return false;
+  }
+  const label = existing.label || formatId;
+  const n = countCardsUsingFormat(pillarId, formatId);
+  const msg = n
+    ? 'Remove type “‘ + label + ’”? ' + n + ' card' + (n === 1 ? '' : 's') + ' will move to “‘ + formatLabel(pillarId, fallback) + ’”.'
+    : 'Remove type “‘ + label + ’”?';
+  if (!confirm(msg)) return false;
+
+  reassignFormatRefs(pillarId, formatId, fallback);
+  const key = formatColorKey(pillarId, formatId);
+  if (isBuiltinFormat(pillarId, formatId)) {
+    const set = removedFormatSet();
+    set.add(key);
+    DATA.removedFormats = Array.from(set);
+  } else {
+    DATA.customFormats = customFormats().filter(f => !(f.pillar === pillarId && f.id === formatId));
+  }
+  if (formatLabels()[key]) delete formatLabels()[key];
+  if (colourPrefs().formats && colourPrefs().formats[key]) delete colourPrefs().formats[key];
+  if (hiddenCalFormats.has(key)) {
+    hiddenCalFormats.delete(key);
+    persistHiddenCalFormats();
+  }
+  clearTimeout(saveTimer);
+  saveData();
+  renderBoard();
+  PPC.showToast('Type “‘ + label + ’” removed');
+  return true;
 }
 
 function scheduleModeLabels() {
@@ -5070,7 +5255,7 @@ function statusOptionsForCard(card) {
 const DEFAULT_STAFF = ['Jarvis', 'Louis', 'Gregor'];
 const ADD_STAFF_ID = '__add_staff__';
 
-let DATA = { ideas: [], sections: { preparation: [], execution: [], review: [], schedule: [] }, anchors: [], cadence: cloneCadence(), weekGoals: {}, dayMarks: {}, leadUpRules: DEFAULT_LEAD_UP_RULES.map(r => ({ ...r })), customAnchorTypes: [], customPillars: [], customFormats: [], pillarLabels: {}, staff: DEFAULT_STAFF.slice(), scheduleModeLabels: {}, colourPrefs: { formats: {}, eventTypes: {} }, layoutPrefs: null };
+let DATA = { ideas: [], sections: { preparation: [], execution: [], review: [], schedule: [] }, anchors: [], cadence: cloneCadence(), weekGoals: {}, dayMarks: {}, leadUpRules: DEFAULT_LEAD_UP_RULES.map(r => ({ ...r })), customAnchorTypes: [], customPillars: [], customFormats: [], pillarLabels: {}, formatLabels: {}, removedFormats: [], staff: DEFAULT_STAFF.slice(), scheduleModeLabels: {}, colourPrefs: { formats: {}, eventTypes: {} }, layoutPrefs: null };
 const expandedSections = new Set(['schedule']);
 const expandedPillars = new Set(PILLARS.filter(p => p.defaultOpen).map(p => p.id));
 let saveTimer = null;
@@ -5231,6 +5416,23 @@ function isStoredMediaRef(v) {
 
 function mediaSrc(v) {
   return isStoredMediaRef(v) ? v : '';
+}
+
+function openMediaLightbox(src) {
+  const url = mediaSrc(src) || (typeof src === 'string' ? src : '');
+  if (!url) return;
+  const box = document.getElementById('mediaLightbox');
+  const img = document.getElementById('mediaLightboxImg');
+  if (!box || !img) return;
+  img.src = url;
+  box.classList.add('open');
+}
+
+function closeMediaLightbox() {
+  const box = document.getElementById('mediaLightbox');
+  const img = document.getElementById('mediaLightboxImg');
+  if (box) box.classList.remove('open');
+  if (img) img.removeAttribute('src');
 }
 
 async function uploadMarketingMedia(dataUrl) {
@@ -6294,6 +6496,8 @@ function defaultData() {
     customPillars: [],
     customFormats: [],
     pillarLabels: {},
+    formatLabels: {},
+    removedFormats: [],
     staff: DEFAULT_STAFF.slice(),
     scheduleModeLabels: {},
     colourPrefs: { formats: {}, eventTypes: {} },
@@ -6383,6 +6587,8 @@ function buildMarketingPayload() {
     customPillars: customPillars().map(p => ({ id: p.id, label: p.label, color: p.color })),
     customFormats: customFormats().map(f => ({ id: f.id, label: f.label, pillar: f.pillar })),
     pillarLabels: { ...pillarLabels() },
+    formatLabels: { ...formatLabels() },
+    removedFormats: Array.from(removedFormatSet()),
     staff: marketingStaff().slice(),
     scheduleModeLabels: { ...scheduleModeLabels() },
     colourPrefs: {
@@ -6478,6 +6684,8 @@ function normalizeLoaded(data) {
   DATA.customPillars = parseCustomPillars(data);
   DATA.customFormats = parseCustomFormats(data);
   DATA.pillarLabels = parsePillarLabels(data);
+  DATA.formatLabels = parseFormatLabels(data);
+  DATA.removedFormats = parseRemovedFormats(data);
   DATA.staff = parseMarketingStaff(data);
 
   const sections = data.sections || { preparation: [], execution: [], review: [], schedule: [] };
@@ -6560,6 +6768,8 @@ function normalizeLoaded(data) {
     customPillars: DATA.customPillars.slice(),
     customFormats: DATA.customFormats.slice(),
     pillarLabels: { ...DATA.pillarLabels },
+    formatLabels: { ...DATA.formatLabels },
+    removedFormats: Array.isArray(DATA.removedFormats) ? DATA.removedFormats.slice() : [],
     staff: DATA.staff.slice(),
     scheduleModeLabels: (() => {
       const src = data.scheduleModeLabels && typeof data.scheduleModeLabels === 'object'
@@ -6604,6 +6814,28 @@ function parsePillarLabels(data) {
   Object.keys(src).forEach(id => {
     const lab = String(src[id] || '').trim().slice(0, 40);
     if (lab) out[id] = lab;
+  });
+  return out;
+}
+
+function parseFormatLabels(data) {
+  const src = data && data.formatLabels && typeof data.formatLabels === 'object' ? data.formatLabels : {};
+  const out = {};
+  Object.keys(src).forEach(key => {
+    const lab = String(src[key] || '').trim().slice(0, 40);
+    if (lab && key.indexOf('::') > 0) out[key] = lab;
+  });
+  return out;
+}
+
+function parseRemovedFormats(data) {
+  const out = [];
+  const seen = new Set();
+  (Array.isArray(data && data.removedFormats) ? data.removedFormats : []).forEach(k => {
+    const key = String(k || '').trim();
+    if (!key || key.indexOf('::') < 0 || seen.has(key)) return;
+    seen.add(key);
+    out.push(key);
   });
   return out;
 }
@@ -8930,7 +9162,7 @@ function buildMarketingDayCell(cell, cardsByDay, leadUpByDay, prepByDay, today) 
       let title = stripHtml(card.body || '').trim();
       if (!title) title = needTypeDisplayLabel(card) || 'Content';
       const pub = card.scheduledAt ? formatShortDate(new Date(card.scheduledAt)) : '';
-      row.title = 'Drag to move prep day' + (pub ? ' · posts ' + pub : '') + ' · × clears reminder';
+      row.title = 'Click to open calendar card' + (pub ? ' · posts ' + pub : '') + ' · drag to move · × clears reminder';
       const clearBtn = document.createElement('button');
       clearBtn.type = 'button';
       clearBtn.className = 'cal-day-prep-clear';
@@ -8953,6 +9185,13 @@ function buildMarketingDayCell(cell, cardsByDay, leadUpByDay, prepByDay, today) 
         sub.textContent = 'Posts ' + pub;
         row.appendChild(sub);
       }
+      row.addEventListener('click', e => {
+        if (e.target.closest('.cal-day-prep-clear')) return;
+        e.stopPropagation();
+        if (calSlotDragMoved) return;
+        if (card.scheduledAt) jumpScheduleToDate(new Date(card.scheduledAt));
+        openSchedulePanel(card.id);
+      });
       row.addEventListener('dragstart', e => {
         if (e.target.closest('.cal-day-prep-clear')) {
           e.preventDefault();
@@ -9607,40 +9846,34 @@ function renderAnchorQuotaRows(quotas) {
     const sub = document.createElement('small');
     sub.textContent = opt.pillarLabel;
     name.appendChild(sub);
-    const isCustom = customFormats().some(f => f.pillar === opt.pillar && f.id === opt.format);
-    if (isCustom) {
-      name.title = 'Double-click to rename';
-      name.style.cursor = 'text';
-      name.addEventListener('dblclick', e => {
-        e.preventDefault();
-        e.stopPropagation();
-        const prev = opt.label;
-        const renameInput = document.createElement('input');
-        renameInput.type = 'text';
-        renameInput.className = 'cal-quota-count';
-        renameInput.style.width = '100%';
-        renameInput.value = prev;
-        renameInput.maxLength = 40;
-        name.textContent = '';
-        name.appendChild(renameInput);
-        renameInput.focus();
-        renameInput.select();
-        const finish = commit => {
-          const next = commit ? (renameInput.value || '').trim().slice(0, 40) : prev;
-          const entry = customFormats().find(f => f.pillar === opt.pillar && f.id === opt.format);
-          if (entry && next) entry.label = next;
-          const nextQuotas = readAnchorQuotasFromUI();
-          // Preserve zero-count visible rows
-          renderAnchorQuotaRows(mergeVisibleZeroQuotas(nextQuotas));
-          if (entry && next && next !== prev) scheduleSave();
-        };
-        renameInput.addEventListener('blur', () => finish(true));
-        renameInput.addEventListener('keydown', ev => {
-          if (ev.key === 'Enter') { ev.preventDefault(); finish(true); }
-          if (ev.key === 'Escape') { ev.preventDefault(); finish(false); }
-        });
+    name.title = 'Double-click to rename';
+    name.style.cursor = 'text';
+    name.addEventListener('dblclick', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      const prev = opt.label;
+      const renameInput = document.createElement('input');
+      renameInput.type = 'text';
+      renameInput.className = 'cal-quota-count';
+      renameInput.style.width = '100%';
+      renameInput.value = prev;
+      renameInput.maxLength = 40;
+      name.textContent = '';
+      name.appendChild(renameInput);
+      renameInput.focus();
+      renameInput.select();
+      const finish = commit => {
+        const next = commit ? (renameInput.value || '').trim().slice(0, 40) : prev;
+        if (commit && next && next !== prev) renameFormat(opt.pillar, opt.format, next);
+        const nextQuotas = readAnchorQuotasFromUI();
+        renderAnchorQuotaRows(mergeVisibleZeroQuotas(nextQuotas));
+      };
+      renameInput.addEventListener('blur', () => finish(true));
+      renameInput.addEventListener('keydown', ev => {
+        if (ev.key === 'Enter') { ev.preventDefault(); finish(true); }
+        if (ev.key === 'Escape') { ev.preventDefault(); finish(false); }
       });
-    }
+    });
     const input = document.createElement('input');
     input.type = 'number';
     input.className = 'cal-quota-count';
@@ -11584,6 +11817,7 @@ function renderCalSlot(card) {
     del.setAttribute('aria-label', 'Remove need slot');
     del.title = 'Remove';
     del.textContent = '\u00d7';
+    del.style.color = formatTone;
     del.addEventListener('click', e => {
       e.stopPropagation();
       if (calSlotDragMoved) return;
@@ -11679,6 +11913,7 @@ function renderCalSlot(card) {
     clearBtn.setAttribute('aria-label', 'Clear scheduled content');
     clearBtn.title = 'Clear content (keep Need slot)';
     clearBtn.textContent = '\u00d7';
+    clearBtn.style.color = formatTone;
     clearBtn.addEventListener('click', e => {
       e.stopPropagation();
       if (calSlotDragMoved) return;
@@ -12836,14 +13071,23 @@ function refreshScheduleThumb(card) {
   if (!thumb) return;
   thumb.innerHTML = '';
   thumb.classList.remove('has-image');
+  thumb.onclick = null;
   const src = cardThumbSrc(card);
   if (src) {
     const img = document.createElement('img');
-    img.src = src;
+    img.src = mediaSrc(src) || src;
     img.alt = '';
     thumb.appendChild(img);
     thumb.classList.add('has-image');
-    thumb.title = isDiscoverCard(card) ? 'Drop or paste to replace preview' : '';
+    thumb.title = isDiscoverCard(card)
+      ? 'Click to view · drop or paste to replace preview'
+      : 'Click to view photo';
+    thumb.onclick = e => {
+      if (e.target.closest('.review-media-clear')) return;
+      e.preventDefault();
+      e.stopPropagation();
+      openMediaLightbox(src);
+    };
     if (isDiscoverCard(card)) {
       const clearBtn = document.createElement('button');
       clearBtn.type = 'button';
@@ -13499,6 +13743,7 @@ function closePanel() {
   if (panelMode === 'schedule' && activeScheduleId) {
     try { savePanel(true); } catch (_) {}
   }
+  closeMediaLightbox();
   closePpcSelects();
   document.getElementById('panel').classList.remove('open');
   document.getElementById('overlay').classList.remove('open');
@@ -13641,6 +13886,28 @@ async function applyImageToScheduleDiscover(file) {
     }
   });
   thumb.tabIndex = 0;
+})();
+
+(function setupMediaLightbox() {
+  const box = document.getElementById('mediaLightbox');
+  const closeBtn = document.getElementById('mediaLightboxClose');
+  const img = document.getElementById('mediaLightboxImg');
+  if (!box) return;
+  box.addEventListener('click', e => {
+    if (e.target === box || e.target === closeBtn) closeMediaLightbox();
+  });
+  if (closeBtn) closeBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    closeMediaLightbox();
+  });
+  if (img) img.addEventListener('click', e => e.stopPropagation());
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && box.classList.contains('open')) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      closeMediaLightbox();
+    }
+  }, true);
 })();
 
 document.getElementById('pReviewVideoUrl').addEventListener('input', e => {
@@ -13825,6 +14092,148 @@ PPC.mountSettings({
     host.innerHTML = '';
     closeColourPopovers();
 
+    const refreshSettings = () => {
+      if (typeof PPC.openSettings === 'function') PPC.openSettings();
+    };
+
+    // ── Card types (formats): add / rename / remove ──
+    const typesToggle = document.createElement('button');
+    typesToggle.type = 'button';
+    typesToggle.className = 'ppc-colour-toggle';
+    typesToggle.innerHTML = '<span>Card types</span><span class="ppc-colour-chev">' + (cardTypesSettingsOpen ? '▾' : '▸') + '</span>';
+    const typesBody = document.createElement('div');
+    typesBody.className = 'ppc-colour-panel';
+    typesBody.hidden = !cardTypesSettingsOpen;
+    typesToggle.addEventListener('click', e => {
+      e.stopPropagation();
+      cardTypesSettingsOpen = !cardTypesSettingsOpen;
+      typesBody.hidden = !cardTypesSettingsOpen;
+      typesToggle.querySelector('.ppc-colour-chev').textContent = cardTypesSettingsOpen ? '▾' : '▸';
+    });
+    host.appendChild(typesToggle);
+    host.appendChild(typesBody);
+
+    allPillars().forEach(p => {
+      typesBody.appendChild(makeColourSection('types-' + p.id, p.label, body => {
+        formatsForPillar(p.id).forEach(f => {
+          const row = document.createElement('div');
+          row.className = 'ppc-type-row';
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.className = 'ppc-type-input';
+          input.value = f.label || f.id;
+          input.maxLength = 40;
+          input.setAttribute('aria-label', 'Rename ' + (f.label || f.id));
+          const commitRename = () => {
+            const next = (input.value || '').trim().slice(0, 40);
+            if (!next) {
+              input.value = f.label || f.id;
+              return;
+            }
+            if (next === (f.label || f.id)) return;
+            if (renameFormat(p.id, f.id, next)) {
+              renderBoard();
+              refreshSettings();
+            } else {
+              input.value = f.label || f.id;
+            }
+          };
+          input.addEventListener('keydown', e => {
+            e.stopPropagation();
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              input.blur();
+            } else if (e.key === 'Escape') {
+              e.preventDefault();
+              input.value = f.label || f.id;
+              input.blur();
+            }
+          });
+          input.addEventListener('blur', commitRename);
+          input.addEventListener('click', e => e.stopPropagation());
+
+          const del = document.createElement('button');
+          del.type = 'button';
+          del.className = 'ppc-type-del';
+          del.setAttribute('aria-label', 'Remove ' + (f.label || f.id));
+          del.title = 'Remove type';
+          del.textContent = '\u00d7';
+          del.addEventListener('click', e => {
+            e.stopPropagation();
+            if (deleteFormat(p.id, f.id)) refreshSettings();
+          });
+
+          row.appendChild(input);
+          row.appendChild(del);
+          body.appendChild(row);
+        });
+
+        const addBtn = document.createElement('button');
+        addBtn.type = 'button';
+        addBtn.className = 'ppc-type-add';
+        addBtn.textContent = '+ Add type';
+        addBtn.addEventListener('click', e => {
+          e.stopPropagation();
+          const wrap = document.createElement('div');
+          wrap.className = 'ppc-type-add-form';
+          const inp = document.createElement('input');
+          inp.type = 'text';
+          inp.className = 'ppc-type-input';
+          inp.placeholder = 'New type name';
+          inp.maxLength = 40;
+          const save = document.createElement('button');
+          save.type = 'button';
+          save.className = 'ppc-type-add-save';
+          save.textContent = 'Add';
+          const cancel = document.createElement('button');
+          cancel.type = 'button';
+          cancel.className = 'ppc-type-add-cancel';
+          cancel.textContent = 'Cancel';
+          const finish = ok => {
+            if (ok) {
+              const entry = createCustomFormat(p.id, inp.value);
+              if (!entry) {
+                inp.focus();
+                return;
+              }
+              renderBoard();
+              refreshSettings();
+              return;
+            }
+            wrap.remove();
+            addBtn.hidden = false;
+          };
+          save.addEventListener('click', ev => {
+            ev.stopPropagation();
+            finish(true);
+          });
+          cancel.addEventListener('click', ev => {
+            ev.stopPropagation();
+            finish(false);
+          });
+          inp.addEventListener('keydown', ev => {
+            ev.stopPropagation();
+            if (ev.key === 'Enter') {
+              ev.preventDefault();
+              finish(true);
+            } else if (ev.key === 'Escape') {
+              ev.preventDefault();
+              finish(false);
+            }
+          });
+          inp.addEventListener('click', ev => ev.stopPropagation());
+          wrap.appendChild(inp);
+          wrap.appendChild(save);
+          wrap.appendChild(cancel);
+          addBtn.hidden = true;
+          addBtn.insertAdjacentElement('afterend', wrap);
+          inp.focus();
+        });
+        body.appendChild(addBtn);
+      }));
+    });
+
+    // ── Colour settings ──
     const toggle = document.createElement('button');
     toggle.type = 'button';
     toggle.className = 'ppc-colour-toggle';
